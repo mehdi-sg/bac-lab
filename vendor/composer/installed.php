@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
-        'reference' => 'e1e02457c1d87bf65eb06755800d7e6441ad2917',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => 'dfc809906d714e5bc91c69f45521725754cc7471',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'reference' => 'e1e02457c1d87bf65eb06755800d7e6441ad2917',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => 'dfc809906d714e5bc91c69f45521725754cc7471',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -403,8 +403,8 @@
         'psr/log-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0|2.0|3.0',
-                1 => '3.0.0',
+                0 => '3.0.0',
+                1 => '1.0|2.0|3.0',
             ),
         ),
         'psr/simple-cache-implementation' => array(

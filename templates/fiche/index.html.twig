@@ -1,0 +1,54 @@
+{% extends 'fiche/_layout.html.twig' %}
+
+{% block fiche_title %}📘 Mes fiches de révision{% endblock %}
+
+{% block fiche_content %}
+
+<div class="fiche-index-wrapper">
+
+    <div class="fiche-index-container">
+
+        <!-- Grid -->
+        <div class="row justify-content-center">
+            {% for fiche in fiches %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card fiche-card h-100">
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{ fiche.title }}</h5>
+
+                            <p class="card-text">
+                                {{ fiche.content|slice(0, 120) }}...
+                            </p>
+                        </div>
+
+                        <div class="card-footer d-flex justify-content-between">
+                            <a href="{{ path('fiche_show', {id: fiche.id}) }}"
+                               class="btn btn-primary btn-sm">
+                                Lire
+                            </a>
+
+                            <a href="{{ path('fiche_edit', {id: fiche.id}) }}"
+                               class="btn btn-outline-secondary btn-sm">
+                                Modifier
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-center text-muted">Aucune fiche créée.</p>
+            {% endfor %}
+        </div>
+
+        <!-- New -->
+        <div class="text-center mt-5">
+            <a href="{{ path('fiche_new') }}" class="btn btn-success btn-lg">
+                ➕ Nouvelle fiche
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

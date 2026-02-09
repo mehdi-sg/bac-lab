@@ -1,0 +1,21 @@
+{% extends 'fiche/_layout.html.twig' %}
+
+{% block fiche_title %}🕒 Historique des modifications{% endblock %}
+
+{% block fiche_content %}
+<ul class="list-group">
+    {% for version in versions %}
+        <li class="list-group-item">
+            <small class="text-muted">
+                Modifié le {{ version.editedAt|date('d/m/Y H:i') }}
+                par {{ version.editorName }}
+            </small>
+            <pre class="mt-2">{{ version.content }}</pre>
+        </li>
+    {% else %}
+        <li class="list-group-item text-muted">
+            Aucune modification enregistrée.
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

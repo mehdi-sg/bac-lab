@@ -1,0 +1,48 @@
+{% extends 'fiche/_layout.html.twig' %}
+
+{% block title %}{{ fiche.title }}{% endblock %}
+
+{% block body %}
+<section class="container fiche-page py-5 mt-5">
+    
+    <!-- Title -->
+    <div class="mb-4 text-center">
+        <h1 class="fw-bold">{{ fiche.title }}</h1>
+        <p class="text-muted">
+            Créée le {{ fiche.createdAt|date('d/m/Y') }}
+        </p>
+    </div>
+
+    <!-- Content Card -->
+    <div class="card shadow-lg border-0">
+      <div class="fiche-content">
+
+    {{
+        fiche.content
+        |nl2br
+        |replace({
+            '!!': '<div class="fiche-block fiche-warning"><strong>⚠️ </strong>',
+            '>>': '<div class="fiche-block fiche-example"><strong>💡 Exemple :</strong> '
+        })
+        |replace({
+            '</div><br />': '</div>'
+        })
+        |raw
+    }}
+
+</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{{ path('fiche_index') }}" class="btn btn-outline-secondary">
+            ← Retour
+        </a>
+
+        <a href="{{ path('fiche_edit', {id: fiche.id}) }}" class="btn btn-primary">
+            ✏️ Modifier
+        </a>
+    </div>
+
+</section>
+{% endblock %}

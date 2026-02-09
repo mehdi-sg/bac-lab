@@ -1,0 +1,113 @@
+{% extends 'fiche/_layout.html.twig' %}
+
+{% block title %}✏️ Modifier la fiche{% endblock %}
+
+{% block fiche_title %}
+✏️ Modifier la fiche
+{% endblock %}
+
+{% block fiche_content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-11">
+
+        <div class="card shadow-lg border-0 fiche-editor-card">
+            <div class="card-body p-5">
+
+                <p class="text-muted text-center mb-4">
+                    Modifie ta fiche et visualise le rendu en temps réel
+                </p>
+
+                {{ form_start(form) }}
+
+                <!-- TITLE -->
+                <div class="mb-4">
+                    {{ form_label(form.title, '📌 Titre de la fiche', {
+                        'label_attr': {'class': 'form-label fw-semibold'}
+                    }) }}
+                    {{ form_widget(form.title, {
+                        'attr': {
+                            'class': 'form-control form-control-lg'
+                        }
+                    }) }}
+                </div>
+
+                <!-- TOOLBAR -->
+                <div class="fiche-toolbar mb-3">
+                    <button type="button" class="btn btn-sm btn-outline-warning"
+                            onclick="insertText('!! Définition\\n')">
+                        ⚠️ Définition
+                    </button>
+
+                    <button type="button" class="btn btn-sm btn-outline-info"
+                            onclick="insertText('>> Exemple\\n')">
+                        📘 Exemple
+                    </button>
+
+                    <button type="button" class="btn btn-sm btn-outline-success"
+                            onclick="insertText('!! Astuce\\n')">
+                        💡 Astuce
+                    </button>
+                </div>
+
+                <div class="row">
+                    <!-- TEXTAREA -->
+                    <div class="col-md-6">
+                        {{ form_label(form.content, '🧠 Contenu', {
+                            'label_attr': {'class': 'form-label fw-semibold'}
+                        }) }}
+
+                        {{ form_widget(form.content, {
+                            'attr': {
+                                'class': 'form-control fiche-textarea',
+                                'rows': 16
+                            }
+                        }) }}
+                    </div>
+
+                    <!-- LIVE PREVIEW -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">👀 Aperçu en direct</label>
+
+                        <div id="preview" class="fiche-preview">
+                            <p class="text-muted">
+                                L’aperçu s’affichera ici…
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+
+                    <div>
+                        <a href="{{ path('fiche_show', {id: fiche.id}) }}"
+                           class="btn btn-outline-secondary">
+                            ← Annuler
+                        </a>
+
+                        <a href="{{ path('fiche_history', {id: fiche.id}) }}"
+                           class="btn btn-outline-primary ms-2">
+                            🕒 Historique
+                        </a>
+                    </div>
+
+                    <button class="btn btn-primary px-4">
+                        💾 Enregistrer
+                    </button>
+
+                </div>
+
+                {{ form_end(form) }}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+{% block js %}
+{{ parent() }}
+<script src="{{ asset('front/js/fiche-editor.js') }}"></script>
+{% endblock %}

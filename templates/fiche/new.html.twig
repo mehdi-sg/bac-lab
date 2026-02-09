@@ -1,0 +1,97 @@
+{% extends 'fiche/_layout.html.twig' %}
+
+{% block fiche_title %}
+➕ Créer une nouvelle fiche
+{% endblock %}
+
+{% block fiche_content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-11">
+
+        <div class="card shadow-lg border-0 fiche-editor-card">
+            <div class="card-body p-5">
+
+                <h4 class="mb-4 fw-bold text-center">
+                    ✍️ Rédige ta fiche de révision
+                </h4>
+
+                {{ form_start(form) }}
+
+                <!-- Title -->
+                <div class="mb-4">
+                    {{ form_label(form.title, '📌 Titre de la fiche', {
+                        'label_attr': {'class': 'form-label fw-semibold'}
+                    }) }}
+                    {{ form_widget(form.title, {
+                        'attr': {
+                            'class': 'form-control form-control-lg',
+                            'placeholder': 'Ex: Limites de fonctions'
+                        }
+                    }) }}
+                </div>
+
+                <!-- Toolbar -->
+                <div class="fiche-toolbar mb-2">
+                    <button type="button" class="btn btn-warning btn-sm" onclick="insertText('!! Définition\n')">
+                        ⚠️ Définition
+                    </button>
+                    <button type="button" class="btn btn-info btn-sm" onclick="insertText('>> Exemple\n')">
+                        📘 Exemple
+                    </button>
+                    <button type="button" class="btn btn-success btn-sm" onclick="insertText('!! Astuce\n')">
+                        💡 Astuce
+                    </button>
+                </div>
+
+                <div class="row">
+                    <!-- Editor -->
+                    <div class="col-md-6">
+                        {{ form_label(form.content, '🧠 Contenu', {
+                            'label_attr': {'class': 'form-label fw-semibold'}
+                        }) }}
+
+                        {{ form_widget(form.content, {
+                            'attr': {
+                                'class': 'form-control fiche-textarea',
+                                'rows': 15,
+                                'id': 'fiche_content'
+                            }
+                        }) }}
+                    </div>
+
+                    <!-- Live Preview -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">👀 Aperçu en direct</label>
+
+                        <div class="fiche-preview" id="preview">
+                            <p class="text-muted">Commence à écrire pour voir l’aperçu...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="{{ path('fiche_index') }}" class="btn btn-outline-secondary">
+                        ← Annuler
+                    </a>
+
+                    <button class="btn btn-primary px-4">
+                        💾 Enregistrer la fiche
+                    </button>
+                </div>
+
+                {{ form_end(form) }}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+{{ parent() }}
+<script src="{{ asset('front/js/fiche-editor.js') }}"></script>
+{% endblock %}
