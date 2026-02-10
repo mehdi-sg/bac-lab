@@ -1,21 +1,154 @@
 {% extends 'fiche/_layout.html.twig' %}
 
+{% block title %}🕒 Historique des modifications{% endblock %}
+
 {% block fiche_title %}🕒 Historique des modifications{% endblock %}
+{% block fiche_subtitle %}
+    Consulte les anciennes versions, copie une version, ou restaure (si activé).
+{% endblock %}
 
 {% block fiche_content %}
-<ul class="list-group">
-    {% for version in versions %}
-        <li class="list-group-item">
-            <small class="text-muted">
-                Modifié le {{ version.editedAt|date('d/m/Y H:i') }}
-                par {{ version.editorName }}
-            </small>
-            <pre class="mt-2">{{ version.content }}</pre>
-        </li>
-    {% else %}
-        <li class="list-group-item text-muted">
-            Aucune modification enregistrée.
-        </li>
-    {% endfor %}
-</ul>
+
+<div class="fiche-center-wrapper">
+    <div class="fiche-center-inner">
+        <div class="col-12 col-xl-10">
+
+            <div class="card border-0 shadow-lg fiche-history-shell">
+                <div class="card-body p-4 p-lg-5">
+
+                    <!-- TOP BAR INSIDE CARD -->
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                        <div class="text-muted fw-semibold">
+                            Historique des versions
+                        </div>
+
+                        <a href="{{ path('fiche_show', { id: fiche.id }) }}"
+                           class="btn btn-outline-secondary btn-sm">
+                            ← Retour à la fiche
+                        </a>
+                    </div>
+
+                    {% if versions is empty %}
+                        <div class="alert alert-light border text-center mb-0">
+                            <div class="fw-bold">Aucune version enregistrée.</div>
+                            <div class="text-muted small">
+                                L’historique apparaîtra après une première modification.
+                            </div>
+                        </div>
+                    {% else %}
+
+                        <!-- INFO ROW -->
+                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                            <div class="text-muted">
+                                <strong>{{ versions|length }}</strong> version(s) enregistrée(s)
+                            </div>
+
+                            <div class="text-muted small">
+                                Astuce : ouvre une version pour voir son contenu, puis copie.
+                            </div>
+                        </div>
+
+                        <!-- TIMELINE -->
+                        <div class="fiche-timeline">
+                            {% for version in versions %}
+                                {% set collapseId = 'v' ~ version.id %}
+
+                                <div class="fiche-tl-item">
+                                    <div class="fiche-tl-dot"></div>
+
+                                    <div class="fiche-tl-card">
+
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                            <div>
+                                                <div class="fw-bold">
+                                                    Version {{ versions|length - loop.index0 }}
+                                                </div>
+                                                <div class="text-muted small">
+                                                    Modifié le {{ version.editedAt|date('d/m/Y à H:i') }}
+                                                    • par <span class="fw-semibold">{{ version.editorName }}</span>
+                                                </div>
+                                            </div>
+
+                                         <div class="d-flex gap-2">
+    <button type="button" class="btn btn-sm btn-outline-secondary"
+            data-copy-target="#content-{{ collapseId }}">
+        📋 Copier
+    </button>
+
+    <form method="post"
+          action="{{ path('fiche_restore_version', { id: fiche.id, versionId: version.id }) }}"
+          class="d-inline">
+        <input type="hidden" name="_token" value="{{ csrf_token('restore_version_' ~ version.id) }}">
+        <button type="submit" class="btn btn-sm btn-outline-success"
+                onclick="return confirm('Restaurer cette version ? Le contenu actuel sera sauvegardé dans l’historique.');">
+            ♻️ Restaurer
+        </button>
+    </form>
+
+    <button class="btn btn-sm btn-primary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapse-{{ collapseId }}">
+        👀 Voir
+    </button>
+</div>
+
+                                        </div>
+
+                                        <div id="collapse-{{ collapseId }}"
+                                             class="collapse {% if loop.first %}show{% endif %} mt-3">
+
+                                            <!-- LIGHT readable content + syntax hint -->
+                                            <div class="fiche-history-content" id="content-{{ collapseId }}">
+                                                {{ version.content
+                                                    |replace({'!!+ ': '💡 '})
+                                                    |replace({'!!- ': '🚫 '})
+                                                    |replace({'!! ': '⚠️ '})
+                                                    |replace({'>> ': '📘 '})
+                                                    |replace({'?? ': '❓ '})
+                                                    |replace({'== ': '🧩 '})
+                                                    |e
+                                                }}
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+{{ parent() }}
+<script>
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-copy-target]');
+    if (!btn) return;
+
+    const target = document.querySelector(btn.dataset.copyTarget);
+    if (!target) return;
+
+    const text = target.innerText;
+
+    try {
+        await navigator.clipboard.writeText(text);
+        const old = btn.innerText;
+        btn.innerText = '✅ Copié';
+        setTimeout(() => btn.innerText = old, 1200);
+    } catch (err) {
+        alert('Copie impossible (navigateur).');
+    }
+});
+</script>
 {% endblock %}

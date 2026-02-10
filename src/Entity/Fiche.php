@@ -33,8 +33,8 @@ class Fiche
     #[ORM\Column(nullable: true)]
     private ?\DateTime $updatedAt = null;
 
-    #[ORM\Column]
-    private ?bool $isPublic = null;
+  #[ORM\Column(options: ['default' => false])]
+private bool $isPublic = false;
 
     /**
      * @var Collection<int, FicheVersion>
@@ -100,18 +100,8 @@ class Fiche
         return $this;
     }
 
-    public function isPublic(): ?bool
-    {
-        return $this->isPublic;
-    }
-
-    public function setIsPublic(bool $isPublic): static
-    {
-        $this->isPublic = $isPublic;
-
-        return $this;
-    }
-
+   public function isPublic(): bool { return $this->isPublic; }
+public function setIsPublic(bool $isPublic): static { $this->isPublic = $isPublic; return $this; }
     /**
      * @return Collection<int, FicheVersion>
      */

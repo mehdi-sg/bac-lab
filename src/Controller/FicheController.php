@@ -35,6 +35,7 @@ class FicheController extends AbstractController
     {
         $fiche = new Fiche();
         $fiche->setCreatedAt(new \DateTimeImmutable());
+        $fiche->setUpdatedAt(new \DateTime());
 
         $form = $this->createForm(FicheType::class, $fiche);
         $form->handleRequest($request);
@@ -116,18 +117,77 @@ class FicheController extends AbstractController
             ),
         ]);
     }
-    #[Route('/fiche/{id}/delete', name: 'fiche_delete', methods: ['POST'])]
-public function delete(
-    Request $request,
-    Fiche $fiche,
-    EntityManagerInterface $em
-): Response {
+#[Route('/{id}/delete', name: 'fiche_delete', methods: ['POST'])]
+public function delete(Request $request, Fiche $fiche, EntityManagerInterface $em): Response
+{
     if ($this->isCsrfTokenValid('delete_fiche_'.$fiche->getId(), $request->request->get('_token'))) {
         $em->remove($fiche);
         $em->flush();
     }
-
     return $this->redirectToRoute('fiche_index');
+}
+// =============================
+// RESTORE — Restore a fiche version
+// =============================
+#[Route('/{id}/restore/{versionId}', name: 'fiche_restore_version', methods: ['POST'])]
+public function restoreVersion(
+    Request $request,
+    Fiche $fiche,
+    int $versionId,
+    FicheVersionRepository $ficheVersionRepository,
+    EntityManagerInterface $em
+): Response {
+    // CSRF check
+    if (!$this->isCsrfTokenValid('restore_version_' . $versionId, $request->request->get('_token'))) {
+        $this->addFlash('danger', 'Token CSRF invalide.');
+        return $this->redirectToRoute('fiche_history', ['id' => $fiche->getId()]);
+    }
+
+    // Find version AND ensure it belongs to this fiche
+    $version = $ficheVersionRepository->findOneBy([
+        'id' => $versionId,
+        'fiche' => $fiche
+    ]);
+
+    if (!$version) {
+        throw $this->createNotFoundException('Version introuvable pour cette fiche.');
+    }
+
+    $currentContent = $fiche->getContent();
+    $targetContent  = $version->getContent();
+
+    // If same content, no need to restore
+    if ($currentContent === $targetContent) {
+        $this->addFlash('info', 'Cette version est déjà la version actuelle.');
+        return $this->redirectToRoute('fiche_history', ['id' => $fiche->getId()]);
+    }
+
+    // ✅ Save current content as a new version BEFORE restoring (so restore is tracked)
+    $backup = new FicheVersion();
+    $backup->setFiche($fiche);
+    $backup->setContent($currentContent);
+    $backup->setEditedAt(new \DateTimeImmutable());
+
+    // Editor name from logged user if exists
+    /** @var \App\Entity\Utilisateur|null $user */
+    $user = $this->getUser();
+    $editorName = 'Utilisateur';
+    if ($user instanceof \App\Entity\Utilisateur && $user->getProfil() !== null) {
+        $editorName = $user->getProfil()->getNom();
+    }
+    $backup->setEditorName($editorName . ' (restore)');
+
+    $em->persist($backup);
+
+    // Restore fiche content
+    $fiche->setContent($targetContent);
+    $fiche->setUpdatedAt(new \DateTime());
+
+    $em->flush();
+
+    $this->addFlash('success', 'Version restaurée avec succès ✅');
+
+    return $this->redirectToRoute('fiche_show', ['id' => $fiche->getId()]);
 }
 
 }
