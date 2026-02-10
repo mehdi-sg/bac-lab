@@ -1,0 +1,161 @@
+{% extends 'security/base_auth.html.twig' %}
+
+{% block title %}Inscription - BacLab{% endblock %}
+
+{% block header_title %}Rejoignez BacLab{% endblock %}
+{% block header_subtitle %}Créez votre compte et commencez votre préparation au Baccalauréat{% endblock %}
+
+{% block body %}
+    {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+    
+    <!-- Section Connexion -->
+    <div class="section-header">
+        <i class="fas fa-lock"></i>
+        <h3>Informations de Connexion</h3>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="email" class="form-label">
+                    <i class="fas fa-envelope" style="color: #667eea; margin-right: 8px;"></i>
+                    Adresse Email
+                </label>
+                {{ form_widget(registrationForm.email, {
+                    'attr': {
+                        'class': 'form-control',
+                        'placeholder': 'votre.email@exemple.com',
+                        'id': 'email'
+                    }
+                }) }}
+                {{ form_errors(registrationForm.email) }}
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="password" class="form-label">
+                    <i class="fas fa-key" style="color: #667eea; margin-right: 8px;"></i>
+                    Mot de Passe
+                </label>
+                {{ form_widget(registrationForm.plainPassword, {
+                    'attr': {
+                        'class': 'form-control',
+                        'placeholder': 'Mot de passe sécurisé',
+                        'id': 'password'
+                    }
+                }) }}
+                {{ form_errors(registrationForm.plainPassword) }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Section Profil -->
+    <div class="section-header">
+        <i class="fas fa-user"></i>
+        <h3>Informations Personnelles</h3>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="nom" class="form-label">
+                    <i class="fas fa-user-circle" style="color: #667eea; margin-right: 8px;"></i>
+                    Nom
+                </label>
+                {{ form_widget(registrationForm.profil.nom, {
+                    'attr': {'class': 'form-control', 'placeholder': 'Votre nom', 'id': 'nom'}
+                }) }}
+                {{ form_errors(registrationForm.profil.nom) }}
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="prenom" class="form-label">
+                    <i class="fas fa-user-tag" style="color: #667eea; margin-right: 8px;"></i>
+                    Prénom
+                </label>
+                {{ form_widget(registrationForm.profil.prenom, {
+                    'attr': {'class': 'form-control', 'placeholder': 'Votre prénom', 'id': 'prenom'}
+                }) }}
+                {{ form_errors(registrationForm.profil.prenom) }}
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="dateNaissance" class="form-label">
+                    <i class="fas fa-calendar-alt" style="color: #667eea; margin-right: 8px;"></i>
+                    Date de Naissance
+                </label>
+                {{ form_widget(registrationForm.profil.dateNaissance, {
+                    'attr': {'class': 'form-control', 'id': 'dateNaissance'}
+                }) }}
+                {{ form_errors(registrationForm.profil.dateNaissance) }}
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="gouvernorat" class="form-label">
+                    <i class="fas fa-map-marker-alt" style="color: #667eea; margin-right: 8px;"></i>
+                    Gouvernorat
+                </label>
+                {{ form_widget(registrationForm.profil.gouvernorat, {
+                    'attr': {'class': 'form-select', 'id': 'gouvernorat'}
+                }) }}
+                {{ form_errors(registrationForm.profil.gouvernorat) }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Section Études -->
+    <div class="section-header">
+        <i class="fas fa-book"></i>
+        <h3>Parcours Scolaire</h3>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="niveau" class="form-label">
+                    <i class="fas fa-layer-group" style="color: #667eea; margin-right: 8px;"></i>
+                    Niveau
+                </label>
+                {{ form_widget(registrationForm.profil.niveau, {
+                    'attr': {'class': 'form-control', 'placeholder': 'Ex: Terminale', 'id': 'niveau'}
+                }) }}
+                {{ form_errors(registrationForm.profil.niveau) }}
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="filiere" class="form-label">
+                    <i class="fas fa-flask" style="color: #667eea; margin-right: 8px;"></i>
+                    Filière
+                </label>
+                {{ form_widget(registrationForm.profil.filiere, {
+                    'attr': {'class': 'form-control', 'placeholder': 'Ex: Sciences Expérimentales', 'id': 'filiere'}
+                }) }}
+                {{ form_errors(registrationForm.profil.filiere) }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bouton d'inscription -->
+    <div class="form-group" style="margin-top: 40px;">
+        <button type="submit" class="btn-auth">
+            <i class="fas fa-rocket" style="margin-right: 10px;"></i>
+            Créer mon compte
+        </button>
+    </div>
+    
+    {{ form_end(registrationForm) }}
+    
+    <!-- Lien vers connexion -->
+    <div class="auth-link">
+        Vous avez déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a>
+    </div>
+{% endblock %}

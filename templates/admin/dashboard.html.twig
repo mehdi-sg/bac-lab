@@ -1,0 +1,165 @@
+{# templates/admin/dashboard.html.twig #}
+{% extends 'back_base.html.twig' %}
+
+{% block title %}Dashboard Admin — BacLab{% endblock %}
+{% block page_title %}Dashboard Admin{% endblock %}
+{% block page_subtitle %}
+Bienvenue, {{ app.user ? app.user.email : 'Admin' }} • Rôle: Administrateur
+{% endblock %}
+
+{% block body %}
+<div class="row g-4">
+
+    <div class="col-12">
+        <div class="glass-card p-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div>
+                    <h3 style="font-weight:900; margin:0;">Vue générale BacLab</h3>
+                    <div style="color: rgba(234,240,255,0.75); font-weight:600; margin-top:6px;">
+                        Un espace admin moderne pour piloter utilisateurs, contenu, ressources, collaboration, quiz et fiches.
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a href="javascript:void(0)" class="btn-ghost">
+                        <i class="fa-solid fa-users me-1"></i> Utilisateurs
+                    </a>
+                    <a href="javascript:void(0)" class="btn-ghost">
+                        <i class="fa-solid fa-school me-1"></i> Filières
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="glass-card p-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div style="color: rgba(234,240,255,0.75); font-weight:700;">Utilisateurs</div>
+                    <div style="font-size:34px; font-weight:900; line-height:1.1;">—</div>
+                    <div style="color: rgba(234,240,255,0.65); font-weight:600; font-size:13px;">Actifs / Total</div>
+                </div>
+                <div style="width:54px;height:54px;border-radius:18px;background: linear-gradient(135deg,#6D5BFF,#2ED3FF);display:flex;align-items:center;justify-content:center;">
+                    <i class="fa-solid fa-user-group" style="font-size:20px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="glass-card p-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div style="color: rgba(234,240,255,0.75); font-weight:700;">Contenu</div>
+                    <div style="font-size:34px; font-weight:900; line-height:1.1;">—</div>
+                    <div style="color: rgba(234,240,255,0.65); font-weight:600; font-size:13px;">Matières / Chapitres</div>
+                </div>
+                <div style="width:54px;height:54px;border-radius:18px;background: linear-gradient(135deg,#FF4D8D,#FFB86C);display:flex;align-items:center;justify-content:center;">
+                    <i class="fa-solid fa-book" style="font-size:20px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="glass-card p-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div style="color: rgba(234,240,255,0.75); font-weight:700;">Ressources</div>
+                    <div style="font-size:34px; font-weight:900; line-height:1.1;">—</div>
+                    <div style="color: rgba(234,240,255,0.65); font-weight:600; font-size:13px;">PDF / Fichiers</div>
+                </div>
+                <div style="width:54px;height:54px;border-radius:18px;background: linear-gradient(135deg,#35FFB6,#2E7BFF);display:flex;align-items:center;justify-content:center;">
+                    <i class="fa-solid fa-folder-open" style="font-size:20px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="glass-card p-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div style="color: rgba(234,240,255,0.75); font-weight:700;">Quiz</div>
+                    <div style="font-size:34px; font-weight:900; line-height:1.1;">—</div>
+                    <div style="color: rgba(234,240,255,0.65); font-weight:600; font-size:13px;">Sessions / Scores</div>
+                </div>
+                <div style="width:54px;height:54px;border-radius:18px;background: rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;">
+                    <i class="fa-solid fa-brain" style="font-size:20px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="glass-card p-4">
+            <h4 style="font-weight:900; margin-bottom:14px;">
+                <i class="fa-solid fa-circle-info me-2" style="opacity:.85"></i>
+                Informations système
+            </h4>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div style="padding:14px;border-radius:16px;border:1px solid rgba(255,255,255,0.10);background: rgba(0,0,0,0.15);">
+                        <div style="color:rgba(234,240,255,.7); font-weight:700;">Environnement</div>
+                        <div style="font-size:18px; font-weight:900;">{{ app.environment }}</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div style="padding:14px;border-radius:16px;border:1px solid rgba(255,255,255,0.10);background: rgba(0,0,0,0.15);">
+                        <div style="color:rgba(234,240,255,.7); font-weight:700;">Date</div>
+                        <div style="font-size:18px; font-weight:900;">{{ "now"|date("d/m/Y H:i") }}</div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div style="padding:14px;border-radius:16px;border:1px solid rgba(255,255,255,0.10);background: rgba(0,0,0,0.15);">
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn-ghost" href="javascript:void(0)">
+                                <i class="fa-solid fa-book-open-reader me-1"></i> Bibliothèque
+                            </a>
+                            <a class="btn-ghost" href="javascript:void(0)">
+                                <i class="fa-solid fa-comments me-1"></i> Collaboration
+                            </a>
+                            <a class="btn-ghost" href="javascript:void(0)">
+                                <i class="fa-solid fa-pen-ruler me-1"></i> Fiches & Co-édition
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="glass-card p-4">
+            <h4 style="font-weight:900; margin-bottom:14px;">
+                <i class="fa-solid fa-bolt me-2" style="opacity:.85"></i>
+                Actions rapides
+            </h4>
+
+            <div class="d-grid gap-2">
+                <a class="btn-ghost" href="javascript:void(0)">
+                    <i class="fa-solid fa-user-plus me-2"></i> Gérer les utilisateurs
+                </a>
+                <a class="btn-ghost" href="javascript:void(0)">
+                    <i class="fa-solid fa-layer-group me-2"></i> Gérer filières / matières / chapitres
+                </a>
+                <a class="btn-ghost" href="javascript:void(0)">
+                    <i class="fa-solid fa-circle-question me-2"></i> Gérer les quiz
+                </a>
+            </div>
+
+            <div style="margin-top:16px; padding:14px; border-radius:16px; border:1px dashed rgba(255,255,255,0.20); color: rgba(234,240,255,0.75);">
+                <div style="font-weight:900; margin-bottom:6px;">Tip design</div>
+                Remplace plus tard les liens vides
+                <code style="color:#EAF0FF;">javascript:void(0)</code> par tes routes Symfony.
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,393 @@
+{# templates/back_base.html.twig #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}BacLab - Admin{% endblock %}</title>
+
+    {# Bootstrap #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    {# Font Awesome #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+    {# Google Font #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --bg: #0B1020;
+            --panel: rgba(255,255,255,0.06);
+            --border: rgba(255,255,255,0.10);
+            --text: #EAF0FF;
+            --muted: rgba(234,240,255,0.70);
+
+            --grad1: linear-gradient(135deg,#6D5BFF,#2ED3FF);
+            --grad2: linear-gradient(135deg,#FF4D8D,#FFB86C);
+            --grad3: linear-gradient(135deg,#35FFB6,#2E7BFF);
+            --glow: 0 10px 40px rgba(109,91,255,0.25);
+
+            --radius: 18px;
+        }
+
+        body{
+            font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: radial-gradient(1200px 600px at 15% 10%, rgba(109,91,255,0.25), transparent 60%),
+                        radial-gradient(900px 500px at 85% 20%, rgba(46,211,255,0.18), transparent 55%),
+                        radial-gradient(900px 500px at 60% 95%, rgba(255,77,141,0.12), transparent 55%),
+                        var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .layout{
+            display:flex;
+            min-height:100vh;
+        }
+
+        /* Sidebar */
+        .sidebar{
+            width: 290px;
+            padding: 22px 18px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            border-right: 1px solid var(--border);
+            background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+            backdrop-filter: blur(14px);
+        }
+
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            padding: 12px 12px;
+            border-radius: var(--radius);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            box-shadow: var(--glow);
+        }
+
+        /* LOGO */
+        .brand-logo{
+            width:44px;
+            height:44px;
+            border-radius:14px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--border);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+        }
+        .brand-logo img{
+            width:100%;
+            height:100%;
+            object-fit:contain;
+            padding:6px;
+        }
+
+        .brand h1{
+            font-size: 16px;
+            margin:0;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+        .brand small{
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .side-section-title{
+            margin: 18px 10px 10px;
+            color: var(--muted);
+            font-weight: 800;
+            font-size: 12px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .nav-pill{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            padding: 12px 12px;
+            border-radius: 14px;
+            text-decoration:none;
+            color: var(--text);
+            border: 1px solid transparent;
+            background: transparent;
+            transition: 0.2s ease;
+        }
+        .nav-pill:hover{
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.10);
+        }
+
+        .nav-pill.active{
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.12);
+            box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+        }
+
+        .nav-icon{
+            width:42px;height:42px;border-radius: 14px;
+            display:flex;align-items:center;justify-content:center;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+        }
+        .nav-icon.grad1{ background: var(--grad1); border-color: transparent; }
+        .nav-icon.grad2{ background: var(--grad2); border-color: transparent; }
+        .nav-icon.grad3{ background: var(--grad3); border-color: transparent; }
+
+        .nav-text{ flex:1; }
+        .nav-text strong{ display:block; font-size: 14px; font-weight: 800; }
+        .nav-text span{ display:block; font-size: 12px; color: var(--muted); font-weight: 600; }
+
+        .sidebar-footer{
+            position:absolute;
+            left:18px;
+            right:18px;
+            bottom:18px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.05);
+            padding: 14px;
+        }
+
+        .sidebar-footer .meta{
+            display:flex;gap:12px;align-items:center;
+        }
+
+        .avatar{
+            width:42px;height:42px;border-radius: 14px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--border);
+            display:flex;align-items:center;justify-content:center;
+            font-weight: 900;
+        }
+
+        .meta small{ color: var(--muted); font-weight: 600; display:block; }
+
+        /* Main */
+        .main{
+            flex:1;
+            padding: 22px 22px 40px;
+        }
+
+        /* Topbar */
+        .topbar{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap: 14px;
+            padding: 16px 18px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+            margin-bottom: 20px;
+        }
+
+        .topbar-title h2{
+            font-size: 18px;
+            margin:0;
+            font-weight: 900;
+        }
+
+        .topbar-title p{
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .topbar-actions{
+            display:flex;align-items:center;gap:10px;
+        }
+
+        .search{
+            width: 320px;
+            max-width: 42vw;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: rgba(0,0,0,0.18);
+            padding: 10px 12px;
+            color: var(--text);
+            outline: none;
+        }
+
+        .btn-ghost{
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            padding: 10px 12px;
+            font-weight: 800;
+            text-decoration:none;
+        }
+        .btn-ghost:hover{
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* Cards */
+        .glass-card{
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 18px 50px rgba(0,0,0,0.18);
+        }
+
+        @media (max-width: 992px){
+            .sidebar{ width: 92px; padding: 18px 10px; }
+            .brand h1, .brand small, .nav-text, .side-section-title, .sidebar-footer .meta div { display:none; }
+            .sidebar-footer{ padding:10px; }
+            .search{ display:none; }
+        }
+    </style>
+
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+
+<div class="layout">
+
+    {# SIDEBAR #}
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-logo">
+                <img src="{{ asset('front/img/logo/logo.png') }}" alt="BacLab Logo">
+            </div>
+            <div>
+                <h1>BacLab Admin</h1>
+                <small>Dashboard • Gestion</small>
+            </div>
+        </div>
+
+        <div class="side-section-title">Navigation</div>
+
+        {# Dashboard (empty link) #}
+        <a class="nav-pill active" href="javascript:void(0)">
+            <div class="nav-icon">
+                <i class="fa-solid fa-gauge-high"></i>
+            </div>
+            <div class="nav-text">
+                <strong>Dashboard</strong>
+                <span>Vue globale</span>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+        </a>
+
+        <div class="side-section-title">Modules</div>
+
+        {# MODULE 1 #}
+        <a class="nav-pill" href="javascript:void(0)">
+            <div class="nav-icon grad1"><i class="fa-solid fa-user-shield"></i></div>
+            <div class="nav-text">
+                <strong>Module 1 — User & Profil</strong>
+                <span>Comptes, rôles, profils</span>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+        </a>
+
+        {# MODULE 2 #}
+        <a class="nav-pill" href="javascript:void(0)">
+            <div class="nav-icon grad2"><i class="fa-solid fa-school"></i></div>
+            <div class="nav-text">
+                <strong>Module 2 — Filières</strong>
+                <span>Matières, chapitres</span>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+        </a>
+
+        {# MODULE 3 #}
+        <a class="nav-pill" href="javascript:void(0)">
+            <div class="nav-icon grad3"><i class="fa-solid fa-book-open-reader"></i></div>
+            <div class="nav-text">
+                <strong>Module 3 — Bibliothèque</strong>
+                <span>Ressources & fichiers</span>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+        </a>
+
+        {# MODULE 4 #}
+        <a class="nav-pill" href="javascript:void(0)">
+            <div class="nav-icon"><i class="fa-solid fa-comments"></i></div>
+            <div class="nav-text">
+                <strong>Module 4 — Collaboration</strong>
+                <span>Messenger & co-op</span>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+        </a>
+
+        {# MODULE 5 #}
+        <a class="nav-pill" href="javascript:void(0)">
+            <div class="nav-icon"><i class="fa-solid fa-brain"></i></div>
+            <div class="nav-text">
+                <strong>Module 5 — Quiz</strong>
+                <span>Tests, scores</span>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+        </a>
+
+        {# MODULE 6 #}
+        <a class="nav-pill" href="javascript:void(0)">
+            <div class="nav-icon"><i class="fa-solid fa-pen-ruler"></i></div>
+            <div class="nav-text">
+                <strong>Module 6 — Fiches</strong>
+                <span>Co-édition & notes</span>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+        </a>
+
+        <div class="sidebar-footer">
+            <div class="meta">
+                <div class="avatar">
+                    {{ app.user and app.user.email ? app.user.email|first|upper : 'A' }}
+                </div>
+                <div style="overflow:hidden">
+                    <div style="font-weight:900; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                        {{ app.user ? app.user.email : 'Admin' }}
+                    </div>
+                    <small>{{ app.environment|default('dev') }} • {{ "now"|date("d/m/Y H:i") }}</small>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-3">
+                <a class="btn-ghost flex-fill text-center" href="javascript:void(0)">
+                    <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    {# MAIN #}
+    <main class="main">
+        <div class="topbar">
+            <div class="topbar-title">
+                <h2>{% block page_title %}Tableau de bord{% endblock %}</h2>
+                <p>{% block page_subtitle %}BacLab • Admin space{% endblock %}</p>
+            </div>
+
+            <div class="topbar-actions">
+                <input class="search" type="text" placeholder="Rechercher (utilisateur, matière, ressource...)">
+                <a class="btn-ghost" href="javascript:void(0)">
+                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Aller au site
+                </a>
+            </div>
+        </div>
+
+        {% block body %}{% endblock %}
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>

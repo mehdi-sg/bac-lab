@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <!-- Background transparent -->
+  <rect width="500" height="500" fill="transparent"/>
+  
+  <!-- Définitions des gradients -->
+  <defs>
+    <!-- Gradient pour le flacon -->
+    <linearGradient id="flaskGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#B8A3E8;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#9B7FD8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7B6BA8;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Gradient pour le liquide -->
+    <linearGradient id="liquidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#C8B8F8;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#9B7FD8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Texte "BAC" en haut -->
+  <text x="120" y="230" font-family="Arial, sans-serif" font-size="95" font-weight="900" fill="#5B4B95" letter-spacing="-2">BAC</text>
+  
+  <!-- Flacon de laboratoire -->
+  <g transform="translate(120, 220)">
+    <!-- Corps du flacon (forme trapézoïdale) -->
+    <path d="M 40 40 L 60 40 L 60 80 L 100 180 L 100 210 Q 100 225 85 225 L 15 225 Q 0 225 0 210 L 0 180 L 40 80 Z" 
+          fill="url(#flaskGrad)" 
+          stroke="#4B3B75" 
+          stroke-width="4"
+          stroke-linejoin="round"/>
+    
+    <!-- Col du flacon -->
+    <rect x="35" y="25" width="30" height="15" fill="#9B7FD8" stroke="#4B3B75" stroke-width="3" rx="2"/>
+    
+    <!-- Bouchon -->
+    <ellipse cx="50" cy="25" rx="18" ry="6" fill="#7B6BA8" stroke="#4B3B75" stroke-width="2"/>
+    
+    <!-- Liquide à l'intérieur -->
+    <path d="M 5 190 L 15 165 L 40 120 L 60 120 L 85 165 L 95 190 Q 95 205 85 210 L 15 210 Q 5 205 5 190 Z" 
+          fill="url(#liquidGrad)" 
+          opacity="0.85"/>
+    
+    <!-- Bulles dans le liquide -->
+    <circle cx="30" cy="175" r="6" fill="#E8D8FF" opacity="0.7"/>
+    <circle cx="55" cy="160" r="5" fill="#E8D8FF" opacity="0.8"/>
+    <circle cx="70" cy="180" r="7" fill="#E8D8FF" opacity="0.6"/>
+    <circle cx="45" cy="195" r="4" fill="#E8D8FF" opacity="0.9"/>
+    <circle cx="25" cy="155" r="4" fill="#E8D8FF" opacity="0.7"/>
+    
+    <!-- Reflets sur le flacon -->
+    <ellipse cx="25" cy="100" rx="8" ry="25" fill="white" opacity="0.2"/>
+    <ellipse cx="75" cy="140" rx="6" ry="20" fill="white" opacity="0.15"/>
+  </g>
+  
+  <!-- Toque de graduation (chapeau académique) -->
+  <g transform="translate(280, 130)">
+    <!-- Planche du chapeau (dessus) -->
+    <path d="M 5 25 L 50 5 L 95 25 L 50 45 Z" 
+          fill="#2C3E50" 
+          stroke="#1A252F" 
+          stroke-width="3"/>
+    
+    <!-- Base du chapeau (ellipse) -->
+    <ellipse cx="50" cy="25" rx="48" ry="10" fill="#34495E" stroke="#1A252F" stroke-width="2"/>
+    
+    <!-- Pompon (tassel) -->
+    <line x1="50" y1="5" x2="50" y2="-12" stroke="#FFD700" stroke-width="3"/>
+    <circle cx="50" cy="-12" r="5" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+    
+    <!-- Détails du chapeau -->
+    <ellipse cx="50" cy="25" rx="35" ry="6" fill="#2C3E50" opacity="0.3"/>
+  </g>
+  
+  <!-- Texte "lab" en bas -->
+  <text x="220" y="450" font-family="Arial, sans-serif" font-size="110" font-weight="900" fill="#2C3E50" letter-spacing="-3">lab</text>
+</svg>
