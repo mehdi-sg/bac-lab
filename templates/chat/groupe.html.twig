@@ -358,21 +358,18 @@
                     <div class="chat-sidebar" style="width: 280px; flex-shrink: 0; display: flex; flex-direction: column;">
                         <div class="sidebar-header p-3" style="flex-shrink: 0;">
                             <div class="d-flex align-items-center justify-content-between mb-3">
-                                <h5 class="mb-0 text-white fw-bold">Discussions</h5>
-                                <button class="more-btn">
-                                    <i class="fas fa-edit text-white-50"></i>
+                                <h5 class="mb-0 text-white fw-bold">Mes Groupes</h5>
+                                <button class="more-btn" data-toggle="dropdown">
+                                    <i class="fas fa-plus text-white-50"></i>
                                 </button>
-                            </div>
-                            <div class="filter-tabs p-1 rounded-lg d-flex">
-                                <button class="btn btn-sm flex-grow-1 rounded-md active" style="background: rgba(255, 255, 255, 0.1); color: white; border: none;">
-                                    Tous
-                                </button>
-                                <button class="btn btn-sm flex-grow-1 rounded-md" style="background: transparent; color: rgba(255, 255, 255, 0.6); border: none;">
-                                    Groupes
-                                </button>
-                                <button class="btn btn-sm flex-grow-1 rounded-md" style="background: transparent; color: rgba(255, 255, 255, 0.6); border: none;">
-                                    Prives
-                                </button>
+                                <div class="dropdown-menu dropdown-menu-right glass-dark" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                                    <a class="dropdown-item text-white py-2" href="{{ path('groupe_new') }}">
+                                        <i class="fas fa-plus mr-2"></i>Creer un groupe
+                                    </a>
+                                    <a class="dropdown-item text-white py-2" href="{{ path('groupe_index') }}">
+                                        <i class="fas fa-globe mr-2"></i>Voir tous les groupes
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         
@@ -380,8 +377,13 @@
                             {% if groupes is empty %}
                                 <div class="p-4 text-center">
                                     <i class="fas fa-users mb-3" style="color: rgba(255, 255, 255, 0.3); font-size: 2rem;"></i>
-                                    <p class="text-white-50 mb-0">Aucun groupe disponible</p>
+                                    <p class="text-white-50 mb-0">Aucun groupe rejoint</p>
                                     <small class="text-white-50">Rejoignez ou creez un groupe pour discuter</small>
+                                    <div class="mt-3">
+                                        <a href="{{ path('groupe_index') }}" class="btn btn-sm" style="background: rgba(102, 126, 234, 0.2); color: #667eea; border: 1px dashed rgba(102, 126, 234, 0.5); border-radius: 12px;">
+                                            <i class="fas fa-search mr-2"></i>Explorer les groupes
+                                        </a>
+                                    </div>
                                 </div>
                             {% else %}
                                 {% set currentRoute = app.request.attributes.get('_route') %}
@@ -400,14 +402,15 @@
                                                 <span style="position: absolute; bottom: -2px; right: -2px; background: #48bb78; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #1a1a2e;">
                                                     <i class="fas fa-globe-americas" style="color: white; font-size: 0.5rem;"></i>
                                                 </span>
+                                                {% else %}
+                                                <span style="position: absolute; bottom: -2px; right: -2px; background: #ed8936; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #1a1a2e;">
+                                                    <i class="fas fa-lock" style="color: white; font-size: 0.5rem;"></i>
+                                                </span>
                                                 {% endif %}
                                             </div>
                                             <div class="flex-grow-1 overflow-hidden">
                                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                                     <h6 class="mb-0 text-white fw-medium" style="font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ g.nom }}</h6>
-                                                    {% if g.messages|length > 0 %}
-                                                    <small class="text-white-50" style="font-size: 0.7rem;">{{ g.messages[0].createdAt|date('H:i') }}</small>
-                                                    {% endif %}
                                                 </div>
                                                 <p class="mb-0 text-white-50 small" style="font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                                     {% if g.description %}
@@ -421,14 +424,6 @@
                                         </div>
                                     </a>
                                 {% endfor %}
-                            {% endif %}
-                            
-                            {% if app.user %}
-                            <div class="p-3">
-                                <a href="{{ path('groupe_new') }}" class="btn btn-sm w-100" style="background: rgba(102, 126, 234, 0.2); color: #667eea; border: 1px dashed rgba(102, 126, 234, 0.5); border-radius: 12px;">
-                                    <i class="fas fa-plus mr-2"></i>Nouveau groupe
-                                </a>
-                            </div>
                             {% endif %}
                         </div>
                     </div>
@@ -457,6 +452,12 @@
                                 </div>
                             </div>
                             <div class="chat-actions d-flex align-items-center gap-2">
+                                {% if isOwner and pendingRequestsCount > 0 %}
+                                <a href="#" class="info-btn position-relative" title="Demandes en attente" id="requestsBtn">
+                                    <i class="fas fa-user-clock text-white" style="font-size: 14px;"></i>
+                                    <span class="position-absolute badge badge-danger" style="top: -5px; right: -5px; font-size: 0.65rem; padding: 3px 6px;">{{ pendingRequestsCount }}</span>
+                                </a>
+                                {% endif %}
                                 <a href="{{ path('groupe_show', {'id': groupe.id}) }}" class="info-btn" title="Informations">
                                     <i class="fas fa-info-circle text-white" style="font-size: 14px;"></i>
                                 </a>
@@ -592,7 +593,19 @@
                         </div>
                         
                         <!-- Join Group Message (if not member) -->
-                        {% if not isMember and app.user %}
+                        {% if membership and membership.isPending() %}
+                        <div class="chat-input px-4 py-4">
+                            <div class="group-info text-center p-4">
+                                <i class="fas fa-hourglass-half mb-3" style="color: #ed8936; font-size: 2rem;"></i>
+                                <p class="mb-3 text-white">
+                                    Votre demande de rejoindre est en attente de validation par le proprietaire.
+                                </p>
+                                <button class="btn" id="cancelRequestBtn" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5); border-radius: 12px; padding: 10px 20px;">
+                                    <i class="fas fa-times mr-2"></i>Annuler la demande
+                                </button>
+                            </div>
+                        </div>
+                        {% elseif not isMember and app.user %}
                         <div class="chat-input px-4 py-4">
                             <div class="group-info text-center p-4">
                                 <i class="fas fa-lock mb-3" style="color: #667eea; font-size: 2rem;"></i>
@@ -605,7 +618,11 @@
                                 </p>
                                 <button class="join-btn" id="joinGroupBtn">
                                     <i class="fas fa-user-plus mr-2"></i>
-                                    Rejoindre le groupe
+                                    {% if groupe.isPublic %}
+                                        Rejoindre le groupe
+                                    {% else %}
+                                        Demander a rejoindre
+                                    {% endif %}
                                 </button>
                             </div>
                         </div>
@@ -661,6 +678,28 @@
         </div>
     </div>
 </section>
+
+<!-- Requests Modal -->
+<div class="modal fade" id="requestsModal" tabindex="-1" role="dialog" aria-labelledby="requestsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content glass-dark" style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title text-white" id="requestsModalLabel">
+                    <i class="fas fa-user-clock mr-2"></i>Demandes en attente
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: transparent; border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="requestsList">
+                <div class="text-center py-4">
+                    <i class="fas fa-spinner fa-spin text-white-50" style="font-size: 1.5rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block js %}
@@ -673,10 +712,12 @@
         const chatMessages = document.getElementById('chatMessages');
         const joinGroupBtn = document.getElementById('joinGroupBtn');
         const leaveGroupBtn = document.getElementById('leaveGroupBtn');
+        const cancelRequestBtn = document.getElementById('cancelRequestBtn');
         const replyIndicator = document.getElementById('replyIndicator');
         const replyingToText = document.getElementById('replyingToText');
         const cancelReplyBtn = document.getElementById('cancelReplyBtn');
         const parentMessageId = document.getElementById('parentMessageId');
+        const requestsBtn = document.getElementById('requestsBtn');
         
         let replyingToMessageId = null;
         
@@ -818,6 +859,148 @@
                     })
                     .catch(error => console.error('Error:', error));
                 }
+            });
+        }
+        
+        // Cancel request handler
+        if (cancelRequestBtn) {
+            cancelRequestBtn.addEventListener('click', function() {
+                if (confirm('Etes-vous sur de vouloir annuler votre demande ?')) {
+                    fetch('{{ path('groupe_leave', {'id': groupe.id}) }}', {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert(data.message || 'Une erreur est survenue');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                }
+            });
+        }
+        
+        // Requests modal handler
+        if (requestsBtn) {
+            requestsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                $('#requestsModal').modal('show');
+                
+                fetch('{{ path('groupe_requests', {'id': groupe.id}) }}')
+                .then(response => response.json())
+                .then(data => {
+                    const requestsList = document.getElementById('requestsList');
+                    
+                    if (data.success && data.requests.length > 0) {
+                        let html = '';
+                        data.requests.forEach(function(request) {
+                            html += `
+                                <div class="d-flex align-items-center justify-content-between p-3 mb-2 rounded" style="background: rgba(255, 255, 255, 0.05);">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar rounded-xl d-flex align-items-center justify-content-center text-white mr-3" style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea, #764ba2);">
+                                            ${request.utilisateur.nom.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <p class="mb-0 text-white" style="font-size: 0.9rem;">${escapeHtml(request.utilisateur.nom)}</p>
+                                            <small class="text-white-50">${request.date}</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm accept-request-btn" data-membre-id="${request.id}" style="background: rgba(72, 187, 120, 0.2); color: #48bb78; border: 1px solid rgba(72, 187, 120, 0.5);">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button class="btn btn-sm reject-request-btn" data-membre-id="${request.id}" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5);">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        requestsList.innerHTML = html;
+                        
+                        // Add event listeners for accept/reject buttons
+                        document.querySelectorAll('.accept-request-btn').forEach(function(btn) {
+                            btn.addEventListener('click', function() {
+                                const membreId = this.dataset.membreId;
+                                fetch('/groupes/' + {{ groupe.id }} + '/accepter/' + membreId, {
+                                    method: 'POST'
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        // Refresh the modal
+                                        requestsBtn.click();
+                                        // Update badge
+                                        const badge = requestsBtn.querySelector('.badge');
+                                        if (badge) {
+                                            let count = parseInt(badge.textContent) - 1;
+                                            if (count <= 0) {
+                                                badge.remove();
+                                                requestsBtn.querySelector('.fa-user-clock').classList.remove('text-warning');
+                                            } else {
+                                                badge.textContent = count;
+                                            }
+                                        }
+                                    } else {
+                                        alert(data.error || 'Une erreur est survenue');
+                                    }
+                                });
+                            });
+                        });
+                        
+                        document.querySelectorAll('.reject-request-btn').forEach(function(btn) {
+                            btn.addEventListener('click', function() {
+                                const membreId = this.dataset.membreId;
+                                fetch('/groupes/' + {{ groupe.id }} + '/rejeter/' + membreId, {
+                                    method: 'POST'
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        // Refresh the modal
+                                        requestsBtn.click();
+                                        // Update badge
+                                        const badge = requestsBtn.querySelector('.badge');
+                                        if (badge) {
+                                            let count = parseInt(badge.textContent) - 1;
+                                            if (count <= 0) {
+                                                badge.remove();
+                                                requestsBtn.querySelector('.fa-user-clock').classList.remove('text-warning');
+                                            } else {
+                                                badge.textContent = count;
+                                            }
+                                        }
+                                    } else {
+                                        alert(data.error || 'Une erreur est survenue');
+                                    }
+                                });
+                            });
+                        });
+                    } else if (data.success) {
+                        requestsList.innerHTML = `
+                            <div class="text-center py-4">
+                                <i class="fas fa-check-circle mb-3" style="color: #48bb78; font-size: 2rem;"></i>
+                                <p class="text-white-50 mb-0">Aucune demande en attente</p>
+                            </div>
+                        `;
+                    } else {
+                        requestsList.innerHTML = `
+                            <div class="text-center py-4">
+                                <p class="text-white-50 mb-0">${data.error || 'Une erreur est survenue'}</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('requestsList').innerHTML = `
+                        <div class="text-center py-4">
+                            <p class="text-white-50 mb-0">Une erreur est survenue</p>
+                        </div>
+                    `;
+                });
             });
         }
         

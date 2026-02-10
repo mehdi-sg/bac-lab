@@ -41,6 +41,14 @@ class MembreGroupe
     )]
     private string $roleMembre = 'MEMBRE';
 
+    // --- STATUT DE DEMANDE ---
+    #[ORM\Column(length: 20)]
+    #[Assert\Choice(
+        choices: ['ACCEPTED', 'PENDING', 'REJECTED'],
+        message: "Le statut doit être ACCEPTED, PENDING ou REJECTED."
+    )]
+    private string $statut = 'ACCEPTED';
+
     // --- DATE DE JONCTION ---
     #[ORM\Column(type: 'datetime_immutable')]
     #[Assert\NotNull(message: "La date de jonction est obligatoire.")]
@@ -87,6 +95,32 @@ class MembreGroupe
     {
         $this->roleMembre = $roleMembre;
         return $this;
+    }
+
+    public function getStatut(): string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): self
+    {
+        $this->statut = $statut;
+        return $this;
+    }
+
+    public function isAccepted(): bool
+    {
+        return $this->statut === 'ACCEPTED';
+    }
+
+    public function isPending(): bool
+    {
+        return $this->statut === 'PENDING';
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->statut === 'REJECTED';
     }
 
     public function getDateJoint(): ?\DateTimeImmutable

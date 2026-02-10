@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Groupe;
 use App\Entity\Message;
 use App\Entity\MembreGroupe;
+use App\Entity\Notification;
 use App\Entity\Utilisateur;
 use App\Form\GroupeType;
 use App\Repository\GroupeRepository;
@@ -20,12 +21,23 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class GroupeController extends AbstractController
 {
     #[Route('/groupes', name: 'groupe_index')]
-    public function index(GroupeRepository $groupeRepository): Response
+    public function index(GroupeRepository $groupeRepository, MembreGroupeRepository $membreGroupeRepository): Response
     {
         $groupes = $groupeRepository->findAll();
+        $user = $this->getUser();
+        
+        // Get user's memberships for each group
+        $userMemberships = [];
+        if ($user instanceof UserInterface) {
+            $membres = $membreGroupeRepository->findBy(['utilisateur' => $user]);
+            foreach ($membres as $membre) {
+                $userMemberships[$membre->getGroupe()->getId()] = $membre;
+            }
+        }
         
         return $this->render('groupe/index.html.twig', [
             'groupes' => $groupes,
+            'userMemberships' => $userMemberships,
         ]);
     }
 
@@ -53,6 +65,7 @@ class GroupeController extends AbstractController
             $membre->setUtilisateur($user);
             $membre->setGroupe($groupe);
             $membre->setRoleMembre('ADMIN');
+            $membre->setStatut('ACCEPTED');
             $membre->setDateJoint(new \DateTimeImmutable());
             
             $entityManager->persist($membre);
@@ -71,7 +84,11 @@ class GroupeController extends AbstractController
     #[Route('/groupes/{id}', name: 'groupe_show')]
     public function show(Groupe $groupe, MembreGroupeRepository $membreGroupeRepository): Response
     {
-        $membres = $membreGroupeRepository->findBy(['groupe' => $groupe]);
+        // Only show accepted members
+        $membres = $membreGroupeRepository->findBy([
+            'groupe' => $groupe,
+            'statut' => 'ACCEPTED'
+        ]);
         
         return $this->render('groupe/show.html.twig', [
             'groupe' => $groupe,
@@ -91,6 +108,8 @@ class GroupeController extends AbstractController
             return $this->json(['error' => 'Vous devez être connecté'], 401);
         }
 
+        /** @var Utilisateur $user */
+
         // Check if already a member
         $existingMembre = $membreGroupeRepository->findOneBy([
             'utilisateur' => $user,
@@ -98,33 +117,74 @@ class GroupeController extends AbstractController
         ]);
 
         if ($existingMembre) {
+            if ($existingMembre->isAccepted()) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Vous êtes déjà membre de ce groupe',
+                ]);
+            } elseif ($existingMembre->isPending()) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Votre demande est en attente de validation',
+                ]);
+            } else {
+                // Rejected before, allow to request again
+                $existingMembre->setStatut('PENDING');
+                $entityManager->flush();
+                return $this->json([
+                    'success' => true,
+                    'message' => 'Votre demande de rejoindre a été renouvelée',
+                ]);
+            }
+        }
+
+        // For public groups, auto-accept
+        if ($groupe->isPublic()) {
+            $membre = new MembreGroupe();
+            $membre->setUtilisateur($user);
+            $membre->setGroupe($groupe);
+            $membre->setRoleMembre('MEMBRE');
+            $membre->setStatut('ACCEPTED');
+            $membre->setDateJoint(new \DateTimeImmutable());
+
+            $entityManager->persist($membre);
+            $entityManager->flush();
+
             return $this->json([
-                'success' => false,
-                'message' => 'Vous êtes déjà membre de ce groupe',
+                'success' => true,
+                'message' => 'Vous avez rejoint le groupe avec succès !',
             ]);
         }
 
-        // Check if group is public or user is invited (for private groups)
-        if (!$groupe->isPublic()) {
-            return $this->json([
-                'success' => false,
-                'message' => 'Ce groupe est privé. Vous devez être invité pour rejoindre.',
-            ]);
-        }
-
-        // Add user as member
+        // For private groups, create a pending request
         $membre = new MembreGroupe();
         $membre->setUtilisateur($user);
         $membre->setGroupe($groupe);
         $membre->setRoleMembre('MEMBRE');
+        $membre->setStatut('PENDING');
         $membre->setDateJoint(new \DateTimeImmutable());
 
         $entityManager->persist($membre);
+        
+        // Create notification for the group owner
+        $owner = $groupe->getCreateur();
+        if ($owner && $owner !== $user) {
+            $notification = new Notification();
+            $notification->setUtilisateur($owner);
+            $notification->setType('join_request');
+            $notification->setTitle('Demande de rejoindre');
+            $userName = $user->getProfil()?->getNom() ?? explode('@', $user->getEmail())[0];
+            $notification->setMessage($userName . ' demande à rejoindre le groupe "' . $groupe->getNom() . '"');
+            $notification->setLink('/chat/groupe/' . $groupe->getId());
+            $notification->setMembre($membre);
+            $entityManager->persist($notification);
+        }
+        
         $entityManager->flush();
 
         return $this->json([
             'success' => true,
-            'message' => 'Vous avez rejoint le groupe avec succès !',
+            'message' => 'Votre demande de rejoindre a été envoyée. En attente de validation par le propriétaire.',
         ]);
     }
 
@@ -170,19 +230,186 @@ class GroupeController extends AbstractController
         ]);
     }
 
+    #[Route('/groupes/{id}/demandes', name: 'groupe_requests', methods: ['GET'])]
+    public function showRequests(
+        Groupe $groupe,
+        MembreGroupeRepository $membreGroupeRepository
+    ): Response {
+        $user = $this->getUser();
+        
+        // Only owner can see requests
+        if ($groupe->getCreateur() !== $user) {
+            return $this->json(['error' => 'Non autorisé'], 403);
+        }
+
+        $pendingRequests = $membreGroupeRepository->findBy([
+            'groupe' => $groupe,
+            'statut' => 'PENDING'
+        ]);
+
+        $requestsData = [];
+        foreach ($pendingRequests as $request) {
+            $requestsData[] = [
+                'id' => $request->getId(),
+                'utilisateur' => [
+                    'id' => $request->getUtilisateur()->getId(),
+                    'nom' => $request->getUtilisateur()->getProfil()?->getNom() ?? $request->getUtilisateur()->getEmail(),
+                ],
+                'date' => $request->getDateJoint()->format('d/m/Y H:i'),
+            ];
+        }
+
+        return $this->json([
+            'success' => true,
+            'requests' => $requestsData,
+        ]);
+    }
+
+    #[Route('/groupes/{id}/accepter/{membreId}', name: 'groupe_accept_member', methods: ['POST'])]
+    public function acceptMember(
+        Groupe $groupe,
+        int $membreId,
+        EntityManagerInterface $entityManager,
+        MembreGroupeRepository $membreGroupeRepository
+    ): Response {
+        $user = $this->getUser();
+        
+        // Only owner can accept members
+        if ($groupe->getCreateur() !== $user) {
+            return $this->json(['error' => 'Non autorisé'], 403);
+        }
+
+        $membre = $membreGroupeRepository->find($membreId);
+        
+        if (!$membre || $membre->getGroupe() !== $groupe) {
+            return $this->json(['error' => 'Membre non trouvé'], 404);
+        }
+
+        $membre->setStatut('ACCEPTED');
+        
+        // Create notification for the accepted user
+        $requester = $membre->getUtilisateur();
+        $notification = new Notification();
+        $notification->setUtilisateur($requester);
+        $notification->setType('join_accepted');
+        $notification->setTitle('Demande acceptée');
+        $notification->setMessage('Votre demande de rejoindre le groupe "' . $groupe->getNom() . '" a été acceptée');
+        $notification->setLink('/chat/groupe/' . $groupe->getId());
+        $entityManager->persist($notification);
+        
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Membre accepté',
+        ]);
+    }
+
+    #[Route('/groupes/{id}/rejeter/{membreId}', name: 'groupe_reject_member', methods: ['POST'])]
+    public function rejectMember(
+        Groupe $groupe,
+        int $membreId,
+        EntityManagerInterface $entityManager,
+        MembreGroupeRepository $membreGroupeRepository
+    ): Response {
+        $user = $this->getUser();
+        
+        // Only owner can reject members
+        if ($groupe->getCreateur() !== $user) {
+            return $this->json(['error' => 'Non autorisé'], 403);
+        }
+
+        $membre = $membreGroupeRepository->find($membreId);
+        
+        if (!$membre || $membre->getGroupe() !== $groupe) {
+            return $this->json(['error' => 'Membre non trouvé'], 404);
+        }
+
+        $membre->setStatut('REJECTED');
+        
+        // Create notification for the rejected user
+        $requester = $membre->getUtilisateur();
+        $notification = new Notification();
+        $notification->setUtilisateur($requester);
+        $notification->setType('join_rejected');
+        $notification->setTitle('Demande refusée');
+        $notification->setMessage('Votre demande de rejoindre le groupe "' . $groupe->getNom() . '" a été refusée');
+        $entityManager->persist($notification);
+        
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Demande refusée',
+        ]);
+    }
+
+    #[Route('/groupes/{id}/supprimer-membre/{membreId}', name: 'groupe_remove_member', methods: ['POST'])]
+    public function removeMember(
+        Groupe $groupe,
+        int $membreId,
+        EntityManagerInterface $entityManager,
+        MembreGroupeRepository $membreGroupeRepository
+    ): Response {
+        $user = $this->getUser();
+        
+        // Only owner can remove members
+        if ($groupe->getCreateur() !== $user) {
+            return $this->json(['error' => 'Non autorisé'], 403);
+        }
+
+        $membre = $membreGroupeRepository->find($membreId);
+        
+        if (!$membre || $membre->getGroupe() !== $groupe) {
+            return $this->json(['error' => 'Membre non trouvé'], 404);
+        }
+
+        // Can't remove yourself (owner)
+        if ($membre->getUtilisateur() === $user) {
+            return $this->json(['error' => 'Vous ne pouvez pas vous supprimer vous-même'], 400);
+        }
+
+        $entityManager->remove($membre);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Membre supprimé du groupe',
+        ]);
+    }
+
     #[Route('/chat', name: 'chat_index')]
     public function chatIndex(
         GroupeRepository $groupeRepository
     ): Response {
-        // Redirect to the first public group, or show empty state
-        $groupes = $groupeRepository->findBy(['isPublic' => true]);
+        $user = $this->getUser();
+        
+        if (!$user instanceof UserInterface) {
+            return $this->redirectToRoute('app_home');
+        }
+        
+        // Get user's joined groups + owned groups
+        $groupes = $groupeRepository->findJoinedGroupsByUser($user);
+        $ownedGroups = $groupeRepository->findBy(['createur' => $user]);
+        
+        // Merge owned groups
+        $seenIds = [];
+        foreach ($groupes as $g) {
+            $seenIds[] = $g->getId();
+        }
+        foreach ($ownedGroups as $ownedGroup) {
+            if (!in_array($ownedGroup->getId(), $seenIds)) {
+                $groupes[] = $ownedGroup;
+                $seenIds[] = $ownedGroup->getId();
+            }
+        }
         
         if (!empty($groupes)) {
             return $this->redirectToRoute('chat_groupe', ['id' => $groupes[0]->getId()]);
         }
         
-        // If no groups exist, redirect to home
-        return $this->redirectToRoute('app_home');
+        // If no groups, redirect to group list
+        return $this->redirectToRoute('groupe_index');
     }
 
     #[Route('/chat/groupe/{id}', name: 'chat_groupe')]
@@ -192,33 +419,80 @@ class GroupeController extends AbstractController
         MembreGroupeRepository $membreGroupeRepository,
         GroupeRepository $groupeRepository
     ): Response {
-        $messages = $messageRepository->findMessagesForGroupe($groupe, 'recent', 50);
-        
-        // Check if user is member (for private groups)
         $user = $this->getUser();
         $isMember = false;
+        $isOwner = false;
+        $membership = null;
         
         if ($user instanceof UserInterface) {
-            $membre = $membreGroupeRepository->findOneBy([
-                'utilisateur' => $user,
-                'groupe' => $groupe,
-            ]);
-            $isMember = $membre !== null;
+            // Check if user is owner
+            if ($groupe->getCreateur() === $user) {
+                $isOwner = true;
+                $isMember = true;
+            } else {
+                // Check if user has any membership (accepted, pending, or null)
+                $membership = $membreGroupeRepository->findOneBy([
+                    'utilisateur' => $user,
+                    'groupe' => $groupe,
+                ]);
+                
+                if ($membership) {
+                    // Has a membership record - check if accepted
+                    if ($membership->isAccepted()) {
+                        $isMember = true;
+                    } elseif ($membership->isPending()) {
+                        // Pending member - not allowed to chat yet
+                        $isMember = false;
+                    } elseif ($membership->getStatut() === null) {
+                        // Old membership without statut - allow access
+                        $isMember = true;
+                    }
+                }
+            }
         }
 
-        // For private groups, redirect if not member
-        if (!$groupe->isPublic() && !$isMember && $user instanceof UserInterface) {
-            $this->addFlash('error', 'Vous devez rejoindre ce groupe pour voir les messages.');
-            return $this->redirectToRoute('groupe_index');
+        // Check pending requests count for owner
+        $pendingRequestsCount = 0;
+        if ($isOwner) {
+            $pendingRequestsCount = $membreGroupeRepository->count([
+                'groupe' => $groupe,
+                'statut' => 'PENDING'
+            ]);
         }
-        
-        // For public groups, allow viewing but not posting
+
+        // Only show messages to members
+        if ($isMember || $isOwner) {
+            $messages = $messageRepository->findMessagesForGroupe($groupe, 'recent', 50);
+        } else {
+            $messages = [];
+        }
+
+        // Get user's joined groups for sidebar
+        $userGroupes = [];
+        if ($user instanceof UserInterface) {
+            $userGroupes = $groupeRepository->findJoinedGroupsByUser($user);
+            
+            // Also include groups owned by the user
+            $ownedGroups = $groupeRepository->findBy(['createur' => $user]);
+            $seenIds = [];
+            foreach ($userGroupes as $g) {
+                $seenIds[] = $g->getId();
+            }
+            foreach ($ownedGroups as $ownedGroup) {
+                if (!in_array($ownedGroup->getId(), $seenIds)) {
+                    $userGroupes[] = $ownedGroup;
+                }
+            }
+        }
 
         return $this->render('chat/groupe.html.twig', [
             'groupe' => $groupe,
             'messages' => $messages,
-            'groupes' => $groupeRepository->findAll(),
+            'groupes' => $userGroupes,
             'isMember' => $isMember,
+            'isOwner' => $isOwner,
+            'membership' => $membership,
+            'pendingRequestsCount' => $pendingRequestsCount,
         ]);
     }
 
@@ -235,14 +509,18 @@ class GroupeController extends AbstractController
             return $this->json(['error' => 'Vous devez être connecté'], 401);
         }
 
-        // Check if user is member of the group (for both public and private)
-        $membre = $membreGroupeRepository->findOneBy([
-            'utilisateur' => $user,
-            'groupe' => $groupe,
-        ]);
-
-        if (!$membre && $groupe->getCreateur() !== $user) {
-            return $this->json(['error' => 'Vous devez rejoindre ce groupe pour envoyer des messages'], 403);
+        // Check if user is owner or accepted member
+        $isOwner = $groupe->getCreateur() === $user;
+        
+        if (!$isOwner) {
+            $membre = $membreGroupeRepository->findOneBy([
+                'utilisateur' => $user,
+                'groupe' => $groupe,
+            ]);
+            
+            if (!$membre || (!$membre->isAccepted() && $membre->getStatut() !== null)) {
+                return $this->json(['error' => 'Vous devez être membre du groupe pour envoyer des messages'], 403);
+            }
         }
 
         $contenu = $request->request->get('contenu', '');
@@ -288,7 +566,8 @@ class GroupeController extends AbstractController
     public function replyToMessage(
         Request $request,
         Message $parentMessage,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        MembreGroupeRepository $membreGroupeRepository
     ): Response {
         $user = $this->getUser();
         
@@ -296,15 +575,20 @@ class GroupeController extends AbstractController
             return $this->json(['error' => 'Vous devez être connecté'], 401);
         }
 
-        // Check if user is member of the group
         $groupe = $parentMessage->getGroupe();
-        $membre = $entityManager->getRepository(MembreGroupe::class)->findOneBy([
-            'utilisateur' => $user,
-            'groupe' => $groupe,
-        ]);
-
-        if (!$membre && $groupe->getCreateur() !== $user) {
-            return $this->json(['error' => 'Vous devez rejoindre ce groupe'], 403);
+        
+        // Check if user is owner or accepted member
+        $isOwner = $groupe->getCreateur() === $user;
+        
+        if (!$isOwner) {
+            $membre = $membreGroupeRepository->findOneBy([
+                'utilisateur' => $user,
+                'groupe' => $groupe,
+            ]);
+            
+            if (!$membre || (!$membre->isAccepted() && $membre->getStatut() !== null)) {
+                return $this->json(['error' => 'Vous devez être membre du groupe'], 403);
+            }
         }
 
         $contenu = $request->request->get('contenu', '');

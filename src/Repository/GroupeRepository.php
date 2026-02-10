@@ -63,4 +63,65 @@ class GroupeRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * Groupes rejoints par l'utilisateur (tout statut).
+     *
+     * @return Groupe[]
+     */
+    public function findJoinedGroupsByUser(Utilisateur $user): array
+    {
+        return $this->createQueryBuilder('g')
+            ->innerJoin('g.membres', 'm')
+            ->andWhere('m.utilisateur = :u')
+            ->setParameter('u', $user)
+            ->orderBy('g.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Tous les groupes (pour le sidebar - inclut groupes publics + groupes rejoints).
+     *
+     * @return Groupe[]
+     */
+    public function findAllForSidebar(Utilisateur $user): array
+    {
+        // Groupes publics
+        $publicGroups = $this->createQueryBuilder('g')
+            ->andWhere('g.isPublic = true')
+            ->orderBy('g.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        // Groupes privés rejoints par l'utilisateur
+        $joinedGroups = $this->createQueryBuilder('g')
+            ->innerJoin('g.membres', 'm')
+            ->andWhere('m.utilisateur = :u')
+            ->andWhere('g.isPublic = false')
+            ->setParameter('u', $user)
+            ->orderBy('g.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        // Fusionner en évitant les doublons
+        $allGroups = [];
+        $seenIds = [];
+
+        foreach ($publicGroups as $group) {
+            if (!in_array($group->getId(), $seenIds)) {
+                $allGroups[] = $group;
+                $seenIds[] = $group->getId();
+            }
+        }
+
+        foreach ($joinedGroups as $group) {
+            if (!in_array($group->getId(), $seenIds)) {
+                $allGroups[] = $group;
+                $seenIds[] = $group->getId();
+            }
+        }
+
+        return $allGroups;
+    }
 }
