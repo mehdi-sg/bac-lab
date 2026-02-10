@@ -7,7 +7,12 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Message>
+ * @extends ServiceEntityRepository<Filiere>
+ *
+ * @method Filiere|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Filiere|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Filiere[]    findAll()
+ * @method Filiere[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class FiliereRepository extends ServiceEntityRepository
 {
@@ -16,28 +21,33 @@ class FiliereRepository extends ServiceEntityRepository
         parent::__construct($registry, Filiere::class);
     }
 
-    //    /**
-    //     * @return Message[] Returns an array of Message objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('m.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    // Méthode personnalisée pour récupérer les filières actives
+    public function findActives(): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.actif = :val')
+            ->setParameter('val', true)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Message
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * @return Filiere[]
+     */
+    public function searchActives(string $query): array
+    {
+        $query = trim($query);
+        if ($query === '') {
+            return $this->findActives();
+        }
+
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.actif = :val')
+            ->andWhere('f.nom LIKE :q OR f.niveau LIKE :q')
+            ->setParameter('val', true)
+            ->setParameter('q', '%' . $query . '%')
+            ->orderBy('f.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

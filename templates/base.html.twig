@@ -67,6 +67,91 @@
             
             .badge-pulse:not(:empty) {
                 display: inline-flex;
+            #chatbotBtn {
+                position: fixed;
+                right: 24px;
+                bottom: 24px;
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                border: none;
+                background: #3b1a77;
+                color: #fff;
+                font-size: 22px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                z-index: 99999;
+                pointer-events: auto;
+            }
+            #chatbotWindow {
+                position: fixed;
+                right: 24px;
+                bottom: 90px;
+                width: 320px;
+                max-height: 420px;
+                background: #fff;
+                border-radius: 16px;
+                box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+                display: none;
+                flex-direction: column;
+                overflow: hidden;
+                z-index: 99999;
+                pointer-events: auto;
+            }
+            #chatbotHeader {
+                background: #3b1a77;
+                color: #fff;
+                padding: 10px 14px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            #chatbotMessages {
+                padding: 12px;
+                overflow-y: auto;
+                flex: 1;
+                font-size: 14px;
+            }
+            .chatbot-msg {
+                margin-bottom: 10px;
+                line-height: 1.4;
+            }
+            .chatbot-msg.user {
+                text-align: right;
+                color: #3b1a77;
+                font-weight: 600;
+            }
+            .chatbot-msg.bot {
+                text-align: left;
+                color: #333;
+            }
+            #chatbotInputArea {
+                display: flex;
+                gap: 6px;
+                padding: 10px;
+                border-top: 1px solid #eee;
+                background: #fafafa;
+            }
+            #chatbotInput {
+                flex: 1;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+            #chatbotSend {
+                background: #3b1a77;
+                color: #fff;
+                border: none;
+                border-radius: 10px;
+                padding: 8px 12px;
+                font-size: 14px;
+                pointer-events: auto;
+            }
+            #chatbotInput:disabled,
+            #chatbotSend:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
             }
         </style>
     {% endblock %}
@@ -100,10 +185,11 @@
                                     <div class="main-menu d-none d-lg-block">
                                         <nav>
                                             <ul id="navigation">                                                                                          
-                                                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                                                <li><a href="{{ path('app_home') }}"Accueil</a></li>
                                                 <li><a href="#">Revision</a>
                                                     <ul class="submenu">
-                                                        <li><a href="#">Cours & PDF</a></li>
+                                                        <{# Dans ton menu navigation #}
+<li><a href="{{ path('app_revision_filieres') }}">Cours & PDF</a></li>
                                                         <li><a href="#">Quiz & Tests</a></li>
                                                         <li><a href="{{ path('fiche_index') }}">fiches & co-edition</a></li>
                                                     </ul>
@@ -155,6 +241,8 @@
     <main>
         {% block body %}{% endblock %}
     </main>
+
+    {% include 'components/chatbot.html.twig' %}
 
     <footer>
         <div class="footer-wrappper footer-bg">
@@ -261,6 +349,68 @@
                     })
                     .catch(error => console.log('No notifications'));
             });
+            (function () {
+                const btn = document.getElementById('chatbotBtn');
+                const win = document.getElementById('chatbotWindow');
+                const closeBtn = document.getElementById('chatbotClose');
+                const input = document.getElementById('chatbotInput');
+                const send = document.getElementById('chatbotSend');
+                const msgs = document.getElementById('chatbotMessages');
+
+                const addMsg = (text, who) => {
+                    const div = document.createElement('div');
+                    div.className = 'chatbot-msg ' + who;
+                    div.textContent = text;
+                    msgs.appendChild(div);
+                    msgs.scrollTop = msgs.scrollHeight;
+                };
+
+                const sendMessage = async () => {
+                    const text = (input.value || '').trim();
+                    if (!text) return;
+                    addMsg(text, 'user');
+                    input.value = '';
+
+                    try {
+                        send.disabled = true;
+                        input.disabled = true;
+                        const res = await fetch('/chatbot/message', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ message: text })
+                        });
+                        let data = null;
+                        try {
+                            data = await res.json();
+                        } catch (e) {
+                            data = { message: 'Réponse invalide du serveur.' };
+                        }
+                        if (!res.ok) {
+                            addMsg(data.message || 'Erreur serveur.', 'bot');
+                        } else {
+                            addMsg(data.message || 'Pas de réponse', 'bot');
+                        }
+                    } catch (e) {
+                        addMsg('Erreur de connexion. Réessaie.', 'bot');
+                    } finally {
+                        send.disabled = false;
+                        input.disabled = false;
+                        input.focus();
+                    }
+                };
+
+                btn.addEventListener('click', () => {
+                    win.style.display = 'flex';
+                    input.focus();
+                });
+                closeBtn.addEventListener('click', () => {
+                    win.style.display = 'none';
+                });
+                send.addEventListener('click', sendMessage);
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') sendMessage();
+                });
+            })();
         </script>
     {% endblock %}
 </body>

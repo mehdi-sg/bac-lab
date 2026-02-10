@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Fiche;
 use App\Entity\FicheVersion;
+use App\Entity\Utilisateur;
 use App\Form\FicheType;
 use App\Repository\FicheRepository;
 use App\Repository\FicheVersionRepository;
@@ -169,10 +170,10 @@ public function restoreVersion(
     $backup->setEditedAt(new \DateTimeImmutable());
 
     // Editor name from logged user if exists
-    /** @var \App\Entity\Utilisateur|null $user */
+    /** @var Utilisateur|null $user */
     $user = $this->getUser();
     $editorName = 'Utilisateur';
-    if ($user instanceof \App\Entity\Utilisateur && $user->getProfil() !== null) {
+    if ($user instanceof Utilisateur && $user->getProfil() !== null) {
         $editorName = $user->getProfil()->getNom();
     }
     $backup->setEditorName($editorName . ' (restore)');

@@ -1,15 +1,14 @@
 <?php
-// src/Entity/Filiere.php
+// src/Entity/Matiere.php
 
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\FiliereRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: FiliereRepository::class)]
-#[ORM\Table(name: 'filiere')]
-class Filiere
+#[ORM\Entity]
+#[ORM\Table(name: 'matiere')]
+class Matiere
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -17,17 +16,14 @@ class Filiere
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Assert\NotBlank(message: "Le nom de la filière est obligatoire.")]
-    #[Assert\Length(min: 3, max: 255)]
+    #[Assert\NotBlank(message: "Le nom de la matière est obligatoire.")]
+    #[Assert\Length(min: 2, max: 255)]
     private ?string $nom = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    #[Assert\NotBlank(message: "Le niveau est obligatoire.")]
-    #[Assert\Choice(
-        choices: ['L1', 'L2', 'L3', 'M1', 'M2'],
-        message: "Le niveau doit être L1, L2, L3, M1 ou M2."
-    )]
-    private ?string $niveau = null;
+    #[ORM\ManyToOne(targetEntity: Filiere::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: "La filière est obligatoire.")]
+    private ?Filiere $filiere = null;
 
     #[ORM\Column(type: 'boolean')]
     private bool $actif = true;
@@ -50,14 +46,13 @@ class Filiere
     public function getNom(): ?string { return $this->nom; }
     public function setNom(string $nom): self { $this->nom = $nom; return $this; }
 
-    public function getNiveau(): ?string { return $this->niveau; }
-    public function setNiveau(string $niveau): self { $this->niveau = $niveau; return $this; }
+    public function getFiliere(): ?Filiere { return $this->filiere; }
+    public function setFiliere(?Filiere $filiere): self { $this->filiere = $filiere; return $this; }
 
     public function isActif(): bool { return $this->actif; }
     public function setActif(bool $actif): self { $this->actif = $actif; return $this; }
 
     public function getCreatedAt(): \DateTimeInterface { return $this->createdAt; }
-    public function setCreatedAt(\DateTimeInterface $createdAt): self { $this->createdAt = $createdAt; return $this; }
 
     public function getUpdatedAt(): ?\DateTimeInterface { return $this->updatedAt; }
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self { $this->updatedAt = $updatedAt; return $this; }

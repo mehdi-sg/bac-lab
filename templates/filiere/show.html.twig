@@ -1,0 +1,739 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails Filière | {{ filiere.nom }}{% endblock %}
+
+{% block body %}
+<style>
+    /* === DESIGN SYSTEM === */
+    :root {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --info: #0ea5e9;
+        --info-light: #e0f2fe;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --radius-sm: 0.375rem;
+        --radius: 0.5rem;
+        --radius-md: 0.75rem;
+        --radius-lg: 1rem;
+        --radius-xl: 1.5rem;
+        --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* === PAGE LAYOUT === */
+    .details-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        padding: 2rem 1rem;
+        position: relative;
+    }
+
+    /* Decorative background elements */
+    .details-page::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 400px;
+        background: linear-gradient(135deg, var(--info) 0%, var(--primary) 100%);
+        clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%);
+        z-index: 0;
+    }
+
+    /* === BREADCRUMB NAVIGATION === */
+    .breadcrumb-nav {
+        position: relative;
+        z-index: 10;
+        margin-bottom: 2rem;
+    }
+
+    .breadcrumb-list {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .breadcrumb-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .breadcrumb-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border-radius: var(--radius);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: var(--transition);
+    }
+
+    .breadcrumb-link:hover {
+        background: rgba(255, 255, 255, 0.25);
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .breadcrumb-separator {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.75rem;
+    }
+
+    .breadcrumb-current {
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+    }
+
+    /* === MAIN CONTAINER === */
+    .details-container {
+        position: relative;
+        z-index: 10;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    /* === HEADER CARD === */
+    .header-card {
+        background: white;
+        border-radius: var(--radius-xl);
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow-xl);
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .header-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--info) 0%, var(--primary) 100%);
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+        box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.3);
+        flex-shrink: 0;
+    }
+
+    .header-content {
+        flex: 1;
+    }
+
+    .header-title {
+        font-size: 1.875rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.025em;
+    }
+
+    .header-subtitle {
+        color: var(--gray-500);
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-top: 0.75rem;
+    }
+
+    .status-badge.active {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-badge.inactive {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    .status-badge.active .status-dot {
+        background: var(--success);
+    }
+
+    .status-badge.inactive .status-dot {
+        background: var(--danger);
+        animation: none;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    /* === DETAILS GRID === */
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-100);
+        transition: var(--transition);
+        animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        animation-fill-mode: both;
+    }
+
+    .detail-card:nth-child(1) { animation-delay: 0.1s; }
+    .detail-card:nth-child(2) { animation-delay: 0.2s; }
+    .detail-card:nth-child(3) { animation-delay: 0.3s; }
+    .detail-card:nth-child(4) { animation-delay: 0.4s; }
+
+    .detail-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--gray-200);
+    }
+
+    .detail-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--gray-500);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+    }
+
+    .detail-label i {
+        color: var(--info);
+    }
+
+    .detail-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin: 0;
+    }
+
+    .detail-value.text-muted {
+        color: var(--gray-400);
+        font-size: 1rem;
+        font-style: italic;
+    }
+
+    /* === TIMELINE CARD === */
+    .timeline-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-100);
+        margin-bottom: 1.5rem;
+        animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.5s both;
+    }
+
+    .timeline-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin: 0 0 1.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .timeline-title i {
+        color: var(--info);
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 7px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--gray-200);
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 1.5rem;
+    }
+
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: -2rem;
+        top: 0;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: white;
+        border: 3px solid var(--info);
+        box-shadow: 0 0 0 4px white;
+    }
+
+    .timeline-item:last-child .timeline-dot {
+        border-color: var(--gray-300);
+    }
+
+    .timeline-content {
+        background: var(--gray-50);
+        padding: 1rem;
+        border-radius: var(--radius);
+        border-left: 3px solid var(--info);
+    }
+
+    .timeline-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--gray-600);
+        margin-bottom: 0.25rem;
+    }
+
+    .timeline-date {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        font-family: 'SF Mono', monospace;
+    }
+
+    /* === ACTION BAR === */
+    .action-bar {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: space-between;
+        align-items: center;
+        animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.6s both;
+    }
+
+    .action-group {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-custom {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.875rem 1.5rem;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        border-radius: var(--radius);
+        transition: var(--transition);
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-back {
+        background: var(--gray-100);
+        color: var(--gray-700);
+    }
+
+    .btn-back:hover {
+        background: var(--gray-200);
+        color: var(--gray-900);
+        transform: translateY(-2px);
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+        color: white;
+        box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-edit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+        color: white;
+        box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-delete:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.4);
+    }
+
+    /* === QUICK STATS === */
+    .stats-bar {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-item {
+        background: white;
+        border-radius: var(--radius);
+        padding: 1rem;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--gray-100);
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--primary);
+        display: block;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        color: var(--gray-500);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 768px) {
+        .details-page::before {
+            height: 300px;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 0 100%);
+        }
+
+        .header-card {
+            flex-direction: column;
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .header-icon {
+            width: 64px;
+            height: 64px;
+            font-size: 1.5rem;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .action-group {
+            justify-content: center;
+        }
+
+        .btn-custom {
+            justify-content: center;
+        }
+
+        .stats-bar {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* === PRINT STYLES === */
+    @media print {
+        .details-page::before,
+        .breadcrumb-nav,
+        .action-bar {
+            display: none;
+        }
+
+        .detail-card,
+        .timeline-card,
+        .header-card {
+            break-inside: avoid;
+            box-shadow: none;
+            border: 1px solid var(--gray-300);
+        }
+    }
+
+    /* === ACCESSIBILITY === */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+</style>
+        <section class="about-area1 fix pt-10">
+
+
+<div class="details-page">
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb-nav" aria-label="Navigation">
+        <ol class="breadcrumb-list">
+            <li class="breadcrumb-item">
+                <a href="{{ path('app_home') }}" class="breadcrumb-link">
+                    <i class="fas fa-home"></i>
+                    <span>Accueil</span>
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ path('filiere_index') }}" class="breadcrumb-link">
+                    <i class="fas fa-list"></i>
+                    <span>Filières</span>
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+            </li>
+            <li class="breadcrumb-item">
+                <span class="breadcrumb-current">{{ filiere.nom }}</span>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="details-container">
+        <!-- Header Card -->
+        <div class="header-card">
+            <div class="header-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="header-content">
+                <h1 class="header-title">{{ filiere.nom }}</h1>
+                <p class="header-subtitle">Filière d'études • Niveau {{ filiere.niveau }}</p>
+                <div class="status-badge {{ filiere.actif ? 'active' : 'inactive' }}">
+                    <span class="status-dot"></span>
+                    <span>{{ filiere.actif ? 'Active' : 'Inactive' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats (Optional - can be populated with real data) -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-value">{{ filiere.niveau }}</span>
+                <span class="stat-label">Niveau</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ filiere.matiereCount|default('0') }}</span>
+                <span class="stat-label">Matières</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ filiere.studentCount|default('0') }}</span>
+                <span class="stat-label">Étudiants</span>
+            </div>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="details-grid">
+            <div class="detail-card">
+                <div class="detail-label">
+                    <i class="fas fa-tag"></i>
+                    <span>Nom complet</span>
+                </div>
+                <p class="detail-value">{{ filiere.nom }}</p>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-label">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Niveau d'études</span>
+                </div>
+                <p class="detail-value">Niveau {{ filiere.niveau }}</p>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-label">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>Statut</span>
+                </div>
+                <p class="detail-value" style="color: {{ filiere.actif ? 'var(--success)' : 'var(--danger)' }}">
+                    {{ filiere.actif ? 'Active' : 'Inactive' }}
+                </p>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-label">
+                    <i class="fas fa-id-card"></i>
+                    <span>Identifiant</span>
+                </div>
+                <p class="detail-value text-muted">#{{ filiere.id }}</p>
+            </div>
+        </div>
+
+        <!-- Timeline Card -->
+        <div class="timeline-card">
+            <h2 class="timeline-title">
+                <i class="fas fa-clock"></i>
+                Historique
+            </h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-label">Création</div>
+                        <div class="timeline-date">{{ filiere.createdAt|date('d/m/Y à H:i') }}</div>
+                    </div>
+                </div>
+                {% if filiere.updatedAt %}
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-label">Dernière modification</div>
+                        <div class="timeline-date">{{ filiere.updatedAt|date('d/m/Y à H:i') }}</div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-label">Modification</div>
+                        <div class="timeline-date text-muted">Aucune modification enregistrée</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="action-bar">
+            <div class="action-group">
+                <a href="{{ path('filiere_index') }}" class="btn-custom btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour à la liste
+                </a>
+            </div>
+            
+            {% if is_granted('ROLE_ADMIN') %}
+            <div class="action-group">
+                <a href="{{ path('filiere_edit', {'id': filiere.id}) }}" class="btn-custom btn-edit">
+                    <i class="fas fa-edit"></i>
+                    Modifier
+                </a>
+                {% if filiere.actif %}
+                <button type="button" class="btn-custom btn-delete" onclick="confirmDelete()">
+                    <i class="fas fa-trash-alt"></i>
+                    Désactiver
+                </button>
+                {% else %}
+                <button type="button" class="btn-custom btn-delete" onclick="confirmDelete()">
+                    <i class="fas fa-trash-alt"></i>
+                    Supprimer
+                </button>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</section>
+<script>
+    function confirmDelete() {
+        if (confirm('Êtes-vous sûr de vouloir {{ filiere.actif ? 'désactiver' : 'supprimer définitivement' }} cette filière ?')) {
+            // Submit delete form or redirect to delete route
+            window.location.href = '{{ path('filiere_delete', {'id': filiere.id}) }}';
+        }
+    }
+
+    // Add subtle parallax effect to header
+    document.addEventListener('mousemove', (e) => {
+        const cards = document.querySelectorAll('.detail-card');
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+        
+        cards.forEach((card, index) => {
+            const speed = (index + 1) * 5;
+            const xOffset = (window.innerWidth / 2 - e.clientX) / speed;
+            const yOffset = (window.innerHeight / 2 - e.clientY) / speed;
+            
+            card.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+        });
+    });
+</script>
+{% endblock %}

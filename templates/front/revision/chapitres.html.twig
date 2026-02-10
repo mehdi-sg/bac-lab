@@ -1,0 +1,647 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BacLab | {{ matiere.nom }}{% endblock %}
+
+{% block body %}
+<style>
+    /* ============================================
+       STYLE DU STEPPER
+       ============================================ */
+    .stepper-container { 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 15px; 
+        margin-bottom: 25px; 
+    }
+    .step-num { 
+        width: 40px; 
+        height: 40px; 
+        border-radius: 50%; 
+        background: rgba(255,255,255,0.1); 
+        color: #fff; 
+        font-weight: bold; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        border: 2px solid rgba(255,255,255,0.3); 
+        text-decoration: none; 
+        transition: 0.3s; 
+    }
+    .step-num.active { 
+        background: #ffc107; 
+        color: #3b1a77; 
+        border-color: #ffc107; 
+        transform: scale(1.1); 
+    }
+    .step-num.done { 
+        background: rgba(255,255,255,0.9); 
+        color: #764ba2; 
+        border-color: #fff; 
+    }
+    .step-line { 
+        width: 40px; 
+        height: 2px; 
+        background: rgba(255,255,255,0.2); 
+    }
+
+    /* ============================================
+       VARIABLES ET BASE
+       ============================================ */
+    :root { 
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
+        --success-color: #4ade80; 
+        --warning-color: #f59e0b;
+    }
+    
+    .hero-section { 
+        background: var(--primary-gradient); 
+        padding: 130px 0 100px; 
+        clip-path: ellipse(150% 100% at 50% 0%); 
+        color: white; 
+    }
+    .progress-container { 
+        max-width: 500px; 
+        margin: 20px auto 0; 
+    }
+    .progress { 
+        height: 12px; 
+        background: rgba(255, 255, 255, 0.2); 
+        border-radius: 50px; 
+        overflow: hidden; 
+    }
+    .progress-bar { 
+        background: var(--success-color); 
+        transition: width 0.8s; 
+    }
+    .chapters-grid { 
+        margin-top: -60px; 
+        padding-bottom: 80px; 
+    }
+
+    /* ============================================
+       CARTES CHAPITRE
+       ============================================ */
+    .chapter-card { 
+        border: none; 
+        border-radius: 25px; 
+        background: #ffffff; 
+        transition: var(--transition); 
+        height: 100%; 
+        display: flex; 
+        flex-direction: column; 
+        position: relative; 
+    }
+    .chapter-card:hover { 
+        transform: translateY(-12px); 
+        box-shadow: 0 20px 40px rgba(118, 75, 162, 0.15); 
+    }
+    .chapter-card.is-completed { 
+        border: 2px solid var(--success-color); 
+    }
+    
+    /* Style pour fichier vide */
+    .chapter-card.empty-file { 
+        border: 2px solid var(--warning-color); 
+    }
+    .chapter-card.empty-file .chapter-header { 
+        background: linear-gradient(45deg, #fef3c7, #fde68a); 
+    }
+    .chapter-card.empty-file .chapter-icon-box {
+        color: var(--warning-color);
+    }
+    
+    .chapter-header { 
+        height: 140px; 
+        background: linear-gradient(45deg, #f3f4f7, #e2e8f0); 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* ============================================
+       ICON BOX
+       ============================================ */
+    .chapter-icon-box {
+        width: 80px;
+        height: 80px;
+        background: white;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        color: #667eea;
+        font-size: 2rem;
+        transition: all 0.3s ease;
+        z-index: 2;
+    }
+    .chapter-card:hover .chapter-icon-box {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+    
+    /* ============================================
+       BADGES ET BOUTONS
+       ============================================ */
+    .chapter-badge { 
+        position: absolute; 
+        top: 15px; 
+        right: 15px; 
+        background: white; 
+        padding: 5px 12px; 
+        border-radius: 50px; 
+        font-weight: 700; 
+        font-size: 0.75rem; 
+        color: #764ba2; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+    }
+    .chapter-badge.empty { 
+        background: var(--warning-color); 
+        color: white; 
+    }
+    
+    .action-buttons { 
+        display: flex; 
+        gap: 10px; 
+    }
+    .btn-action { 
+        width: 38px; 
+        height: 38px; 
+        border-radius: 50%; 
+        border: none; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        cursor: pointer; 
+        background: #f8f9fa; 
+        color: #764ba2; 
+        transition: all 0.2s; 
+    }
+    .btn-action:hover { 
+        background: #667eea; 
+        color: white; 
+        transform: scale(1.1); 
+    }
+    .btn-audio.playing { 
+        background: #ff4757; 
+        color: white; 
+        animation: pulse 1.5s infinite; 
+    }
+    .btn-check.completed { 
+        background: var(--success-color); 
+        color: white; 
+        transform: scale(1.1); 
+    }
+    @keyframes pulse { 
+        0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4); } 
+        70% { box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); } 
+        100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); } 
+    }
+    
+    .btn-read { 
+        background: var(--primary-gradient); 
+        color: white !important; 
+        border-radius: 12px; 
+        padding: 12px; 
+        font-weight: 600; 
+        text-align: center; 
+        text-decoration: none; 
+        margin-top: auto; 
+        transition: all 0.3s; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    .btn-read:hover { 
+        transform: translateY(-2px); 
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); 
+    }
+    
+    .btn-empty {
+        background: var(--warning-color);
+        color: white !important;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        margin-top: auto;
+        cursor: pointer;
+        border: none;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+    }
+    .btn-empty:hover {
+        background: #d97706;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+    }
+    
+    .animate-up { 
+        animation: fadeInUp 0.8s ease-out forwards; 
+        opacity: 0; 
+    }
+    @keyframes fadeInUp { 
+        from { opacity: 0; transform: translateY(30px); } 
+        to { opacity: 1; transform: translateY(0); } 
+    }
+
+    /* ============================================
+       EMPTY STATE - Aucun chapitre
+       ============================================ */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        margin-top: 2rem;
+    }
+    .empty-icon {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #f3f4f7 0%, #e2e8f0 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        font-size: 3rem;
+        color: #94a3b8;
+    }
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+    }
+    .empty-text {
+        color: #64748b;
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .btn-back-matiere {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.875rem 1.5rem;
+        background: var(--primary-gradient);
+        color: white;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .btn-back-matiere:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        color: white;
+    }
+
+    /* ============================================
+       MODAL FICHIER VIDE
+       ============================================ */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.6);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+    }
+    .modal-overlay.active {
+        display: flex;
+    }
+    .modal-content {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        max-width: 450px;
+        width: 90%;
+        text-align: center;
+        animation: modalPop 0.3s ease;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    @keyframes modalPop {
+        from { transform: scale(0.8); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+    .modal-icon {
+        width: 90px;
+        height: 90px;
+        background: #fef3c7;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2.5rem;
+        color: var(--warning-color);
+    }
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+    }
+    .modal-text {
+        color: #64748b;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+    .modal-chapter-name {
+        color: var(--warning-color);
+        font-weight: 600;
+        display: block;
+        margin: 0.5rem 0;
+        padding: 0.75rem;
+        background: #fef3c7;
+        border-radius: 8px;
+    }
+    .btn-modal {
+        padding: 0.875rem 2rem;
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .btn-modal:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+</style>
+
+<!-- ============================================
+     HERO SECTION
+     ============================================ -->
+<div class="hero-section text-center">
+    <div class="container animate-up">
+        <div class="stepper-container">
+            <a href="{{ path('app_revision_filieres') }}" class="step-num done">1</a>
+            <div class="step-line"></div>
+            <a href="{{ path('app_revision_matieres', {id: matiere.filiere.id}) }}" class="step-num done">2</a>
+            <div class="step-line"></div>
+            <span class="step-num active">3</span>
+        </div>
+
+        <span class="badge bg-white text-primary px-3 py-2 rounded-pill mb-3">{{ matiere.nom }}</span>
+        <h1 class="display-4 fw-bold mb-2">Chapitres & Supports</h1>
+        
+        {% if chapitres|length > 0 %}
+        <div class="progress-container">
+            <div class="d-flex justify-content-between small fw-bold mb-2">
+                <span>Ma progression</span>
+                <span id="prog-val">0%</span>
+            </div>
+            <div class="progress"><div id="prog-bar" class="progress-bar" style="width: 0%"></div></div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ============================================
+     CONTENU PRINCIPAL
+     ============================================ -->
+<div class="container chapters-grid">
+    
+    {# CAS 1: Il y a des chapitres #}
+    {% if chapitres|length > 0 %}
+        <div class="row g-4">
+            {% for c in chapitres %}
+                {% set hasFile = c.contenu and c.contenu != '' %}
+                
+                <div class="col-lg-4 col-md-6 animate-up" style="animation-delay: {{ loop.index * 0.1 }}s">
+                    <div class="card chapter-card shadow-sm {{ not hasFile ? 'empty-file' : '' }}" id="card-{{ c.id }}">
+                        
+                        <!-- HEADER AVEC ICONE -->
+                        <div class="chapter-header">
+                            {% if hasFile %}
+                                <span class="chapter-badge">PDF</span>
+                            {% else %}
+                                <span class="chapter-badge empty">VIDE</span>
+                            {% endif %}
+                            
+                            <div class="chapter-icon-box">
+                                {% if hasFile %}
+                                    {% set titreLower = c.titre|lower %}
+                                    {% if 'intro' in titreLower or 'généralité' in titreLower or 'définition' in titreLower %}
+                                        <i class="fas fa-play-circle"></i>
+                                    {% elseif 'exercice' in titreLower or 'application' in titreLower or 'pratique' in titreLower %}
+                                        <i class="fas fa-pencil-alt"></i>
+                                    {% elseif 'révision' in titreLower or 'récap' in titreLower or 'synthèse' in titreLower %}
+                                        <i class="fas fa-clipboard-check"></i>
+                                    {% elseif 'examen' in titreLower or 'test' in titreLower or 'contrôle' in titreLower %}
+                                        <i class="fas fa-file-alt"></i>
+                                    {% elseif 'chimie' in titreLower or 'réaction' in titreLower or 'molécule' in titreLower %}
+                                        <i class="fas fa-flask"></i>
+                                    {% elseif 'physique' in titreLower or 'force' in titreLower or 'énergie' in titreLower %}
+                                        <i class="fas fa-atom"></i>
+                                    {% elseif 'math' in titreLower or 'calcul' in titreLower or 'équation' in titreLower or 'fonction' in titreLower %}
+                                        <i class="fas fa-calculator"></i>
+                                    {% elseif 'biologie' in titreLower or 'cellule' in titreLower or 'organisme' in titreLower %}
+                                        <i class="fas fa-dna"></i>
+                                    {% elseif 'histoire' in titreLower or 'guerre' in titreLower or 'siècle' in titreLower %}
+                                        <i class="fas fa-landmark"></i>
+                                    {% elseif 'géo' in titreLower or 'carte' in titreLower or 'climat' in titreLower %}
+                                        <i class="fas fa-globe"></i>
+                                    {% elseif 'philo' in titreLower or 'pensée' in titreLower or 'philosophie' in titreLower %}
+                                        <i class="fas fa-brain"></i>
+                                    {% elseif 'langue' in titreLower or 'grammaire' in titreLower or 'vocabulaire' in titreLower %}
+                                        <i class="fas fa-language"></i>
+                                    {% elseif 'technologie' in titreLower or 'informatique' in titreLower %}
+                                        <i class="fas fa-laptop-code"></i>
+                                    {% else %}
+                                        <i class="fas fa-book-open"></i>
+                                    {% endif %}
+                                {% else %}
+                                    <i class="fas fa-file-excel"></i>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- BODY -->
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-muted small">Chapitre {{ loop.index }}</span>
+                                <div class="action-buttons">
+                                    {% if hasFile %}
+                                        <button class="btn-action btn-audio" onclick="speak('{{ c.titre|e('js') }}', this)" title="Lire à haute voix">
+                                            <i class="fas fa-volume-up"></i>
+                                        </button>
+                                    {% endif %}
+                                    <button class="btn-action btn-check" onclick="toggleTask('{{ c.id }}', this)" title="Marquer comme terminé">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <h4 class="fw-bold mb-4" style="color: #2d3436; flex-grow: 1; font-size: 1.1rem; line-height: 1.4;">
+                                {{ c.titre }}
+                            </h4>
+                            
+                            {# BOUTON SELON FICHIER #}
+                            {% if hasFile %}
+                                <a href="{{ asset('uploads/pdf/' ~ c.contenu) }}" target="_blank" class="btn btn-read">
+                                    <i class="fas fa-eye"></i> Lire le cours
+                                </a>
+                            {% else %}
+                                <button class="btn btn-empty" onclick="showEmptyModal('{{ c.titre|e('js') }}')">
+                                    <i class="fas fa-exclamation-triangle"></i> Fichier vide
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    
+    {# CAS 2: Aucun chapitre #}
+    {% else %}
+        <div class="empty-state animate-up">
+            <div class="empty-icon">
+                <i class="fas fa-folder-open"></i>
+            </div>
+            <h2 class="empty-title">Aucun chapitre disponible</h2>
+            <p class="empty-text">
+                Cette matière ne contient pas encore de chapitres. 
+                Les ressources pédagogiques seront bientôt ajoutées par notre équipe.
+            </p>
+            <a href="{{ path('app_revision_matieres', {id: matiere.filiere.id}) }}" class="btn-back-matiere">
+                <i class="fas fa-arrow-left"></i> Retour aux matières
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- ============================================
+     MODAL FICHIER VIDE
+     ============================================ -->
+<div class="modal-overlay" id="emptyModal">
+    <div class="modal-content">
+        <div class="modal-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 class="modal-title">Fichier vide</h3>
+        <p class="modal-text">
+            Le chapitre suivant n'a pas encore de contenu :
+            <span class="modal-chapter-name" id="modalChapterName"></span>
+            Le fichier PDF sera bientôt disponible.
+        </p>
+        <button class="btn-modal" onclick="closeEmptyModal()">
+            <i class="fas fa-check"></i> J'ai compris
+        </button>
+    </div>
+</div>
+
+<!-- ============================================
+     JAVASCRIPT
+     ============================================ -->
+<script>
+    // Lecture audio du titre
+    function speak(text, btn) {
+        if (window.speechSynthesis.speaking) { 
+            window.speechSynthesis.cancel(); 
+            if (btn.classList.contains('playing')) { 
+                resetAudio(); 
+                return; 
+            } 
+        }
+        resetAudio();
+        const msg = new SpeechSynthesisUtterance("Chapitre : " + text);
+        msg.lang = 'fr-FR'; 
+        msg.onstart = () => btn.classList.add('playing'); 
+        msg.onend = () => resetAudio();
+        window.speechSynthesis.speak(msg);
+    }
+    
+    function resetAudio() { 
+        document.querySelectorAll('.btn-audio').forEach(b => b.classList.remove('playing')); 
+    }
+    
+    // Marquer comme terminé
+    function toggleTask(id, btn) {
+        const card = document.getElementById('card-' + id);
+        btn.classList.toggle('completed'); 
+        card.classList.toggle('is-completed');
+        let done = JSON.parse(localStorage.getItem('done_chapters')) || [];
+        if (btn.classList.contains('completed')) { 
+            if (!done.includes(id)) done.push(id); 
+        } else { 
+            done = done.filter(i => i !== id); 
+        }
+        localStorage.setItem('done_chapters', JSON.stringify(done));
+        updateProgress();
+    }
+    
+    // Mise à jour barre de progression
+    function updateProgress() {
+        const total = document.querySelectorAll('.btn-check').length;
+        const done = document.querySelectorAll('.btn-check.completed').length;
+        const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+        const progBar = document.getElementById('prog-bar');
+        const progVal = document.getElementById('prog-val');
+        if (progBar) progBar.style.width = percent + '%';
+        if (progVal) progVal.innerText = percent + '%';
+    }
+    
+    // Afficher modal fichier vide
+    function showEmptyModal(titre) {
+        const modal = document.getElementById('emptyModal');
+        document.getElementById('modalChapterName').textContent = titre;
+        modal.classList.add('active');
+    }
+    
+    // Fermer modal
+    function closeEmptyModal() {
+        document.getElementById('emptyModal').classList.remove('active');
+    }
+    
+    // Fermer modal en cliquant à l'extérieur
+    document.getElementById('emptyModal').addEventListener('click', function(e) {
+        if (e.target === this) closeEmptyModal();
+    });
+    
+    // Fermer avec touche Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeEmptyModal();
+    });
+    
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', () => {
+        const done = JSON.parse(localStorage.getItem('done_chapters')) || [];
+        document.querySelectorAll('.btn-check').forEach(btn => {
+            const idMatch = btn.getAttribute('onclick').match(/'([^']+)'/);
+            if (idMatch && done.includes(idMatch[1])) { 
+                btn.classList.add('completed'); 
+                const card = document.getElementById('card-' + idMatch[1]);
+                if (card) card.classList.add('is-completed'); 
+            }
+        });
+        updateProgress();
+    });
+</script>
+{% endblock %}
