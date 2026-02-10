@@ -5,19 +5,19 @@ namespace App\Entity;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-// IMPORTATION INDISPENSABLE POUR LE CONTROLE DE SAISIE CÔTÉ SERVEUR
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
+#[ORM\Table(name: 'message')]
+#[ORM\Index(name: 'idx_message_groupe_created', columns: ['groupe_id', 'created_at'])]
 class Message
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    /* --- CONTROLE DE SAISIE : CONTENU DU MESSAGE --- */
     #[Assert\NotBlank(message: "Le contenu du message ne peut pas être vide.")]
     #[Assert\Length(
         max: 2000,
@@ -26,30 +26,32 @@ class Message
     private ?string $contenu = null;
 
     #[ORM\Column(length: 10)]
-    /* --- CONTROLE DE SAISIE : TYPE DE MESSAGE --- */
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: "Le type de message est obligatoire.")]
     #[Assert\Choice(
         choices: ['TEXTE', 'IMAGE', 'PDF'],
         message: "Le type de message doit être soit TEXTE, IMAGE ou PDF."
     )]
-    private ?string $typeMessage = 'TEXTE';
+    private string $typeMessage = 'TEXTE';
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_IMMUTABLE)]
+    private \DateTimeImmutable $createdAt;
 
-    /* --- RELATION "ADVANCED" : AUTO-RÉFÉRENCE (Parent Message) --- */
-    /* Permet de répondre à un message spécifique (parent_message_id) */
+    // Réponse à un message (parent)
     #[ORM\ManyToOne(targetEntity: self::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    #[ORM\JoinColumn(name: 'parent_message_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?self $parentMessage = null;
 
-    /* --- RELATION : ManyToOne vers Utilisateur (L'expéditeur) --- */
+    // Soft delete
+    #[ORM\Column(name: 'deleted_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $deletedAt = null;
+
+    // Expéditeur
     #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "L'expéditeur est obligatoire.")]
     private ?Utilisateur $expediteur = null;
 
-    /* --- RELATION : ManyToOne vers Groupe --- */
+    // Groupe
     #[ORM\ManyToOne(targetEntity: Groupe::class, inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "Le groupe de destination est obligatoire.")]
@@ -57,13 +59,13 @@ class Message
 
     public function __construct()
     {
-        // Initialisation automatique de la date de création
         $this->createdAt = new \DateTimeImmutable();
+        $this->typeMessage = 'TEXTE';
     }
 
-    // ======================================================
-    // GETTERS & SETTERS
-    // ======================================================
+    // =======================
+    // Getters / Setters
+    // =======================
 
     public function getId(): ?int
     {
@@ -75,13 +77,13 @@ class Message
         return $this->contenu;
     }
 
-    public function setContenu(string $contenu): self
+    public function setContenu(?string $contenu): self
     {
         $this->contenu = $contenu;
         return $this;
     }
 
-    public function getTypeMessage(): ?string
+    public function getTypeMessage(): string
     {
         return $this->typeMessage;
     }
@@ -92,7 +94,7 @@ class Message
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -134,5 +136,21 @@ class Message
     {
         $this->groupe = $groupe;
         return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deletedAt !== null;
     }
 }

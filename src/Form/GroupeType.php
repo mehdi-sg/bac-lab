@@ -3,9 +3,12 @@
 namespace App\Form;
 
 use App\Entity\Groupe;
+use App\Entity\Filiere;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -17,17 +20,40 @@ class GroupeType extends AbstractType
             ->add('nom', TextType::class, [
                 'label' => 'Nom du groupe de révision',
                 'attr' => [
-                    'class' => 'form-control', // Classe CSS de Swipe/Bootstrap
-                    'placeholder' => 'Ex: Révision Math Techniques'
+                    'class' => 'form-control',
+                    'placeholder' => 'Ex: Révision Math Techniques',
                 ],
+                'required' => false,
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description / Objectifs',
                 'attr' => [
-                    'class' => 'form-control', // Classe CSS de Swipe/Bootstrap
+                    'class' => 'form-control',
                     'placeholder' => 'De quoi allez-vous discuter ?',
-                    'rows' => 3
+                    'rows' => 3,
                 ],
+                'required' => false,
+            ])
+            ->add('isPublic', CheckboxType::class, [
+                'label' => 'Groupe public',
+                'attr' => [
+                    'class' => 'form-check-input',
+                ],
+                'label_attr' => [
+                    'class' => 'form-check-label',
+                ],
+                'required' => false,
+                'data' => true,
+            ])
+            ->add('filiere', EntityType::class, [
+                'class' => Filiere::class,
+                'choice_label' => 'nom',
+                'label' => 'Filière',
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+                'required' => false,
+                'placeholder' => 'Sélectionner une filière (optionnel)',
             ]);
     }
 
@@ -35,12 +61,9 @@ class GroupeType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Groupe::class,
-            // --- TRÈS IMPORTANT (CONSIGNE PIDEV) ---
-            // Désactive la validation automatique du navigateur (HTML5)
-            // Pour que seul le contrôle de saisie serveur (PHP) soit utilisé.
             'attr' => [
-                'novalidate' => 'novalidate'
-            ]
+                'novalidate' => 'novalidate',
+            ],
         ]);
     }
 }

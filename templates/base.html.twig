@@ -69,14 +69,19 @@
                                                         <li><a href="#">Guide des Filières</a></li>
                                                     </ul>
                                                 </li>
-                                                <li><a href="#">Communauté</a></li>
+                                                <li><a href="#">Communauté</a>
+                                                    <ul class="submenu">
+                                                        <li><a href="{{ path('groupe_index') }}"><i class="fas fa-users mr-2"></i>Groupes de révision</a></li>
+                                                        <li><a href="{{ path('chat_index') }}"><i class="fas fa-comments mr-2"></i>Chat en direct</a></li>
+                                                    </ul>
+                                                </li>
                                                 
                                                 {% if is_granted('ROLE_USER') %}
-                                                    <li class="button-header"><a href="{{ path('app_profile') }}" class="btn">Mon Profil</a></li>
-                                                    <li class="button-header"><a href="{{ path('app_logout') }}" class="btn btn3">Déconnexion</a></li>
+                                                    <li><a href="{{ path('app_profile') }}" class="btn">Mon Profil</a></li>
+                                                    <li><a href="{{ path('app_logout') }}" class="btn btn3">Déconnexion</a></li>
                                                 {% else %}
-                                                    <li class="button-header margin-left"><a href="{{ path('app_register') }}" class="btn">S'inscrire</a></li>
-                                                    <li class="button-header"><a href="{{ path('app_login') }}" class="btn btn3">Connexion</a></li>
+                                                    <li class="margin-left"><a href="{{ path('app_register') }}" class="btn">S'inscrire</a></li>
+                                                    <li><a href="{{ path('app_login') }}" class="btn btn3">Connexion</a></li>
                                                 {% endif %}
                                             </ul>
                                         </nav>

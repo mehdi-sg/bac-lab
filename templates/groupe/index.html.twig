@@ -1,12 +1,284 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-<div class="container mt-5">
-    <h2>➕ Créer un groupe</h2>
-    <p>Formulaire de création du groupe (à faire).</p>
+{% block title %}Groupes de Révision - BacLab{% endblock %}
 
-    <a href="{{ path('chat_index') }}" class="btn btn-secondary mt-3">
-        ← Retour au chat
-    </a>
-</div>
+{% block css %}
+    {{ parent() }}
+    <style>
+        .groupe-card {
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .groupe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2) !important;
+        }
+        
+        .groupe-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+        }
+        
+        .groupe-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .membre-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .stat-item .number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-item .label {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .filiere-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .filiere-badge.math {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+        
+        .filiere-badge.science {
+            background: rgba(72, 187, 120, 0.1);
+            color: #48bb78;
+        }
+        
+        .filiere-badge.physique {
+            background: rgba(236, 201, 75, 0.1);
+            color: #d69e2e;
+        }
+        
+        .filiere-badge.chimie {
+            background: rgba(237, 137, 54, 0.1);
+            color: #ed8936;
+        }
+        
+        .filiere-badge.default {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .action-btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 25px;
+            padding: 8px 23px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn-outline:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .public-badge {
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+        }
+        
+        .private-badge {
+            background: rgba(237, 137, 54, 0.2);
+            color: #ed8936;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<!-- Hero Section -->
+<section class="hero-section d-flex align-items-center" style="padding-top: 100px; min-height: 60vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center text-white">
+                <h1 class="display-4 font-weight-bold mb-4">Groupes de Révision</h1>
+                <p class="lead mb-5">Rejoignez des groupes d'étude, discutez avec d'autres étudiants et préparez-vous ensemble au Baccalauréat</p>
+                <a href="{{ path('groupe_new') }}" class="btn btn-light btn-lg rounded-pill px-5">
+                    <i class="fas fa-plus-circle mr-2"></i>
+                    Créer un groupe
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Groupes Section -->
+<section class="py-5" style="background: #f8f9fa;">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-lg-6">
+                <h2 class="font-weight-bold text-dark">Tous les groupes</h2>
+                <p class="text-muted">Découvrez et rejoignez des groupes de révision</p>
+            </div>
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Rechercher un groupe..." style="border-radius: 25px 0 0 25px; padding: 15px 20px;" id="searchGroupe">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary px-4" style="border-radius: 0 25px 25px 0; background: linear-gradient(135deg, #667eea, #764ba2); border: none;">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row" id="groupesContainer">
+            {% if groupes is empty %}
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-users fa-4x mb-4" style="color: #dee2e6;"></i>
+                    <h4 class="text-muted mb-3">Aucun groupe disponible</h4>
+                    <p class="text-muted mb-4">Soyez le premier à créer un groupe de révision !</p>
+                    <a href="{{ path('groupe_new') }}" class="btn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+                        <i class="fas fa-plus mr-2"></i>
+                        Créer un groupe
+                    </a>
+                </div>
+            {% else %}
+                {% for groupe in groupes %}
+                    {% set filiereClass = 'default' %}
+                    {% if groupe.filiere %}
+                        {% set filiereLower = groupe.filiere.nom|lower %}
+                        {% if 'math' in filiereLower %}
+                            {% set filiereClass = 'math' %}
+                        {% elseif 'science' in filiereLower %}
+                            {% set filiereClass = 'science' %}
+                        {% elseif 'physique' in filiereLower %}
+                            {% set filiereClass = 'physique' %}
+                        {% elseif 'chimie' in filiereLower %}
+                            {% set filiereClass = 'chimie' %}
+                        {% endif %}
+                    {% endif %}
+                    
+                    <div class="col-lg-4 col-md-6 mb-4 groupe-item" data-nom="{{ groupe.nom|lower }}">
+                        <div class="card groupe-card shadow-sm h-100">
+                            <div class="groupe-header text-center">
+                                <div class="groupe-avatar mx-auto mb-3">
+                                    {{ groupe.nom|first|upper }}
+                                </div>
+                                <h4 class="font-weight-bold mb-2">{{ groupe.nom }}</h4>
+                                {% if groupe.filiere %}
+                                    <span class="filiere-badge {{ filiereClass }}">{{ groupe.filiere.nom }}</span>
+                                {% else %}
+                                    <span class="public-badge">{% if groupe.isPublic %}Public{% else %}Privé{% endif %}</span>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text text-muted mb-3">
+                                    {% if groupe.description %}
+                                        {{ groupe.description[:100] }}{% if groupe.description|length > 100 %}...{% endif %}
+                                    {% else %}
+                                        Groupe de révision
+                                    {% endif %}
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="membre-badge">
+                                        <i class="fas fa-users mr-1"></i>
+                                        {{ groupe.membres.count }} membre{% if groupe.membres.count != 1 %}s{% endif %}
+                                    </span>
+                                    <span class="{{ groupe.isPublic ? 'public-badge' : 'private-badge' }}">
+                                        {% if groupe.isPublic %}
+                                            <i class="fas fa-globe mr-1"></i>Public
+                                        {% else %}
+                                            <i class="fas fa-lock mr-1"></i>Privé
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <a href="{{ path('chat_groupe', {'id': groupe.id}) }}" class="action-btn">
+                                        <i class="fas fa-comments mr-2"></i>
+                                        Chat
+                                    </a>
+                                    <a href="{{ path('groupe_show', {'id': groupe.id}) }}" class="action-btn-outline">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        Détails
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchGroupe');
+        const groupItems = document.querySelectorAll('.groupe-item');
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                groupItems.forEach(function(item) {
+                    const nom = item.dataset.nom;
+                    if (nom.includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+</script>
 {% endblock %}
