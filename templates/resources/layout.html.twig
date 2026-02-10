@@ -1,0 +1,163 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <!--? slider Area Start-->
+    <section class="slider-area ">
+        <div class="slider-active">
+            <!-- Single Slider -->
+            <div class="single-slider slider-height d-flex align-items-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-7 col-md-12">
+                            <div class="hero__caption">
+                                <h1 data-animation="fadeInLeft" data-delay="0.2s">Online learning<br> platform</h1>
+                                <p data-animation="fadeInLeft" data-delay="0.4s">Build skills with courses, certificates, and degrees online from world-class universities and companies</p>
+                                <a href="#" class="btn hero-btn" data-animation="fadeInLeft" data-delay="0.7s">Join for Free</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>          
+            </div>
+        </div>
+    </section>
+    
+    <!-- ? services-area -->
+    <div class="services-area">
+        <div class="container">
+            <div class="row justify-content-sm-center">
+                <div class="col-lg-4 col-md-6 col-sm-8">
+                    <div class="single-services mb-30">
+                        <div class="features-icon">
+                            <img src="{{ asset('assets/img/icon/icon1.svg') }}" alt="">
+                        </div>
+                        <div class="features-caption">
+                            <h3>60+ UX courses</h3>
+                            <p>The automated process all your website tasks.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-8">
+                    <div class="single-services mb-30">
+                        <div class="features-icon">
+                            <img src="{{ asset('assets/img/icon/icon2.svg') }}" alt="">
+                        </div>
+                        <div class="features-caption">
+                            <h3>Expert instructors</h3>
+                            <p>The automated process all your website tasks.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-8">
+                    <div class="single-services mb-30">
+                        <div class="features-icon">
+                            <img src="{{ asset('assets/img/icon/icon3.svg') }}" alt="">
+                        </div>
+                        <div class="features-caption">
+                            <h3>Life time access</h3>
+                            <p>The automated process all your website tasks.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROTOTYPE: Pedagogical Library Section -->
+    {# --- MOCK DATA START --- #}
+    {% set ressources = [
+        {
+            'id': 1,
+            'titre': 'Mathématiques: Algèbre Linéaire',
+            'description': 'Un cours complet sur les espaces vectoriels et les matrices. Idéal pour le BAC.',
+            'auteur': 'Pr. Jean Dupont',
+            'typeFichier': 'PDF',
+            'noteMoyenne': 4.5,
+            'image': 'assets/img/gallery/featured1.png',
+            'tags': 'Maths, Algèbre'
+        },
+        {
+            'id': 2,
+            'titre': 'Physique: Mécanique Quantique',
+            'description': 'Introduction aux principes fondamentaux de la physique moderne et ondes.',
+            'auteur': 'Dr. Sara Mansour',
+            'typeFichier': 'VIDEO',
+            'noteMoyenne': 4.8,
+            'image': 'assets/img/gallery/featured2.png',
+            'tags': 'Physique, Science'
+        },
+        {
+            'id': 3,
+            'titre': 'Informatique: Algorithmique',
+            'description': 'Apprenez les bases de la logique de programmation et des structures de données.',
+            'auteur': 'Dev Academy',
+            'typeFichier': 'LIEN',
+            'noteMoyenne': 3.9,
+            'image': 'assets/img/gallery/featured3.png',
+            'tags': 'Informatique, Code'
+        }
+    ] %}
+    {# --- MOCK DATA END --- #}
+
+    <div class="courses-area section-padding40 fix">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-7 col-lg-8">
+                    <div class="section-tittle text-center mb-55">
+                        <h2>Bibliothèque de Ressources</h2>
+                        <p>Explorez nos supports pédagogiques (PDF, Vidéos, Liens)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                {% for r in ressources %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="properties pb-20">
+                        <div class="properties__card">
+                            <div class="properties__img overlay1">
+                                <a href="{{ path('test_details') }}">
+                                    <img src="{{ asset(r.image) }}" alt="">
+                                </a>
+                                <!-- Type Badge -->
+                                <div style="position: absolute; top: 15px; left: 15px; background: #C86FFF; color: white; padding: 5px 12px; border-radius: 4px; z-index: 3; font-weight: bold; font-size: 12px;">
+                                    {{ r.typeFichier }}
+                                </div>
+                            </div>
+                            <div class="properties__caption">
+                                <p>{{ r.tags }}</p>
+                                <h3><a href="{{ path('test_details') }}">{{ r.titre }}</a></h3>
+                                <p>{{ r.description }}</p>
+                                <div class="properties__footer d-flex justify-content-between align-items-center">
+                                    <div class="restaurant-name">
+                                        <div class="rating">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star-half"></i>
+                                            <span style="color: #4255A4; margin-left: 5px;">({{ r.noteMoyenne }})</span>
+                                        </div>
+                                    </div>
+                                    <div class="price">
+                                        <span style="font-size: 14px; color: #707b8e;">{{ r.auteur }}</span>
+                                    </div>
+                                </div>
+                                <a href="{{ path('test_details') }}" class="border-btn border-btn2">Consulter le cours</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- View More Button -->
+            <div class="row justify-content-center">
+                <div class="col-xl-12">
+                    <div class="section-tittle text-center mt-20">
+                        <a href="#" class="border-btn">Voir toutes les ressources</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
