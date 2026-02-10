@@ -1,0 +1,332 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Questions - {{ quiz.titre }} - Admin{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        /* Background dégradé violet pour le header */
+        .header-area,
+        .header-area.header-transparent,
+        .header-sticky {
+            background: linear-gradient(90deg, #5b6fd8 0%, #8b5cf6 50%, #a855f7 100%) !important;
+        }
+
+        .main-menu nav > ul > li > a {
+            color: white !important;
+        }
+
+        .slider-area {
+            display: none;
+        }
+
+        body {
+            background: #f5f7fa;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 120px auto 50px;
+            padding: 0 15px;
+        }
+
+        .quiz-info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .quiz-info-card h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+
+        .quiz-info-card p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .btn-back {
+            background: white;
+            color: #667eea;
+            padding: 10px 25px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: #f7fafc;
+            color: #667eea;
+        }
+
+        .btn-add-question {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-add-question:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+            color: white;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .question-type {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 18px;
+            color: #2d3748;
+            font-weight: 600;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+
+        .choices-list {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+
+        .choice-item {
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            background: #f7fafc;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .choice-item.correct {
+            background: #c6f6d5;
+            border-left: 4px solid #38a169;
+        }
+
+        .choice-letter {
+            width: 30px;
+            height: 30px;
+            background: white;
+            border: 2px solid #cbd5e0;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .choice-item.correct .choice-letter {
+            background: #38a169;
+            border-color: #38a169;
+            color: white;
+        }
+
+        .question-meta {
+            display: flex;
+            gap: 20px;
+            color: #718096;
+            font-size: 14px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .question-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            padding: 6px 15px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-edit-question {
+            background: #4299e1;
+            color: white;
+        }
+
+        .btn-edit-question:hover {
+            background: #3182ce;
+        }
+
+        .btn-delete-question {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-delete-question:hover {
+            background: #e53e3e;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #cbd5e0;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #a0aec0;
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border-left: 4px solid #38a169;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    
+    <div class="quiz-info-card">
+        <h1>{{ quiz.titre }}</h1>
+        <p>{{ quiz.description }}</p>
+    </div>
+
+    <div class="actions-bar">
+        <a href="{{ path('admin_quiz_index') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Retour aux quiz
+        </a>
+        <a href="{{ path('admin_question_new', {id: quiz.id}) }}" class="btn-add-question">
+            <i class="fas fa-plus"></i> Ajouter une Question
+        </a>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> {{ message }}
+        </div>
+    {% endfor %}
+
+    {% if questions|length > 0 %}
+        {% for question in questions %}
+        <div class="question-card">
+            <div class="question-header">
+                <div>
+                    <span class="question-number">Question {{ loop.index }}</span>
+                    <span class="question-type">{{ question.typeQuestion }}</span>
+                </div>
+                <div class="question-actions">
+                    <form method="POST" action="{{ path('admin_question_delete', {id: question.id}) }}" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette question ?');">
+                        <button type="submit" class="btn-action btn-delete-question">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="question-text">{{ question.enonce }}</div>
+
+           <div class="choices-list">
+    {% set letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'] %}
+    {% for choix in question.choix %}
+    <div class="choice-item {% if choix.estCorrect %}correct{% endif %}">
+        <span class="choice-letter">{{ letters[loop.index0] }}</span>
+        <span>{{ choix.libelle }}</span>
+        {% if choix.estCorrect %}
+            <i class="fas fa-check" style="color: #38a169; margin-left: auto;"></i>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+            <div class="question-meta">
+                <span><i class="fas fa-star"></i> {{ question.score }} points</span>
+                <span><i class="fas fa-book"></i> {{ question.matiere.nom }}</span>
+                <span><i class="fas fa-bookmark"></i> {{ question.chapitre.titre }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-question-circle"></i>
+            <h3>Aucune question pour le moment</h3>
+            <p>Commencez par ajouter des questions à ce quiz</p>
+            <a href="{{ path('admin_question_new', {id: quiz.id}) }}" class="btn-add-question">
+                <i class="fas fa-plus"></i> Ajouter une question
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

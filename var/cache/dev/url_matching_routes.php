@@ -16,6 +16,11 @@ return [
         '/_profiler/xdebug' => [[['_route' => '_profiler_xdebug', '_controller' => 'web_profiler.controller.profiler::xdebugAction'], null, null, null, false, false, null]],
         '/_profiler/open' => [[['_route' => '_profiler_open_file', '_controller' => 'web_profiler.controller.profiler::openAction'], null, null, null, false, false, null]],
         '/home' => [[['_route' => 'app_home', '_controller' => 'App\\Controller\\HomeController::index'], null, null, null, false, false, null]],
+        '/admin/quiz' => [[['_route' => 'admin_quiz_index', '_controller' => 'App\\Controller\\QuizAdminController::index'], null, null, null, true, false, null]],
+        '/admin/quiz/nouveau' => [[['_route' => 'admin_quiz_new', '_controller' => 'App\\Controller\\QuizAdminController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        '/quiz' => [[['_route' => 'app_quiz', '_controller' => 'App\\Controller\\QuizController::index'], null, null, null, false, false, null]],
+        '/quiz/start' => [[['_route' => 'app_quiz_start', '_controller' => 'App\\Controller\\QuizController::start'], null, null, null, false, false, null]],
+        '/quiz/submit' => [[['_route' => 'app_quiz_submit', '_controller' => 'App\\Controller\\QuizController::submit'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
     ],
     [ // $regexpList
         0 => '{^(?'
@@ -37,6 +42,30 @@ return [
                         .')'
                     .')'
                 .')'
+                .'|/a(?'
+                    .'|pi/chapitres/matiere/([^/]++)(*:236)'
+                    .'|dmin/qu(?'
+                        .'|estion/([^/]++)/choix/(?'
+                            .'|add(*:282)'
+                            .'|([^/]++)/(?'
+                                .'|delete(*:308)'
+                                .'|toggle\\-correct(*:331)'
+                            .')'
+                        .')'
+                        .'|iz/(?'
+                            .'|api/chapitres/matiere/([^/]++)(*:377)'
+                            .'|([^/]++)/(?'
+                                .'|modifier(*:405)'
+                                .'|supprimer(*:422)'
+                                .'|question(?'
+                                    .'|s(*:442)'
+                                    .'|/nouvelle(*:459)'
+                                .')'
+                            .')'
+                            .'|question/([^/]++)/supprimer(*:496)'
+                        .')'
+                    .')'
+                .')'
             .')/?$}sDu',
     ],
     [ // $dynamicRoutes
@@ -47,8 +76,18 @@ return [
         148 => [[['_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'], ['token'], null, null, false, false, null]],
         168 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
         181 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
-        191 => [
-            [['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null],
+        191 => [[['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null]],
+        236 => [[['_route' => 'api_chapitres_by_matiere', '_controller' => 'App\\Controller\\ChapitreApiController::getByMatiere'], ['id'], ['GET' => 0], null, false, true, null]],
+        282 => [[['_route' => 'admin_choix_add', '_controller' => 'App\\Controller\\ChoixController::add'], ['questionId'], ['POST' => 0], null, false, false, null]],
+        308 => [[['_route' => 'admin_choix_delete', '_controller' => 'App\\Controller\\ChoixController::delete'], ['questionId', 'choixId'], ['POST' => 0], null, false, false, null]],
+        331 => [[['_route' => 'admin_choix_toggle_correct', '_controller' => 'App\\Controller\\ChoixController::toggleCorrect'], ['questionId', 'choixId'], ['POST' => 0], null, false, false, null]],
+        377 => [[['_route' => 'api_chapitres_matiere', '_controller' => 'App\\Controller\\QuestionAdminController::chapitresByMatiere'], ['matiereId'], ['GET' => 0], null, false, true, null]],
+        405 => [[['_route' => 'admin_quiz_edit', '_controller' => 'App\\Controller\\QuizAdminController::edit'], ['id'], null, null, false, false, null]],
+        422 => [[['_route' => 'admin_quiz_delete', '_controller' => 'App\\Controller\\QuizAdminController::delete'], ['id'], ['POST' => 0], null, false, false, null]],
+        442 => [[['_route' => 'admin_quiz_questions', '_controller' => 'App\\Controller\\QuizAdminController::questions'], ['id'], null, null, false, false, null]],
+        459 => [[['_route' => 'admin_question_new', '_controller' => 'App\\Controller\\QuizAdminController::newQuestion'], ['id'], null, null, false, false, null]],
+        496 => [
+            [['_route' => 'admin_question_delete', '_controller' => 'App\\Controller\\QuizAdminController::deleteQuestion'], ['id'], ['POST' => 0], null, false, false, null],
             [null, null, null, null, false, false, 0],
         ],
     ],

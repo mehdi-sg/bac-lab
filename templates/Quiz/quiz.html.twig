@@ -1,0 +1,581 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Quiz & Tests - BacLab{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .quiz-selector {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+        }
+        
+        .step-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #ddd;
+            color: #666;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        
+        .step.active .step-number {
+            background: linear-gradient(to right, #2d5be3, #1a3db8);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .step.completed .step-number {
+            background: #28a745;
+            color: white;
+        }
+        
+        .step-title {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .step.active .step-title {
+            color: #2d5be3;
+            font-weight: 600;
+        }
+        
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .selection-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .selection-card:hover {
+            border-color: #2d5be3;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(45, 91, 227, 0.1);
+        }
+        
+        .selection-card.selected {
+            border-color: #2d5be3;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+        }
+        
+        .selection-card .icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        
+        .selection-card h4 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .selection-card p {
+            font-size: 13px;
+            color: #666;
+            margin: 0;
+        }
+        
+        .quiz-summary {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            border-left: 4px solid #2d5be3;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .quiz-summary.show {
+            display: block;
+            animation: fadeInUp 0.5s;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .summary-value {
+            color: #2d5be3;
+            font-weight: 600;
+        }
+        
+        .btn-start-quiz {
+            background: linear-gradient(to right, #2d5be3, #1a3db8);
+            color: white;
+            padding: 15px 50px;
+            border-radius: 50px;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        
+        .btn-start-quiz:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(45, 91, 227, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-start-quiz:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .btn-nav {
+            padding: 12px 30px;
+            border-radius: 25px;
+            border: 2px solid #2d5be3;
+            background: white;
+            color: #2d5be3;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-nav:hover {
+            background: #2d5be3;
+            color: white;
+        }
+        
+        .btn-nav.next {
+            background: #2d5be3;
+            color: white;
+        }
+        
+        .btn-nav.next:hover {
+            background: #1a3db8;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="slider-area" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="slider-height2 d-flex align-items-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="hero-cap text-center">
+                        <h2 style="color: white;">Quiz & Tests de Révision</h2>
+                        <p style="color: rgba(255,255,255,0.9); font-size: 18px;">Évaluez vos connaissances et progressez à votre rythme</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="about-area section-padding">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                
+                <!-- Indicateur d'étapes -->
+                <div class="step-indicator">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Choisir une matière</div>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Choisir un chapitre</div>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Choisir le niveau</div>
+                    </div>
+                </div>
+
+                <!-- Sélecteur de Quiz -->
+                <div class="quiz-selector">
+                    
+                    <!-- Étape 1: Sélection de la matière -->
+                    <div id="step-matiere" class="step-content">
+                        <h3 class="text-center mb-4">Sélectionnez une matière</h3>
+                        <div class="selection-grid">
+                            <div class="selection-card" data-matiere="mathematiques">
+                                <div class="icon">📐</div>
+                                <h4>Mathématiques</h4>
+                                <p>Algèbre, Analyse, Géométrie</p>
+                            </div>
+                            <div class="selection-card" data-matiere="physique">
+                                <div class="icon">⚛️</div>
+                                <h4>Physique</h4>
+                                <p>Mécanique, Électricité, Optique</p>
+                            </div>
+                            <div class="selection-card" data-matiere="sciences">
+                                <div class="icon">🧬</div>
+                                <h4>Sciences SVT</h4>
+                                <p>Biologie, Géologie</p>
+                            </div>
+                            <div class="selection-card" data-matiere="informatique">
+                                <div class="icon">💻</div>
+                                <h4>Informatique</h4>
+                                <p>Algorithmes, Programmation</p>
+                            </div>
+                            <div class="selection-card" data-matiere="francais">
+                                <div class="icon">📚</div>
+                                <h4>Français</h4>
+                                <p>Grammaire, Littérature</p>
+                            </div>
+                            <div class="selection-card" data-matiere="arabe">
+                                <div class="icon">📖</div>
+                                <h4>Arabe</h4>
+                                <p>Langue et Littérature</p>
+                            </div>
+                            <div class="selection-card" data-matiere="anglais">
+                                <div class="icon">🌍</div>
+                                <h4>Anglais</h4>
+                                <p>Grammar, Vocabulary</p>
+                            </div>
+                            <div class="selection-card" data-matiere="philosophie">
+                                <div class="icon">🤔</div>
+                                <h4>Philosophie</h4>
+                                <p>Réflexion et Pensée critique</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 2: Sélection du chapitre -->
+                    <div id="step-chapitre" class="step-content hidden">
+                        <h3 class="text-center mb-4">Sélectionnez un chapitre</h3>
+                        <div id="chapitres-grid" class="selection-grid">
+                            <!-- Les chapitres seront chargés dynamiquement ici -->
+                        </div>
+                    </div>
+
+                    <!-- Étape 3: Sélection du niveau -->
+                    <div id="step-niveau" class="step-content hidden">
+                        <h3 class="text-center mb-4">Sélectionnez le niveau de difficulté</h3>
+                        <div class="selection-grid">
+                            <div class="selection-card" data-niveau="facile">
+                                <div class="icon">😊</div>
+                                <h4>Facile</h4>
+                                <p>Questions de base</p>
+                            </div>
+                            <div class="selection-card" data-niveau="moyen">
+                                <div class="icon">🤓</div>
+                                <h4>Moyen</h4>
+                                <p>Questions intermédiaires</p>
+                            </div>
+                            <div class="selection-card" data-niveau="difficile">
+                                <div class="icon">🎓</div>
+                                <h4>Difficile</h4>
+                                <p>Questions avancées</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Boutons de navigation -->
+                    <div class="navigation-buttons">
+                        <button class="btn-nav prev hidden" id="btn-prev">← Précédent</button>
+                        <button class="btn-nav next" id="btn-next" disabled>Suivant →</button>
+                    </div>
+                </div>
+
+                <!-- Résumé et bouton de démarrage -->
+                <div class="quiz-summary" id="quiz-summary">
+                    <h3 class="text-center mb-4">📝 Récapitulatif de votre quiz</h3>
+                    <div class="summary-item">
+                        <span class="summary-label">Matière :</span>
+                        <span class="summary-value" id="summary-matiere">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Chapitre :</span>
+                        <span class="summary-value" id="summary-chapitre">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Niveau :</span>
+                        <span class="summary-value" id="summary-niveau">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Nombre de questions :</span>
+                        <span class="summary-value">10 questions</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Durée estimée :</span>
+                        <span class="summary-value">20 minutes</span>
+                    </div>
+                    <div class="text-center">
+                        <button class="btn-start-quiz" id="btn-start-quiz">
+                            🚀 Commencer le Quiz
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+        // Données des chapitres par matière
+        const chapitres = {
+            'mathematiques': [
+                { id: 1, nom: 'Limites et Continuité', icon: '∞' },
+                { id: 2, nom: 'Dérivabilité', icon: 'f\'(x)' },
+                { id: 3, nom: 'Étude de fonctions', icon: '📈' },
+                { id: 4, nom: 'Primitives et Intégrales', icon: '∫' },
+                { id: 5, nom: 'Nombres Complexes', icon: 'ℂ' },
+                { id: 6, nom: 'Géométrie dans l\'espace', icon: '📐' }
+            ],
+            'physique': [
+                { id: 1, nom: 'Mécanique du point', icon: '🎯' },
+                { id: 2, nom: 'Électricité', icon: '⚡' },
+                { id: 3, nom: 'Oscillations mécaniques', icon: '〰️' },
+                { id: 4, nom: 'Optique géométrique', icon: '🔍' },
+                { id: 5, nom: 'Ondes', icon: '🌊' }
+            ],
+            'sciences': [
+                { id: 1, nom: 'La génétique', icon: '🧬' },
+                { id: 2, nom: 'L\'immunologie', icon: '🦠' },
+                { id: 3, nom: 'La géologie', icon: '🌋' },
+                { id: 4, nom: 'L\'écologie', icon: '🌿' }
+            ],
+            'informatique': [
+                { id: 1, nom: 'Algorithmes', icon: '⚙️' },
+                { id: 2, nom: 'Structures de données', icon: '📊' },
+                { id: 3, nom: 'Bases de données', icon: '💾' },
+                { id: 4, nom: 'Réseaux', icon: '🌐' }
+            ],
+            'francais': [
+                { id: 1, nom: 'La Boîte à Merveilles', icon: '📕' },
+                { id: 2, nom: 'Antigone', icon: '🎭' },
+                { id: 3, nom: 'Le Dernier Jour d\'un Condamné', icon: '📘' },
+                { id: 4, nom: 'Grammaire', icon: '✍️' }
+            ],
+            'arabe': [
+                { id: 1, nom: 'النحو والصرف', icon: '📝' },
+                { id: 2, nom: 'البلاغة', icon: '🎨' },
+                { id: 3, nom: 'الأدب', icon: '📚' }
+            ],
+            'anglais': [
+                { id: 1, nom: 'Grammar', icon: '📖' },
+                { id: 2, nom: 'Vocabulary', icon: '📚' },
+                { id: 3, nom: 'Reading Comprehension', icon: '📰' },
+                { id: 4, nom: 'Writing Skills', icon: '✏️' }
+            ],
+            'philosophie': [
+                { id: 1, nom: 'La Conscience', icon: '💭' },
+                { id: 2, nom: 'L\'Inconscient', icon: '🧠' },
+                { id: 3, nom: 'La Liberté', icon: '🕊️' },
+                { id: 4, nom: 'Le Devoir', icon: '⚖️' }
+            ]
+        };
+
+        let currentStep = 1;
+        let selections = {
+            matiere: null,
+            chapitre: null,
+            niveau: null
+        };
+
+        // Gestion des étapes
+        function updateStepIndicator() {
+            document.querySelectorAll('.step').forEach((step, index) => {
+                const stepNum = index + 1;
+                step.classList.remove('active', 'completed');
+                
+                if (stepNum < currentStep) {
+                    step.classList.add('completed');
+                } else if (stepNum === currentStep) {
+                    step.classList.add('active');
+                }
+            });
+        }
+
+        function showStep(stepNum) {
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            if (stepNum === 1) {
+                document.getElementById('step-matiere').classList.remove('hidden');
+                document.getElementById('btn-prev').classList.add('hidden');
+            } else if (stepNum === 2) {
+                document.getElementById('step-chapitre').classList.remove('hidden');
+                document.getElementById('btn-prev').classList.remove('hidden');
+            } else if (stepNum === 3) {
+                document.getElementById('step-niveau').classList.remove('hidden');
+                document.getElementById('btn-prev').classList.remove('hidden');
+            }
+            
+            updateStepIndicator();
+            updateNextButton();
+        }
+
+        function updateNextButton() {
+            const btnNext = document.getElementById('btn-next');
+            
+            if (currentStep === 1 && selections.matiere) {
+                btnNext.disabled = false;
+            } else if (currentStep === 2 && selections.chapitre) {
+                btnNext.disabled = false;
+            } else if (currentStep === 3 && selections.niveau) {
+                btnNext.disabled = false;
+            } else {
+                btnNext.disabled = true;
+            }
+        }
+
+        // Sélection de matière
+        document.querySelectorAll('#step-matiere .selection-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('#step-matiere .selection-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selections.matiere = this.dataset.matiere;
+                updateNextButton();
+                
+                // Charger les chapitres
+                loadChapitres(selections.matiere);
+            });
+        });
+
+        // Charger les chapitres dynamiquement
+        function loadChapitres(matiere) {
+            const grid = document.getElementById('chapitres-grid');
+            grid.innerHTML = '';
+            
+            if (chapitres[matiere]) {
+                chapitres[matiere].forEach(chapitre => {
+                    const card = document.createElement('div');
+                    card.className = 'selection-card';
+                    card.dataset.chapitre = chapitre.id;
+                    card.innerHTML = `
+                        <div class="icon">${chapitre.icon}</div>
+                        <h4>${chapitre.nom}</h4>
+                        <p>Chapitre ${chapitre.id}</p>
+                    `;
+                    
+                    card.addEventListener('click', function() {
+                        document.querySelectorAll('#step-chapitre .selection-card').forEach(c => c.classList.remove('selected'));
+                        this.classList.add('selected');
+                        selections.chapitre = chapitre.nom;
+                        updateNextButton();
+                    });
+                    
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        // Sélection du niveau
+        document.querySelectorAll('#step-niveau .selection-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('#step-niveau .selection-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selections.niveau = this.dataset.niveau;
+                updateNextButton();
+                showSummary();
+            });
+        });
+
+        // Navigation
+        document.getElementById('btn-next').addEventListener('click', function() {
+            if (currentStep < 3) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+
+        document.getElementById('btn-prev').addEventListener('click', function() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+                document.getElementById('quiz-summary').classList.remove('show');
+            }
+        });
+
+        // Afficher le résumé
+        function showSummary() {
+            document.getElementById('summary-matiere').textContent = selections.matiere ? selections.matiere.charAt(0).toUpperCase() + selections.matiere.slice(1) : '-';
+            document.getElementById('summary-chapitre').textContent = selections.chapitre || '-';
+            document.getElementById('summary-niveau').textContent = selections.niveau ? selections.niveau.charAt(0).toUpperCase() + selections.niveau.slice(1) : '-';
+            
+            if (selections.matiere && selections.chapitre && selections.niveau) {
+                document.getElementById('quiz-summary').classList.add('show');
+            }
+        }
+
+        // Démarrer le quiz
+        document.getElementById('btn-start-quiz').addEventListener('click', function() {
+    // Rediriger vers la page du quiz avec les paramètres
+    window.location.href = `/quiz/start?matiere=${selections.matiere}&chapitre=${encodeURIComponent(selections.chapitre)}&niveau=${selections.niveau}`;
+});
+
+        // Initialisation
+        showStep(1);
+    </script>
+{% endblock %}

@@ -15,7 +15,7 @@ class NamedSerializerConfig
     private $includeBuiltInNormalizers;
     private $includeBuiltInEncoders;
     private $_usedProperties = [];
-    
+
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
@@ -25,10 +25,10 @@ class NamedSerializerConfig
     {
         $this->_usedProperties['nameConverter'] = true;
         $this->nameConverter = $value;
-    
+
         return $this;
     }
-    
+
     /**
      * @param ParamConfigurator|list<ParamConfigurator|mixed> $value
      *
@@ -38,10 +38,10 @@ class NamedSerializerConfig
     {
         $this->_usedProperties['defaultContext'] = true;
         $this->defaultContext = $value;
-    
+
         return $this;
     }
-    
+
     /**
      * Whether to include the built-in normalizers
      * @default true
@@ -52,10 +52,10 @@ class NamedSerializerConfig
     {
         $this->_usedProperties['includeBuiltInNormalizers'] = true;
         $this->includeBuiltInNormalizers = $value;
-    
+
         return $this;
     }
-    
+
     /**
      * Whether to include the built-in encoders
      * @default true
@@ -66,10 +66,10 @@ class NamedSerializerConfig
     {
         $this->_usedProperties['includeBuiltInEncoders'] = true;
         $this->includeBuiltInEncoders = $value;
-    
+
         return $this;
     }
-    
+
     public function __construct(array $config = [])
     {
         if (array_key_exists('name_converter', $config)) {
@@ -77,30 +77,30 @@ class NamedSerializerConfig
             $this->nameConverter = $config['name_converter'];
             unset($config['name_converter']);
         }
-    
+
         if (array_key_exists('default_context', $config)) {
             $this->_usedProperties['defaultContext'] = true;
             $this->defaultContext = $config['default_context'];
             unset($config['default_context']);
         }
-    
+
         if (array_key_exists('include_built_in_normalizers', $config)) {
             $this->_usedProperties['includeBuiltInNormalizers'] = true;
             $this->includeBuiltInNormalizers = $config['include_built_in_normalizers'];
             unset($config['include_built_in_normalizers']);
         }
-    
+
         if (array_key_exists('include_built_in_encoders', $config)) {
             $this->_usedProperties['includeBuiltInEncoders'] = true;
             $this->includeBuiltInEncoders = $config['include_built_in_encoders'];
             unset($config['include_built_in_encoders']);
         }
-    
+
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-    
+
     public function toArray(): array
     {
         $output = [];
@@ -116,7 +116,7 @@ class NamedSerializerConfig
         if (isset($this->_usedProperties['includeBuiltInEncoders'])) {
             $output['include_built_in_encoders'] = $this->includeBuiltInEncoders;
         }
-    
+
         return $output;
     }
 

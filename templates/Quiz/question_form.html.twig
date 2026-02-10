@@ -1,0 +1,480 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ edit ? 'Modifier' : 'Nouvelle' }} Question - Admin{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        /* Background dégradé violet pour le header */
+        .header-area,
+        .header-area.header-transparent,
+        .header-sticky {
+            background: linear-gradient(90deg, #5b6fd8 0%, #8b5cf6 50%, #a855f7 100%) !important;
+        }
+
+        .main-menu nav > ul > li > a {
+            color: white !important;
+        }
+
+        .slider-area {
+            display: none;
+        }
+
+        body {
+            background: #f5f7fa;
+        }
+
+        .admin-container {
+            max-width: 900px;
+            margin: 120px auto 50px;
+            padding: 0 15px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .form-card h1 {
+            color: #2d3748;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-section {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .form-section h3 {
+            color: #2d3748;
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .choices-container {
+            margin-top: 20px;
+        }
+
+        .choice-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .choice-letter {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .choice-input-group input[type="text"] {
+            flex: 1;
+        }
+
+        .choice-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .choice-checkbox:hover {
+            border-color: #48bb78;
+        }
+
+        .choice-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .choice-checkbox label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 13px;
+            color: #4a5568;
+        }
+
+        .btn-add-choice {
+            background: #4299e1;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-add-choice:hover {
+            background: #3182ce;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .help-text {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-container {
+                margin-top: 100px;
+            }
+
+            .form-card {
+                padding: 25px;
+            }
+
+            .choice-input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    
+    <div class="form-card">
+        <h1>{{ edit ? '✏️ Modifier la Question' : '➕ Nouvelle Question' }}</h1>
+        
+        <form method="POST"
+      action="{{ path('admin_question_new', {id: quiz.id}) }}"
+      id="question-form">
+
+            
+            <!-- Énoncé de la question -->
+            <div class="form-group">
+                <label for="enonce">Énoncé de la question *</label>
+                <textarea 
+                    id="enonce" 
+                    name="enonce" 
+                    required
+                    placeholder="Ex: Quelle est la dérivée de ln(x) ?"
+                >{{ question ? question.enonce : '' }}</textarea>
+            </div>
+
+            <!-- Type et Score -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="type_question">Type de question *</label>
+                    <select id="type_question" name="type_question" required>
+                        <option value="">-- Sélectionner --</option>
+                        <option value="QCM" {{ question and question.typeQuestion == 'QCM' ? 'selected' : '' }}>QCM (Choix multiples)</option>
+                        <option value="VRAI_FAUX" {{ question and question.typeQuestion == 'VRAI_FAUX' ? 'selected' : '' }}>Vrai / Faux</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="score">Points *</label>
+                    <input 
+                        type="number" 
+                        id="score" 
+                        name="score" 
+                        value="{{ question ? question.score : 1 }}" 
+                        min="1"
+                        max="20"
+                        required
+                        placeholder="1"
+                    >
+                    <div class="help-text">Nombre de points pour cette question</div>
+                </div>
+            </div>
+
+            <!-- Matière et Chapitre -->
+            <div class="form-section">
+                <h3>📚 Classification</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="matiere_id">Matière *</label>
+                        <select id="matiere_id" name="matiere_id" required>
+                            <option value="">-- Sélectionner une matière --</option>
+                            {% for matiere in matieres %}
+                                <option 
+                                    value="{{ matiere.id }}" 
+                                    data-filiere="{{ matiere.filiere.id }}"
+                                    {{ question and question.matiere.id == matiere.id ? 'selected' : '' }}
+                                >
+                                    {{ matiere.nom }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="chapitre_id">Chapitre *</label>
+                        <select id="chapitre_id" name="chapitre_id" required>
+                            <option value="">-- Sélectionnez d'abord une matière --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Choix de réponses -->
+            <div class="form-section">
+                <h3>✅ Choix de réponses</h3>
+                <div class="help-text" style="margin-bottom: 20px;">
+                    Ajoutez les différentes réponses possibles et cochez la/les bonne(s) réponse(s)
+                </div>
+                
+                <div class="choices-container" id="choices-container">
+                    <!-- Les choix seront ajoutés ici dynamiquement -->
+                </div>
+
+                <button type="button" class="btn-add-choice" onclick="addChoice()">
+                    <i class="fas fa-plus"></i> Ajouter un choix
+                </button>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> {{ edit ? 'Enregistrer' : 'Créer la Question' }}
+                </button>
+                <a href="{{ path('admin_quiz_questions', {id: quiz.id}) }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let choiceCount = 0;
+            const letters = ['A','B','C','D','E','F','G','H','I','J'];
+
+            const matiereSelect = document.getElementById('matiere_id');
+            const chapitreSelect = document.getElementById('chapitre_id');
+            const form = document.getElementById('question-form');
+            const container = document.getElementById('choices-container');
+
+            // URL API générée par Symfony (évite les erreurs de chemin)
+            const chapitresUrlTemplate = "{{ path('api_chapitres_by_matiere', {id: 0}) }}";
+
+            if (!matiereSelect || !chapitreSelect || !form || !container) {
+                console.error("Form elements not found in DOM", {
+                    matiereSelect, chapitreSelect, form, container
+                });
+                return;
+            }
+
+            async function loadChapitres(matiereId) {
+                if (!matiereId) {
+                    chapitreSelect.innerHTML = '<option value="">-- Sélectionnez d\'abord une matière --</option>';
+                    return;
+                }
+
+                const url = chapitresUrlTemplate.replace('/0', '/' + matiereId);
+                console.log("Loading chapitres from:", url);
+
+                chapitreSelect.innerHTML = '<option value="">Chargement...</option>';
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' }
+                    });
+
+                    // Debug complet si la réponse n'est pas OK
+                    if (!response.ok) {
+                        const text = await response.text();
+                        console.error("API error:", response.status, text);
+                        chapitreSelect.innerHTML = '<option value="">Erreur API (' + response.status + ')</option>';
+                        return;
+                    }
+
+                    const chapitres = await response.json();
+                    console.log("Chapitres received:", chapitres);
+
+                    chapitreSelect.innerHTML = '<option value="">-- Sélectionner un chapitre --</option>';
+
+                    if (!Array.isArray(chapitres) || chapitres.length === 0) {
+                        chapitreSelect.innerHTML += '<option value="">Aucun chapitre trouvé</option>';
+                        return;
+                    }
+
+                    chapitres.forEach(chapitre => {
+                        const option = document.createElement('option');
+                        option.value = chapitre.id;
+                        option.textContent = chapitre.titre;
+                        chapitreSelect.appendChild(option);
+                    });
+
+                } catch (err) {
+                    console.error("Fetch failed:", err);
+                    chapitreSelect.innerHTML = '<option value="">Erreur de chargement</option>';
+                }
+            }
+
+            // Charger chapitres au changement de matière
+            matiereSelect.addEventListener('change', function() {
+                loadChapitres(this.value);
+            });
+
+            // Charger automatiquement au chargement si matière déjà sélectionnée
+            if (matiereSelect.value) {
+                loadChapitres(matiereSelect.value);
+            }
+
+            // Ajouter un choix
+            window.addChoice = function() {
+                if (choiceCount >= 10) {
+                    alert('Vous ne pouvez pas ajouter plus de 10 choix');
+                    return;
+                }
+
+                const div = document.createElement('div');
+                div.className = 'choice-input-group';
+                div.innerHTML = `
+                    <div class="choice-letter">${letters[choiceCount]}</div>
+                    <input
+                        type="text"
+                        name="choix_libelle[]"
+                        required
+                        placeholder="Entrez le texte du choix ${letters[choiceCount]}"
+                    >
+                    <div class="choice-checkbox">
+                        <input
+                            type="checkbox"
+                            name="choix_correct[]"
+                            value="${choiceCount}"
+                            id="correct_${choiceCount}"
+                        >
+                        <label for="correct_${choiceCount}">Bonne réponse</label>
+                    </div>
+                `;
+                container.appendChild(div);
+                choiceCount++;
+            };
+
+            // Init: 4 choix si nouvelle question
+            {% if not edit %}
+            for (let i = 0; i < 4; i++) addChoice();
+            {% endif %}
+
+            // Validation : au moins une bonne réponse
+            form.addEventListener('submit', function(e) {
+                const checked = document.querySelectorAll('input[name="choix_correct[]"]:checked');
+                if (checked.length === 0) {
+                    e.preventDefault();
+                    alert('Vous devez sélectionner au moins une bonne réponse !');
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,265 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Quiz - Admin{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        /* Background dégradé violet pour le header */
+        .header-area,
+        .header-area.header-transparent,
+        .header-sticky {
+            background: linear-gradient(90deg, #5b6fd8 0%, #8b5cf6 50%, #a855f7 100%) !important;
+        }
+
+        .main-menu nav > ul > li > a {
+            color: white !important;
+        }
+
+        .slider-area {
+            display: none;
+        }
+
+        body {
+            background: #f5f7fa;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 120px auto 50px;
+            padding: 0 15px;
+        }
+
+        .admin-header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+            color: #2d3748;
+            font-size: 28px;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .quiz-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .quiz-card h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .quiz-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .badge-niveau {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge-questions {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .badge-duree {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .quiz-description {
+            color: #718096;
+            font-size: 14px;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+
+        .quiz-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-action {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-view {
+            background: #4299e1;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #3182ce;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #38a169;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #e53e3e;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border-left: 4px solid #38a169;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #cbd5e0;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #a0aec0;
+            margin-bottom: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    
+    <div class="admin-header">
+        <h1>📚 Gestion des Quiz</h1>
+        <a href="{{ path('admin_quiz_new') }}" class="btn-primary-custom">
+            <i class="fas fa-plus"></i> Nouveau Quiz
+        </a>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> {{ message }}
+        </div>
+    {% endfor %}
+
+    {% if quizzes|length > 0 %}
+        <div class="quiz-grid">
+            {% for quiz in quizzes %}
+            <div class="quiz-card">
+                <h3>{{ quiz.titre }}</h3>
+                
+                <div>
+                    <span class="quiz-badge badge-niveau">{{ quiz.niveau }}</span>
+                    <span class="quiz-badge badge-questions">{{ quiz.nbQuestions }} questions</span>
+                    <span class="quiz-badge badge-duree">{{ quiz.duree }} min</span>
+                </div>
+                
+                <p class="quiz-description">{{ quiz.description|slice(0, 120) }}...</p>
+                
+                <div class="quiz-actions">
+                    <a href="{{ path('admin_quiz_questions', {id: quiz.id}) }}" class="btn-action btn-view">
+                        <i class="fas fa-list"></i> Questions
+                    </a>
+                    <a href="{{ path('admin_quiz_edit', {id: quiz.id}) }}" class="btn-action btn-edit">
+                        <i class="fas fa-edit"></i> Modifier
+                    </a>
+                    <form method="POST" action="{{ path('admin_quiz_delete', {id: quiz.id}) }}" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce quiz ?');">
+                        <button type="submit" class="btn-action btn-delete">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>Aucun quiz pour le moment</h3>
+            <p>Commencez par créer votre premier quiz</p>
+            <a href="{{ path('admin_quiz_new') }}" class="btn-primary-custom">
+                <i class="fas fa-plus"></i> Créer un quiz
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
