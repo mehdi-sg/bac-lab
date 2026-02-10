@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controller;
 
 use App\Entity\Groupe;
@@ -8,6 +7,7 @@ use App\Entity\MembreGroupe;
 use App\Entity\Notification;
 use App\Entity\Utilisateur;
 use App\Form\GroupeType;
+use App\Repository\FicheRepository;
 use App\Repository\GroupeRepository;
 use App\Repository\MessageRepository;
 use App\Repository\MembreGroupeRepository;
@@ -265,6 +265,38 @@ class GroupeController extends AbstractController
         ]);
     }
 
+    #[Route('/groupes/{id}/membres', name: 'groupe_membres', methods: ['GET'])]
+    public function getMembres(
+        Groupe $groupe,
+        MembreGroupeRepository $membreGroupeRepository
+    ): Response {
+        $user = $this->getUser();
+        
+        // Get accepted members
+        $membres = $membreGroupeRepository->findBy([
+            'groupe' => $groupe,
+            'statut' => 'ACCEPTED'
+        ]);
+
+        $membresData = [];
+        foreach ($membres as $membre) {
+            $membresData[] = [
+                'id' => $membre->getId(),
+                'utilisateur' => [
+                    'id' => $membre->getUtilisateur()->getId(),
+                    'nom' => $membre->getUtilisateur()->getProfil()?->getNom() ?? $membre->getUtilisateur()->getEmail(),
+                ],
+                'role' => $membre->getRoleMembre(),
+                'date' => $membre->getDateJoint()->format('d/m/Y H:i'),
+            ];
+        }
+
+        return $this->json([
+            'success' => true,
+            'requests' => $membresData,
+        ]);
+    }
+
     #[Route('/groupes/{id}/accepter/{membreId}', name: 'groupe_accept_member', methods: ['POST'])]
     public function acceptMember(
         Groupe $groupe,
@@ -501,7 +533,8 @@ class GroupeController extends AbstractController
         Request $request,
         Groupe $groupe,
         EntityManagerInterface $entityManager,
-        MembreGroupeRepository $membreGroupeRepository
+        MembreGroupeRepository $membreGroupeRepository,
+        FicheRepository $ficheRepository
     ): Response {
         $user = $this->getUser();
         
@@ -524,16 +557,66 @@ class GroupeController extends AbstractController
         }
 
         $contenu = $request->request->get('contenu', '');
+        $ficheId = $request->request->get('ficheId', null);
         
-        if (empty(trim($contenu))) {
+        // Handle file upload
+        $file = $request->files->get('file');
+        $filePath = null;
+        $fileName = null;
+        $typeMessage = 'TEXTE';
+        
+        if ($file) {
+            $uploadDir = $this->getParameter('kernel.project_dir') . '/public/uploads/chat/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            
+            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $originalName);
+            $extension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
+            $newFileName = $safeName . '_' . uniqid() . '.' . strtolower($extension);
+            
+            // Get MIME type BEFORE moving the file
+            $mimeType = $file->getMimeType() ?? '';
+            
+            $file->move($uploadDir, $newFileName);
+            $filePath = '/uploads/chat/' . $newFileName;
+            $fileName = $file->getClientOriginalName();
+            
+            // Set type based on file type
+            if (strpos($mimeType, 'image/') === 0) {
+                $typeMessage = 'IMAGE';
+            } elseif ($mimeType === 'application/pdf' || strtolower($extension) === 'pdf') {
+                $typeMessage = 'PDF';
+            }
+        }
+        
+        // Handle fiche reference
+        $fiche = null;
+        if ($ficheId) {
+            $fiche = $ficheRepository->find($ficheId);
+        }
+        
+        // Validate: at least one of contenu, file, or fiche must be present
+        if (empty(trim($contenu)) && !$file && !$fiche) {
             return $this->json(['error' => 'Le message ne peut pas être vide'], 400);
         }
 
         $message = new Message();
         $message->setContenu($contenu);
-        $message->setTypeMessage('TEXTE');
+        $message->setTypeMessage($typeMessage);
         $message->setExpediteur($user);
         $message->setGroupe($groupe);
+        
+        if ($filePath) {
+            $message->setFilePath($filePath);
+            $message->setFileName($fileName);
+        }
+        
+        if ($fiche) {
+            $message->setFiche($fiche);
+            $message->setTypeMessage('FICHE');
+        }
         
         $entityManager->persist($message);
         $entityManager->flush();
@@ -555,6 +638,9 @@ class GroupeController extends AbstractController
                 'id' => $message->getId(),
                 'contenu' => $message->getContenu(),
                 'createdAt' => $message->getCreatedAt()->format('d/m/Y H:i'),
+                'filePath' => $message->getFilePath(),
+                'fileName' => $message->getFileName(),
+                'fiche' => $fiche ? ['id' => $fiche->getId(), 'title' => $fiche->getTitle()] : null,
                 'expediteur' => [
                     'nom' => $userName,
                 ],
@@ -567,7 +653,8 @@ class GroupeController extends AbstractController
         Request $request,
         Message $parentMessage,
         EntityManagerInterface $entityManager,
-        MembreGroupeRepository $membreGroupeRepository
+        MembreGroupeRepository $membreGroupeRepository,
+        FicheRepository $ficheRepository
     ): Response {
         $user = $this->getUser();
         
@@ -592,17 +679,67 @@ class GroupeController extends AbstractController
         }
 
         $contenu = $request->request->get('contenu', '');
+        $ficheId = $request->request->get('ficheId', null);
         
-        if (empty(trim($contenu))) {
+        // Handle file upload
+        $file = $request->files->get('file');
+        $filePath = null;
+        $fileName = null;
+        $typeMessage = 'TEXTE';
+        
+        if ($file) {
+            $uploadDir = $this->getParameter('kernel.project_dir') . '/public/uploads/chat/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            
+            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $originalName);
+            $extension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
+            $newFileName = $safeName . '_' . uniqid() . '.' . strtolower($extension);
+            
+            // Get MIME type BEFORE moving the file
+            $mimeType = $file->getMimeType() ?? '';
+            
+            $file->move($uploadDir, $newFileName);
+            $filePath = '/uploads/chat/' . $newFileName;
+            $fileName = $file->getClientOriginalName();
+            
+            // Set type based on file type
+            if (strpos($mimeType, 'image/') === 0) {
+                $typeMessage = 'IMAGE';
+            } elseif ($mimeType === 'application/pdf' || strtolower($extension) === 'pdf') {
+                $typeMessage = 'PDF';
+            }
+        }
+        
+        // Handle fiche reference
+        $fiche = null;
+        if ($ficheId) {
+            $fiche = $ficheRepository->find($ficheId);
+        }
+        
+        // Validate: at least one of contenido, file, or fiche must be present
+        if (empty(trim($contenu)) && !$file && !$fiche) {
             return $this->json(['error' => 'Le message ne peut pas être vide'], 400);
         }
 
         $message = new Message();
         $message->setContenu($contenu);
-        $message->setTypeMessage('TEXTE');
+        $message->setTypeMessage($typeMessage);
         $message->setExpediteur($user);
         $message->setGroupe($groupe);
         $message->setParentMessage($parentMessage);
+        
+        if ($filePath) {
+            $message->setFilePath($filePath);
+            $message->setFileName($fileName);
+        }
+        
+        if ($fiche) {
+            $message->setFiche($fiche);
+            $message->setTypeMessage('FICHE');
+        }
         
         $entityManager->persist($message);
         $entityManager->flush();
@@ -656,6 +793,41 @@ class GroupeController extends AbstractController
         return $this->json([
             'success' => true,
             'message' => 'Message supprimé',
+        ]);
+    }
+
+    #[Route('/chat/message/{id}/editer', name: 'chat_edit_message', methods: ['POST'])]
+    public function editMessage(
+        Request $request,
+        Message $message,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+        
+        if (!$user instanceof Utilisateur) {
+            return $this->json(['error' => 'Vous devez être connecté'], 401);
+        }
+
+        // Check if user is the sender
+        if ($message->getExpediteur() !== $user) {
+            return $this->json(['error' => 'Vous ne pouvez pas modifier ce message'], 403);
+        }
+
+        $contenu = $request->request->get('contenu', '');
+        
+        if (empty(trim($contenu))) {
+            return $this->json(['error' => 'Le message ne peut pas être vide'], 400);
+        }
+
+        $message->setContenu($contenu);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => [
+                'id' => $message->getId(),
+                'contenu' => $message->getContenu(),
+            ],
         ]);
     }
 }
