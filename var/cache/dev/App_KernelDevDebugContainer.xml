@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
   <parameters>
-    <parameter key="kernel.project_dir">C:\Users\asus\Documents\bac-lab</parameter>
+    <parameter key="kernel.project_dir">C:\Users\Msi\bac-lab</parameter>
     <parameter key="kernel.environment">dev</parameter>
     <parameter key="kernel.runtime_environment">%env(default:kernel.environment:APP_RUNTIME_ENV)%</parameter>
     <parameter key="kernel.runtime_mode">%env(query_string:default:container.runtime_mode:APP_RUNTIME_MODE)%</parameter>
@@ -9,9 +9,9 @@
     <parameter key="kernel.runtime_mode.cli">%env(not:default:kernel.runtime_mode.web:)%</parameter>
     <parameter key="kernel.runtime_mode.worker">%env(bool:default::key:worker:default:kernel.runtime_mode:)%</parameter>
     <parameter key="kernel.debug">true</parameter>
-    <parameter key="kernel.build_dir">C:\Users\asus\Documents\bac-lab\var\cache\dev</parameter>
-    <parameter key="kernel.cache_dir">C:\Users\asus\Documents\bac-lab\var\cache\dev</parameter>
-    <parameter key="kernel.logs_dir">C:\Users\asus\Documents\bac-lab\var\log</parameter>
+    <parameter key="kernel.build_dir">C:\Users\Msi\bac-lab\var\cache\dev</parameter>
+    <parameter key="kernel.cache_dir">C:\Users\Msi\bac-lab\var\cache\dev</parameter>
+    <parameter key="kernel.logs_dir">C:\Users\Msi\bac-lab\var\log</parameter>
     <parameter key="kernel.bundles" type="collection">
       <parameter key="FrameworkBundle">Symfony\Bundle\FrameworkBundle\FrameworkBundle</parameter>
       <parameter key="DoctrineBundle">Doctrine\Bundle\DoctrineBundle\DoctrineBundle</parameter>
@@ -28,63 +28,63 @@
     </parameter>
     <parameter key="kernel.bundles_metadata" type="collection">
       <parameter key="FrameworkBundle" type="collection">
-        <parameter key="path">C:\Users\asus\Documents\bac-lab\vendor\symfony\framework-bundle</parameter>
+        <parameter key="path">C:\Users\Msi\bac-lab\vendor\symfony\framework-bundle</parameter>
         <parameter key="namespace">Symfony\Bundle\FrameworkBundle</parameter>
       </parameter>
       <parameter key="DoctrineBundle" type="collection">
-        <parameter key="path">C:\Users\asus\Documents\bac-lab\vendor\doctrine\doctrine-bundle</parameter>
+        <parameter key="path">C:\Users\Msi\bac-lab\vendor\doctrine\doctrine-bundle</parameter>
         <parameter key="namespace">Doctrine\Bundle\DoctrineBundle</parameter>
       </parameter>
       <parameter key="DoctrineMigrationsBundle" type="collection">
-        <parameter key="path">C:\Users\asus\Documents\bac-lab\vendor\doctrine\doctrine-migrations-bundle</parameter>
+        <parameter key="path">C:\Users\Msi\bac-lab\vendor\doctrine\doctrine-migrations-bundle</parameter>
         <parameter key="namespace">Doctrine\Bundle\MigrationsBundle</parameter>
       </parameter>
       <parameter key="DebugBundle" type="collection">
-        <parameter key="path">C:\Users\asus\Documents\bac-lab\vendor\symfony\debug-bundle</parameter>
+        <parameter key="path">C:\Users\Msi\bac-lab\vendor\symfony\debug-bundle</parameter>
         <parameter key="namespace">Symfony\Bundle\DebugBundle</parameter>
       </parameter>
       <parameter key="TwigBundle" type="collection">
-        <parameter key="path">C:\Users\asus\Documents\bac-lab\vendor\symfony\twig-bundle</parameter>
+        <parameter key="path">C:\Users\Msi\bac-lab\vendor\symfony\twig-bundle</parameter>
         <parameter key="namespace">Symfony\Bundle\TwigBundle</parameter>
       </parameter>
       <parameter key="WebProfilerBundle" type="collection">
-        <parameter key="path">C:\Users\asus\Documents\bac-lab\vendor\symfony\web-profiler-bundle</parameter>
+        <parameter key="path">C:\Users\Msi\bac-lab\vendor\symfony\web-profiler-bundle</parameter>
         <parameter key="namespace">Symfony\Bundle\WebProfilerBundle</parameter>
       </parameter>
       <parameter key="StimulusBundle" type="collection">
-        <parameter key="path">C:\Users\asus\Documents\bac-lab\vendor\symfony\stimulus-bundle</parameter>
+        <parameter key="path">C:\Users\Msi\bac-lab\vendor\symfony\stimulus-bundle</parameter>
         <parameter key="namespace">Symfony\UX\StimulusBundle</parameter>
       </parameter>
       <parameter key="TurboBundle" type="collection">
-        <parameter key="path">C:\Users\asus\Documents\bac-lab\vendor\symfony\ux-turbo</parameter>
+        <parameter key="path">C:\Users\Msi\bac-lab\vendor\symfony\ux-turbo</parameter>
         <parameter key="namespace">Symfony\UX\Turbo</parameter>
       </parameter>
       <parameter key="TwigExtraBundle" type="collection">
-        <parameter key="path">C:\Users\asus\Documents\bac-lab\vendor\twig\extra-bundle</parameter>
+        <parameter key="path">C:\Users\Msi\bac-lab\vendor\twig\extra-bundle</parameter>
         <parameter key="namespace">Twig\Extra\TwigExtraBundle</parameter>
       </parameter>
       <parameter key="SecurityBundle" type="collection">
-        <parameter key="path">C:\Users\asus\Documents\bac-lab\vendor\symfony\security-bundle</parameter>
+        <parameter key="path">C:\Users\Msi\bac-lab\vendor\symfony\security-bundle</parameter>
         <parameter key="namespace">Symfony\Bundle\SecurityBundle</parameter>
       </parameter>
       <parameter key="MonologBundle" type="collection">
-        <parameter key="path">C:\Users\asus\Documents\bac-lab\vendor\symfony\monolog-bundle\src</parameter>
+        <parameter key="path">C:\Users\Msi\bac-lab\vendor\symfony\monolog-bundle\src</parameter>
         <parameter key="namespace">Symfony\Bundle\MonologBundle</parameter>
       </parameter>
       <parameter key="MakerBundle" type="collection">
-        <parameter key="path">C:\Users\asus\Documents\bac-lab\vendor\symfony\maker-bundle</parameter>
+        <parameter key="path">C:\Users\Msi\bac-lab\vendor\symfony\maker-bundle</parameter>
         <parameter key="namespace">Symfony\Bundle\MakerBundle</parameter>
       </parameter>
     </parameter>
     <parameter key="kernel.charset">UTF-8</parameter>
     <parameter key="kernel.container_class">App_KernelDevDebugContainer</parameter>
-    <parameter key="kernel.share_dir">C:\Users\asus\Documents\bac-lab\var\share\dev</parameter>
+    <parameter key="kernel.share_dir">C:\Users\Msi\bac-lab\var\share\dev</parameter>
     <parameter key=".container.known_envs" type="collection">
       <parameter>dev</parameter>
       <parameter>test</parameter>
       <parameter>prod</parameter>
     </parameter>
-    <parameter key=".kernel.config_dir">C:\Users\asus\Documents\bac-lab/config</parameter>
+    <parameter key=".kernel.config_dir">C:\Users\Msi\bac-lab/config</parameter>
     <parameter key=".kernel.bundles_definition" type="collection">
       <parameter key="Symfony\Bundle\FrameworkBundle\FrameworkBundle" type="collection">
         <parameter key="all">true</parameter>
@@ -162,19 +162,19 @@
     <parameter key="asset.request_context.base_path">null</parameter>
     <parameter key="asset.request_context.secure">null</parameter>
     <parameter key="translator.logging">false</parameter>
-    <parameter key="translator.default_path">C:\Users\asus\Documents\bac-lab/translations</parameter>
+    <parameter key="translator.default_path">C:\Users\Msi\bac-lab/translations</parameter>
     <parameter key="debug.error_handler.throw_at">-1</parameter>
-    <parameter key="debug.container.dump">C:\Users\asus\Documents\bac-lab\var\cache\dev/App_KernelDevDebugContainer.xml</parameter>
+    <parameter key="debug.container.dump">C:\Users\Msi\bac-lab\var\cache\dev/App_KernelDevDebugContainer.xml</parameter>
     <parameter key="router.request_context.host">localhost</parameter>
     <parameter key="router.request_context.scheme">http</parameter>
     <parameter key="router.request_context.base_url"/>
     <parameter key="router.resource">kernel::loadRoutes</parameter>
-    <parameter key="router.cache_dir">C:\Users\asus\Documents\bac-lab\var\cache\dev</parameter>
+    <parameter key="router.cache_dir">C:\Users\Msi\bac-lab\var\cache\dev</parameter>
     <parameter key="request_listener.http_port">80</parameter>
     <parameter key="request_listener.https_port">443</parameter>
-    <parameter key="serializer.mapping.cache.file">C:\Users\asus\Documents\bac-lab\var\cache\dev/serialization.php</parameter>
+    <parameter key="serializer.mapping.cache.file">C:\Users\Msi\bac-lab\var\cache\dev/serialization.php</parameter>
     <parameter key=".serializer.named_serializers" type="collection"/>
-    <parameter key="cache.prefix.seed">_C:\Users\asus\Documents\bac-lab.App_KernelDevDebugContainer</parameter>
+    <parameter key="cache.prefix.seed">_C:\Users\Msi\bac-lab.App_KernelDevDebugContainer</parameter>
     <parameter key="session.metadata.storage_key">_sf2_meta</parameter>
     <parameter key="session.storage.options" type="collection">
       <parameter key="cache_limiter" type="string">0</parameter>
@@ -190,11 +190,11 @@
       <parameter key="data-controller">csrf-protection</parameter>
     </parameter>
     <parameter key=".form.type_extension.csrf.token_id">submit</parameter>
-    <parameter key="validator.mapping.cache.file">C:\Users\asus\Documents\bac-lab\var\cache\dev/validation.php</parameter>
+    <parameter key="validator.mapping.cache.file">C:\Users\Msi\bac-lab\var\cache\dev/validation.php</parameter>
     <parameter key="validator.translation_domain">validators</parameter>
     <parameter key="profiler_listener.only_exceptions">false</parameter>
     <parameter key="profiler_listener.only_main_requests">false</parameter>
-    <parameter key="profiler.storage.dsn">file:C:\Users\asus\Documents\bac-lab\var\cache\dev/profiler</parameter>
+    <parameter key="profiler.storage.dsn">file:C:\Users\Msi\bac-lab\var\cache\dev/profiler</parameter>
     <parameter key="doctrine.dbal.configuration.class">Doctrine\DBAL\Configuration</parameter>
     <parameter key="doctrine.data_collector.class">Doctrine\Bundle\DoctrineBundle\DataCollector\DoctrineDataCollector</parameter>
     <parameter key="doctrine.dbal.connection.event_manager.class">Symfony\Bridge\Doctrine\ContainerAwareEventManager</parameter>
@@ -271,7 +271,7 @@
     <parameter key="doctrine.orm.auto_generate_proxy_classes">true</parameter>
     <parameter key="doctrine.orm.enable_lazy_ghost_objects">true</parameter>
     <parameter key="doctrine.orm.enable_native_lazy_objects">false</parameter>
-    <parameter key="doctrine.orm.proxy_dir">C:\Users\asus\Documents\bac-lab\var\cache\dev/doctrine/orm/Proxies</parameter>
+    <parameter key="doctrine.orm.proxy_dir">C:\Users\Msi\bac-lab\var\cache\dev/doctrine/orm/Proxies</parameter>
     <parameter key="doctrine.orm.proxy_namespace">Proxies</parameter>
     <parameter key="doctrine.migrations.preferred_em">null</parameter>
     <parameter key="doctrine.migrations.preferred_connection">null</parameter>
@@ -279,7 +279,7 @@
     <parameter key="twig.form.resources" type="collection">
       <parameter>form_div_layout.html.twig</parameter>
     </parameter>
-    <parameter key="twig.default_path">C:\Users\asus\Documents\bac-lab/templates</parameter>
+    <parameter key="twig.default_path">C:\Users\Msi\bac-lab/templates</parameter>
     <parameter key="web_profiler.debug_toolbar.intercept_redirects">false</parameter>
     <parameter key="web_profiler.debug_toolbar.mode">2</parameter>
     <parameter key="security.role_hierarchy.roles" type="collection"/>
@@ -412,12 +412,44 @@
       <tag name="controller.service_arguments"/>
       <tag name="routing.route_loader"/>
     </service>
+    <service id="App\Entity" class="App\Entity" abstract="true">
+      <tag name="container.excluded" source="in &quot;config/services.yaml&quot;"/>
+    </service>
+    <service id="App\Controller\ChapitreController" class="App\Controller\ChapitreController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.xFD7AqT.App\Controller\ChapitreController"/>
+      </call>
+    </service>
+    <service id="App\Controller\ChatbotController" class="App\Controller\ChatbotController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="routing.controller"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.xFD7AqT.App\Controller\ChatbotController"/>
+      </call>
+    </service>
     <service id="App\Controller\FicheController" class="App\Controller\FicheController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="routing.controller"/>
       <tag name="container.service_subscriber"/>
       <call method="setContainer">
-        <argument type="service" id=".service_locator.TJNRSaV.App\Controller\FicheController"/>
+        <argument type="service" id=".service_locator.xFD7AqT.App\Controller\FicheController"/>
+      </call>
+    </service>
+    <service id="App\Controller\FiliereController" class="App\Controller\FiliereController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.xFD7AqT.App\Controller\FiliereController"/>
+      </call>
+    </service>
+    <service id="App\Controller\FrontRevisionController" class="App\Controller\FrontRevisionController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.xFD7AqT.App\Controller\FrontRevisionController"/>
       </call>
     </service>
     <service id="App\Controller\HomeController" class="App\Controller\HomeController" public="true" autowire="true" autoconfigure="true">
@@ -425,19 +457,32 @@
       <tag name="routing.controller"/>
       <tag name="container.service_subscriber"/>
       <call method="setContainer">
-        <argument type="service" id=".service_locator.TJNRSaV.App\Controller\HomeController"/>
+        <argument type="service" id=".service_locator.xFD7AqT.App\Controller\HomeController"/>
       </call>
     </service>
-    <service id="App\Entity\Fiche" class="App\Entity\Fiche" autowire="true" autoconfigure="true">
-      <tag name="container.excluded" source="because it's a Doctrine entity"/>
-      <tag name="container.excluded" source="with #[Doctrine\ORM\Mapping\Entity] attribute"/>
+    <service id="App\Controller\MatiereController" class="App\Controller\MatiereController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.xFD7AqT.App\Controller\MatiereController"/>
+      </call>
     </service>
-    <service id="App\Entity\FicheVersion" class="App\Entity\FicheVersion" autowire="true" autoconfigure="true">
-      <tag name="container.excluded" source="because it's a Doctrine entity"/>
-      <tag name="container.excluded" source="with #[Doctrine\ORM\Mapping\Entity] attribute"/>
+    <service id="App\Form\ChapitreType" class="App\Form\ChapitreType" autowire="true" autoconfigure="true">
+      <tag name="form.type" csrf_token_id="%.form.type_extension.csrf.token_id%"/>
     </service>
     <service id="App\Form\FicheType" class="App\Form\FicheType" autowire="true" autoconfigure="true">
       <tag name="form.type" csrf_token_id="%.form.type_extension.csrf.token_id%"/>
+    </service>
+    <service id="App\Form\FiliereType" class="App\Form\FiliereType" autowire="true" autoconfigure="true">
+      <tag name="form.type" csrf_token_id="%.form.type_extension.csrf.token_id%"/>
+    </service>
+    <service id="App\Form\MatiereType" class="App\Form\MatiereType" autowire="true" autoconfigure="true">
+      <tag name="form.type" csrf_token_id="%.form.type_extension.csrf.token_id%"/>
+      <argument type="service" id="App\Repository\FiliereRepository"/>
+    </service>
+    <service id="App\Repository\ChapitreRepository" class="App\Repository\ChapitreRepository" autowire="true" autoconfigure="true">
+      <tag name="doctrine.repository_service"/>
+      <argument type="service" id="doctrine"/>
     </service>
     <service id="App\Repository\FicheRepository" class="App\Repository\FicheRepository" autowire="true" autoconfigure="true">
       <tag name="doctrine.repository_service"/>
@@ -446,6 +491,21 @@
     <service id="App\Repository\FicheVersionRepository" class="App\Repository\FicheVersionRepository" autowire="true" autoconfigure="true">
       <tag name="doctrine.repository_service"/>
       <argument type="service" id="doctrine"/>
+    </service>
+    <service id="App\Repository\FiliereRepository" class="App\Repository\FiliereRepository" autowire="true" autoconfigure="true">
+      <tag name="doctrine.repository_service"/>
+      <argument type="service" id="doctrine"/>
+    </service>
+    <service id="App\Service\ChatbotService" class="App\Service\ChatbotService" autowire="true" autoconfigure="true">
+      <argument type="service" id="http_client.uri_template"/>
+      <argument>%env(OPENROUTER_API_KEY)%</argument>
+      <argument>%env(OPENROUTER_MODEL)%</argument>
+    </service>
+    <service id="App\Service\OpenRouterClient" class="App\Service\OpenRouterClient" autowire="true" autoconfigure="true">
+      <argument>%env(OPENROUTER_API_KEY)%</argument>
+      <argument>%env(OPENROUTER_MODEL)%</argument>
+      <argument>%env(OPENROUTER_SITE_URL)%</argument>
+      <argument>%env(OPENROUTER_APP_NAME)%</argument>
     </service>
     <service id="argument_metadata_factory" class="Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory"/>
     <service id="argument_resolver.backed_enum_resolver" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\BackedEnumValueResolver">
@@ -475,7 +535,7 @@
     </service>
     <service id="argument_resolver.service" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
       <tag name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver" priority="-50">controller.argument_value_resolver</tag>
-      <argument type="service" id=".service_locator.MAxS68V"/>
+      <argument type="service" id=".service_locator.bGh2qGl"/>
     </service>
     <service id="argument_resolver.default" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">
       <tag name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver" priority="-100">controller.argument_value_resolver</tag>
@@ -569,7 +629,7 @@
       </argument>
     </service>
     <service id="http_cache.store" class="Symfony\Component\HttpKernel\HttpCache\Store">
-      <argument>C:\Users\asus\Documents\bac-lab\var\share\dev/http_cache</argument>
+      <argument>C:\Users\Msi\bac-lab\var\share\dev/http_cache</argument>
     </service>
     <service id="url_helper" class="Symfony\Component\HttpFoundation\UrlHelper">
       <argument type="service" id="request_stack"/>
@@ -579,7 +639,7 @@
       <tag name="container.no_preload"/>
       <argument type="tagged_iterator" tag="kernel.cache_warmer"/>
       <argument>true</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/App_KernelDevDebugContainerDeprecations.log</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/App_KernelDevDebugContainerDeprecations.log</argument>
     </service>
     <service id="cache_clearer" class="Symfony\Component\HttpKernel\CacheClearer\ChainCacheClearer">
       <argument type="tagged_iterator" tag="kernel.cache_clearer"/>
@@ -869,7 +929,7 @@
       </argument>
       <argument>UTF-8</argument>
       <argument type="service" id="debug.file_link_formatter" on-invalid="null"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <argument type="service">
         <service>
           <argument type="service" id="request_stack"/>
@@ -912,7 +972,7 @@
       <tag name="console.command"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="filesystem"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <call method="setName">
         <argument>assets:install</argument>
       </call>
@@ -1101,7 +1161,7 @@
       <tag name="console.command"/>
       <tag name="container.no_preload"/>
       <argument>dev</argument>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <call method="setName">
         <argument>debug:dotenv</argument>
       </call>
@@ -1343,16 +1403,16 @@
       <argument type="service" id="translator.data_collector"/>
       <argument type="service" id="translation.reader"/>
       <argument type="service" id="translation.extractor"/>
-      <argument>C:\Users\asus\Documents\bac-lab/translations</argument>
-      <argument>C:\Users\asus\Documents\bac-lab/templates</argument>
+      <argument>C:\Users\Msi\bac-lab/translations</argument>
+      <argument>C:\Users\Msi\bac-lab/templates</argument>
       <argument type="collection">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations</argument>
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations</argument>
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations</argument>
       </argument>
       <argument type="collection">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\twig-bridge/Resources/views/Email</argument>
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\twig-bridge/Resources/views/Form</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\twig-bridge/Resources/views/Email</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\twig-bridge/Resources/views/Form</argument>
       </argument>
       <argument type="collection"/>
       <call method="setName">
@@ -1369,16 +1429,16 @@
       <argument type="service" id="translation.reader"/>
       <argument type="service" id="translation.extractor"/>
       <argument>en</argument>
-      <argument>C:\Users\asus\Documents\bac-lab/translations</argument>
-      <argument>C:\Users\asus\Documents\bac-lab/templates</argument>
+      <argument>C:\Users\Msi\bac-lab/translations</argument>
+      <argument>C:\Users\Msi\bac-lab/templates</argument>
       <argument type="collection">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations</argument>
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations</argument>
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations</argument>
       </argument>
       <argument type="collection">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\twig-bridge/Resources/views/Email</argument>
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\twig-bridge/Resources/views/Form</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\twig-bridge/Resources/views/Email</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\twig-bridge/Resources/views/Form</argument>
       </argument>
       <argument type="collection"/>
       <call method="setName">
@@ -1471,7 +1531,10 @@
         <argument>Symfony\Bridge\Doctrine\Form\Type</argument>
       </argument>
       <argument type="collection">
+        <argument>App\Form\ChapitreType</argument>
         <argument>App\Form\FicheType</argument>
+        <argument>App\Form\FiliereType</argument>
+        <argument>App\Form\MatiereType</argument>
         <argument>Symfony\Component\Form\Extension\Core\Type\FormType</argument>
         <argument>Symfony\Component\Form\Extension\Core\Type\ChoiceType</argument>
         <argument>Symfony\Component\Form\Extension\Core\Type\FileType</argument>
@@ -1663,7 +1726,7 @@
       <argument/>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/pools/system</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1682,7 +1745,7 @@
       <tag name="monolog.logger" channel="cache"/>
       <argument/>
       <argument>0</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\share\dev/pools/app</argument>
+      <argument>C:\Users\Msi\bac-lab\var\share\dev/pools/app</argument>
       <argument type="service" id="cache.default_marshaller" on-invalid="ignore"/>
       <call method="setLogger">
         <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
@@ -1853,16 +1916,16 @@
     <service id="asset_mapper.cached_mapped_asset_factory" class="Symfony\Component\AssetMapper\Factory\CachedMappedAssetFactory">
       <tag name="container.decorator" id="asset_mapper.mapped_asset_factory" inner="asset_mapper.cached_mapped_asset_factory.inner"/>
       <argument type="service" id="asset_mapper.cached_mapped_asset_factory.inner"/>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/asset_mapper</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/asset_mapper</argument>
       <argument>true</argument>
     </service>
     <service id="asset_mapper.repository" class="Symfony\Component\AssetMapper\AssetMapperRepository">
       <argument type="collection">
-        <argument key="C:\Users\asus\Documents\bac-lab\vendor\symfony\ux-turbo\src\DependencyInjection/../../assets/dist">@symfony/ux-turbo</argument>
-        <argument key="C:\Users\asus\Documents\bac-lab\vendor\symfony\stimulus-bundle\src\DependencyInjection/../../assets/dist">@symfony/stimulus-bundle</argument>
+        <argument key="C:\Users\Msi\bac-lab\vendor\symfony\ux-turbo\src\DependencyInjection/../../assets/dist">@symfony/ux-turbo</argument>
+        <argument key="C:\Users\Msi\bac-lab\vendor\symfony\stimulus-bundle\src\DependencyInjection/../../assets/dist">@symfony/stimulus-bundle</argument>
         <argument key="assets/"/>
       </argument>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <argument type="collection">
         <argument>#^(?=[^\.]).*\.d\.ts$#</argument>
         <argument>#^(?=[^\.])/?(?=[^\.]).*.*/(?=[^\.])controllers\.json$#</argument>
@@ -1874,10 +1937,10 @@
       <argument>/assets/</argument>
     </service>
     <service id="asset_mapper.local_public_assets_filesystem" class="Symfony\Component\AssetMapper\Path\LocalPublicAssetsFilesystem">
-      <argument>C:\Users\asus\Documents\bac-lab/public</argument>
+      <argument>C:\Users\Msi\bac-lab/public</argument>
     </service>
     <service id="asset_mapper.compiled_asset_mapper_config_reader" class="Symfony\Component\AssetMapper\CompiledAssetMapperConfigReader">
-      <argument>C:\Users\asus\Documents\bac-lab/public/assets</argument>
+      <argument>C:\Users\Msi\bac-lab/public/assets</argument>
     </service>
     <service id="asset_mapper.asset_package" class="Symfony\Component\AssetMapper\MapperAwareAssetPackage">
       <tag name="container.decorator" id="assets._default_package" inner="asset_mapper.asset_package.inner"/>
@@ -1901,7 +1964,7 @@
       <argument type="service" id="asset_mapper"/>
       <argument type="service" id="asset_mapper.importmap.generator"/>
       <argument type="service" id="asset_mapper.local_public_assets_filesystem"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <argument>true</argument>
       <argument type="service" id="debug.event_dispatcher" on-invalid="null"/>
       <call method="setName">
@@ -1916,7 +1979,7 @@
       <tag name="container.no_preload"/>
       <argument type="service" id="asset_mapper"/>
       <argument type="service" id="asset_mapper.repository"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <call method="setName">
         <argument>debug:asset-map</argument>
       </call>
@@ -1945,7 +2008,7 @@
       <argument type="service" id="monolog.logger.asset_mapper"/>
     </service>
     <service id="asset_mapper.importmap.config_reader" class="Symfony\Component\AssetMapper\ImportMap\ImportMapConfigReader">
-      <argument>C:\Users\asus\Documents\bac-lab/importmap.php</argument>
+      <argument>C:\Users\Msi\bac-lab/importmap.php</argument>
       <argument type="service" id="asset_mapper.importmap.remote_package_storage"/>
     </service>
     <service id="asset_mapper.importmap.manager" class="Symfony\Component\AssetMapper\ImportMap\ImportMapManager">
@@ -1960,7 +2023,7 @@
       <argument type="service" id="asset_mapper.importmap.config_reader"/>
     </service>
     <service id="asset_mapper.importmap.remote_package_storage" class="Symfony\Component\AssetMapper\ImportMap\RemotePackageStorage">
-      <argument>C:\Users\asus\Documents\bac-lab/assets/vendor</argument>
+      <argument>C:\Users\Msi\bac-lab/assets/vendor</argument>
     </service>
     <service id="asset_mapper.importmap.remote_package_downloader" class="Symfony\Component\AssetMapper\ImportMap\RemotePackageDownloader">
       <argument type="service" id="asset_mapper.importmap.remote_package_storage"/>
@@ -1997,7 +2060,7 @@
       <tag name="container.no_preload"/>
       <argument type="service" id="asset_mapper.importmap.manager"/>
       <argument type="service" id="asset_mapper.importmap.version_checker"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <call method="setName">
         <argument>importmap:require</argument>
       </call>
@@ -2032,7 +2095,7 @@
       <tag name="console.command"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="asset_mapper.importmap.remote_package_downloader"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <call method="setName">
         <argument>importmap:install</argument>
       </call>
@@ -2250,331 +2313,331 @@
         </argument>
       </argument>
       <argument type="collection">
-        <argument key="cache_dir">C:\Users\asus\Documents\bac-lab\var\cache\dev/translations</argument>
+        <argument key="cache_dir">C:\Users\Msi\bac-lab\var\cache\dev/translations</argument>
         <argument key="debug">true</argument>
         <argument key="resource_files" type="collection">
           <argument key="af" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.af.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.af.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.af.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.af.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.af.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.af.xlf</argument>
           </argument>
           <argument key="ar" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.ar.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.ar.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.ar.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.ar.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.ar.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.ar.xlf</argument>
           </argument>
           <argument key="az" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.az.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.az.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.az.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.az.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.az.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.az.xlf</argument>
           </argument>
           <argument key="be" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.be.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.be.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.be.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.be.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.be.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.be.xlf</argument>
           </argument>
           <argument key="bg" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.bg.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.bg.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.bg.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.bg.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.bg.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.bg.xlf</argument>
           </argument>
           <argument key="bs" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.bs.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.bs.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.bs.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.bs.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.bs.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.bs.xlf</argument>
           </argument>
           <argument key="ca" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.ca.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.ca.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.ca.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.ca.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.ca.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.ca.xlf</argument>
           </argument>
           <argument key="cs" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.cs.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.cs.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.cs.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.cs.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.cs.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.cs.xlf</argument>
           </argument>
           <argument key="cy" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.cy.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.cy.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.cy.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.cy.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.cy.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.cy.xlf</argument>
           </argument>
           <argument key="da" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.da.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.da.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.da.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.da.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.da.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.da.xlf</argument>
           </argument>
           <argument key="de" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.de.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.de.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.de.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.de.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.de.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.de.xlf</argument>
           </argument>
           <argument key="el" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.el.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.el.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.el.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.el.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.el.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.el.xlf</argument>
           </argument>
           <argument key="en" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.en.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.en.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.en.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.en.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.en.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.en.xlf</argument>
           </argument>
           <argument key="es" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.es.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.es.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.es.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.es.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.es.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.es.xlf</argument>
           </argument>
           <argument key="et" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.et.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.et.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.et.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.et.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.et.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.et.xlf</argument>
           </argument>
           <argument key="eu" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.eu.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.eu.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.eu.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.eu.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.eu.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.eu.xlf</argument>
           </argument>
           <argument key="fa" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.fa.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.fa.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.fa.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.fa.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.fa.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.fa.xlf</argument>
           </argument>
           <argument key="fi" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.fi.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.fi.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.fi.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.fi.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.fi.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.fi.xlf</argument>
           </argument>
           <argument key="fr" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.fr.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.fr.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.fr.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.fr.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.fr.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.fr.xlf</argument>
           </argument>
           <argument key="gl" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.gl.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.gl.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.gl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.gl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.gl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.gl.xlf</argument>
           </argument>
           <argument key="he" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.he.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.he.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.he.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.he.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.he.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.he.xlf</argument>
           </argument>
           <argument key="hr" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.hr.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.hr.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.hr.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.hr.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.hr.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.hr.xlf</argument>
           </argument>
           <argument key="hu" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.hu.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.hu.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.hu.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.hu.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.hu.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.hu.xlf</argument>
           </argument>
           <argument key="hy" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.hy.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.hy.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.hy.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.hy.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.hy.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.hy.xlf</argument>
           </argument>
           <argument key="id" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.id.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.id.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.id.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.id.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.id.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.id.xlf</argument>
           </argument>
           <argument key="it" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.it.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.it.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.it.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.it.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.it.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.it.xlf</argument>
           </argument>
           <argument key="ja" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.ja.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.ja.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.ja.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.ja.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.ja.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.ja.xlf</argument>
           </argument>
           <argument key="lb" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.lb.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.lb.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.lb.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.lb.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.lb.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.lb.xlf</argument>
           </argument>
           <argument key="lt" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.lt.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.lt.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.lt.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.lt.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.lt.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.lt.xlf</argument>
           </argument>
           <argument key="lv" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.lv.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.lv.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.lv.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.lv.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.lv.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.lv.xlf</argument>
           </argument>
           <argument key="mk" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.mk.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.mk.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.mk.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.mk.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.mk.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.mk.xlf</argument>
           </argument>
           <argument key="mn" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.mn.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.mn.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.mn.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.mn.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.mn.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.mn.xlf</argument>
           </argument>
           <argument key="my" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.my.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.my.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.my.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.my.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.my.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.my.xlf</argument>
           </argument>
           <argument key="nb" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.nb.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.nb.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.nb.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.nb.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.nb.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.nb.xlf</argument>
           </argument>
           <argument key="nl" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.nl.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.nl.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.nl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.nl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.nl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.nl.xlf</argument>
           </argument>
           <argument key="nn" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.nn.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.nn.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.nn.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.nn.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.nn.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.nn.xlf</argument>
           </argument>
           <argument key="no" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.no.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.no.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.no.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.no.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.no.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.no.xlf</argument>
           </argument>
           <argument key="pl" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.pl.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.pl.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.pl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.pl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.pl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.pl.xlf</argument>
           </argument>
           <argument key="pt" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.pt.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.pt.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.pt.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.pt.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.pt.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.pt.xlf</argument>
           </argument>
           <argument key="pt_BR" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.pt_BR.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.pt_BR.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.pt_BR.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.pt_BR.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.pt_BR.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.pt_BR.xlf</argument>
           </argument>
           <argument key="ro" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.ro.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.ro.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.ro.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.ro.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.ro.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.ro.xlf</argument>
           </argument>
           <argument key="ru" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.ru.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.ru.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.ru.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.ru.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.ru.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.ru.xlf</argument>
           </argument>
           <argument key="sk" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.sk.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.sk.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.sk.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.sk.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.sk.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.sk.xlf</argument>
           </argument>
           <argument key="sl" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.sl.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.sl.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.sl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.sl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.sl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.sl.xlf</argument>
           </argument>
           <argument key="sq" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.sq.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.sq.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.sq.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.sq.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.sq.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.sq.xlf</argument>
           </argument>
           <argument key="sr_Cyrl" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.sr_Cyrl.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.sr_Cyrl.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.sr_Cyrl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.sr_Cyrl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.sr_Cyrl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.sr_Cyrl.xlf</argument>
           </argument>
           <argument key="sr_Latn" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.sr_Latn.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.sr_Latn.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.sr_Latn.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.sr_Latn.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.sr_Latn.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.sr_Latn.xlf</argument>
           </argument>
           <argument key="sv" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.sv.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.sv.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.sv.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.sv.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.sv.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.sv.xlf</argument>
           </argument>
           <argument key="th" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.th.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.th.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.th.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.th.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.th.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.th.xlf</argument>
           </argument>
           <argument key="tl" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.tl.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.tl.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.tl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.tl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.tl.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.tl.xlf</argument>
           </argument>
           <argument key="tr" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.tr.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.tr.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.tr.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.tr.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.tr.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.tr.xlf</argument>
           </argument>
           <argument key="uk" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.uk.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.uk.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.uk.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.uk.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.uk.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.uk.xlf</argument>
           </argument>
           <argument key="ur" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.ur.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.ur.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.ur.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.ur.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.ur.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.ur.xlf</argument>
           </argument>
           <argument key="uz" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.uz.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.uz.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.uz.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.uz.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.uz.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.uz.xlf</argument>
           </argument>
           <argument key="vi" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.vi.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.vi.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.vi.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.vi.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.vi.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.vi.xlf</argument>
           </argument>
           <argument key="zh_CN" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.zh_CN.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.zh_CN.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.zh_CN.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.zh_CN.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.zh_CN.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.zh_CN.xlf</argument>
           </argument>
           <argument key="zh_TW" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations\validators.zh_TW.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations\validators.zh_TW.xlf</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations\security.zh_TW.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations\validators.zh_TW.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations\validators.zh_TW.xlf</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations\security.zh_TW.xlf</argument>
           </argument>
         </argument>
         <argument key="scanned_directories" type="collection">
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\framework-bundle/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\doctrine\doctrine-bundle/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\doctrine\doctrine-migrations-bundle/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\debug-bundle/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\twig-bundle/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\web-profiler-bundle/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\stimulus-bundle/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\ux-turbo/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\twig\extra-bundle/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-bundle/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\monolog-bundle\src/translations</argument>
-          <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\maker-bundle/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations</argument>
+          <argument>C:\Users\Msi\bac-lab/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\symfony\framework-bundle/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\doctrine\doctrine-bundle/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\doctrine\doctrine-migrations-bundle/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\symfony\debug-bundle/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\symfony\twig-bundle/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\symfony\web-profiler-bundle/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\symfony\stimulus-bundle/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\symfony\ux-turbo/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\twig\extra-bundle/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-bundle/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\symfony\monolog-bundle\src/translations</argument>
+          <argument>C:\Users\Msi\bac-lab\vendor\symfony\maker-bundle/translations</argument>
         </argument>
         <argument key="cache_vary" type="collection">
           <argument key="scanned_directories" type="collection">
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\validator/Resources/translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\form/Resources/translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-core/Resources/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\validator/Resources/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\form/Resources/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-core/Resources/translations</argument>
             <argument>translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\framework-bundle/translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\doctrine\doctrine-bundle/translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\doctrine\doctrine-migrations-bundle/translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\debug-bundle/translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\twig-bundle/translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\web-profiler-bundle/translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\stimulus-bundle/translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\ux-turbo/translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\twig\extra-bundle/translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-bundle/translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\monolog-bundle\src/translations</argument>
-            <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\maker-bundle/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\framework-bundle/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\doctrine\doctrine-bundle/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\doctrine\doctrine-migrations-bundle/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\debug-bundle/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\twig-bundle/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\web-profiler-bundle/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\stimulus-bundle/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\ux-turbo/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\twig\extra-bundle/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-bundle/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\monolog-bundle\src/translations</argument>
+            <argument>C:\Users\Msi\bac-lab\vendor\symfony\maker-bundle/translations</argument>
           </argument>
         </argument>
       </argument>
@@ -2913,7 +2976,7 @@
     <service id="debug.file_link_formatter" class="Symfony\Component\ErrorHandler\ErrorRenderer\FileLinkFormatter">
       <argument>%env(default::SYMFONY_IDE)%</argument>
       <argument type="service" id="request_stack" on-invalid="ignore"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <argument type="service_closure" id="debug.file_link_formatter.url_format"/>
     </service>
     <service id="debug.stopwatch" class="Symfony\Component\Stopwatch\Stopwatch" public="true">
@@ -3569,7 +3632,7 @@
     </service>
     <service id="argument_resolver.not_tagged_controller" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
       <tag name="controller.argument_value_resolver" priority="-200"/>
-      <argument type="service" id=".service_locator.MAxS68V"/>
+      <argument type="service" id=".service_locator.bGh2qGl"/>
     </service>
     <service id="debug.log_processor" class="Symfony\Bridge\Monolog\Processor\DebugProcessor">
       <tag name="kernel.reset" method="reset"/>
@@ -3651,6 +3714,7 @@
     <service id="routing.loader.attribute.services" class="Symfony\Component\Routing\Loader\AttributeServicesLoader">
       <tag name="routing.loader" priority="-10"/>
       <argument type="collection">
+        <argument>App\Controller\ChatbotController</argument>
         <argument>App\Controller\FicheController</argument>
         <argument>App\Controller\HomeController</argument>
       </argument>
@@ -3679,10 +3743,10 @@
     <service id="router.default" class="Symfony\Bundle\FrameworkBundle\Routing\Router">
       <tag name="monolog.logger" channel="router"/>
       <tag name="container.service_subscriber" id="routing.loader"/>
-      <argument type="service" id=".service_locator.xdLQ5FJ.router.default"/>
+      <argument type="service" id=".service_locator.yWPg3oY.router.default"/>
       <argument>kernel::loadRoutes</argument>
       <argument type="collection">
-        <argument key="cache_dir">C:\Users\asus\Documents\bac-lab\var\cache\dev</argument>
+        <argument key="cache_dir">C:\Users\Msi\bac-lab\var\cache\dev</argument>
         <argument key="debug">true</argument>
         <argument key="generator_class">Symfony\Component\Routing\Generator\CompiledUrlGenerator</argument>
         <argument key="generator_dumper_class">Symfony\Component\Routing\Generator\Dumper\CompiledUrlGeneratorDumper</argument>
@@ -3733,7 +3797,7 @@
       <argument type="service" id="request_stack"/>
       <argument type="service" id="router.request_context" on-invalid="ignore"/>
       <argument type="service" id="monolog.logger.request" on-invalid="ignore"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <argument>true</argument>
     </service>
     <service id="Symfony\Bundle\FrameworkBundle\Controller\RedirectController" class="Symfony\Bundle\FrameworkBundle\Controller\RedirectController" public="true">
@@ -3760,7 +3824,7 @@
       <argument type="service" id="property_info.reflection_extractor" on-invalid="null"/>
     </service>
     <service id="secrets.vault" class="Symfony\Bundle\FrameworkBundle\Secrets\SodiumVault">
-      <argument>C:\Users\asus\Documents\bac-lab/config/secrets/%env(default:kernel.environment:APP_RUNTIME_ENV)%</argument>
+      <argument>C:\Users\Msi\bac-lab/config/secrets/%env(default:kernel.environment:APP_RUNTIME_ENV)%</argument>
       <argument type="service" id="secrets.decryption_key" on-invalid="ignore"/>
       <argument>APP_SECRET</argument>
     </service>
@@ -3773,7 +3837,7 @@
       <argument>base64:default::SYMFONY_DECRYPTION_SECRET</argument>
     </service>
     <service id="secrets.local_vault" class="Symfony\Bundle\FrameworkBundle\Secrets\DotenvVault">
-      <argument>C:\Users\asus\Documents\bac-lab/.env.dev.local</argument>
+      <argument>C:\Users\Msi\bac-lab/.env.dev.local</argument>
     </service>
     <service id="serializer.mapping.class_discriminator_resolver" class="Symfony\Component\Serializer\Mapping\ClassDiscriminatorFromClassMetadata">
       <argument type="service" id="serializer.mapping.class_metadata_factory"/>
@@ -3883,10 +3947,10 @@
       <argument type="collection">
         <argument type="service" id="serializer.mapping.attribute_loader"/>
       </argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/serialization.php</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/serialization.php</argument>
     </service>
     <service id="serializer.mapping.cache.symfony" class="Psr\Cache\CacheItemPoolInterface">
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/serialization.php</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/serialization.php</argument>
       <argument type="service" id="cache.serializer"/>
       <factory class="Symfony\Component\Cache\Adapter\PhpArrayAdapter" method="create"/>
     </service>
@@ -4108,7 +4172,7 @@
       <argument>true</argument>
     </service>
     <service id="session.storage.factory.mock_file" class="Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorageFactory">
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/sessions</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/sessions</argument>
       <argument>MOCKSESSID</argument>
       <argument type="service">
         <service class="Symfony\Component\HttpFoundation\Session\Storage\MetadataBag">
@@ -4187,7 +4251,7 @@
       <argument type="service" id="form.registry"/>
     </service>
     <service id="form.extension" class="Symfony\Component\Form\Extension\DependencyInjection\DependencyInjectionExtension">
-      <argument type="service" id=".service_locator.dG2jNni"/>
+      <argument type="service" id=".service_locator.leMwd4V"/>
       <argument type="collection">
         <argument key="Symfony\Component\Form\Extension\Core\Type\FormType" type="iterator">
           <argument type="service" id="form.type_extension.form.transformation_failure_handling"/>
@@ -4296,7 +4360,10 @@
       <argument type="service" id="form.server_params"/>
       <argument>%form.type_extension.csrf.field_attr%</argument>
       <argument type="collection">
+        <argument key="App\Form\ChapitreType">submit</argument>
         <argument key="App\Form\FicheType">submit</argument>
+        <argument key="App\Form\FiliereType">submit</argument>
+        <argument key="App\Form\MatiereType">submit</argument>
       </argument>
     </service>
     <service id="validator.builder" class="Symfony\Component\Validator\ValidatorBuilder">
@@ -4339,10 +4406,10 @@
     <service id="validator.mapping.cache_warmer" class="Symfony\Bundle\FrameworkBundle\CacheWarmer\ValidatorCacheWarmer">
       <tag name="kernel.cache_warmer"/>
       <argument type="service" id="validator.builder"/>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/validation.php</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/validation.php</argument>
     </service>
     <service id="validator.mapping.cache.adapter" class="Symfony\Component\Cache\Adapter\PhpArrayAdapter" constructor="create">
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/validation.php</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/validation.php</argument>
       <argument type="service" id="cache.validator"/>
     </service>
     <service id="validator.validator_factory" class="Symfony\Component\Validator\ContainerConstraintValidatorFactory">
@@ -5068,7 +5135,7 @@
       </call>
     </service>
     <service id="profiler.storage" class="Symfony\Component\HttpKernel\Profiler\FileProfilerStorage">
-      <argument>file:C:\Users\asus\Documents\bac-lab\var\cache\dev/profiler</argument>
+      <argument>file:C:\Users\Msi\bac-lab\var\cache\dev/profiler</argument>
     </service>
     <service id="profiler_listener" class="Symfony\Component\HttpKernel\EventListener\ProfilerListener">
       <tag name="kernel.reset" method="?reset"/>
@@ -5149,7 +5216,7 @@
       <tag name="monolog.logger" channel="profiler"/>
       <tag name="data_collector" template="@WebProfiler/Collector/logger.html.twig" id="logger" priority="300"/>
       <argument type="service" id="monolog.logger.profiler" on-invalid="ignore"/>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/App_KernelDevDebugContainer</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/App_KernelDevDebugContainer</argument>
       <argument type="service" id=".virtual_request_stack" on-invalid="ignore"/>
     </service>
     <service id="data_collector.time" class="Symfony\Component\HttpKernel\DataCollector\TimeDataCollector">
@@ -5559,7 +5626,7 @@
     <service id="doctrine.orm.configuration" class="Doctrine\ORM\Configuration" abstract="true"/>
     <service id="doctrine.orm.entity_manager.abstract" class="Doctrine\ORM\EntityManager" lazy="true" abstract="true"/>
     <service id="doctrine.orm.container_repository_factory" class="Doctrine\Bundle\DoctrineBundle\Repository\ContainerRepositoryFactory">
-      <argument type="service" id=".service_locator.2YCMJHF"/>
+      <argument type="service" id=".service_locator.am10PJ4"/>
     </service>
     <service id="doctrine.orm.manager_configurator.abstract" class="Doctrine\Bundle\DoctrineBundle\ManagerConfigurator" abstract="true">
       <argument type="collection"/>
@@ -5757,7 +5824,7 @@
         <argument type="service" id=".doctrine.orm.default_metadata_driver"/>
       </call>
       <call method="setProxyDir">
-        <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/doctrine/orm/Proxies</argument>
+        <argument>C:\Users\Msi\bac-lab\var\cache\dev/doctrine/orm/Proxies</argument>
       </call>
       <call method="setProxyNamespace">
         <argument>Proxies</argument>
@@ -5800,7 +5867,7 @@
     </service>
     <service id="doctrine.orm.default_attribute_metadata_driver" class="Doctrine\ORM\Mapping\Driver\AttributeDriver">
       <argument type="collection">
-        <argument>C:\Users\asus\Documents\bac-lab\src\Entity</argument>
+        <argument>C:\Users\Msi\bac-lab\src\Entity</argument>
       </argument>
       <argument>true</argument>
     </service>
@@ -5866,7 +5933,7 @@
     <service id="doctrine.migrations.configuration" class="Doctrine\Migrations\Configuration\Configuration">
       <call method="addMigrationsDirectory">
         <argument>DoctrineMigrations</argument>
-        <argument>C:\Users\asus\Documents\bac-lab/migrations</argument>
+        <argument>C:\Users\Msi\bac-lab/migrations</argument>
       </call>
       <call method="setAllOrNothing">
         <argument>false</argument>
@@ -6098,7 +6165,7 @@
         <argument key="source" type="service">
           <service class="Symfony\Component\VarDumper\Dumper\ContextProvider\SourceContextProvider">
             <argument>UTF-8</argument>
-            <argument>C:\Users\asus\Documents\bac-lab</argument>
+            <argument>C:\Users\Msi\bac-lab</argument>
             <argument type="service" id="debug.file_link_formatter" on-invalid="null"/>
           </service>
         </argument>
@@ -6120,7 +6187,7 @@
         <argument key="source" type="service">
           <service class="Symfony\Component\VarDumper\Dumper\ContextProvider\SourceContextProvider">
             <argument>UTF-8</argument>
-            <argument>C:\Users\asus\Documents\bac-lab</argument>
+            <argument>C:\Users\Msi\bac-lab</argument>
             <argument type="service" id="debug.file_link_formatter" on-invalid="null"/>
           </service>
         </argument>
@@ -6185,7 +6252,7 @@
       <tag name="kernel.reset" method="resetGlobals"/>
       <argument type="service" id="twig.loader.native_filesystem"/>
       <argument type="collection">
-        <argument key="cache">C:\Users\asus\Documents\bac-lab\var\cache\dev/twig</argument>
+        <argument key="cache">C:\Users\Msi\bac-lab\var\cache\dev/twig</argument>
         <argument key="charset">UTF-8</argument>
         <argument key="debug">true</argument>
         <argument key="strict_variables">true</argument>
@@ -6310,10 +6377,10 @@
     <service id="twig.template_iterator" class="Symfony\Bundle\TwigBundle\TemplateIterator">
       <argument type="service" id="kernel"/>
       <argument type="collection">
-        <argument key="C:\Users\asus\Documents\bac-lab\vendor\symfony\twig-bridge/Resources/views/Email">email</argument>
-        <argument key="C:\Users\asus\Documents\bac-lab\vendor\symfony\twig-bridge/Resources/views/Form">null</argument>
+        <argument key="C:\Users\Msi\bac-lab\vendor\symfony\twig-bridge/Resources/views/Email">email</argument>
+        <argument key="C:\Users\Msi\bac-lab\vendor\symfony\twig-bridge/Resources/views/Form">null</argument>
       </argument>
-      <argument>C:\Users\asus\Documents\bac-lab/templates</argument>
+      <argument>C:\Users\Msi\bac-lab/templates</argument>
       <argument type="collection">
         <argument>*.twig</argument>
       </argument>
@@ -6328,76 +6395,76 @@
     <service id="twig.loader.native_filesystem" class="Twig\Loader\FilesystemLoader">
       <tag name="twig.loader"/>
       <argument type="collection"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\doctrine\doctrine-bundle/templates</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\doctrine\doctrine-bundle/templates</argument>
         <argument>Doctrine</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\doctrine\doctrine-bundle/templates</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\doctrine\doctrine-bundle/templates</argument>
         <argument>!Doctrine</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\doctrine\doctrine-migrations-bundle/templates</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\doctrine\doctrine-migrations-bundle/templates</argument>
         <argument>DoctrineMigrations</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\doctrine\doctrine-migrations-bundle/templates</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\doctrine\doctrine-migrations-bundle/templates</argument>
         <argument>!DoctrineMigrations</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\debug-bundle/Resources/views</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\debug-bundle/Resources/views</argument>
         <argument>Debug</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\debug-bundle/Resources/views</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\debug-bundle/Resources/views</argument>
         <argument>!Debug</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\web-profiler-bundle/Resources/views</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\web-profiler-bundle/Resources/views</argument>
         <argument>WebProfiler</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\web-profiler-bundle/Resources/views</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\web-profiler-bundle/Resources/views</argument>
         <argument>!WebProfiler</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\ux-turbo/templates</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\ux-turbo/templates</argument>
         <argument>Turbo</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\ux-turbo/templates</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\ux-turbo/templates</argument>
         <argument>!Turbo</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-bundle/Resources/views</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-bundle/Resources/views</argument>
         <argument>Security</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\security-bundle/Resources/views</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\security-bundle/Resources/views</argument>
         <argument>!Security</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\maker-bundle/templates</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\maker-bundle/templates</argument>
         <argument>Maker</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\maker-bundle/templates</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\maker-bundle/templates</argument>
         <argument>!Maker</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab/templates</argument>
+        <argument>C:\Users\Msi\bac-lab/templates</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\twig-bridge/Resources/views/Email</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\twig-bridge/Resources/views/Email</argument>
         <argument>email</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\twig-bridge/Resources/views/Email</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\twig-bridge/Resources/views/Email</argument>
         <argument>!email</argument>
       </call>
       <call method="addPath">
-        <argument>C:\Users\asus\Documents\bac-lab\vendor\symfony\twig-bridge/Resources/views/Form</argument>
+        <argument>C:\Users\Msi\bac-lab\vendor\symfony\twig-bridge/Resources/views/Form</argument>
       </call>
     </service>
     <service id="twig.loader.chain" class="Twig\Loader\ChainLoader"/>
@@ -6510,9 +6577,9 @@
       <tag name="console.command"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="twig"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <argument>%kernel.bundles_metadata%</argument>
-      <argument>C:\Users\asus\Documents\bac-lab/templates</argument>
+      <argument>C:\Users\Msi\bac-lab/templates</argument>
       <argument type="service" id="debug.file_link_formatter" on-invalid="null"/>
       <call method="setName">
         <argument>debug:twig</argument>
@@ -6561,7 +6628,7 @@
       <argument type="service" id="twig"/>
       <argument>%data_collector.templates%</argument>
       <argument type="service" id="web_profiler.csp.handler"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
     </service>
     <service id="web_profiler.controller.router" class="Symfony\Bundle\WebProfilerBundle\Controller\RouterController" public="true">
       <argument type="service" id="profiler" on-invalid="null"/>
@@ -6604,7 +6671,7 @@
     <service id="twig.extension.code" class="Symfony\Bundle\WebProfilerBundle\Profiler\CodeExtension">
       <tag name="twig.extension"/>
       <argument type="service" id="debug.file_link_formatter"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <argument>UTF-8</argument>
     </service>
     <service id="web_profiler.debug_toolbar" class="Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener">
@@ -6627,7 +6694,7 @@
       <argument type="service" id="stimulus.helper"/>
     </service>
     <service id="stimulus.asset_mapper.ux_package_reader" class="Symfony\UX\StimulusBundle\Ux\UxPackageReader">
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
     </service>
     <service id="stimulus.ux_controllers_twig_extension" class="Symfony\UX\StimulusBundle\Twig\UxControllersTwigExtension">
       <tag name="twig.extension"/>
@@ -6637,15 +6704,15 @@
       <argument type="service" id="stimulus.asset_mapper.controllers_map_generator"/>
       <argument type="service" id="asset_mapper"/>
       <argument type="service" id="stimulus.asset_mapper.ux_package_reader"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
     </service>
     <service id="stimulus.asset_mapper.controllers_map_generator" class="Symfony\UX\StimulusBundle\AssetMapper\ControllersMapGenerator">
       <argument type="service" id="asset_mapper"/>
       <argument type="service" id="stimulus.asset_mapper.ux_package_reader"/>
       <argument type="collection">
-        <argument>C:\Users\asus\Documents\bac-lab/assets/controllers</argument>
+        <argument>C:\Users\Msi\bac-lab/assets/controllers</argument>
       </argument>
-      <argument>C:\Users\asus\Documents\bac-lab/assets/controllers.json</argument>
+      <argument>C:\Users\Msi\bac-lab/assets/controllers.json</argument>
       <argument type="service" id="stimulus.asset_mapper.auto_import_locator" on-invalid="null"/>
     </service>
     <service id="stimulus.asset_mapper.auto_import_locator" class="Symfony\UX\StimulusBundle\AssetMapper\AutoImportLocator">
@@ -7464,7 +7531,7 @@
     <service id="monolog.processor.psr_log_message" class="Monolog\Processor\PsrLogMessageProcessor"/>
     <service id="monolog.handler.main" class="Monolog\Handler\StreamHandler">
       <tag name="kernel.reset" method="reset"/>
-      <argument>C:\Users\asus\Documents\bac-lab\var\log/dev.log</argument>
+      <argument>C:\Users\Msi\bac-lab\var\log/dev.log</argument>
       <argument>debug</argument>
       <argument>true</argument>
       <argument>null</argument>
@@ -7487,8 +7554,8 @@
       <argument type="service" id="filesystem"/>
       <argument type="service" id="maker.autoloader_util"/>
       <argument type="service" id="maker.file_link_formatter"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
-      <argument>C:\Users\asus\Documents\bac-lab/templates</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab/templates</argument>
     </service>
     <service id="maker.autoloader_finder" class="Symfony\Bundle\MakerBundle\Util\ComposerAutoloaderFinder">
       <argument>App</argument>
@@ -7665,7 +7732,7 @@
     </service>
     <service id="maker.maker.make_migration" class="Symfony\Bundle\MakerBundle\Maker\MakeMigration">
       <tag name="maker.command"/>
-      <argument>C:\Users\asus\Documents\bac-lab</argument>
+      <argument>C:\Users\Msi\bac-lab</argument>
       <argument type="service" id="maker.file_link_formatter"/>
     </service>
     <service id="maker.maker.make_stimulus_controller" class="Symfony\Bundle\MakerBundle\Maker\MakeStimulusController">
@@ -7687,24 +7754,46 @@
       <argument type="service" id="maker.file_manager"/>
       <argument type="service" id="maker.generator"/>
     </service>
-    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\FicheController" class="App\Controller\FicheController" autowire="true" abstract="true"/>
-    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\FicheController" class="App\Controller\FicheController" autowire="true" abstract="true"/>
-    <service id=".instanceof.App\Controller\FicheController.0.App\Controller\FicheController" class="App\Controller\FicheController" autowire="true" abstract="true"/>
-    <service id=".abstract.instanceof.App\Controller\FicheController" class="App\Controller\FicheController" autowire="true" autoconfigure="true" abstract="true"/>
-    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\HomeController" class="App\Controller\HomeController" autowire="true" abstract="true"/>
-    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\HomeController" class="App\Controller\HomeController" autowire="true" abstract="true"/>
-    <service id=".instanceof.App\Controller\HomeController.0.App\Controller\HomeController" class="App\Controller\HomeController" autowire="true" abstract="true"/>
-    <service id=".abstract.instanceof.App\Controller\HomeController" class="App\Controller\HomeController" autowire="true" autoconfigure="true" abstract="true"/>
-    <service id=".instanceof.App\Entity\Fiche.0.App\Entity\Fiche" class="App\Entity\Fiche" autowire="true" abstract="true"/>
-    <service id=".abstract.instanceof.App\Entity\Fiche" class="App\Entity\Fiche" autowire="true" autoconfigure="true" abstract="true"/>
-    <service id=".instanceof.App\Entity\FicheVersion.0.App\Entity\FicheVersion" class="App\Entity\FicheVersion" autowire="true" abstract="true"/>
-    <service id=".abstract.instanceof.App\Entity\FicheVersion" class="App\Entity\FicheVersion" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ChapitreController" class="App\Controller\ChapitreController" public="true" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ChapitreController" class="App\Controller\ChapitreController" public="true" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\ChapitreController" class="App\Controller\ChapitreController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ChatbotController" class="App\Controller\ChatbotController" public="true" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ChatbotController" class="App\Controller\ChatbotController" public="true" autowire="true" abstract="true"/>
+    <service id=".instanceof.App\Controller\ChatbotController.0.App\Controller\ChatbotController" class="App\Controller\ChatbotController" public="true" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\ChatbotController" class="App\Controller\ChatbotController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\FicheController" class="App\Controller\FicheController" public="true" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\FicheController" class="App\Controller\FicheController" public="true" autowire="true" abstract="true"/>
+    <service id=".instanceof.App\Controller\FicheController.0.App\Controller\FicheController" class="App\Controller\FicheController" public="true" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\FicheController" class="App\Controller\FicheController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\FiliereController" class="App\Controller\FiliereController" public="true" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\FiliereController" class="App\Controller\FiliereController" public="true" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\FiliereController" class="App\Controller\FiliereController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\FrontRevisionController" class="App\Controller\FrontRevisionController" public="true" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\FrontRevisionController" class="App\Controller\FrontRevisionController" public="true" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\FrontRevisionController" class="App\Controller\FrontRevisionController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\HomeController" class="App\Controller\HomeController" public="true" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\HomeController" class="App\Controller\HomeController" public="true" autowire="true" abstract="true"/>
+    <service id=".instanceof.App\Controller\HomeController.0.App\Controller\HomeController" class="App\Controller\HomeController" public="true" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\HomeController" class="App\Controller\HomeController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\MatiereController" class="App\Controller\MatiereController" public="true" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\MatiereController" class="App\Controller\MatiereController" public="true" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\MatiereController" class="App\Controller\MatiereController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\ChapitreType" class="App\Form\ChapitreType" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Form\ChapitreType" class="App\Form\ChapitreType" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\FicheType" class="App\Form\FicheType" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Form\FicheType" class="App\Form\FicheType" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\FiliereType" class="App\Form\FiliereType" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Form\FiliereType" class="App\Form\FiliereType" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\MatiereType" class="App\Form\MatiereType" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Form\MatiereType" class="App\Form\MatiereType" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\ChapitreRepository" class="App\Repository\ChapitreRepository" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Repository\ChapitreRepository" class="App\Repository\ChapitreRepository" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\FicheRepository" class="App\Repository\FicheRepository" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Repository\FicheRepository" class="App\Repository\FicheRepository" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\FicheVersionRepository" class="App\Repository\FicheVersionRepository" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Repository\FicheVersionRepository" class="App\Repository\FicheVersionRepository" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\FiliereRepository" class="App\Repository\FiliereRepository" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Repository\FiliereRepository" class="App\Repository\FiliereRepository" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".service_locator.ryAvHi4" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -8223,6 +8312,73 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.1vYpZ1B" method="withContext"/>
     </service>
+    <service id=".service_locator.dz4_imx" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="chapitreRepository" type="service_closure" id="App\Repository\ChapitreRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.dz4_imx.App\Controller\ChapitreController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ChapitreController::index()"/>
+      <argument>App\Controller\ChapitreController::index()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.dz4_imx" method="withContext"/>
+    </service>
+    <service id=".service_locator.z0A7H.F" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+      </argument>
+    </service>
+    <service id=".service_locator.z0A7H.F.App\Controller\ChapitreController::new()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ChapitreController::new()"/>
+      <argument>App\Controller\ChapitreController::new()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.z0A7H.F" method="withContext"/>
+    </service>
+    <service id=".service_locator.Z6FbZt8" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="chapitre" type="service_closure" id=".errored..service_locator.Z6FbZt8.App\Entity\Chapitre"/>
+      </argument>
+    </service>
+    <service id=".service_locator.Z6FbZt8.App\Controller\ChapitreController::show()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ChapitreController::show()"/>
+      <argument>App\Controller\ChapitreController::show()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.Z6FbZt8" method="withContext"/>
+    </service>
+    <service id=".service_locator.U5IQ.LC" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="chapitre" type="service_closure" id=".errored..service_locator.U5IQ.LC.App\Entity\Chapitre"/>
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+      </argument>
+    </service>
+    <service id=".service_locator.U5IQ.LC.App\Controller\ChapitreController::edit()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ChapitreController::edit()"/>
+      <argument>App\Controller\ChapitreController::edit()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.U5IQ.LC" method="withContext"/>
+    </service>
+    <service id=".service_locator.U5IQ.LC.App\Controller\ChapitreController::delete()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ChapitreController::delete()"/>
+      <argument>App\Controller\ChapitreController::delete()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.U5IQ.LC" method="withContext"/>
+    </service>
+    <service id=".service_locator.jxv0ykO" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="chatbot" type="service_closure" id="App\Service\ChatbotService"/>
+      </argument>
+    </service>
+    <service id=".service_locator.jxv0ykO.App\Controller\ChatbotController::ask()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ChatbotController::ask()"/>
+      <argument>App\Controller\ChatbotController::ask()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.jxv0ykO" method="withContext"/>
+    </service>
     <service id=".service_locator.AlBZe5C" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -8234,12 +8390,6 @@
       <argument>App\Controller\FicheController::index()</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.AlBZe5C" method="withContext"/>
-    </service>
-    <service id=".service_locator.z0A7H.F" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator"/>
-      <argument type="collection">
-        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
-      </argument>
     </service>
     <service id=".service_locator.z0A7H.F.App\Controller\FicheController::new()" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\FicheController::new()"/>
@@ -8291,27 +8441,189 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.1cj3dMN" method="withContext"/>
     </service>
-    <service id=".service_locator.MAxS68V" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.z0A7H.F.App\Controller\FiliereController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\FiliereController::index()"/>
+      <argument>App\Controller\FiliereController::index()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.z0A7H.F" method="withContext"/>
+    </service>
+    <service id=".service_locator.z0A7H.F.App\Controller\FiliereController::new()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\FiliereController::new()"/>
+      <argument>App\Controller\FiliereController::new()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.z0A7H.F" method="withContext"/>
+    </service>
+    <service id=".service_locator.Rkg_ZGo" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="filiere" type="service_closure" id=".errored..service_locator.Rkg_ZGo.App\Entity\Filiere"/>
+      </argument>
+    </service>
+    <service id=".service_locator.Rkg_ZGo.App\Controller\FiliereController::show()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\FiliereController::show()"/>
+      <argument>App\Controller\FiliereController::show()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.Rkg_ZGo" method="withContext"/>
+    </service>
+    <service id=".service_locator.3jRshy4" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="filiere" type="service_closure" id=".errored..service_locator.3jRshy4.App\Entity\Filiere"/>
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+      </argument>
+    </service>
+    <service id=".service_locator.3jRshy4.App\Controller\FiliereController::edit()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\FiliereController::edit()"/>
+      <argument>App\Controller\FiliereController::edit()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.3jRshy4" method="withContext"/>
+    </service>
+    <service id=".service_locator.3jRshy4.App\Controller\FiliereController::delete()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\FiliereController::delete()"/>
+      <argument>App\Controller\FiliereController::delete()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.3jRshy4" method="withContext"/>
+    </service>
+    <service id=".service_locator.ydXCfGE" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="repo" type="service_closure" id="App\Repository\FiliereRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.ydXCfGE.App\Controller\FrontRevisionController::listFilieres()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\FrontRevisionController::listFilieres()"/>
+      <argument>App\Controller\FrontRevisionController::listFilieres()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.ydXCfGE" method="withContext"/>
+    </service>
+    <service id=".service_locator.ccbiunS" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="filiere" type="service_closure" id=".errored..service_locator.ccbiunS.App\Entity\Filiere"/>
+        <argument key="doctrine" type="service_closure" id="doctrine"/>
+      </argument>
+    </service>
+    <service id=".service_locator.ccbiunS.App\Controller\FrontRevisionController::listMatieres()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\FrontRevisionController::listMatieres()"/>
+      <argument>App\Controller\FrontRevisionController::listMatieres()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.ccbiunS" method="withContext"/>
+    </service>
+    <service id=".service_locator.QPo2m8E" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="matiere" type="service_closure" id=".errored..service_locator.QPo2m8E.App\Entity\Matiere"/>
+        <argument key="doctrine" type="service_closure" id="doctrine"/>
+      </argument>
+    </service>
+    <service id=".service_locator.QPo2m8E.App\Controller\FrontRevisionController::listPdf()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\FrontRevisionController::listPdf()"/>
+      <argument>App\Controller\FrontRevisionController::listPdf()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.QPo2m8E" method="withContext"/>
+    </service>
+    <service id=".service_locator.z0A7H.F.App\Controller\MatiereController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\MatiereController::index()"/>
+      <argument>App\Controller\MatiereController::index()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.z0A7H.F" method="withContext"/>
+    </service>
+    <service id=".service_locator.z0A7H.F.App\Controller\MatiereController::new()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\MatiereController::new()"/>
+      <argument>App\Controller\MatiereController::new()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.z0A7H.F" method="withContext"/>
+    </service>
+    <service id=".service_locator.HsbKmE." class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="matiere" type="service_closure" id=".errored..service_locator.HsbKmE..App\Entity\Matiere"/>
+      </argument>
+    </service>
+    <service id=".service_locator.HsbKmE..App\Controller\MatiereController::show()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\MatiereController::show()"/>
+      <argument>App\Controller\MatiereController::show()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.HsbKmE." method="withContext"/>
+    </service>
+    <service id=".service_locator.6NWbZgS" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="matiere" type="service_closure" id=".errored..service_locator.6NWbZgS.App\Entity\Matiere"/>
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+      </argument>
+    </service>
+    <service id=".service_locator.6NWbZgS.App\Controller\MatiereController::edit()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\MatiereController::edit()"/>
+      <argument>App\Controller\MatiereController::edit()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.6NWbZgS" method="withContext"/>
+    </service>
+    <service id=".service_locator.6NWbZgS.App\Controller\MatiereController::delete()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\MatiereController::delete()"/>
+      <argument>App\Controller\MatiereController::delete()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.6NWbZgS" method="withContext"/>
+    </service>
+    <service id=".service_locator.bGh2qGl" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.1vYpZ1B.kernel::registerContainerConfiguration()"/>
         <argument key="App\Kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.1vYpZ1B.kernel::registerContainerConfiguration()"/>
         <argument key="kernel::loadRoutes" type="service_closure" id=".service_locator.1vYpZ1B.kernel::loadRoutes()"/>
         <argument key="App\Kernel::loadRoutes" type="service_closure" id=".service_locator.1vYpZ1B.kernel::loadRoutes()"/>
+        <argument key="App\Controller\ChapitreController::index" type="service_closure" id=".service_locator.dz4_imx.App\Controller\ChapitreController::index()"/>
+        <argument key="App\Controller\ChapitreController::new" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\ChapitreController::new()"/>
+        <argument key="App\Controller\ChapitreController::show" type="service_closure" id=".service_locator.Z6FbZt8.App\Controller\ChapitreController::show()"/>
+        <argument key="App\Controller\ChapitreController::edit" type="service_closure" id=".service_locator.U5IQ.LC.App\Controller\ChapitreController::edit()"/>
+        <argument key="App\Controller\ChapitreController::delete" type="service_closure" id=".service_locator.U5IQ.LC.App\Controller\ChapitreController::delete()"/>
+        <argument key="App\Controller\ChatbotController::ask" type="service_closure" id=".service_locator.jxv0ykO.App\Controller\ChatbotController::ask()"/>
         <argument key="App\Controller\FicheController::index" type="service_closure" id=".service_locator.AlBZe5C.App\Controller\FicheController::index()"/>
         <argument key="App\Controller\FicheController::new" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\FicheController::new()"/>
         <argument key="App\Controller\FicheController::show" type="service_closure" id=".service_locator.dlAP8TO.App\Controller\FicheController::show()"/>
         <argument key="App\Controller\FicheController::edit" type="service_closure" id=".service_locator.1cj3dMN.App\Controller\FicheController::edit()"/>
         <argument key="App\Controller\FicheController::history" type="service_closure" id=".service_locator.uS3u6ds.App\Controller\FicheController::history()"/>
         <argument key="App\Controller\FicheController::delete" type="service_closure" id=".service_locator.1cj3dMN.App\Controller\FicheController::delete()"/>
+        <argument key="App\Controller\FiliereController::index" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\FiliereController::index()"/>
+        <argument key="App\Controller\FiliereController::new" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\FiliereController::new()"/>
+        <argument key="App\Controller\FiliereController::show" type="service_closure" id=".service_locator.Rkg_ZGo.App\Controller\FiliereController::show()"/>
+        <argument key="App\Controller\FiliereController::edit" type="service_closure" id=".service_locator.3jRshy4.App\Controller\FiliereController::edit()"/>
+        <argument key="App\Controller\FiliereController::delete" type="service_closure" id=".service_locator.3jRshy4.App\Controller\FiliereController::delete()"/>
+        <argument key="App\Controller\FrontRevisionController::listFilieres" type="service_closure" id=".service_locator.ydXCfGE.App\Controller\FrontRevisionController::listFilieres()"/>
+        <argument key="App\Controller\FrontRevisionController::listMatieres" type="service_closure" id=".service_locator.ccbiunS.App\Controller\FrontRevisionController::listMatieres()"/>
+        <argument key="App\Controller\FrontRevisionController::listPdf" type="service_closure" id=".service_locator.QPo2m8E.App\Controller\FrontRevisionController::listPdf()"/>
+        <argument key="App\Controller\MatiereController::index" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\MatiereController::index()"/>
+        <argument key="App\Controller\MatiereController::new" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\MatiereController::new()"/>
+        <argument key="App\Controller\MatiereController::show" type="service_closure" id=".service_locator.HsbKmE..App\Controller\MatiereController::show()"/>
+        <argument key="App\Controller\MatiereController::edit" type="service_closure" id=".service_locator.6NWbZgS.App\Controller\MatiereController::edit()"/>
+        <argument key="App\Controller\MatiereController::delete" type="service_closure" id=".service_locator.6NWbZgS.App\Controller\MatiereController::delete()"/>
         <argument key="kernel:registerContainerConfiguration" type="service_closure" id=".service_locator.1vYpZ1B.kernel::registerContainerConfiguration()"/>
         <argument key="kernel:loadRoutes" type="service_closure" id=".service_locator.1vYpZ1B.kernel::loadRoutes()"/>
+        <argument key="App\Controller\ChapitreController:index" type="service_closure" id=".service_locator.dz4_imx.App\Controller\ChapitreController::index()"/>
+        <argument key="App\Controller\ChapitreController:new" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\ChapitreController::new()"/>
+        <argument key="App\Controller\ChapitreController:show" type="service_closure" id=".service_locator.Z6FbZt8.App\Controller\ChapitreController::show()"/>
+        <argument key="App\Controller\ChapitreController:edit" type="service_closure" id=".service_locator.U5IQ.LC.App\Controller\ChapitreController::edit()"/>
+        <argument key="App\Controller\ChapitreController:delete" type="service_closure" id=".service_locator.U5IQ.LC.App\Controller\ChapitreController::delete()"/>
+        <argument key="App\Controller\ChatbotController:ask" type="service_closure" id=".service_locator.jxv0ykO.App\Controller\ChatbotController::ask()"/>
         <argument key="App\Controller\FicheController:index" type="service_closure" id=".service_locator.AlBZe5C.App\Controller\FicheController::index()"/>
         <argument key="App\Controller\FicheController:new" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\FicheController::new()"/>
         <argument key="App\Controller\FicheController:show" type="service_closure" id=".service_locator.dlAP8TO.App\Controller\FicheController::show()"/>
         <argument key="App\Controller\FicheController:edit" type="service_closure" id=".service_locator.1cj3dMN.App\Controller\FicheController::edit()"/>
         <argument key="App\Controller\FicheController:history" type="service_closure" id=".service_locator.uS3u6ds.App\Controller\FicheController::history()"/>
         <argument key="App\Controller\FicheController:delete" type="service_closure" id=".service_locator.1cj3dMN.App\Controller\FicheController::delete()"/>
+        <argument key="App\Controller\FiliereController:index" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\FiliereController::index()"/>
+        <argument key="App\Controller\FiliereController:new" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\FiliereController::new()"/>
+        <argument key="App\Controller\FiliereController:show" type="service_closure" id=".service_locator.Rkg_ZGo.App\Controller\FiliereController::show()"/>
+        <argument key="App\Controller\FiliereController:edit" type="service_closure" id=".service_locator.3jRshy4.App\Controller\FiliereController::edit()"/>
+        <argument key="App\Controller\FiliereController:delete" type="service_closure" id=".service_locator.3jRshy4.App\Controller\FiliereController::delete()"/>
+        <argument key="App\Controller\FrontRevisionController:listFilieres" type="service_closure" id=".service_locator.ydXCfGE.App\Controller\FrontRevisionController::listFilieres()"/>
+        <argument key="App\Controller\FrontRevisionController:listMatieres" type="service_closure" id=".service_locator.ccbiunS.App\Controller\FrontRevisionController::listMatieres()"/>
+        <argument key="App\Controller\FrontRevisionController:listPdf" type="service_closure" id=".service_locator.QPo2m8E.App\Controller\FrontRevisionController::listPdf()"/>
+        <argument key="App\Controller\MatiereController:index" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\MatiereController::index()"/>
+        <argument key="App\Controller\MatiereController:new" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\MatiereController::new()"/>
+        <argument key="App\Controller\MatiereController:show" type="service_closure" id=".service_locator.HsbKmE..App\Controller\MatiereController::show()"/>
+        <argument key="App\Controller\MatiereController:edit" type="service_closure" id=".service_locator.6NWbZgS.App\Controller\MatiereController::edit()"/>
+        <argument key="App\Controller\MatiereController:delete" type="service_closure" id=".service_locator.6NWbZgS.App\Controller\MatiereController::delete()"/>
       </argument>
     </service>
     <service id=".service_locator.DA6YX9k" class="Symfony\Component\DependencyInjection\ServiceLocator">
@@ -8497,10 +8809,13 @@
       <argument type="service" id="argument_resolver.query_parameter_value_resolver"/>
       <argument type="service" id="debug.stopwatch"/>
     </service>
-    <service id=".service_locator.dG2jNni" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.leMwd4V" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="App\Form\ChapitreType" type="service_closure" id="App\Form\ChapitreType"/>
         <argument key="App\Form\FicheType" type="service_closure" id="App\Form\FicheType"/>
+        <argument key="App\Form\FiliereType" type="service_closure" id="App\Form\FiliereType"/>
+        <argument key="App\Form\MatiereType" type="service_closure" id="App\Form\MatiereType"/>
         <argument key="Symfony\Component\Form\Extension\Core\Type\FormType" type="service_closure" id="form.type.form"/>
         <argument key="Symfony\Component\Form\Extension\Core\Type\ChoiceType" type="service_closure" id="form.type.choice"/>
         <argument key="Symfony\Component\Form\Extension\Core\Type\FileType" type="service_closure" id="form.type.file"/>
@@ -8649,11 +8964,13 @@
         <argument key="turbo.doctrine.event_listener" type="service_closure" id="turbo.doctrine.event_listener"/>
       </argument>
     </service>
-    <service id=".service_locator.2YCMJHF" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.am10PJ4" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="App\Repository\ChapitreRepository" type="service_closure" id="App\Repository\ChapitreRepository"/>
         <argument key="App\Repository\FicheRepository" type="service_closure" id="App\Repository\FicheRepository"/>
         <argument key="App\Repository\FicheVersionRepository" type="service_closure" id="App\Repository\FicheVersionRepository"/>
+        <argument key="App\Repository\FiliereRepository" type="service_closure" id="App\Repository\FiliereRepository"/>
       </argument>
     </service>
     <service id=".service_locator.W55Po6X" class="Symfony\Component\DependencyInjection\ServiceLocator">
@@ -8906,7 +9223,7 @@
         <argument key="translation.loader.json" type="service_closure" id="translation.loader.json"/>
       </argument>
     </service>
-    <service id=".service_locator.TJNRSaV" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.xFD7AqT" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="router" type="service_closure" id="router.default" on-invalid="ignore"/>
@@ -8922,17 +9239,63 @@
         <argument key="web_link.http_header_serializer" type="service_closure" id="web_link.http_header_serializer" on-invalid="ignore"/>
       </argument>
     </service>
-    <service id=".service_locator.TJNRSaV.App\Controller\FicheController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.xFD7AqT.App\Controller\ChapitreController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ChapitreController"/>
+      <argument>App\Controller\ChapitreController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.xFD7AqT" method="withContext"/>
+    </service>
+    <service id=".service_locator.xFD7AqT.App\Controller\ChatbotController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ChatbotController"/>
+      <argument>App\Controller\ChatbotController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.xFD7AqT" method="withContext"/>
+    </service>
+    <service id=".service_locator.xFD7AqT.App\Controller\FicheController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\FicheController"/>
       <argument>App\Controller\FicheController</argument>
       <argument type="service" id="service_container"/>
-      <factory service=".service_locator.TJNRSaV" method="withContext"/>
+      <factory service=".service_locator.xFD7AqT" method="withContext"/>
     </service>
-    <service id=".service_locator.TJNRSaV.App\Controller\HomeController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.xFD7AqT.App\Controller\FiliereController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\FiliereController"/>
+      <argument>App\Controller\FiliereController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.xFD7AqT" method="withContext"/>
+    </service>
+    <service id=".service_locator.xFD7AqT.App\Controller\FrontRevisionController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\FrontRevisionController"/>
+      <argument>App\Controller\FrontRevisionController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.xFD7AqT" method="withContext"/>
+    </service>
+    <service id=".service_locator.xFD7AqT.App\Controller\HomeController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\HomeController"/>
       <argument>App\Controller\HomeController</argument>
       <argument type="service" id="service_container"/>
-      <factory service=".service_locator.TJNRSaV" method="withContext"/>
+      <factory service=".service_locator.xFD7AqT" method="withContext"/>
+    </service>
+    <service id=".service_locator.xFD7AqT.App\Controller\MatiereController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\MatiereController"/>
+      <argument>App\Controller\MatiereController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.xFD7AqT" method="withContext"/>
+    </service>
+    <service id=".service_locator.TJNRSaV" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="router" type="service_closure" id="router.default" on-invalid="ignore"/>
+        <argument key="request_stack" type="service_closure" id="request_stack" on-invalid="ignore"/>
+        <argument key="http_kernel" type="service_closure" id="http_kernel" on-invalid="ignore"/>
+        <argument key="serializer" type="service_closure" id="debug.serializer" on-invalid="ignore"/>
+        <argument key="security.authorization_checker" type="service_closure" id="security.authorization_checker" on-invalid="ignore"/>
+        <argument key="twig" type="service_closure" id="twig" on-invalid="ignore"/>
+        <argument key="form.factory" type="service_closure" id="form.factory" on-invalid="ignore"/>
+        <argument key="security.token_storage" type="service_closure" id="security.token_storage" on-invalid="ignore"/>
+        <argument key="security.csrf.token_manager" type="service_closure" id="security.csrf.same_origin_token_manager" on-invalid="ignore"/>
+        <argument key="parameter_bag" type="service_closure" id="parameter_bag" on-invalid="ignore"/>
+        <argument key="web_link.http_header_serializer" type="service_closure" id="web_link.http_header_serializer" on-invalid="ignore"/>
+      </argument>
     </service>
     <service id=".service_locator.TJNRSaV.controller.helper" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="controller.helper"/>
@@ -8952,17 +9315,17 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.kvOAK9B" method="withContext"/>
     </service>
-    <service id=".service_locator.xdLQ5FJ" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.yWPg3oY" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="routing.loader" type="service_closure" id="routing.loader"/>
       </argument>
     </service>
-    <service id=".service_locator.xdLQ5FJ.router.default" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.yWPg3oY.router.default" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="router.default"/>
       <argument>router.default</argument>
       <argument type="service" id="service_container"/>
-      <factory service=".service_locator.xdLQ5FJ" method="withContext"/>
+      <factory service=".service_locator.yWPg3oY" method="withContext"/>
     </service>
     <service id=".service_locator.mFBT25N" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
@@ -9113,7 +9476,7 @@
     <service id="asset_mapper.cached_mapped_asset_factory.inner" class="Symfony\Component\AssetMapper\Factory\MappedAssetFactory">
       <argument type="service" id="asset_mapper.public_assets_path_resolver"/>
       <argument type="service" id="asset_mapper_compiler"/>
-      <argument>C:\Users\asus\Documents\bac-lab/assets/vendor</argument>
+      <argument>C:\Users\Msi\bac-lab/assets/vendor</argument>
     </service>
     <service id="asset_mapper.asset_package.inner" class="Symfony\Component\Asset\PathPackage">
       <argument/>
@@ -9133,8 +9496,13 @@
       <call method="allowControllers">
         <argument type="collection">
           <argument>App\Kernel</argument>
+          <argument>App\Controller\ChapitreController</argument>
+          <argument>App\Controller\ChatbotController</argument>
           <argument>App\Controller\FicheController</argument>
+          <argument>App\Controller\FiliereController</argument>
+          <argument>App\Controller\FrontRevisionController</argument>
           <argument>App\Controller\HomeController</argument>
+          <argument>App\Controller\MatiereController</argument>
           <argument>Doctrine\Bundle\DoctrineBundle\Controller\ProfilerController</argument>
         </argument>
       </call>
@@ -9367,14 +9735,38 @@
     <service id=".errored..service_locator.1vYpZ1B.Symfony\Component\Config\Loader\LoaderInterface" class="Symfony\Component\Config\Loader\LoaderInterface">
       <tag name="container.error" message="Cannot autowire service &quot;.service_locator.1vYpZ1B&quot;: it needs an instance of &quot;Symfony\Component\Config\Loader\LoaderInterface&quot; but this type has been excluded from autowiring."/>
     </service>
+    <service id=".errored..service_locator.Z6FbZt8.App\Entity\Chapitre" class="App\Entity\Chapitre">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.Z6FbZt8&quot;: it needs an instance of &quot;App\Entity\Chapitre&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
+    <service id=".errored..service_locator.U5IQ.LC.App\Entity\Chapitre" class="App\Entity\Chapitre">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.U5IQ.LC&quot;: it needs an instance of &quot;App\Entity\Chapitre&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
     <service id=".errored..service_locator.dlAP8TO.App\Entity\Fiche" class="App\Entity\Fiche">
-      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.dlAP8TO&quot;: it needs an instance of &quot;App\Entity\Fiche&quot; but this type has been excluded because it's a Doctrine entity."/>
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.dlAP8TO&quot;: it needs an instance of &quot;App\Entity\Fiche&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
     </service>
     <service id=".errored..service_locator.1cj3dMN.App\Entity\Fiche" class="App\Entity\Fiche">
-      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.1cj3dMN&quot;: it needs an instance of &quot;App\Entity\Fiche&quot; but this type has been excluded because it's a Doctrine entity."/>
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.1cj3dMN&quot;: it needs an instance of &quot;App\Entity\Fiche&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
     </service>
     <service id=".errored..service_locator.uS3u6ds.App\Entity\Fiche" class="App\Entity\Fiche">
-      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.uS3u6ds&quot;: it needs an instance of &quot;App\Entity\Fiche&quot; but this type has been excluded because it's a Doctrine entity."/>
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.uS3u6ds&quot;: it needs an instance of &quot;App\Entity\Fiche&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
+    <service id=".errored..service_locator.Rkg_ZGo.App\Entity\Filiere" class="App\Entity\Filiere">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.Rkg_ZGo&quot;: it needs an instance of &quot;App\Entity\Filiere&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
+    <service id=".errored..service_locator.3jRshy4.App\Entity\Filiere" class="App\Entity\Filiere">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.3jRshy4&quot;: it needs an instance of &quot;App\Entity\Filiere&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
+    <service id=".errored..service_locator.ccbiunS.App\Entity\Filiere" class="App\Entity\Filiere">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.ccbiunS&quot;: it needs an instance of &quot;App\Entity\Filiere&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
+    <service id=".errored..service_locator.QPo2m8E.App\Entity\Matiere" class="App\Entity\Matiere">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.QPo2m8E&quot;: it needs an instance of &quot;App\Entity\Matiere&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
+    <service id=".errored..service_locator.HsbKmE..App\Entity\Matiere" class="App\Entity\Matiere">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.HsbKmE.&quot;: it needs an instance of &quot;App\Entity\Matiere&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
+    <service id=".errored..service_locator.6NWbZgS.App\Entity\Matiere" class="App\Entity\Matiere">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.6NWbZgS&quot;: it needs an instance of &quot;App\Entity\Matiere&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
     </service>
     <service id=".console.command.about.lazy" class="Symfony\Component\Console\Command\LazyCommand">
       <argument>about</argument>
@@ -10339,103 +10731,103 @@
       </argument>
     </service>
     <service id="cache.app.recorder_inner" class="Symfony\Component\Cache\Adapter\FilesystemAdapter">
-      <argument>ErNMs0lEiO</argument>
+      <argument>Nu1X+osfr1</argument>
       <argument>0</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\share\dev/pools/app</argument>
+      <argument>C:\Users\Msi\bac-lab\var\share\dev/pools/app</argument>
       <argument type="service" id="cache.default_marshaller" on-invalid="ignore"/>
       <call method="setLogger">
         <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       </call>
     </service>
     <service id="cache.system.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>3XxBIYgRyc</argument>
+      <argument>h5ji4CEX03</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/pools/system</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.validator.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>6kC-31NNxj</argument>
+      <argument>1sXiaNuxmX</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/pools/system</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.serializer.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>JEkkvJEZmN</argument>
+      <argument>SIoc0XD6bk</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/pools/system</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.property_info.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>KuOyzjKJil</argument>
+      <argument>JZTWlEkX-h</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/pools/system</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.asset_mapper.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>zCbejL1WK7</argument>
+      <argument>f+Xd9OPIV8</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/pools/system</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.messenger.restart_workers_signal.recorder_inner" class="Symfony\Component\Cache\Adapter\FilesystemAdapter">
-      <argument>VkAX1xo4a8</argument>
+      <argument>v8vt9Pnn0j</argument>
       <argument>0</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\share\dev/pools/app</argument>
+      <argument>C:\Users\Msi\bac-lab\var\share\dev/pools/app</argument>
       <argument type="service" id="cache.default_marshaller" on-invalid="ignore"/>
       <call method="setLogger">
         <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       </call>
     </service>
     <service id="cache.http_client.pool.recorder_inner" class="Symfony\Component\Cache\Adapter\FilesystemAdapter">
-      <argument>6Dol9FXEt5</argument>
+      <argument>l1rAWOi2G7</argument>
       <argument>0</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\share\dev/pools/app</argument>
+      <argument>C:\Users\Msi\bac-lab\var\share\dev/pools/app</argument>
       <argument type="service" id="cache.default_marshaller" on-invalid="ignore"/>
       <call method="setLogger">
         <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       </call>
     </service>
     <service id="cache.validator_expression_language.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>CLFPmJGSWW</argument>
+      <argument>H0R0APxL5U</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/pools/system</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.doctrine.orm.default.result.recorder_inner" class="Symfony\Component\Cache\Adapter\ArrayAdapter"/>
     <service id="cache.doctrine.orm.default.query.recorder_inner" class="Symfony\Component\Cache\Adapter\ArrayAdapter"/>
     <service id="cache.security_expression_language.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>+urRbw1D31</argument>
+      <argument>Euy4YaUvBW</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/pools/system</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.security_is_granted_attribute_expression_language.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>ETTVr+OqiJ</argument>
+      <argument>5lCOAqjrQY</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/pools/system</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.security_is_csrf_token_valid_attribute_expression_language.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>CO2IrN6kRp</argument>
+      <argument>XbE9W33l+q</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\Users\asus\Documents\bac-lab\var\cache\dev/pools/system</argument>
+      <argument>C:\Users\Msi\bac-lab\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -10602,7 +10994,7 @@
     <service id="Psr\Log\LoggerInterface" alias="monolog.logger"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.ryAvHi4" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.MAxS68V"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.bGh2qGl"/>
     <service id="doctrine.id_generator_locator" alias=".service_locator.W55Po6X"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id=".Psr\Log\LoggerInterface $request.logger" alias="monolog.logger.request"/>
@@ -10640,6 +11032,7 @@
     <service id=".service_locator.O8.cMm9" alias="messenger.receiver_locator"/>
     <service id=".service_locator.oeWXF0n" alias="messenger.retry_strategy_locator"/>
     <service id=".service_locator.S9tnIXR" alias=".service_locator.DA6YX9k"/>
+    <service id=".service_locator.X8q8H3." alias=".service_locator.xFD7AqT"/>
     <service id="validator" alias="debug.validator"/>
     <service id="http_client" alias="http_client.uri_template"/>
     <service id="http_client.uri_template.inner" alias=".debug.http_client"/>
@@ -10661,11 +11054,23 @@
     <service id=".signing.messenger.default_serializer.inner" alias="messenger.transport.native_php_serializer"/>
     <service id="doctrine.orm.default_metadata_driver" alias=".doctrine.orm.default_metadata_driver"/>
     <service id=".service_locator.c0wzfI4" alias=".service_locator.1vYpZ1B"/>
-    <service id=".service_locator.qn3kNib" alias=".service_locator.AlBZe5C"/>
+    <service id=".service_locator.TCvykKM" alias=".service_locator.dz4_imx"/>
     <service id=".service_locator.0ekWYPZ" alias=".service_locator.z0A7H.F"/>
+    <service id=".service_locator.WE2EgyU" alias=".service_locator.Z6FbZt8"/>
+    <service id=".service_locator.LpfGaiq" alias=".service_locator.U5IQ.LC"/>
+    <service id=".service_locator.QIy3pJG" alias=".service_locator.jxv0ykO"/>
+    <service id=".service_locator.qn3kNib" alias=".service_locator.AlBZe5C"/>
     <service id=".service_locator.dgX3_m3" alias=".service_locator.dlAP8TO"/>
     <service id=".service_locator.3YM931t" alias=".service_locator.1cj3dMN"/>
     <service id=".service_locator.56s10fj" alias=".service_locator.uS3u6ds"/>
+    <service id=".service_locator.1bqNM.t" alias=".service_locator.Rkg_ZGo"/>
+    <service id=".service_locator.rGFXTk4" alias=".service_locator.3jRshy4"/>
+    <service id=".service_locator.IdfBeO4" alias=".service_locator.ydXCfGE"/>
+    <service id=".service_locator.jK2FhUL" alias=".service_locator.ccbiunS"/>
+    <service id=".service_locator.0O428k1" alias=".service_locator.QPo2m8E"/>
+    <service id=".service_locator.rNFUX4o" alias=".service_locator.HsbKmE."/>
+    <service id=".service_locator.HYulXfK" alias=".service_locator.6NWbZgS"/>
+    <service id=".service_locator.4L3Qmaa" alias=".service_locator.xFD7AqT"/>
     <service id=".service_locator.D6tJ4Px" alias=".service_locator.TJNRSaV"/>
   </services>
 </container>

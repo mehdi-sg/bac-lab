@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ edit ? 'Modifier une filière' : 'Ajouter une filière' }}{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2>{{ edit ? 'Modifier une filière' : 'Ajouter une filière' }}</h2>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_label(form.nom) }}
+                            {{ form_widget(form.nom, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                            {{ form_errors(form.nom) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(form.niveau) }}
+                            {{ form_widget(form.niveau, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                            {{ form_errors(form.niveau) }}
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-success btn-lg">{{ edit ? 'Modifier' : 'Ajouter' }}</button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{{ path('filiere_index') }}" class="btn btn-secondary">Retour à la liste</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

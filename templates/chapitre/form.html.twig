@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Chapitre{% endblock %}
+
+{% block body %}
+
+<div class="container mt-5" style="padding-top: 50px;"> {# marge en haut #}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">{{ edit ? 'Modifier un Chapitre' : 'Ajouter un Chapitre' }}</h4>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+
+                    <div class="mb-3">
+                        {{ form_label(form.titre) }}
+                        {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.titre) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.contenu) }}
+                        {{ form_widget(form.contenu, {'attr': {'class': 'form-control', 'rows': 5}}) }}
+                        {{ form_errors(form.contenu) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.ordre) }}
+                        {{ form_widget(form.ordre, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.ordre) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.matiere) }}
+                        {{ form_widget(form.matiere, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.matiere) }}
+                    </div>
+
+                    <button class="btn btn-success">{{ edit ? 'Mettre à jour' : 'Créer' }}</button>
+                    <a href="{{ path('chapitre_index') }}" class="btn btn-secondary">Retour à la liste</a>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
