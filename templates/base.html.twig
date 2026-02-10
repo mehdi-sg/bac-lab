@@ -24,6 +24,51 @@
         <link rel="stylesheet" href="{{ asset('front/css/slick.css') }}">
         <link rel="stylesheet" href="{{ asset('front/css/nice-select.css') }}">
         <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
+        <style>
+            /* Notification Bell - Site Matching Style */
+            .notification-bell {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                color: white;
+                transition: all 0.3s ease;
+                margin-right: 5px;
+            }
+            
+            .notification-bell:hover {
+                background: rgba(255, 255, 255, 0.15);
+            }
+            
+            .notification-bell svg {
+                width: 18px;
+                height: 18px;
+            }
+            
+            .badge-pulse {
+                position: absolute;
+                top: 0;
+                right: 0;
+                min-width: 16px;
+                height: 16px;
+                padding: 0 4px;
+                font-size: 0.65rem;
+                font-weight: 700;
+                line-height: 16px;
+                text-align: center;
+                color: white;
+                background: #667eea;
+                border-radius: 8px;
+                display: none;
+            }
+            
+            .badge-pulse:not(:empty) {
+                display: inline-flex;
+            }
+        </style>
     {% endblock %}
 </head>
 
@@ -56,27 +101,41 @@
                                         <nav>
                                             <ul id="navigation">                                                                                          
                                                 <li><a href="{{ path('app_home') }}">Accueil</a></li>
-                                                <li><a href="#">Révision</a>
+                                                <li><a href="#">Revision</a>
                                                     <ul class="submenu">
                                                         <li><a href="#">Cours & PDF</a></li>
                                                         <li><a href="#">Quiz & Tests</a></li>
-                                                        <li><a href="{{ path('fiche_index') }}">fiches & co-édition</a></li>
+                                                        <li><a href="{{ path('fiche_index') }}">fiches & co-edition</a></li>
                                                     </ul>
                                                 </li>
                                                 <li><a href="#">Orientation</a>
                                                     <ul class="submenu">
                                                         <li><a href="#">Calcul du Score</a></li>
-                                                        <li><a href="#">Guide des Filières</a></li>
+                                                        <li><a href="#">Guide des Filieres</a></li>
                                                     </ul>
                                                 </li>
-                                                <li><a href="#">Communauté</a></li>
+                                                <li><a href="#">Communaute</a>
+                                                    <ul class="submenu">
+                                                        <li><a href="{{ path('groupe_index') }}"><i class="fas fa-users mr-2"></i>Groupes de revision</a></li>
+                                                        <li><a href="{{ path('chat_index') }}"><i class="fas fa-comments mr-2"></i>Chat en direct</a></li>
+                                                    </ul>
+                                                </li>
                                                 
                                                 {% if is_granted('ROLE_USER') %}
-                                                    <li class="button-header"><a href="{{ path('app_profile') }}" class="btn">Mon Profil</a></li>
-                                                    <li class="button-header"><a href="{{ path('app_logout') }}" class="btn btn3">Déconnexion</a></li>
+                                                    <li>
+                                                        <a href="{{ path('notifications_index') }}" class="notification-bell" title="Notifications">
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                                            </svg>
+                                                            <span id="notification-badge" class="badge-pulse">0</span>
+                                                        </a>
+                                                    </li>
+                                                    <li><a href="{{ path('app_profile') }}" class="btn">Mon Profil</a></li>
+                                                    <li><a href="{{ path('app_logout') }}" class="btn btn3">Deconnexion</a></li>
                                                 {% else %}
-                                                    <li class="button-header margin-left"><a href="{{ path('app_register') }}" class="btn">S'inscrire</a></li>
-                                                    <li class="button-header"><a href="{{ path('app_login') }}" class="btn btn3">Connexion</a></li>
+                                                    <li class="margin-left"><a href="{{ path('app_register') }}" class="btn">S'inscrire</a></li>
+                                                    <li><a href="{{ path('app_login') }}" class="btn btn3">Connexion</a></li>
                                                 {% endif %}
                                             </ul>
                                         </nav>
@@ -109,25 +168,25 @@
                                 </div>
                                 <div class="footer-tittle">
                                     <div class="footer-pera">
-                                        <p>Votre succès au Bac commence par une révision structurée et une orientation éclairée.</p>
+                                        <p>Votre succes au Bac commence par une revision structuree et une orientation eclairee.</p>
                                     </div>
                                 </div>
                                 <div class="footer-social">
                                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                                     <a href="#"><i class="fab fa-instagram"></i></a>
-                                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5">
                             <div class="single-footer-caption mb-50">
                                 <div class="footer-tittle">
-                                    <h4>Révision</h4>
+                                    <h4>Revision</h4>
                                     <ul>
-                                        <li><a href="#">Mathématiques</a></li>
+                                        <li><a href="#">Mathematiques</a></li>
                                         <li><a href="#">Sciences</a></li>
                                         <li><a href="#">Informatique</a></li>
-                                        <li><a href="#">Économie</a></li>
+                                        <li><a href="#">Economie</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -138,7 +197,7 @@
                                     <h4>Orientation</h4>
                                     <ul>
                                         <li><a href="#">Calculer mon Score</a></li>
-                                        <li><a href="#">Filières Universitaires</a></li>
+                                        <li><a href="#">Filieres Universitaires</a></li>
                                         <li><a href="#">Guide de l'Orientation</a></li>
                                     </ul>
                                 </div>
@@ -153,7 +212,7 @@
                         <div class="row d-flex align-items-center">
                             <div class="col-xl-12 ">
                                 <div class="footer-copy-right text-center">
-                                    <p>Copyright &copy; {{ "now"|date("Y") }} BacLab - Tous droits réservés</p>
+                                    <p>Copyright &copy; {{ "now"|date("Y") }} BacLab - Tous droits reserves</p>
                                 </div>
                             </div>
                         </div>
@@ -189,6 +248,20 @@
         <script src="{{ asset('front/js/jquery.ajaxchimp.min.js') }}"></script>
         <script src="{{ asset('front/js/plugins.js') }}"></script>
         <script src="{{ asset('front/js/main.js') }}"></script>
+        <script>
+            // Fetch notification count
+            document.addEventListener('DOMContentLoaded', function() {
+                fetch('{{ path('notifications_count') }}')
+                    .then(response => response.json())
+                    .then(data => {
+                        const badge = document.getElementById('notification-badge');
+                        if (badge && data.count > 0) {
+                            badge.textContent = data.count;
+                        }
+                    })
+                    .catch(error => console.log('No notifications'));
+            });
+        </script>
     {% endblock %}
 </body>
 </html>
