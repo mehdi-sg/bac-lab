@@ -1,0 +1,210 @@
+{# templates/chat/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<main>
+  <div class="layout">
+
+    {# Sidebar - Mes groupes #}
+    <div class="sidebar" id="sidebar">
+      <div class="tab-content">
+
+        <div id="discussions" class="tab-pane fade active show">
+          <div class="search">
+            <form class="form-inline position-relative" method="get" action="{{ path('chat_index') }}">
+              <input type="search" class="form-control" name="q" value="{{ q|default('') }}" placeholder="Rechercher une discussion...">
+              <button type="submit" class="btn btn-link loop"><i class="material-icons">search</i></button>
+            </form>
+          </div>
+
+          <div class="discussions">
+            <h1>Mes Groupes</h1>
+            <div class="list-group" role="tablist">
+              {% for g in mesGroupes %}
+                <a href="{{ path('chat_index', {groupeId: g.id}) }}"
+                   class="filterDiscussions all single {{ activeGroupe and activeGroupe.id == g.id ? 'active' : '' }}">
+                  <img class="avatar-md"
+                       src="https://ui-avatars.com/api/?name={{ g.nom|url_encode }}&background=2196F3&color=fff"
+                       alt="avatar">
+                  <div class="data">
+                    <h5>{{ g.nom }}</h5>
+                    <p>{{ g.description|slice(0,60) }}{% if g.description|length > 60 %}...{% endif %}</p>
+                  </div>
+                </a>
+              {% else %}
+                <p class="p-3 text-muted">Tu n’as rejoint aucun groupe.</p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        {# Explorer #}
+        <div id="groups" class="tab-pane fade">
+          <div class="search">
+            <button class="btn button w-100" data-toggle="modal" data-target="#modalCreateGroup">
+              Créer un nouveau groupe
+            </button>
+          </div>
+          <div class="contacts">
+            <h1>Groupes suggérés</h1>
+            <div class="list-group">
+              {% for g in groupesPublics %}
+                <div class="contact d-flex justify-content-between align-items-center">
+                  <div class="data">
+                    <h5>{{ g.nom }}</h5>
+                    <p>Filière: {{ g.filiere ? g.filiere.nom : 'Toutes' }}</p>
+                  </div>
+                  <form method="post" action="{{ path('groupe_join', {id: g.id}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('join' ~ g.id) }}">
+                    <button class="btn"><i class="material-icons">add_circle_outline</i></button>
+                  </form>
+                </div>
+              {% else %}
+                <p class="p-3 text-muted">Aucun groupe public trouvé.</p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    {# Zone Chat #}
+    <div class="main">
+      {% if activeGroupe %}
+        <div class="babble active show">
+          <div class="chat">
+
+            <div class="top">
+              <div class="inside d-flex justify-content-between align-items-center">
+                <div class="data">
+                  <h5>{{ activeGroupe.nom }}</h5>
+                  <span>{{ activeGroupe.membres|length }} membres</span>
+                </div>
+
+                <div class="dropdown">
+                  <button class="btn" data-toggle="dropdown"><i class="material-icons">filter_list</i></button>
+                  <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="{{ path('chat_index', {groupeId: activeGroupe.id, sort: 'recent'}) }}">Plus récents</a>
+                    <a class="dropdown-item" href="{{ path('chat_index', {groupeId: activeGroupe.id, sort: 'old'}) }}">Anciens</a>
+                    <a class="dropdown-item" href="{{ path('chat_index', {groupeId: activeGroupe.id, sort: 'pdf'}) }}">Fichiers (PDF)</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="content" id="content">
+              <div class="container">
+                <div class="col-md-12">
+                  {% for m in messages %}
+                    {% set isMe = (m.expediteur.id == app.user.id) %}
+                    <div class="message {{ isMe ? 'me' : '' }}">
+                      {% if not isMe %}
+                        <img class="avatar-md"
+                             src="https://ui-avatars.com/api/?name={{ m.expediteur.nom|default(m.expediteur.email)|url_encode }}"
+                             alt="avatar">
+                      {% endif %}
+
+                      <div class="text-main">
+                        <div class="text-group {{ isMe ? 'me' : '' }}">
+                          <div class="text {{ isMe ? 'me' : '' }}">
+                            {% if m.parentMessage %}
+                              <div class="quoted-container">
+                                <small>{{ m.parentMessage.expediteur.nom|default('User') }} : {{ m.parentMessage.contenu|slice(0,50) }}...</small>
+                              </div>
+                            {% endif %}
+                            <p>{{ m.contenu }}</p>
+                          </div>
+                        </div>
+
+                        <span>
+                          {{ m.createdAt|date('H:i') }}
+                          <button class="btn btn-link p-0"
+                                  onclick="replyTo('{{ m.expediteur.nom|default('User')|e('js') }}','{{ m.contenu|slice(0,80)|e('js') }}', {{ m.id }})">
+                            <i class="material-icons" style="font-size:14px">reply</i>
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                  {% else %}
+                    <p class="text-muted">Aucun message.</p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            {# Form envoyer message (serveur only validation) #}
+            <div class="container">
+              <div class="col-md-12">
+                <div class="bottom">
+
+                  <div id="replyBar" class="reply-preview w-100">
+                    <span id="replyText"></span>
+                    <button class="btn" type="button" onclick="cancelReply()"><i class="material-icons">close</i></button>
+                  </div>
+
+                  <form class="position-relative w-100"
+                        method="post"
+                        action="{{ path('message_send', {id: activeGroupe.id}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('send' ~ activeGroupe.id) }}">
+                    <input type="hidden" name="parent_id" id="parentId" value="">
+                    <textarea class="form-control" name="contenu" placeholder="Tapez votre message ici..." rows="1"></textarea>
+                    <button type="submit" class="btn send"><i class="material-icons">send</i></button>
+                  </form>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      {% else %}
+        <div class="p-4 text-muted">Sélectionne un groupe pour ouvrir le chat.</div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  {# Modal créer groupe (form Symfony recommandé, mais OK en POST) #}
+  <div class="modal fade" id="modalCreateGroup" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="requests">
+        <div class="title">
+          <h1>Démarrer un groupe</h1>
+          <button type="button" class="btn" data-dismiss="modal"><i class="material-icons">close</i></button>
+        </div>
+        <div class="content">
+          <form action="{{ path('groupe_create') }}" method="POST">
+            <input type="hidden" name="_token" value="{{ csrf_token('create_groupe') }}">
+            <div class="form-group">
+              <label>Nom du groupe :</label>
+              <input type="text" name="nom" class="form-control" placeholder="Ex: Révision Philo Bac">
+            </div>
+            <div class="form-group">
+              <label>Description :</label>
+              <textarea name="description" class="form-control" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn button w-100">Créer mon groupe</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+function replyTo(user, text, parentId) {
+  document.getElementById('replyBar').style.display = 'flex';
+  document.getElementById('replyText').innerText = "Réponse à " + user + " : " + text;
+  document.getElementById('parentId').value = parentId;
+}
+function cancelReply() {
+  document.getElementById('replyBar').style.display = 'none';
+  document.getElementById('parentId').value = '';
+}
+</script>
+{% endblock %}
