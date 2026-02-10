@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mon Profil - BacLab{% endblock %}
+
+{% block body %}
+<div class="container" style="padding: 80px 20px;">
+    <div class="row">
+        <div class="col-12">
+            <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 40px; border-radius: 20px; color: white; margin-bottom: 40px; box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);">
+                <h1 style="font-size: 42px; font-weight: 800; margin-bottom: 15px;">
+                    <i class="fas fa-edit" style="margin-right: 15px;"></i>
+                    Modifier mon Profil
+                </h1>
+                <p style="font-size: 18px; opacity: 0.95; margin: 0;">
+                    Mettez à jour vos informations personnelles
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+                {{ form_start(form) }}
+                
+                <!-- Section Informations Personnelles -->
+                <div style="margin-bottom: 40px;">
+                    <h3 style="font-size: 24px; font-weight: 700; color: #1a202c; margin-bottom: 25px; border-bottom: 3px solid #667eea; padding-bottom: 15px;">
+                        <i class="fas fa-user" style="color: #667eea; margin-right: 10px;"></i>
+                        Informations Personnelles
+                    </h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="profil_nom" style="display: block; font-size: 17px; font-weight: 700; color: #1a202c; margin-bottom: 12px;">
+                                <i class="fas fa-user-circle" style="color: #667eea; margin-right: 8px;"></i>
+                                Nom
+                            </label>
+                            {{ form_widget(form.nom, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'style': 'width: 100%; padding: 18px 22px; font-size: 18px; border: 2.5px solid #e2e8f0; border-radius: 14px; background: #f8fafc; color: #1a202c; font-weight: 500;'
+                                }
+                            }) }}
+                            {{ form_errors(form.nom) }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <label for="profil_prenom" style="display: block; font-size: 17px; font-weight: 700; color: #1a202c; margin-bottom: 12px;">
+                                <i class="fas fa-user-tag" style="color: #667eea; margin-right: 8px;"></i>
+                                Prénom
+                            </label>
+                            {{ form_widget(form.prenom, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'style': 'width: 100%; padding: 18px 22px; font-size: 18px; border: 2.5px solid #e2e8f0; border-radius: 14px; background: #f8fafc; color: #1a202c; font-weight: 500;'
+                                }
+                            }) }}
+                            {{ form_errors(form.prenom) }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <label for="profil_dateNaissance" style="display: block; font-size: 17px; font-weight: 700; color: #1a202c; margin-bottom: 12px;">
+                                <i class="fas fa-calendar-alt" style="color: #667eea; margin-right: 8px;"></i>
+                                Date de Naissance
+                            </label>
+                            {{ form_widget(form.dateNaissance, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'style': 'width: 100%; padding: 18px 22px; font-size: 18px; border: 2.5px solid #e2e8f0; border-radius: 14px; background: #f8fafc; color: #1a202c; font-weight: 500;'
+                                }
+                            }) }}
+                            {{ form_errors(form.dateNaissance) }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <label for="profil_gouvernorat" style="display: block; font-size: 17px; font-weight: 700; color: #1a202c; margin-bottom: 12px;">
+                                <i class="fas fa-map-marker-alt" style="color: #667eea; margin-right: 8px;"></i>
+                                Gouvernorat
+                            </label>
+                            {{ form_widget(form.gouvernorat, {
+                                'attr': {
+                                    'class': 'form-select',
+                                    'style': 'width: 100%; padding: 18px 22px; font-size: 18px; border: 2.5px solid #e2e8f0; border-radius: 14px; background: #f8fafc; color: #1a202c; font-weight: 500;'
+                                }
+                            }) }}
+                            {{ form_errors(form.gouvernorat) }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Parcours Scolaire -->
+                <div style="margin-bottom: 40px;">
+                    <h3 style="font-size: 24px; font-weight: 700; color: #1a202c; margin-bottom: 25px; border-bottom: 3px solid #f093fb; padding-bottom: 15px;">
+                        <i class="fas fa-graduation-cap" style="color: #f093fb; margin-right: 10px;"></i>
+                        Parcours Scolaire
+                    </h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="profil_niveau" style="display: block; font-size: 17px; font-weight: 700; color: #1a202c; margin-bottom: 12px;">
+                                <i class="fas fa-layer-group" style="color: #f093fb; margin-right: 8px;"></i>
+                                Niveau
+                            </label>
+                            {{ form_widget(form.niveau, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'style': 'width: 100%; padding: 18px 22px; font-size: 18px; border: 2.5px solid #e2e8f0; border-radius: 14px; background: #f8fafc; color: #1a202c; font-weight: 500;'
+                                }
+                            }) }}
+                            {{ form_errors(form.niveau) }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <label for="profil_filiere" style="display: block; font-size: 17px; font-weight: 700; color: #1a202c; margin-bottom: 12px;">
+                                <i class="fas fa-flask" style="color: #f093fb; margin-right: 8px;"></i>
+                                Filière
+                            </label>
+                            {{ form_widget(form.filiere, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'style': 'width: 100%; padding: 18px 22px; font-size: 18px; border: 2.5px solid #e2e8f0; border-radius: 14px; background: #f8fafc; color: #1a202c; font-weight: 500;'
+                                }
+                            }) }}
+                            {{ form_errors(form.filiere) }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                    <a href="{{ path('app_profile') }}" style="padding: 18px 35px; font-size: 18px; font-weight: 700; color: #718096; background: #e2e8f0; border: none; border-radius: 14px; text-decoration: none; display: inline-block;">
+                        <i class="fas fa-times" style="margin-right: 8px;"></i>
+                        Annuler
+                    </a>
+                    <button type="submit" style="padding: 18px 35px; font-size: 18px; font-weight: 700; color: white; background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 14px; cursor: pointer; box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);">
+                        <i class="fas fa-save" style="margin-right: 8px;"></i>
+                        Enregistrer les modifications
+                    </button>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

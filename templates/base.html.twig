@@ -9,6 +9,16 @@
     
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('front/img/favicon.ico') }}">
 
+<<<<<<< HEAD
+=======
+<<<<<<< Updated upstream
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body>
+=======
+>>>>>>> 5d6f0fc (feat(fiches): advanced editor with live preview)
     {% block css %}
         <link rel="stylesheet" href="{{ asset('front/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ asset('front/css/owl.carousel.min.css') }}">
@@ -72,10 +82,18 @@
                                                 <li><a href="#">Communauté</a></li>
                                                 
                                                 {% if is_granted('ROLE_USER') %}
+<<<<<<< HEAD
                                                     <li class="button-header"><a href="#" class="btn btn3">Mon Profil</a></li>
                                                 {% else %}
                                                     <li class="button-header margin-left"><a href="#" class="btn">S'inscrire</a></li>
                                                     <li class="button-header"><a href="#" class="btn btn3">Connexion</a></li>
+=======
+                                                    <li class="button-header"><a href="{{ path('app_profile') }}" class="btn">Mon Profil</a></li>
+                                                    <li class="button-header"><a href="{{ path('app_logout') }}" class="btn btn3">Déconnexion</a></li>
+                                                {% else %}
+                                                    <li class="button-header margin-left"><a href="{{ path('app_register') }}" class="btn">S'inscrire</a></li>
+                                                    <li class="button-header"><a href="{{ path('app_login') }}" class="btn btn3">Connexion</a></li>
+>>>>>>> 5d6f0fc (feat(fiches): advanced editor with live preview)
                                                 {% endif %}
                                             </ul>
                                         </nav>
@@ -93,6 +111,10 @@
     </header>
 
     <main>
+<<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
+>>>>>>> 5d6f0fc (feat(fiches): advanced editor with live preview)
         {% block body %}{% endblock %}
     </main>
 
