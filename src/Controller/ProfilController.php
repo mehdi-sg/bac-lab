@@ -134,9 +134,6 @@ class ProfilController extends AbstractController
         ]);
     }
 
-    // ===========================
-    //  Suppression (2 étapes)
-    // ===========================
 
     #[Route('/delete/confirm/{token}', name: 'app_profile_delete_confirm', methods: ['GET', 'POST'])]
     public function deleteConfirm(

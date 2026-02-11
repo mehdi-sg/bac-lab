@@ -6,6 +6,7 @@ use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_USER_EMAIL', fields: ['email'])]
@@ -117,8 +118,8 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     public function setIsActive(bool $isActive): self
-     {
+    {
         $this->isActive = $isActive;
         return $this;
-      }
+    }
 }

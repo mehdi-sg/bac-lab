@@ -1,0 +1,165 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}Recherche - Admin{% endblock %}
+
+{% block body %}
+
+<style>
+  .table-glass{
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.16);
+    box-shadow: 0 12px 30px rgba(0,0,0,.35);
+  }
+
+  .table-glass table{
+    margin:0;
+    background: transparent !important;
+  }
+
+  .table-glass thead th{
+    background: rgba(255,255,255,.06) !important;
+    color: rgba(234,240,255,.90) !important;
+    border-color: rgba(255,255,255,.10) !important;
+    font-weight: 900;
+  }
+
+  .table-glass tbody td{
+    background: transparent !important;
+    color: rgba(234,240,255,.88) !important;
+    border-color: rgba(255,255,255,.08) !important;
+    vertical-align: middle;
+    font-weight: 700;
+  }
+
+  .table-glass tbody tr:hover td{
+    background: rgba(255,255,255,.03) !important;
+  }
+
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.05);
+    font-weight: 900;
+    font-size: 12px;
+  }
+
+  .pill.success{
+    border-color: rgba(46,211,255,.30);
+    background: rgba(46,211,255,.12);
+  }
+
+  .pill.danger{
+    border-color: rgba(255,77,141,.30);
+    background: rgba(255,77,141,.12);
+  }
+
+  .role-badge{
+    display:inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.05);
+    font-size: 12px;
+    font-weight: 900;
+    margin: 2px 6px 2px 0;
+    color: rgba(234,240,255,.88);
+  }
+
+  .actions{
+    display:flex;
+    justify-content:flex-end;
+  }
+
+  .icon-btn{
+    width: 36px;
+    height: 36px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.06);
+    color: rgba(234,240,255,.92);
+    text-decoration:none;
+  }
+
+  .icon-btn:hover{
+    background: rgba(255,255,255,.10);
+  }
+
+  .muted{
+    color: rgba(234,240,255,.70);
+    font-weight: 700;
+  }
+</style>
+
+<div class="container" style="padding: 80px 20px;">
+
+  <div class="glass-card p-4 mb-4">
+    <h2 style="font-weight:900;margin:0;">Résultats de recherche</h2>
+    <div class="muted" style="margin-top:6px;">
+      Requête : <span style="font-weight:900;">{{ q ?: '—' }}</span>
+    </div>
+  </div>
+
+  <div class="glass-card p-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 style="margin:0;font-weight:900;">
+        <i class="fa-solid fa-users me-2"></i> Utilisateurs
+      </h3>
+      <a class="btn-ghost" href="{{ path('admin_user_index', { q: q }) }}">
+        Voir tout
+      </a>
+    </div>
+
+    {% if users is empty %}
+      <div class="muted">Aucun utilisateur trouvé.</div>
+    {% else %}
+      <div class="table-responsive">
+        <div class="table-glass">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Rôles</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u in users %}
+                <tr>
+                  <td>{{ u.email }}</td>
+
+                  <td>
+                    {% for role in u.roles %}
+                      <span class="role-badge">{{ role }}</span>
+                    {% endfor %}
+                  </td>
+
+                  <td>
+                    {% if u.isActive %}
+                      <span class="pill success">Actif</span>
+                    {% else %}
+                      <span class="pill danger">Inactif</span>
+                    {% endif %}
+                  </td>
+
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+
+</div>
+
+{% endblock %}

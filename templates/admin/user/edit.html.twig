@@ -113,7 +113,7 @@
     <div>
       <h2 style="margin:0;font-weight:900;">Modifier utilisateur</h2>
       <div class="muted" style="font-weight:700;margin-top:6px;">
-        Mettre à jour l’email, les rôles et le statut.
+        Mettre à jour l'email, les rôles et le statut.
       </div>
     </div>
 
@@ -148,6 +148,56 @@
           <div class="help-text">Laisser vide pour ne pas modifier</div>
           {{ form_errors(form.plainPassword) }}
         {% endif %}
+      </div>
+
+      {# Profil (Nom / Prénom etc.) #}
+      <div class="field-card" style="grid-column:1/-1;">
+        <div class="field-label">Profil</div>
+
+        <div class="form-wrap">
+          <div class="field-card glass-input">
+            <div class="field-label">Nom</div>
+            {{ form_widget(form.profil.nom) }}
+            {{ form_errors(form.profil.nom) }}
+          </div>
+
+          <div class="field-card glass-input">
+            <div class="field-label">Prénom</div>
+            {{ form_widget(form.profil.prenom) }}
+            {{ form_errors(form.profil.prenom) }}
+          </div>
+
+          {# optionnels si tu les as gardés dans ProfilEmbeddedType #}
+          {% if form.profil.dateNaissance is defined %}
+            <div class="field-card glass-input">
+              <div class="field-label">Date de naissance</div>
+              {{ form_widget(form.profil.dateNaissance) }}
+              {{ form_errors(form.profil.dateNaissance) }}
+            </div>
+          {% endif %}
+
+          {% if form.profil.gouvernorat is defined %}
+            <div class="field-card glass-input">
+              <div class="field-label">Gouvernorat</div>
+              {{ form_widget(form.profil.gouvernorat) }}
+              {{ form_errors(form.profil.gouvernorat) }}
+            </div>
+          {% endif %}
+          {% if form.profil.niveau is defined %}
+            <div class="field-card glass-input">
+              <div class="field-label">Niveau</div>
+              {{ form_widget(form.profil.niveau) }}
+              {{ form_errors(form.profil.niveau) }}
+            </div>
+          {% endif %}
+          {% if form.profil.filiere is defined %}
+            <div class="field-card glass-input">
+              <div class="field-label">Filiére</div>
+              {{ form_widget(form.profil.filiere) }}
+              {{ form_errors(form.profil.filiere) }}
+            </div>
+          {% endif %}
+        </div>
       </div>
 
       {# Rôles #}

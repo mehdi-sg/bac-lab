@@ -237,6 +237,7 @@
         .btn-ghost:hover{
             background: rgba(255,255,255,0.08);
         }
+        
 
         /* Cards */
         .glass-card{
@@ -387,14 +388,19 @@
             </div>
 
            <div class="topbar-actions">
-    <input class="search" type="text" placeholder="Rechercher (utilisateur, matière, ressource...)">
+    <form method="get" action="{{ path('admin_search') }}" class="d-flex gap-2" style="align-items:center;">
+        <input class="search"
+               type="text"
+               name="q"
+               value="{{ app.request.query.get('q') }}"
+               placeholder="Rechercher (utilisateur, matière, ressource...)">
+    </form>
 
     <a class="btn-ghost"
        href="{{ path('app_home') }}"
        target="_blank"
        rel="noopener noreferrer">
-        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>
-        Aller au site
+        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Aller au site
     </a>
 </div>
   

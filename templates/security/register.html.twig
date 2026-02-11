@@ -7,13 +7,13 @@
 
 {% block body %}
     {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
-    
+
     <!-- Section Connexion -->
     <div class="section-header">
         <i class="fas fa-lock"></i>
         <h3>Informations de Connexion</h3>
     </div>
-    
+
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
@@ -31,31 +31,35 @@
                 {{ form_errors(registrationForm.email) }}
             </div>
         </div>
-        
+
         <div class="col-md-6">
             <div class="form-group">
-                <label for="password" class="form-label">
+                <label for="registration_plainPassword" class="form-label">
                     <i class="fas fa-key" style="color: #667eea; margin-right: 8px;"></i>
                     Mot de Passe
                 </label>
+
+                {# ⚠️ IMPORTANT: ne force pas id="password" ici, laisse Symfony mettre son id #}
                 {{ form_widget(registrationForm.plainPassword, {
                     'attr': {
                         'class': 'form-control',
-                        'placeholder': 'Mot de passe sécurisé',
-                        'id': 'password'
+                        'placeholder': 'Mot de passe sécurisé'
                     }
                 }) }}
+
                 {{ form_errors(registrationForm.plainPassword) }}
+
+                <div id="password-strength" class="mt-2 small"></div>
             </div>
         </div>
     </div>
-    
+
     <!-- Section Profil -->
     <div class="section-header">
         <i class="fas fa-user"></i>
         <h3>Informations Personnelles</h3>
     </div>
-    
+
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
@@ -69,7 +73,7 @@
                 {{ form_errors(registrationForm.profil.nom) }}
             </div>
         </div>
-        
+
         <div class="col-md-6">
             <div class="form-group">
                 <label for="prenom" class="form-label">
@@ -82,7 +86,7 @@
                 {{ form_errors(registrationForm.profil.prenom) }}
             </div>
         </div>
-        
+
         <div class="col-md-6">
             <div class="form-group">
                 <label for="dateNaissance" class="form-label">
@@ -95,7 +99,7 @@
                 {{ form_errors(registrationForm.profil.dateNaissance) }}
             </div>
         </div>
-        
+
         <div class="col-md-6">
             <div class="form-group">
                 <label for="gouvernorat" class="form-label">
@@ -109,13 +113,13 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Section Études -->
     <div class="section-header">
         <i class="fas fa-book"></i>
         <h3>Parcours Scolaire</h3>
     </div>
-    
+
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
@@ -129,7 +133,7 @@
                 {{ form_errors(registrationForm.profil.niveau) }}
             </div>
         </div>
-        
+
         <div class="col-md-6">
             <div class="form-group">
                 <label for="filiere" class="form-label">
@@ -143,7 +147,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Bouton d'inscription -->
     <div class="form-group" style="margin-top: 40px;">
         <button type="submit" class="btn-auth">
@@ -151,11 +155,51 @@
             Créer mon compte
         </button>
     </div>
-    
+
     {{ form_end(registrationForm) }}
-    
-    <!-- Lien vers connexion -->
+
     <div class="auth-link">
         Vous avez déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const passwordInput = document.querySelector('#registration_plainPassword');
+            const strengthDiv = document.getElementById('password-strength');
+
+            if (!passwordInput || !strengthDiv) return;
+
+            const updateStrength = () => {
+                const value = passwordInput.value;
+
+                const hasNumber = /[0-9]/.test(value);
+                const hasSpecial = /[\W_]/.test(value);
+                const hasLength = value.length >= 8;
+
+                if (value.length === 0) {
+                    strengthDiv.textContent = "";
+                    strengthDiv.style.color = "";
+                    passwordInput.style.borderColor = "";
+                    return;
+                }
+
+                if (hasNumber && hasSpecial && hasLength) {
+                    strengthDiv.textContent = "Mot de passe fort ✔️";
+                    strengthDiv.style.color = "green";
+                    passwordInput.style.borderColor = "green";
+                } else {
+                    strengthDiv.textContent = "Il faut : 8 caractères, 1 chiffre et 1 caractère spécial";
+                    strengthDiv.style.color = "red";
+                    passwordInput.style.borderColor = "red";
+                }
+            };
+
+            passwordInput.addEventListener('input', updateStrength);
+            updateStrength();
+        });
+    </script>
 {% endblock %}

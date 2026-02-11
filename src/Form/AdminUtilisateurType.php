@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Utilisateur;
+use App\Form\ProfilEmbeddedType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -42,7 +43,11 @@ class AdminUtilisateurType extends AbstractType
                 'help' => $isEdit
                     ? 'Laisser vide pour ne pas modifier'
                     : 'Mot de passe requis à la création',
+            ])
+            ->add('profil', ProfilEmbeddedType::class, [
+                'by_reference' => false,
             ]);
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void

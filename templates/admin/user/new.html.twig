@@ -142,6 +142,49 @@
         {{ form_errors(form.plainPassword) }}
       </div>
 
+      {# Profil (Nom / Prénom etc.) #}
+      <div class="field-card" style="grid-column:1/-1;">
+        <div class="field-label">Profil</div>
+
+        <div class="form-wrap">
+          <div class="field-card glass-input">
+            <div class="field-label">Nom</div>
+            {{ form_widget(form.profil.nom) }}
+            {{ form_errors(form.profil.nom) }}
+          </div>
+
+          <div class="field-card glass-input">
+            <div class="field-label">Prénom</div>
+            {{ form_widget(form.profil.prenom) }}
+            {{ form_errors(form.profil.prenom) }}
+          </div>
+
+          <div class="field-card glass-input">
+            <div class="field-label">Date de naissance</div>
+            {{ form_widget(form.profil.dateNaissance) }}
+            {{ form_errors(form.profil.dateNaissance) }}
+          </div>
+
+          <div class="field-card glass-input">
+            <div class="field-label">Gouvernorat</div>
+            {{ form_widget(form.profil.gouvernorat) }}
+            {{ form_errors(form.profil.gouvernorat) }}
+          </div>
+
+          <div class="field-card glass-input">
+            <div class="field-label">Niveau</div>
+            {{ form_widget(form.profil.niveau) }}
+            {{ form_errors(form.profil.niveau) }}
+          </div>
+
+          <div class="field-card glass-input">
+            <div class="field-label">Filiére</div>
+            {{ form_widget(form.profil.filiere) }}
+            {{ form_errors(form.profil.filiere) }}
+          </div>
+        </div>
+      </div>
+
       {# Rôles #}
       <div class="field-card" style="grid-column:1/-1;">
         <div class="field-label">Rôles</div>

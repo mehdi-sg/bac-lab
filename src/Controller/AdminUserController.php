@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Profil;
 use App\Entity\Utilisateur;
 use App\Form\AdminUtilisateurType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,11 +17,38 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class AdminUserController extends AbstractController
 {
-    #[Route('/', name: 'admin_user_index')]
-    public function index(EntityManagerInterface $em): Response
+    #[Route('/', name: 'admin_user_index', methods: ['GET'])]
+    public function index(Request $request, EntityManagerInterface $em): Response
     {
+        $q = trim((string) $request->query->get('q', ''));
+        $status = (string) $request->query->get('status', ''); // active|inactive|''
+        $role = (string) $request->query->get('role', '');     // ROLE_ADMIN|ROLE_MODERATOR|ROLE_USER|''
+
+        $qb = $em->getRepository(\App\Entity\Utilisateur::class)->createQueryBuilder('u');
+
+        if ($q !== '') {
+            $qb->andWhere('LOWER(u.email) LIKE :q')
+               ->setParameter('q', '%'.mb_strtolower($q).'%');
+        }
+
+        if ($status === 'active') {
+            $qb->andWhere('u.isActive = 1');
+        } elseif ($status === 'inactive') {
+            $qb->andWhere('u.isActive = 0');
+        }
+
+        if ($role !== '') {
+            $qb->andWhere('u.roles LIKE :r')
+               ->setParameter('r', '%"'.$role.'"%');
+        }
+
+        $users = $qb->orderBy('u.email', 'ASC')->getQuery()->getResult();
+
         return $this->render('admin/user/index.html.twig', [
-            'users' => $em->getRepository(Utilisateur::class)->findAll(),
+            'users' => $users,
+            'q' => $q,
+            'status' => $status,
+            'role' => $role,
         ]);
     }
 
@@ -33,6 +61,11 @@ class AdminUserController extends AbstractController
         $user = new Utilisateur();
         $user->setIsActive(true);
         $user->setRoles(['ROLE_USER']);
+
+        // Create a new Profil and set it on the user
+        $profil = new Profil();
+        $profil->setUtilisateur($user);
+        $user->setProfil($profil);
 
         $form = $this->createForm(AdminUtilisateurType::class, $user, [
             'is_edit' => false,
