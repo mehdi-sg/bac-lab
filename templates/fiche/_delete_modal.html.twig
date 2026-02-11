@@ -1,0 +1,34 @@
+{# Delete Modal Component #}
+{% set modal_id = modal_id|default('deleteModal') %}
+{% set fiche_id = fiche_id|default(0) %}
+{% set fiche_title = fiche_title|default('') %}
+
+<div class="fiche-modal-overlay" id="{{ modal_id }}" tabindex="-1" role="dialog">
+    <div class="fiche-modal">
+        <div class="fiche-modal-header">
+            <h5 class="mb-0">
+                <i class="fa fa-exclamation-triangle mr-2"></i>
+                Confirmer la suppression
+            </h5>
+        </div>
+        <div class="fiche-modal-body">
+            <i class="fa fa-trash fa-4x text-danger opacity-50 mb-3 d-block"></i>
+            <p class="mb-1">Êtes-vous sûr de vouloir supprimer cette fiche ?</p>
+            <h6 class="text-primary">{{ fiche_title }}</h6>
+            <p class="text-danger mt-3 mb-0">
+                <small><i class="fa fa-exclamation-circle mr-1"></i>Cette action est irréversible.</small>
+            </p>
+        </div>
+        <div class="fiche-modal-footer">
+            <button type="button" class="fiche-btn fiche-btn-secondary" data-dismiss="modal">
+                <i class="fa fa-times mr-1"></i>Annuler
+            </button>
+            <form action="{{ path('fiche_delete', {'id': fiche_id}) }}" method="post" class="d-inline">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_fiche_' ~ fiche_id) }}">
+                <button type="submit" class="fiche-btn fiche-btn-danger">
+                    <i class="fa fa-trash mr-1"></i>Supprimer
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -43,6 +43,10 @@ class Notification
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?MembreGroupe $membre = null;
 
+    #[ORM\ManyToOne(targetEntity: FicheJoinRequest::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?FicheJoinRequest $ficheJoinRequest = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -151,6 +155,17 @@ class Notification
     public function setMembre(?MembreGroupe $membre): self
     {
         $this->membre = $membre;
+        return $this;
+    }
+
+    public function getFicheJoinRequest(): ?FicheJoinRequest
+    {
+        return $this->ficheJoinRequest;
+    }
+
+    public function setFicheJoinRequest(?FicheJoinRequest $ficheJoinRequest): self
+    {
+        $this->ficheJoinRequest = $ficheJoinRequest;
         return $this;
     }
 }

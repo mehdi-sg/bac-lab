@@ -59,4 +59,9 @@ class Profil
         $this->utilisateur = $utilisateur;
         return $this;
     }
+
+    public function getUtilisateur(): Utilisateur
+    {
+        return $this->utilisateur;
+    }
 }
