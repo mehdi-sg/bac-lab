@@ -91,6 +91,43 @@
             margin-top: 30px;
         }
 
+        .form-section {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .form-section h3 {
+            color: #2d3748;
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .help-text {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .field-error {
+            color: #e53e3e;
+            font-size: 13px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* Style pour les champs avec erreur */
+        .form-group.has-error input,
+        .form-group.has-error textarea,
+        .form-group.has-error select {
+            border-color: #e53e3e;
+            box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+        }
+
         .btn {
             padding: 12px 30px;
             border-radius: 25px;
@@ -121,6 +158,24 @@
             background: #cbd5e0;
         }
 
+        /* Messages d'erreur */
+        .alert-error {
+            background: #fed7d7;
+            border: 1px solid #fc8181;
+            color: #c53030;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .alert-error ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+
+        }
+
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -145,14 +200,25 @@
         
         <form method="POST">
         <input type="hidden" name="_token" value="{{ csrf_token('quiz_form') }}">
+        
+        {# Affichage des erreurs de validation #}
+        {% if errors is defined and errors is not empty %}
+            <div class="alert-error">
+                <ul>
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        
             <div class="form-group">
                 <label for="titre">Titre du Quiz *</label>
                 <input 
                     type="text" 
                     id="titre" 
                     name="titre" 
-                    value="{{ quiz.titre ?? '' }}" 
-                    required
+                    value="{{ (old.titre ?? quiz.titre ?? '') }}" 
                     placeholder="Ex: Quiz de Mathématiques - Chapitre 1"
                 >
             </div>
@@ -163,17 +229,17 @@
                     id="description" 
                     name="description" 
                     placeholder="Décrivez brièvement le contenu du quiz..."
-                >{{ quiz.description ?? '' }}</textarea>
+                >{{ (old.description ?? quiz.description ?? '') }}</textarea>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="niveau">Niveau *</label>
-                    <select id="niveau" name="niveau" required>
+                    <select id="niveau" name="niveau">
                         <option value="">-- Sélectionner --</option>
-                        <option value="Facile" {{ quiz.niveau == 'Facile' ? 'selected' : '' }}>Facile</option>
-                        <option value="Moyen" {{ quiz.niveau == 'Moyen' ? 'selected' : '' }}>Moyen</option>
-                        <option value="Difficile" {{ quiz.niveau == 'Difficile' ? 'selected' : '' }}>Difficile</option>
+                        <option value="Facile" {{ ((old.niveau ?? quiz.niveau ?? '') == 'Facile') ? 'selected' : '' }}>Facile</option>
+                        <option value="Moyen" {{ ((old.niveau ?? quiz.niveau ?? '') == 'Moyen') ? 'selected' : '' }}>Moyen</option>
+                        <option value="Difficile" {{ ((old.niveau ?? quiz.niveau ?? '') == 'Difficile') ? 'selected' : '' }}>Difficile</option>
                     </select>
                 </div>
 
@@ -183,27 +249,70 @@
                         type="number" 
                         id="duree" 
                         name="duree" 
-                        value="{{ quiz.duree ?? 20 }}" 
+                        value="{{ (old.duree ?? quiz.duree ?? 20) }}" 
                         min="1"
                         max="180"
-                        required
                         placeholder="20"
                     >
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="nb_questions">Nombre de questions *</label>
-                <input 
-                    type="number" 
-                    id="nb_questions" 
-                    name="nb_questions" 
-                    value="{{ quiz.nbQuestions ?? 10 }}" 
-                    min="1"
-                    max="100"
-                    required
-                    placeholder="10"
-                >
+            <!-- Matière et Chapitre -->
+            <div class="form-section">
+                <h3>📚 Classification</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="matiere_id">Matière *</label>
+                        <select id="matiere_id" name="matiere_id">
+                            <option value="">-- Sélectionner une matière --</option>
+                            {% for matiere in matieres %}
+                                <option 
+                                    value="{{ matiere.id }}" 
+                                    data-filiere="{{ matiere.filiere.id }}"
+                                    {{ ((old.matiere_id ?? (quiz.matiere.id ?? '')) == matiere.id) ? 'selected' : '' }}
+                                >
+                                    {{ matiere.nom }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {# Bouton pour rafraîchir les chapitres #}
+                        <div style="margin-top: 8px;">
+                            <button type="submit" name="action" value="refresh_chapitres" class="btn btn-info" style="padding: 6px 15px; font-size: 13px;">
+                                🔄 Rafraîchir les chapitres
+                            </button>
+                        </div>
+                        {% if old is defined and old.matiere_id is defined and old.matiere_id is empty and errors is defined and errors|length > 0 %}
+                            <span class="field-error">Ce champ est obligatoire</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="chapitre_id">Chapitre *</label>
+                        <select id="chapitre_id" name="chapitre_id">
+                            <option value="">-- Sélectionner un chapitre --</option>
+                            {% if chapitres is defined and chapitres is not empty %}
+                                {% for chapitre in chapitres %}
+                                    <option 
+                                        value="{{ chapitre.id }}"
+                                        {{ ((old.chapitre_id ?? (quiz.chapitre.id ?? '')) == chapitre.id) ? 'selected' : '' }}
+                                    >
+                                        {{ chapitre.titre }}
+                                    </option>
+                                {% endfor %}
+                            {% elseif old.matiere_id is defined and old.matiere_id > 0 %}
+                                <option value="">Sélectionnez une matière et cliquez sur "Rafraîchir"</option>
+                            {% elseif quiz.matiere is defined and quiz.matiere %}
+                                <option value="">Sélectionnez un chapitre</option>
+                            {% else %}
+                                <option value="">-- Sélectionnez d'abord une matière --</option>
+                            {% endif %}
+                        </select>
+                        {% if old is defined and old.chapitre_id is defined and old.chapitre_id is empty and errors is defined and errors|length > 0 %}
+                            <span class="field-error">Ce champ est obligatoire</span>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
 
             <div class="form-actions">
@@ -219,3 +328,4 @@
 
 </div>
 {% endblock %}
+

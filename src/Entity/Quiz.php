@@ -38,6 +38,14 @@ class Quiz
     #[ORM\Column]
     private ?bool $etat = null;
 
+    #[ORM\ManyToOne(targetEntity: Chapitre::class)]
+    #[ORM\JoinColumn(name: 'id_chapitre', referencedColumnName: 'id_chapitre', nullable: false)]
+    private ?Chapitre $chapitre = null;
+
+    #[ORM\ManyToOne(targetEntity: Matiere::class, inversedBy: 'questions')]
+#[ORM\JoinColumn(name: 'id_matiere', referencedColumnName: 'id_matiere', nullable: false)]
+private ?Matiere $matiere = null;
+
 
     #[ORM\OneToMany(
         mappedBy: 'quiz',
@@ -78,6 +86,29 @@ class Quiz
 
         return $this;
     }
+
+    public function getChapitre(): ?Chapitre
+    {
+        return $this->chapitre;
+    }
+
+    public function setChapitre(?Chapitre $chapitre): static
+    {
+        $this->chapitre = $chapitre;
+        return $this;
+    }
+
+    public function getMatiere(): ?Matiere
+    {
+        return $this->matiere;
+    }
+
+    public function setMatiere(?Matiere $matiere): static
+    {
+        $this->matiere = $matiere;
+        return $this;
+    }
+
 
     public function getDescription(): ?string
     {

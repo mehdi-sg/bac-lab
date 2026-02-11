@@ -29,19 +29,6 @@ class Question
     #[ORM\JoinColumn(name: 'id_quiz', referencedColumnName: 'id_quiz', nullable: false , onDelete: 'CASCADE')]
     private ?Quiz $quiz = null;
 
-    // src/Entity/Question.php
-
-
-
-
-    #[ORM\ManyToOne(targetEntity: Chapitre::class)]
-    #[ORM\JoinColumn(name: 'id_chapitre', referencedColumnName: 'id_chapitre', nullable: false)]
-    private ?Chapitre $chapitre = null;
-
-    #[ORM\ManyToOne(targetEntity: Matiere::class, inversedBy: 'questions')]
-#[ORM\JoinColumn(name: 'id_matiere', referencedColumnName: 'id_matiere', nullable: false)]
-private ?Matiere $matiere = null;
-
     #[ORM\OneToMany(mappedBy: 'question', targetEntity: Choix::class, cascade: ['persist', 'remove'])]
     private Collection $choix;
 
@@ -75,11 +62,10 @@ private ?Matiere $matiere = null;
 
     public function setTypeQuestion(string $typeQuestion): static
     {
-        // Validation optionnelle
-        if (!in_array($typeQuestion, ['QCM', 'VRAI_FAUX'])) {
-            throw new \InvalidArgumentException('Type de question invalide');
+        // Validation: ne définir que si la valeur est valide
+        if (in_array($typeQuestion, ['QCM', 'VRAI_FAUX'])) {
+            $this->typeQuestion = $typeQuestion;
         }
-        $this->typeQuestion = $typeQuestion;
         return $this;
     }
 
@@ -102,28 +88,6 @@ private ?Matiere $matiere = null;
     public function setQuiz(?Quiz $quiz): static
     {
         $this->quiz = $quiz;
-        return $this;
-    }
-
-    public function getChapitre(): ?Chapitre
-    {
-        return $this->chapitre;
-    }
-
-    public function setChapitre(?Chapitre $chapitre): static
-    {
-        $this->chapitre = $chapitre;
-        return $this;
-    }
-
-    public function getMatiere(): ?Matiere
-    {
-        return $this->matiere;
-    }
-
-    public function setMatiere(?Matiere $matiere): static
-    {
-        $this->matiere = $matiere;
         return $this;
     }
 
@@ -157,3 +121,4 @@ private ?Matiere $matiere = null;
         return $this;
     }
 }
+

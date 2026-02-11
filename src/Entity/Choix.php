@@ -16,8 +16,9 @@ class Choix
     #[ORM\Column(length: 255)]
     private ?string $libelle = null;
 
-    #[ORM\Column(name: 'est_correct')]
-    private ?bool $estCorrect = null;
+    #[ORM\Column(name: 'est_correct', type: 'boolean')]
+    private bool $estCorrect = false;
+
 
     #[ORM\ManyToOne(targetEntity: Question::class, inversedBy: 'choix')]
     #[ORM\JoinColumn(name: 'id_question', referencedColumnName: 'id_question', nullable: false)]
@@ -41,16 +42,17 @@ class Choix
         return $this;
     }
 
-    public function isEstCorrect(): ?bool
+    public function isEstCorrect(): bool
     {
         return $this->estCorrect;
     }
-
+    
     public function setEstCorrect(bool $estCorrect): static
     {
         $this->estCorrect = $estCorrect;
         return $this;
     }
+    
 
     public function getQuestion(): ?Question
     {

@@ -536,7 +536,7 @@
     </service>
     <service id="argument_resolver.service" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
       <tag name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver" priority="-50">controller.argument_value_resolver</tag>
-      <argument type="service" id=".service_locator.32O6zYj"/>
+      <argument type="service" id=".service_locator.X_UjjqE"/>
     </service>
     <service id="argument_resolver.default" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">
       <tag name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver" priority="-100">controller.argument_value_resolver</tag>
@@ -3636,7 +3636,7 @@
     </service>
     <service id="argument_resolver.not_tagged_controller" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
       <tag name="controller.argument_value_resolver" priority="-200"/>
-      <argument type="service" id=".service_locator.32O6zYj"/>
+      <argument type="service" id=".service_locator.X_UjjqE"/>
     </service>
     <service id="debug.log_processor" class="Symfony\Bridge\Monolog\Processor\DebugProcessor">
       <tag name="kernel.reset" method="reset"/>
@@ -8376,30 +8376,12 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.z0A7H.F" method="withContext"/>
     </service>
-    <service id=".service_locator.z0A7H.F.App\Controller\QuestionAdminController::new()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\QuestionAdminController::new()"/>
-      <argument>App\Controller\QuestionAdminController::new()</argument>
-      <argument type="service" id="service_container"/>
-      <factory service=".service_locator.z0A7H.F" method="withContext"/>
-    </service>
     <service id=".service_locator.2gbUsz6" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="quiz" type="service_closure" id=".errored..service_locator.2gbUsz6.App\Entity\Quiz"/>
         <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
       </argument>
-    </service>
-    <service id=".service_locator.2gbUsz6.App\Controller\QuestionAdminController::edit()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\QuestionAdminController::edit()"/>
-      <argument>App\Controller\QuestionAdminController::edit()</argument>
-      <argument type="service" id="service_container"/>
-      <factory service=".service_locator.2gbUsz6" method="withContext"/>
-    </service>
-    <service id=".service_locator.2gbUsz6.App\Controller\QuestionAdminController::delete()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\QuestionAdminController::delete()"/>
-      <argument>App\Controller\QuestionAdminController::delete()</argument>
-      <argument type="service" id="service_container"/>
-      <factory service=".service_locator.2gbUsz6" method="withContext"/>
     </service>
     <service id=".service_locator.2gbUsz6.App\Controller\QuestionAdminController::questions()" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\QuestionAdminController::questions()"/>
@@ -8420,17 +8402,17 @@
         <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
       </argument>
     </service>
+    <service id=".service_locator.9ZEbets.App\Controller\QuestionAdminController::editQuestion()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\QuestionAdminController::editQuestion()"/>
+      <argument>App\Controller\QuestionAdminController::editQuestion()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.9ZEbets" method="withContext"/>
+    </service>
     <service id=".service_locator.9ZEbets.App\Controller\QuestionAdminController::deleteQuestion()" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\QuestionAdminController::deleteQuestion()"/>
       <argument>App\Controller\QuestionAdminController::deleteQuestion()</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.9ZEbets" method="withContext"/>
-    </service>
-    <service id=".service_locator.z0A7H.F.App\Controller\QuestionAdminController::chapitresByMatiere()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\QuestionAdminController::chapitresByMatiere()"/>
-      <argument>App\Controller\QuestionAdminController::chapitresByMatiere()</argument>
-      <argument type="service" id="service_container"/>
-      <factory service=".service_locator.z0A7H.F" method="withContext"/>
     </service>
     <service id=".service_locator.z0A7H.F.App\Controller\QuizAdminController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\QuizAdminController::index()"/>
@@ -8462,19 +8444,7 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.2gbUsz6" method="withContext"/>
     </service>
-    <service id=".service_locator.2gbUsz6.App\Controller\QuizAdminController::newQuestion()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\QuizAdminController::newQuestion()"/>
-      <argument>App\Controller\QuizAdminController::newQuestion()</argument>
-      <argument type="service" id="service_container"/>
-      <factory service=".service_locator.2gbUsz6" method="withContext"/>
-    </service>
-    <service id=".service_locator.9ZEbets.App\Controller\QuizAdminController::deleteQuestion()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\QuizAdminController::deleteQuestion()"/>
-      <argument>App\Controller\QuizAdminController::deleteQuestion()</argument>
-      <argument type="service" id="service_container"/>
-      <factory service=".service_locator.9ZEbets" method="withContext"/>
-    </service>
-    <service id=".service_locator.32O6zYj" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.X_UjjqE" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.1vYpZ1B.kernel::registerContainerConfiguration()"/>
@@ -8486,20 +8456,15 @@
         <argument key="App\Controller\ChoixController::delete" type="service_closure" id=".service_locator.TP_uXcr.App\Controller\ChoixController::delete()"/>
         <argument key="App\Controller\ChoixController::toggleCorrect" type="service_closure" id=".service_locator.TP_uXcr.App\Controller\ChoixController::toggleCorrect()"/>
         <argument key="App\Controller\QuestionAdminController::index" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\QuestionAdminController::index()"/>
-        <argument key="App\Controller\QuestionAdminController::new" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\QuestionAdminController::new()"/>
-        <argument key="App\Controller\QuestionAdminController::edit" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuestionAdminController::edit()"/>
-        <argument key="App\Controller\QuestionAdminController::delete" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuestionAdminController::delete()"/>
         <argument key="App\Controller\QuestionAdminController::questions" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuestionAdminController::questions()"/>
         <argument key="App\Controller\QuestionAdminController::newQuestion" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuestionAdminController::newQuestion()"/>
+        <argument key="App\Controller\QuestionAdminController::editQuestion" type="service_closure" id=".service_locator.9ZEbets.App\Controller\QuestionAdminController::editQuestion()"/>
         <argument key="App\Controller\QuestionAdminController::deleteQuestion" type="service_closure" id=".service_locator.9ZEbets.App\Controller\QuestionAdminController::deleteQuestion()"/>
-        <argument key="App\Controller\QuestionAdminController::chapitresByMatiere" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\QuestionAdminController::chapitresByMatiere()"/>
         <argument key="App\Controller\QuizAdminController::index" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\QuizAdminController::index()"/>
         <argument key="App\Controller\QuizAdminController::new" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\QuizAdminController::new()"/>
         <argument key="App\Controller\QuizAdminController::edit" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuizAdminController::edit()"/>
         <argument key="App\Controller\QuizAdminController::delete" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuizAdminController::delete()"/>
         <argument key="App\Controller\QuizAdminController::questions" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuizAdminController::questions()"/>
-        <argument key="App\Controller\QuizAdminController::newQuestion" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuizAdminController::newQuestion()"/>
-        <argument key="App\Controller\QuizAdminController::deleteQuestion" type="service_closure" id=".service_locator.9ZEbets.App\Controller\QuizAdminController::deleteQuestion()"/>
         <argument key="kernel:registerContainerConfiguration" type="service_closure" id=".service_locator.1vYpZ1B.kernel::registerContainerConfiguration()"/>
         <argument key="kernel:loadRoutes" type="service_closure" id=".service_locator.1vYpZ1B.kernel::loadRoutes()"/>
         <argument key="App\Controller\ChapitreApiController:getByMatiere" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\ChapitreApiController::getByMatiere()"/>
@@ -8507,20 +8472,15 @@
         <argument key="App\Controller\ChoixController:delete" type="service_closure" id=".service_locator.TP_uXcr.App\Controller\ChoixController::delete()"/>
         <argument key="App\Controller\ChoixController:toggleCorrect" type="service_closure" id=".service_locator.TP_uXcr.App\Controller\ChoixController::toggleCorrect()"/>
         <argument key="App\Controller\QuestionAdminController:index" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\QuestionAdminController::index()"/>
-        <argument key="App\Controller\QuestionAdminController:new" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\QuestionAdminController::new()"/>
-        <argument key="App\Controller\QuestionAdminController:edit" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuestionAdminController::edit()"/>
-        <argument key="App\Controller\QuestionAdminController:delete" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuestionAdminController::delete()"/>
         <argument key="App\Controller\QuestionAdminController:questions" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuestionAdminController::questions()"/>
         <argument key="App\Controller\QuestionAdminController:newQuestion" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuestionAdminController::newQuestion()"/>
+        <argument key="App\Controller\QuestionAdminController:editQuestion" type="service_closure" id=".service_locator.9ZEbets.App\Controller\QuestionAdminController::editQuestion()"/>
         <argument key="App\Controller\QuestionAdminController:deleteQuestion" type="service_closure" id=".service_locator.9ZEbets.App\Controller\QuestionAdminController::deleteQuestion()"/>
-        <argument key="App\Controller\QuestionAdminController:chapitresByMatiere" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\QuestionAdminController::chapitresByMatiere()"/>
         <argument key="App\Controller\QuizAdminController:index" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\QuizAdminController::index()"/>
         <argument key="App\Controller\QuizAdminController:new" type="service_closure" id=".service_locator.z0A7H.F.App\Controller\QuizAdminController::new()"/>
         <argument key="App\Controller\QuizAdminController:edit" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuizAdminController::edit()"/>
         <argument key="App\Controller\QuizAdminController:delete" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuizAdminController::delete()"/>
         <argument key="App\Controller\QuizAdminController:questions" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuizAdminController::questions()"/>
-        <argument key="App\Controller\QuizAdminController:newQuestion" type="service_closure" id=".service_locator.2gbUsz6.App\Controller\QuizAdminController::newQuestion()"/>
-        <argument key="App\Controller\QuizAdminController:deleteQuestion" type="service_closure" id=".service_locator.9ZEbets.App\Controller\QuizAdminController::deleteQuestion()"/>
       </argument>
     </service>
     <service id=".service_locator.DA6YX9k" class="Symfony\Component\DependencyInjection\ServiceLocator">
@@ -10839,7 +10799,7 @@
     <service id="Psr\Log\LoggerInterface" alias="monolog.logger"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.ryAvHi4" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.32O6zYj"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.X_UjjqE"/>
     <service id="doctrine.id_generator_locator" alias=".service_locator.W55Po6X"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id=".Psr\Log\LoggerInterface $request.logger" alias="monolog.logger.request"/>

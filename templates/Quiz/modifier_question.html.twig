@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ edit ? 'Modifier' : 'Nouvelle' }} Question - Admin{% endblock %}
+{% block title %}Modifier la Question - Admin{% endblock %}
 
 {% block css %}
     {{ parent() }}
@@ -362,7 +362,7 @@
 <div class="admin-container">
     
     <div class="form-card">
-        <h1>➕ Nouvelle Question</h1>
+        <h1>✏️ Modifier la Question</h1>
         
         {# Affichage des erreurs de validation #}
         {% if errors is defined and errors is not empty %}
@@ -376,11 +376,11 @@
         {% endif %}
         
         <form method="POST"
-              action="{{ path('admin_question_new', {id: quiz.id}) }}"
+              action="{{ path('admin_question_edit', {id: question.id}) }}"
               id="question-form">
 
-            <!-- Champ caché pour le nombre de choix -->
-            <input type="hidden" name="choix_count" value="{{ choiceCount ?? 2 }}">
+            <!-- Champ caché pour le nombre de choix (sera écrasé dans QCM) -->
+            <input type="hidden" name="choix_count" value="2">
             
             <!-- Énoncé de la question -->
             <div class="form-group">
@@ -389,7 +389,7 @@
                     id="enonce" 
                     name="enonce" 
                     placeholder="Ex: Quelle est la dérivée de ln(x) ?"
-                >{{ (old.enonce ?? '') }}</textarea>
+                >{{ (old.enonce ?? (question ? question.enonce : '')) }}</textarea>
                 {% if old is defined and old.enonce is defined and old.enonce is empty and errors is defined and errors|length > 0 %}
                     <span class="field-error">Ce champ est obligatoire</span>
                 {% endif %}
@@ -401,8 +401,8 @@
                     <label for="type_question">Type de question *</label>
                     <select id="type_question" name="type_question">
                         <option value="">-- Sélectionner --</option>
-                        <option value="QCM" {{ ((old.type_question ?? '') == 'QCM') ? 'selected' : '' }}>QCM (Choix multiples)</option>
-                        <option value="VRAI_FAUX" {{ ((old.type_question ?? '') == 'VRAI_FAUX') ? 'selected' : '' }}>Vrai / Faux</option>
+                        <option value="QCM" {{ ((old.type_question ?? (question ? question.typeQuestion : '')) == 'QCM') ? 'selected' : '' }}>QCM (Choix multiples)</option>
+                        <option value="VRAI_FAUX" {{ ((old.type_question ?? (question ? question.typeQuestion : '')) == 'VRAI_FAUX') ? 'selected' : '' }}>Vrai / Faux</option>
                     </select>
                     <div style="display: flex; gap: 10px; margin-top: 8px;">
                         <button type="submit" name="action" value="change_type" class="btn btn-info" style="padding: 6px 15px; font-size: 13px;">
@@ -417,7 +417,7 @@
                         type="number" 
                         id="score" 
                         name="score" 
-                        value="{{ (old.score ?? 1) }}" 
+                        value="{{ (old.score ?? (question ? question.score : 1)) }}" 
                         min="1"
                         max="20"
                         placeholder="1"
@@ -431,7 +431,8 @@
                 <h3>✅ Choix de réponses</h3>
                 
                 {# VRAI_FAUX #}
-                {% if (old.type_question ?? '') == 'VRAI_FAUX' %}
+                {% set currentType = (old.type_question is defined) ? old.type_question : (question ? question.typeQuestion : '') %}
+                {% if currentType == 'VRAI_FAUX' %}
                     <div class="help-text" style="margin-bottom: 20px;">
                         Cochez la bonne réponse pour cette question Vrai/Faux
                     </div>
@@ -457,7 +458,7 @@
                     <input type="hidden" name="choix_count" value="2">
                 
                 {# QCM #}
-                {% elseif (old.type_question ?? '') == 'QCM' %}
+                {% elseif currentType == 'QCM' %}
                     <div class="help-text" style="margin-bottom: 20px;">
                         Remplissez les choix possibles et cochez la/les bonne(s) réponse(s)
                     </div>
@@ -467,13 +468,22 @@
                         {% set max_choices = 5 %}
                         {% set count = choiceCount ?? 2 %}
                         
+                        {# Construire les tableaux depuis old ou question pour edit mode #}
                         {% set choix_libelles = [] %}
                         {% set choix_corrects = [] %}
                         
                         {% if old.choix_libelle_0 is defined %}
+                            {# Mode POST avec erreur - utiliser old #}
                             {% for i in 0..(count - 1) %}
                                 {% set choix_libelles = choix_libelles|merge([(attribute(old, 'choix_libelle_' ~ i) ?? '')]) %}
                                 {% set choix_corrects = choix_corrects|merge([(attribute(old, 'choix_correct_' ~ i) ?? '0')]) %}
+                            {% endfor %}
+                        {% elseif question is defined and question.choix|length > 0 and currentType == (question ? question.typeQuestion : '') %}
+                            {# Mode GET initial - utiliser question #}
+                            {% set count = question.choix|length %}
+                            {% for i in 0..(count - 1) %}
+                                {% set choix_libelles = choix_libelles|merge([question.choix[i].libelle]) %}
+                                {% set choix_corrects = choix_corrects|merge([question.choix[i].estCorrect ? '1' : '0']) %}
                             {% endfor %}
                         {% endif %}
                         
@@ -531,7 +541,7 @@
 
             <div class="form-actions">
                 <button type="submit" name="action" value="save" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Créer la Question
+                    <i class="fas fa-save"></i> Enregistrer les modifications
                 </button>
                 <a href="{{ path('admin_quiz_questions', {id: quiz.id}) }}" class="btn btn-secondary">
                     <i class="fas fa-times"></i> Annuler
@@ -546,7 +556,7 @@
 {% block js %}
     {{ parent() }}
     <script>
-        // Highlight pour Vrai/Faux
+        // Highlight pour Vrai/Faux - ce JS est seulement pour l'interface, pas pour la validation
         document.addEventListener('DOMContentLoaded', function() {
             const vfOptions = document.querySelectorAll('.vf-option');
             

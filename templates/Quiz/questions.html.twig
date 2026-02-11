@@ -287,6 +287,9 @@
                     <span class="question-type">{{ question.typeQuestion }}</span>
                 </div>
                 <div class="question-actions">
+                    <a href="{{ path('admin_question_edit', {id: question.id}) }}" class="btn-action btn-edit-question">
+                        <i class="fas fa-edit"></i> Modifier
+                    </a>
                     <form method="POST" action="{{ path('admin_question_delete', {id: question.id}) }}" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette question ?');">
                         <button type="submit" class="btn-action btn-delete-question">
                             <i class="fas fa-trash"></i> Supprimer
@@ -312,8 +315,8 @@
 
             <div class="question-meta">
                 <span><i class="fas fa-star"></i> {{ question.score }} points</span>
-                <span><i class="fas fa-book"></i> {{ question.matiere.nom }}</span>
-                <span><i class="fas fa-bookmark"></i> {{ question.chapitre.titre }}</span>
+                <span><i class="fas fa-book"></i> {{ quiz.matiere.nom }}</span>
+                <span><i class="fas fa-bookmark"></i> {{ quiz.chapitre.titre }}</span>
             </div>
         </div>
         {% endfor %}
