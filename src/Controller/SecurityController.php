@@ -50,6 +50,7 @@ class SecurityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Hash le mot de passe depuis le champ plainPassword
             $plainPassword = $form->get('plainPassword')->getData();
+            
             $user->setPassword(
                 $hasher->hashPassword($user, $plainPassword)
             );

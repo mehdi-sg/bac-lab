@@ -138,8 +138,13 @@ class FicheController extends AbstractController
     // SHOW — Reading mode
     // =============================
     #[Route('/{id}', name: 'fiche_show', methods: ['GET'])]
-    public function show(Fiche $fiche, FicheModerateurRepository $ficheModerateurRepository, FicheFavoriRepository $ficheFavoriRepository): Response
-    {
+    public function show(
+        Fiche $fiche,
+        FicheModerateurRepository $ficheModerateurRepository,
+        FicheFavoriRepository $ficheFavoriRepository,
+        FicheJoinRequestRepository $ficheJoinRequestRepository,
+        EntityManagerInterface $em
+    ): Response {
         /** @var Utilisateur|null $user */
         $user = $this->getUser();
         
@@ -156,11 +161,46 @@ class FicheController extends AbstractController
             $isFavorited = $ficheFavoriRepository->isFavorited($fiche->getId(), $user->getId());
         }
         
+        // Eagerly load moderators with their utilisateurs and profiles
+        $moderateurs = $ficheModerateurRepository->createQueryBuilder('m')
+            ->leftJoin('m.utilisateur', 'u')
+            ->leftJoin('u.profil', 'p')
+            ->addSelect('u', 'p')
+            ->andWhere('m.fiche = :fiche')
+            ->setParameter('fiche', $fiche)
+            ->getQuery()
+            ->getResult();
+        
+        // Filter out moderators with deleted users
+        $validModerateurs = array_filter($moderateurs, function ($m) {
+            return $m->getUtilisateur() !== null;
+        });
+        
+        // Eagerly load join requests with their utilisateurs and profiles
+        $joinRequests = $ficheJoinRequestRepository->createQueryBuilder('jr')
+            ->leftJoin('jr.utilisateur', 'u')
+            ->leftJoin('u.profil', 'p')
+            ->addSelect('u', 'p')
+            ->andWhere('jr.fiche = :fiche')
+            ->andWhere('jr.status = :status')
+            ->setParameter('fiche', $fiche)
+            ->setParameter('status', FicheJoinRequest::STATUS_PENDING)
+            ->orderBy('jr.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+        
+        // Filter out requests with deleted users
+        $validJoinRequests = array_filter($joinRequests, function ($r) {
+            return $r->getUtilisateur() !== null;
+        });
+        
         return $this->render('fiche/show.html.twig', [
             'fiche' => $fiche,
             'is_moderateur' => $isModerateur,
             'is_owner' => $isOwner,
             'is_favorited' => $isFavorited,
+            'moderateurs_list' => $validModerateurs,
+            'join_requests_list' => $validJoinRequests,
         ]);
     }
 

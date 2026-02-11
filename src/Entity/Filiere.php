@@ -3,6 +3,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\FiliereRepository;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -38,10 +40,17 @@ class Filiere
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
+    /**
+     * @var Collection<int, Profil>
+     */
+    #[ORM\OneToMany(targetEntity: Profil::class, mappedBy: 'filiere')]
+    private Collection $profils;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
         $this->actif = true;
+        $this->profils = new ArrayCollection();
     }
 
     // Getters & Setters
@@ -61,4 +70,31 @@ class Filiere
 
     public function getUpdatedAt(): ?\DateTimeInterface { return $this->updatedAt; }
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self { $this->updatedAt = $updatedAt; return $this; }
+
+    /**
+     * @return Collection<int, Profil>
+     */
+    public function getProfils(): Collection
+    {
+        return $this->profils;
+    }
+
+    public function addProfil(Profil $profil): self
+    {
+        if (!$this->profils->contains($profil)) {
+            $this->profils->add($profil);
+            $profil->setFiliere($this);
+        }
+        return $this;
+    }
+
+    public function removeProfil(Profil $profil): self
+    {
+        if ($this->profils->removeElement($profil)) {
+            if ($profil->getFiliere() === $this) {
+                $profil->setFiliere(null);
+            }
+        }
+        return $this;
+    }
 }

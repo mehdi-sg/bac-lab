@@ -3,182 +3,232 @@
 {% block title %}{{ fiche.title }} - BAC Lab{% endblock %}
 
 {% block fiche_title %}
-    <i class="fa fa-graduation-cap mr-2"></i>
-    {{ fiche.title }}
+    <div class="fiche-hero-title">
+        <i class="fa fa-graduation-cap"></i>
+        <span>{{ fiche.title }}</span>
+    </div>
 {% endblock %}
 
 {% block fiche_subtitle %}
-    {% if is_moderateur %}
-        <span class="badge bg-success me-2">
-            <i class="fa fa-check-circle mr-1"></i>Vous êtes modérateur
+    <div class="fiche-hero-subtitle">
+        {% if is_moderateur %}
+            <span class="fiche-card-badge me-2">
+                <i class="fa fa-check-circle"></i>Vous êtes modérateur
+            </span>
+        {% endif %}
+        {% if is_favorited %}
+            <span class="fiche-card-badge me-2" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #ef4444;">
+                <i class="fa fa-heart"></i>Favori
+            </span>
+        {% endif %}
+        <span class="fiche-card-date">
+            <i class="fa fa-calendar-alt"></i>
+            {{ fiche.createdAt|date('d/m/Y') }}
         </span>
-    {% endif %}
-    {% if is_favorited %}
-        <span class="badge bg-danger me-2">
-            <i class="fa fa-heart mr-1"></i>Favori
-        </span>
-    {% endif %}
-    <span>
-        <i class="fa fa-calendar-alt mr-1"></i>
-        Créée le {{ fiche.createdAt|date('d/m/Y') }}
-    </span>
+    </div>
 {% endblock %}
-
 
 {% block fiche_header_actions %}
-    <a href="{{ path('fiche_index') }}" class="btn btn-light btn-lg rounded-pill shadow-sm me-2">
-        <i class="fa fa-arrow-left mr-1"></i>Retour
-    </a>
-    {% if app.user %}
-        <form action="{{ path('fiche_toggle_favorite', {'id': fiche.id}) }}" method="post" class="d-inline">
-            <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite_' ~ fiche.id) }}">
-            <button type="submit" class="btn btn-lg rounded-pill shadow-sm me-2 {{ is_favorited ? 'btn-danger' : 'btn-outline-danger' }}">
-                <i class="fa {{ is_favorited ? 'fa-heart' : 'fa-heart-o' }} mr-1"></i>
-                {{ is_favorited ? 'Retirer des favoris' : 'Ajouter aux favoris' }}
-            </button>
-        </form>
-    {% endif %}
-    {% if is_moderateur %}
-        <div class="btn-group shadow-sm">
-            <a href="{{ path('fiche_edit', {id: fiche.id}) }}" class="btn btn-primary btn-lg rounded-pill">
-                <i class="fa fa-edit mr-1"></i>Modifier
+    <div class="fiche-header-actions">
+        <a href="{{ path('fiche_index') }}" class="fiche-btn fiche-btn-secondary rounded-pill">
+            <i class="fa fa-arrow-left"></i>Retour
+        </a>
+        {% if app.user %}
+            <form action="{{ path('fiche_toggle_favorite', {'id': fiche.id}) }}" method="post" class="d-inline">
+                <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite_' ~ fiche.id) }}">
+                <button type="submit" class="fiche-btn {{ is_favorited ? 'fiche-btn-danger' : 'fiche-btn-primary' }} rounded-pill">
+                    <i class="fa {{ is_favorited ? 'fa-heart' : 'fa-heart-o' }}"></i>
+                    {{ is_favorited ? 'Retirer' : 'Favoris' }}
+                </button>
+            </form>
+        {% endif %}
+        {% if is_moderateur %}
+            <a href="{{ path('fiche_edit', {id: fiche.id}) }}" class="fiche-btn fiche-btn-primary rounded-pill">
+                <i class="fa fa-edit"></i>Modifier
             </a>
-            <button type="button" class="btn btn-danger btn-lg rounded-pill" data-toggle="modal" data-target="#deleteModal">
-                <i class="fa fa-trash mr-1"></i>
+            <button type="button" class="fiche-btn fiche-btn-danger rounded-pill" data-toggle="modal" data-target="#deleteModal">
+                <i class="fa fa-trash"></i>
             </button>
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
 {% endblock %}
-
 
 {% block fiche_content %}
 
-<!-- Content Card -->
-<div class="card bg-white bg-opacity-25 border-0 shadow-lg mb-5">
-    <div class="fiche-content p-5">
-
-    {{
-        fiche.content
-        |nl2br
-        |replace({
-            '!!': '<div class="fiche-block fiche-warning"><strong>⚠️ </strong>',
-            '>>': '<div class="fiche-block fiche-example"><strong>💡 Exemple :</strong> '
-        })
-        |replace({
-            '</div><br />': '</div>'
-        })
-        |raw
-    }}
-
+<!-- Moderators Banner -->
+<div class="fiche-moderators-banner mb-5">
+    <div class="banner-content">
+        <div class="banner-icon">
+            <i class="fa fa-users"></i>
+        </div>
+        <div class="banner-info">
+            <h4 class="banner-title">Modérateurs</h4>
+            <p class="banner-count">{{ moderateurs_list|length }} personne(s)</p>
+        </div>
+        <div class="banner-avatars">
+            {% for moderateur in moderateurs_list|slice(0, 5) %}
+                <div class="avatar" data-toggle="tooltip" title="
+                    {% if moderateur.utilisateur and moderateur.utilisateur.profil %}
+                        {{ moderateur.utilisateur.profil.nom }} {{ moderateur.utilisateur.profil.prenom }}
+                    {% elseif moderateur.utilisateur %}
+                        {{ moderateur.utilisateur.email }}
+                    {% else %}
+                        Utilisateur
+                    {% endif %}
+                    {% if moderateur.isOwner %}(Propriétaire){% endif %}
+                ">
+                    {% if moderateur.utilisateur and moderateur.utilisateur.profil and moderateur.utilisateur.profil.nom %}
+                        {{ moderateur.utilisateur.profil.nom|first|upper }}
+                    {% elseif moderateur.utilisateur %}
+                        {{ moderateur.utilisateur.email|first|upper }}
+                    {% else %}
+                        <i class="fa fa-user"></i>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            {% if moderateurs_list|length > 5 %}
+                <div class="avatar avatar-more">+{{ moderateurs_list|length - 5 }}</div>
+            {% endif %}
+        </div>
+        <div class="banner-actions">
+            <button class="fiche-btn fiche-btn-primary rounded-pill btn-sm" data-toggle="collapse" data-target="#moderatorsList">
+                <i class="fa fa-eye"></i>Voir tout
+            </button>
+        </div>
     </div>
 </div>
 
-<!-- Moderation Section -->
-<div class="row g-4">
-    <div class="col-md-6">
-        <!-- Moderators List -->
-        <div class="card border-0 shadow-lg h-100">
-            <div class="card-header bg-gradient-primary text-white py-4">
-                <h5 class="mb-0">
-                    <i class="fa fa-users mr-2"></i>
-                    Modérateurs
-                </h5>
-            </div>
-            <div class="card-body bg-white">
-                {% if fiche.moderateurs is empty %}
-                    <p class="text-muted mb-0 text-center py-4">
-                        <i class="fa fa-user-plus fa-3x mb-3 text-muted"></i><br>
-                        Aucun modérateur.
+<!-- Collapsible Moderators List -->
+<div class="collapse mb-5" id="moderatorsList">
+    <div class="fiche-moderators-list">
+        {% for moderateur in moderateurs_list %}
+            <div class="moderateur-card-item">
+                <div class="moderateur-avatar-large">
+                    {% if moderateur.utilisateur and moderateur.utilisateur.profil and moderateur.utilisateur.profil.nom %}
+                        {{ moderateur.utilisateur.profil.nom|first|upper }}
+                    {% elseif moderateur.utilisateur %}
+                        {{ moderateur.utilisateur.email|first|upper }}
+                    {% else %}
+                        <i class="fa fa-user"></i>
+                    {% endif %}
+                </div>
+                <div class="moderateur-details">
+                    <h5 class="moderateur-name">
+                        {% if moderateur.utilisateur and moderateur.utilisateur.profil %}
+                            {{ moderateur.utilisateur.profil.nom }} {{ moderateur.utilisateur.profil.prenom }}
+                        {% elseif moderateur.utilisateur %}
+                            {{ moderateur.utilisateur.email }}
+                        {% else %}
+                            Utilisateur supprimé
+                        {% endif %}
+                    </h5>
+                    <p class="moderateur-email">
+                        {% if moderateur.utilisateur %}
+                            {{ moderateur.utilisateur.email }}
+                        {% else %}
+                            Email non disponible
+                        {% endif %}
                     </p>
-                {% else %}
-                    <ul class="list-group list-group-flush">
-                        {% for moderateur in fiche.moderateurs %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                <span>
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 mr-3">
-                                            <i class="fa fa-user text-primary"></i>
-                                        </div>
-                                        <div>
-                                            <strong>
-                                                {% if moderateur.utilisateur and moderateur.utilisateur.profil %}
-                                                    {{ moderateur.utilisateur.profil.nom }} {{ moderateur.utilisateur.profil.prenom }}
-                                                {% elseif moderateur.utilisateur %}
-                                                    {{ moderateur.utilisateur.email }}
-                                                {% else %}
-                                                    Utilisateur inconnu
-                                                {% endif %}
-                                            </strong>
-                                        </div>
-                                    </div>
-                                </span>
-                                {% if moderateur.isOwner %}
-                                    <span class="badge bg-warning text-dark rounded-pill px-3">
-                                        <i class="fa fa-star mr-1"></i>Propriétaire
-                                    </span>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                    <span class="moderateur-role {% if moderateur.isOwner %}role-owner{% endif %}">
+                        {% if moderateur.isOwner %}
+                            <i class="fa fa-crown"></i> Propriétaire
+                        {% else %}
+                            <i class="fa fa-user"></i> Modérateur
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Main Content Section -->
+<div class="fiche-show-container">
+    
+    <!-- Content Card -->
+    <div class="fiche-show-card mb-5">
+        <div class="fiche-card-header">
+            <div class="fiche-card-icon">
+                <i class="fa fa-book-open"></i>
+            </div>
+            <h3 class="fiche-card-title mt-3">Contenu de la fiche</h3>
+        </div>
+        <div class="fiche-card-body">
+            <div class="fiche-content">
+                {{
+                    fiche.content
+                    |nl2br
+                    |replace({
+                        '!!': '<div class="fiche-block fiche-warning"><strong>⚠️ </strong>',
+                        '>>': '<div class="fiche-block fiche-example"><strong>💡 Exemple :</strong> '
+                    })
+                    |replace({
+                        '</div><br />': '</div>'
+                    })
+                    |raw
+                }}
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <!-- Join Request Form (for non-moderators) -->
-        {% if app.user and not is_moderateur %}
-            <div class="card border-0 shadow-lg h-100">
-                <div class="card-header bg-gradient-success text-white py-4">
-                    <h5 class="mb-0">
-                        <i class="fa fa-user-plus mr-2"></i>
-                        Demander à rejoindre
-                    </h5>
-                </div>
-                <div class="card-body bg-white">
-                    <p class="text-muted mb-4">
-                        <i class="fa fa-info-circle mr-2"></i>
-                        Vous n'êtes pas modérateur de cette fiche. Souhaitez-vous demander à rejoindre l'équipe ?
-                    </p>
-                    <form action="{{ path('fiche_join_request', {'id': fiche.id}) }}" method="post">
-                        <input type="hidden" name="_token" value="{{ csrf_token('fiche_join_request_' ~ fiche.id) }}">
-                        <div class="mb-4">
-                            <label for="message" class="form-label text-muted">Message (optionnel)</label>
-                            <textarea class="form-control border-0 bg-light rounded-lg" id="message" name="message" rows="4" placeholder="Présentez-vous brièvement..."></textarea>
+    <!-- Team & Actions Grid -->
+    <div class="row g-4">
+        
+        <!-- Join Request Card (for non-moderators) -->
+        <div class="col-lg-6">
+            {% if app.user and not is_moderateur %}
+                <div class="fiche-join-card h-100">
+                    <div class="fiche-card-header" style="background: linear-gradient(180deg, rgba(16, 185, 129, 0.15) 0%, transparent 100%);">
+                        <div class="fiche-card-icon" style="background: linear-gradient(135deg, #10b981, #06b6d4);">
+                            <i class="fa fa-user-plus"></i>
                         </div>
-                        <button type="submit" class="btn btn-success btn-lg w-100 rounded-pill shadow-lg">
-                            <i class="fa fa-paper-plane mr-2"></i>
-                            Envoyer ma demande
-                        </button>
-                    </form>
+                        <h4 class="fiche-card-title mt-2">Rejoindre l'équipe</h4>
+                    </div>
+                    <div class="fiche-card-body">
+                        <p class="fiche-card-excerpt mb-4">
+                            <i class="fa fa-info-circle mr-2"></i>
+                            Vous n'êtes pas modérateur de cette fiche. Souhaitez-vous demander à rejoindre l'équipe ?
+                        </p>
+                        <form action="{{ path('fiche_join_request', {'id': fiche.id}) }}" method="post">
+                            <input type="hidden" name="_token" value="{{ csrf_token('fiche_join_request_' ~ fiche.id) }}">
+                            <div class="mb-4">
+                                <label for="message" class="form-label text-muted mb-2">Message (optionnel)</label>
+                                <textarea class="fiche-input" id="message" name="message" rows="4" placeholder="Présentez-vous brièvement..."></textarea>
+                            </div>
+                            <button type="submit" class="fiche-btn fiche-btn-primary w-100 rounded-pill" style="background: linear-gradient(135deg, #10b981, #06b6d4);">
+                                <i class="fa fa-paper-plane"></i>
+                                Envoyer ma demande
+                            </button>
+                        </form>
+                    </div>
                 </div>
-            </div>
-        {% endif %}
+            {% endif %}
 
-        <!-- Pending Requests (for owners only) -->
-        {% if is_owner %}
-            <div class="card border-0 shadow-lg h-100">
-                <div class="card-header bg-gradient-warning text-dark py-4">
-                    <h5 class="mb-0">
-                        <i class="fa fa-clock-o mr-2"></i>
-                        Demandes en attente
-                    </h5>
-                </div>
-                <div class="card-body bg-white">
-                    {% set pending_requests = fiche.joinRequests|filter(r => r.status == 'pending') %}
-                    {% if pending_requests is empty %}
-                        <div class="text-center py-4">
-                            <i class="fa fa-check-circle fa-4x text-success mb-3"></i>
-                            <p class="text-muted mb-0">Aucune demande en attente.</p>
+            {% if is_owner %}
+                <div class="fiche-requests-card h-100">
+                    <div class="fiche-card-header" style="background: linear-gradient(180deg, rgba(236, 72, 153, 0.15) 0%, transparent 100%);">
+                        <div class="fiche-card-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                            <i class="fa fa-clock-o"></i>
                         </div>
-                    {% else %}
-                        {% for request in pending_requests %}
-                            <div class="border-bottom pb-3 mb-3">
-                                <div class="d-flex align-items-start">
-                                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 mr-3">
-                                        <i class="fa fa-user text-primary"></i>
+                        <h4 class="fiche-card-title mt-2">Demandes en attente</h4>
+                    </div>
+                    <div class="fiche-card-body">
+                        {% if join_requests_list is empty %}
+                            <div class="fiche-empty-mini">
+                                <i class="fa fa-check-circle"></i>
+                                <p>Aucune demande en attente</p>
+                            </div>
+                        {% else %}
+                            {% for request in join_requests_list %}
+                                <div class="fiche-request-item">
+                                    <div class="fiche-request-avatar">
+                                        {% if request.utilisateur.profil and request.utilisateur.profil.nom %}
+                                            {{ request.utilisateur.profil.nom|first|upper }}
+                                        {% else %}
+                                            {{ request.utilisateur.email|first|upper }}
+                                        {% endif %}
                                     </div>
-                                    <div class="flex-grow-1">
+                                    <div class="fiche-request-content">
                                         <p class="mb-1">
                                             <strong>
                                                 {% if request.utilisateur.profil %}
@@ -187,11 +237,11 @@
                                                     {{ request.utilisateur.email }}
                                                 {% endif %}
                                             </strong>
-                                            <small class="text-muted">a demandé à rejoindre</small>
+                                            <small class="text-muted">veut rejoindre</small>
                                         </p>
                                         {% if request.message %}
-                                            <p class="text-muted mb-2">
-                                                <em class="bg-light rounded p-2 d-block">« {{ request.message }} »</em>
+                                            <p class="fiche-request-message">
+                                                « {{ request.message }} »
                                             </p>
                                         {% endif %}
                                         <small class="text-muted d-block mb-3">
@@ -199,27 +249,79 @@
                                             {{ request.createdAt|date('d/m/Y H:i') }}
                                         </small>
                                         <div class="d-flex gap-2">
-                                            <form action="{{ path('fiche_approve_request', {'ficheId': fiche.id, 'requestId': request.id}) }}" method="post">
+                                            <form action="{{ path('fiche_approve_request', {'ficheId': fiche.id, 'requestId': request.id}) }}" method="post" class="d-inline">
                                                 <input type="hidden" name="_token" value="{{ csrf_token('approve_request_' ~ request.id) }}">
-                                                <button type="submit" class="btn btn-success btn-sm rounded-pill">
-                                                    <i class="fa fa-check mr-1"></i>Accepter
+                                                <button type="submit" class="fiche-btn fiche-btn-primary btn-sm rounded-pill">
+                                                    <i class="fa fa-check"></i>Accepter
                                                 </button>
                                             </form>
-                                            <form action="{{ path('fiche_reject_request', {'ficheId': fiche.id, 'requestId': request.id}) }}" method="post">
+                                            <form action="{{ path('fiche_reject_request', {'ficheId': fiche.id, 'requestId': request.id}) }}" method="post" class="d-inline">
                                                 <input type="hidden" name="_token" value="{{ csrf_token('reject_request_' ~ request.id) }}">
-                                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill">
-                                                    <i class="fa fa-times mr-1"></i>Refuser
+                                                <button type="submit" class="fiche-btn fiche-btn-secondary btn-sm rounded-pill">
+                                                    <i class="fa fa-times"></i>Refuser
                                                 </button>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Moderators Detail Card -->
+        <div class="col-lg-6">
+            <div class="fiche-team-card h-100">
+                <div class="fiche-card-header" style="background: linear-gradient(180deg, rgba(99, 102, 241, 0.15) 0%, transparent 100%);">
+                    <div class="fiche-card-icon" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">
+                        <i class="fa fa-users-cog"></i>
+                    </div>
+                    <h4 class="fiche-card-title mt-2">Équipe de modération</h4>
+                </div>
+                <div class="fiche-card-body">
+                    {% if moderateurs_list is empty %}
+                        <div class="fiche-empty-mini">
+                            <i class="fa fa-user-plus"></i>
+                            <p>Aucun modérateur</p>
+                        </div>
+                    {% else %}
+                        <ul class="fiche-moderator-list">
+                            {% for moderateur in moderateurs_list %}
+                                <li class="fiche-moderator-item">
+                                    <div class="fiche-moderator-avatar">
+                                        {% if moderateur.utilisateur and moderateur.utilisateur.profil and moderateur.utilisateur.profil.nom %}
+                                            {{ moderateur.utilisateur.profil.nom|first|upper }}
+                                        {% elseif moderateur.utilisateur %}
+                                            {{ moderateur.utilisateur.email|first|upper }}
+                                        {% else %}
+                                            <i class="fa fa-user"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="fiche-moderator-info">
+                                        <strong>
+                                            {% if moderateur.utilisateur and moderateur.utilisateur.profil %}
+                                                {{ moderateur.utilisateur.profil.nom }} {{ moderateur.utilisateur.profil.prenom }}
+                                            {% elseif moderateur.utilisateur %}
+                                                {{ moderateur.utilisateur.email }}
+                                            {% else %}
+                                                Utilisateur supprimé
+                                            {% endif %}
+                                        </strong>
+                                        {% if moderateur.isOwner %}
+                                            <span class="fiche-card-badge" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); color: #f59e0b;">
+                                                <i class="fa fa-star"></i>Propriétaire
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
                     {% endif %}
                 </div>
             </div>
-        {% endif %}
+        </div>
     </div>
 </div>
 
@@ -227,34 +329,34 @@
 {% if is_moderateur %}
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-danger text-white">
+            <div class="modal-content border-0 shadow-lg" style="background: var(--dark); border-radius: var(--radius-lg);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
                     <h5 class="modal-title" id="deleteModalLabel">
                         <i class="fa fa-exclamation-triangle mr-2"></i>
                         Confirmer la suppression
                     </h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: none; border: none; font-size: 1.5rem;">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="padding: 2rem;">
                     <div class="text-center mb-3">
-                        <i class="fa fa-trash fa-4x text-danger opacity-50"></i>
+                        <i class="fa fa-trash fa-4x text-danger" style="opacity: 0.5;"></i>
                     </div>
-                    <p class="text-center">Êtes-vous sûr de vouloir supprimer cette fiche ?</p>
-                    <h6 class="text-center text-primary mb-0">{{ fiche.title }}</h6>
+                    <p class="text-center" style="color: var(--text-secondary);">Êtes-vous sûr de vouloir supprimer cette fiche ?</p>
+                    <h6 class="text-center" style="color: var(--primary);">{{ fiche.title }}</h6>
                     <p class="text-danger text-center mt-3 mb-0">
-                        <small><i class="fa fa-exclamation-circle mr-1"></i>Cette action est irréversible et supprimera également toutes les versions.</small>
+                        <small><i class="fa fa-exclamation-circle mr-1"></i>Cette action est irréversible</small>
                     </p>
                 </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-light rounded-pill" data-dismiss="modal">
-                        <i class="fa fa-times mr-1"></i>Annuler
+                <div class="modal-footer border-0" style="padding: 1rem 2rem 2rem;">
+                    <button type="button" class="fiche-btn fiche-btn-secondary rounded-pill" data-dismiss="modal">
+                        <i class="fa fa-times"></i>Annuler
                     </button>
                     <form action="{{ path('fiche_delete', {'id': fiche.id}) }}" method="post" class="d-inline">
                         <input type="hidden" name="_token" value="{{ csrf_token('delete_fiche_' ~ fiche.id) }}">
-                        <button type="submit" class="btn btn-danger rounded-pill">
-                            <i class="fa fa-trash mr-1"></i>Supprimer
+                        <button type="submit" class="fiche-btn fiche-btn-danger rounded-pill">
+                            <i class="fa fa-trash"></i>Supprimer
                         </button>
                     </form>
                 </div>
@@ -268,21 +370,428 @@
 {% block stylesheets %}
 {{ parent() }}
 <style>
-    .bg-gradient-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* =========================================================
+       SHOW PAGE SPECIFIC STYLES
+       ========================================================= */
+    
+    /* Header Actions */
+    .fiche-header-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
     }
     
-    .bg-gradient-success {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    /* Moderators Banner */
+    .fiche-moderators-banner {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(236, 72, 153, 0.1));
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        backdrop-filter: blur(10px);
     }
     
-    .bg-gradient-warning {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    .fiche-moderators-banner .banner-content {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    
+    .fiche-moderators-banner .banner-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+    
+    .fiche-moderators-banner .banner-info {
+        flex: 1;
+        min-width: 150px;
+    }
+    
+    .fiche-moderators-banner .banner-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+    
+    .fiche-moderators-banner .banner-count {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0.25rem 0 0;
+    }
+    
+    .fiche-moderators-banner .banner-avatars {
+        display: flex;
+        align-items: center;
+    }
+    
+    .fiche-moderators-banner .avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-left: -10px;
+        border: 3px solid var(--dark);
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    
+    .fiche-moderators-banner .avatar:first-child {
+        margin-left: 0;
+    }
+    
+    .fiche-moderators-banner .avatar:hover {
+        transform: translateY(-5px);
+        z-index: 10;
+    }
+    
+    .fiche-moderators-banner .avatar-more {
+        background: rgba(255, 255, 255, 0.1);
+        font-size: 0.875rem;
+    }
+    
+    .fiche-moderators-banner .banner-actions {
+        flex-shrink: 0;
+    }
+    
+    /* Moderators List */
+    .fiche-moderators-list {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+    }
+    
+    .moderateur-card-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-radius: var(--radius);
+        margin-bottom: 0.75rem;
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        transition: var(--transition);
+    }
+    
+    .moderateur-card-item:hover {
+        transform: translateX(5px);
+        border-color: rgba(99, 102, 241, 0.3);
+    }
+    
+    .moderateur-avatar-large {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .moderateur-details {
+        flex-grow: 1;
+    }
+    
+    .moderateur-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 0.25rem;
+    }
+    
+    .moderateur-email {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0 0 0.5rem;
+    }
+    
+    .moderateur-role {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: rgba(99, 102, 241, 0.15);
+        color: var(--primary);
+    }
+    
+    .moderateur-role.role-owner {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+    }
+    
+    /* Show Card */
+    .fiche-show-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        transition: var(--transition);
+        backdrop-filter: blur(10px);
+    }
+    
+    .fiche-show-card:hover {
+        box-shadow: var(--shadow-lg), var(--shadow-glow);
+    }
+    
+    .fiche-show-card .fiche-card-header {
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .fiche-show-card .fiche-card-icon {
+        margin: 0 auto;
     }
     
     .fiche-content {
-        font-size: 1.1rem;
+        font-size: 1rem;
         line-height: 1.8;
+        color: var(--text-secondary);
+    }
+    
+    /* Content Blocks */
+    .fiche-block {
+        padding: 1.25rem;
+        border-radius: var(--radius);
+        margin: 1rem 0;
+    }
+    
+    .fiche-warning {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.1));
+        border-left: 4px solid var(--warning);
+    }
+    
+    .fiche-example {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05));
+        border-left: 4px solid var(--primary);
+    }
+    
+    /* Team Card */
+    .fiche-team-card,
+    .fiche-join-card,
+    .fiche-requests-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        transition: var(--transition);
+        backdrop-filter: blur(10px);
+    }
+    
+    .fiche-team-card:hover,
+    .fiche-join-card:hover,
+    .fiche-requests-card:hover {
+        box-shadow: var(--shadow-lg), var(--shadow-glow);
+        transform: translateY(-4px);
+    }
+    
+    .fiche-team-card .fiche-card-header,
+    .fiche-join-card .fiche-card-header,
+    .fiche-requests-card .fiche-card-header {
+        text-align: center;
+    }
+    
+    /* Moderator List */
+    .fiche-moderator-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .fiche-moderator-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-radius: var(--radius);
+        margin-bottom: 0.75rem;
+        background: rgba(255, 255, 255, 0.03);
+        transition: var(--transition);
+    }
+    
+    .fiche-moderator-item:hover {
+        background: rgba(255, 255, 255, 0.06);
+    }
+    
+    .fiche-moderator-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .fiche-moderator-info {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    /* Input */
+    .fiche-input {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-primary);
+        font-size: 0.9375rem;
+        transition: var(--transition);
+        resize: vertical;
+    }
+    
+    .fiche-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+    
+    .fiche-input::placeholder {
+        color: var(--text-secondary);
+    }
+    
+    /* Request Items */
+    .fiche-request-item {
+        display: flex;
+        padding: 1.25rem;
+        border-radius: var(--radius);
+        margin-bottom: 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        transition: var(--transition);
+    }
+    
+    .fiche-request-item:hover {
+        background: rgba(255, 255, 255, 0.06);
+    }
+    
+    .fiche-request-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .fiche-request-content {
+        flex-grow: 1;
+    }
+    
+    .fiche-request-message {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-sm);
+        margin: 0.75rem 0;
+        font-style: italic;
+        color: var(--text-secondary);
+        border-left: 3px solid var(--primary);
+    }
+    
+    /* Empty Mini */
+    .fiche-empty-mini {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-secondary);
+    }
+    
+    .fiche-empty-mini i {
+        font-size: 2.5rem;
+        opacity: 0.3;
+        margin-bottom: 1rem;
+        display: block;
+    }
+    
+    .fiche-empty-mini p {
+        margin: 0;
+        font-size: 0.9375rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 991px) {
+        .fiche-header-actions {
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        .fiche-hero-title {
+            font-size: 2rem;
+            flex-direction: column;
+        }
+        
+        .fiche-hero-title i {
+            font-size: 2rem;
+        }
+        
+        .fiche-moderators-banner .banner-content {
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .fiche-moderators-banner .banner-avatars {
+            justify-content: center;
+            margin: 1rem 0;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .moderateur-card-item,
+        .fiche-request-item,
+        .fiche-moderator-item {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .moderateur-avatar-large,
+        .fiche-request-avatar,
+        .fiche-moderator-avatar {
+            margin: 0 auto 1rem;
+        }
+        
+        .moderateur-details,
+        .fiche-request-content .d-flex {
+            justify-content: center;
+        }
+        
+        .fiche-moderators-banner .avatar {
+            width: 40px;
+            height: 40px;
+            font-size: 0.875rem;
+        }
     }
 </style>
 {% endblock %}

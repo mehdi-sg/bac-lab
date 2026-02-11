@@ -72,7 +72,7 @@
 
         public function getUserIdentifier(): string { return $this->email; }
 
-        public function getRoles(): array { return array_unique($this->roles); }
+        public function getRoles(): array { return array_values(array_unique($this->roles)); }
         public function setRoles(array $roles): self { $this->roles = $roles; return $this; }
 
         public function getPassword(): string { return $this->password; }

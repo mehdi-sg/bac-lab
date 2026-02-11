@@ -1147,9 +1147,10 @@
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
-.fiche-filter-select option {
-  background: var(--dark);
-  color: var(--text-primary);
+.fiche-filter-select option,
+.nice-select .option {
+  background: var(--dark) !important;
+  color: var(--text-primary) !important;
   padding: 8px;
 }
 

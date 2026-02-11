@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Filiere;
 use App\Entity\Profil;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -9,6 +10,8 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Doctrine\ORM\EntityRepository;
 
 class ProfilType extends AbstractType
 {
@@ -26,11 +29,31 @@ class ProfilType extends AbstractType
                 'widget' => 'single_text',
                 'required' => false,
             ])
-            ->add('niveau', TextType::class, [
+            ->add('niveau', ChoiceType::class, [
                 'label' => 'Niveau',
+                'choices' => [
+                    '1ère année' => '1ère année',
+                    '2ème année' => '2ème année',
+                    '3ème année' => '3ème année',
+                    '4ème année' => '4ème année',
+                    '5ème année' => '5ème année',
+                    'M1' => 'M1',
+                    'M2' => 'M2',
+                ],
             ])
-            ->add('filiere', TextType::class, [
+            ->add('filiere', EntityType::class, [
                 'label' => 'Filière',
+                'class' => Filiere::class,
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('f')
+                        ->andWhere('f.actif = :actif')
+                        ->setParameter('actif', true)
+                        ->orderBy('f.nom', 'ASC');
+                },
+                'choice_label' => function (Filiere $filiere) {
+                    return $filiere->getNom() . ' - ' . $filiere->getNiveau();
+                },
+                'placeholder' => 'Sélectionnez une filière',
                 'required' => false,
             ])
             ->add('gouvernorat', ChoiceType::class, [
