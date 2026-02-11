@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260211153113 extends AbstractMigration
+final class Version20260211211407 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -22,6 +22,7 @@ final class Version20260211153113 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE chapitre (id INT AUTO_INCREMENT NOT NULL, titre VARCHAR(255) NOT NULL, contenu LONGTEXT DEFAULT NULL, actif TINYINT NOT NULL, ordre INT NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME DEFAULT NULL, matiere_id INT NOT NULL, INDEX IDX_8C62B025F46CD258 (matiere_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE choix (id_choix INT AUTO_INCREMENT NOT NULL, libelle VARCHAR(255) NOT NULL, est_correct TINYINT NOT NULL, id_question INT NOT NULL, INDEX IDX_4F488091E62CA5DB (id_question), PRIMARY KEY (id_choix)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
+        $this->addSql('CREATE TABLE evaluation_ressource (id INT AUTO_INCREMENT NOT NULL, note INT DEFAULT NULL, commentaire LONGTEXT DEFAULT NULL, est_favori TINYINT NOT NULL, est_signale TINYINT NOT NULL, date_evaluation DATETIME NOT NULL, date_commentaire DATETIME DEFAULT NULL, date_favori DATETIME DEFAULT NULL, ressource_id INT NOT NULL, utilisateur_id INT NOT NULL, INDEX IDX_419F8EC0FC6CD52A (ressource_id), INDEX IDX_419F8EC0FB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE fiche (id INT AUTO_INCREMENT NOT NULL, title VARCHAR(255) NOT NULL, content LONGTEXT NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME DEFAULT NULL, is_public TINYINT DEFAULT 0 NOT NULL, filiere_id INT DEFAULT NULL, INDEX IDX_4C13CC78180AA129 (filiere_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE fiche_favoris (id INT AUTO_INCREMENT NOT NULL, created_at DATETIME NOT NULL, utilisateur_id INT NOT NULL, fiche_id INT NOT NULL, INDEX IDX_91329FE8FB88E14F (utilisateur_id), INDEX IDX_91329FE8DF522508 (fiche_id), UNIQUE INDEX unique_user_fiche_favori (utilisateur_id, fiche_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE fiche_join_requests (id INT AUTO_INCREMENT NOT NULL, message VARCHAR(500) DEFAULT NULL, status VARCHAR(20) DEFAULT \'pending\' NOT NULL, created_at DATETIME NOT NULL, processed_at DATETIME DEFAULT NULL, fiche_id INT NOT NULL, utilisateur_id INT NOT NULL, processed_by_id INT DEFAULT NULL, INDEX IDX_600A465CDF522508 (fiche_id), INDEX IDX_600A465CFB88E14F (utilisateur_id), INDEX IDX_600A465C2FFD4FD3 (processed_by_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
@@ -36,10 +37,13 @@ final class Version20260211153113 extends AbstractMigration
         $this->addSql('CREATE TABLE profil (id INT AUTO_INCREMENT NOT NULL, nom VARCHAR(50) NOT NULL, prenom VARCHAR(50) NOT NULL, niveau VARCHAR(30) NOT NULL, gouvernorat VARCHAR(50) NOT NULL, date_naissance DATE DEFAULT NULL, filiere VARCHAR(100) DEFAULT NULL, utilisateur_id INT NOT NULL, UNIQUE INDEX UNIQ_E6D6B297FB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE question (id_question INT AUTO_INCREMENT NOT NULL, enonce LONGTEXT NOT NULL, type_question VARCHAR(20) NOT NULL, score INT NOT NULL, id_quiz INT NOT NULL, INDEX IDX_B6F7494E2F32E690 (id_quiz), PRIMARY KEY (id_question)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE quiz (id_quiz INT AUTO_INCREMENT NOT NULL, titre VARCHAR(150) NOT NULL, description LONGTEXT NOT NULL, niveau VARCHAR(50) NOT NULL, duree INT NOT NULL, nb_questions INT NOT NULL, date_creation DATETIME NOT NULL, etat TINYINT NOT NULL, id_chapitre INT NOT NULL, id_matiere INT NOT NULL, INDEX IDX_A412FA92DCB95CB0 (id_chapitre), INDEX IDX_A412FA924E89FE3A (id_matiere), PRIMARY KEY (id_quiz)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
+        $this->addSql('CREATE TABLE ressource (id INT AUTO_INCREMENT NOT NULL, titre VARCHAR(255) NOT NULL, description LONGTEXT DEFAULT NULL, auteur VARCHAR(200) DEFAULT NULL, url_fichier VARCHAR(255) DEFAULT NULL, type_fichier VARCHAR(50) NOT NULL, image_couverture VARCHAR(255) DEFAULT NULL, tags VARCHAR(255) DEFAULT NULL, categorie VARCHAR(100) DEFAULT NULL, taille_fichier INT DEFAULT NULL, nombre_vues INT DEFAULT 0 NOT NULL, nombre_telechargements INT DEFAULT 0 NOT NULL, note_moyenne NUMERIC(3, 2) DEFAULT \'0.00\' NOT NULL, statut VARCHAR(50) DEFAULT \'EN_ATTENTE\' NOT NULL, date_ajout DATETIME NOT NULL, est_active TINYINT DEFAULT 1 NOT NULL, PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE utilisateur (id INT AUTO_INCREMENT NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, is_active TINYINT NOT NULL, created_at DATETIME NOT NULL, UNIQUE INDEX UNIQ_USER_EMAIL (email), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE messenger_messages (id BIGINT AUTO_INCREMENT NOT NULL, body LONGTEXT NOT NULL, headers LONGTEXT NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at DATETIME NOT NULL, available_at DATETIME NOT NULL, delivered_at DATETIME DEFAULT NULL, INDEX IDX_75EA56E0FB7336F0E3BD61CE16BA31DBBF396750 (queue_name, available_at, delivered_at, id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('ALTER TABLE chapitre ADD CONSTRAINT FK_8C62B025F46CD258 FOREIGN KEY (matiere_id) REFERENCES matiere (id)');
         $this->addSql('ALTER TABLE choix ADD CONSTRAINT FK_4F488091E62CA5DB FOREIGN KEY (id_question) REFERENCES question (id_question)');
+        $this->addSql('ALTER TABLE evaluation_ressource ADD CONSTRAINT FK_419F8EC0FC6CD52A FOREIGN KEY (ressource_id) REFERENCES ressource (id)');
+        $this->addSql('ALTER TABLE evaluation_ressource ADD CONSTRAINT FK_419F8EC0FB88E14F FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id)');
         $this->addSql('ALTER TABLE fiche ADD CONSTRAINT FK_4C13CC78180AA129 FOREIGN KEY (filiere_id) REFERENCES filiere (id)');
         $this->addSql('ALTER TABLE fiche_favoris ADD CONSTRAINT FK_91329FE8FB88E14F FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE fiche_favoris ADD CONSTRAINT FK_91329FE8DF522508 FOREIGN KEY (fiche_id) REFERENCES fiche (id) ON DELETE CASCADE');
@@ -71,6 +75,8 @@ final class Version20260211153113 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE chapitre DROP FOREIGN KEY FK_8C62B025F46CD258');
         $this->addSql('ALTER TABLE choix DROP FOREIGN KEY FK_4F488091E62CA5DB');
+        $this->addSql('ALTER TABLE evaluation_ressource DROP FOREIGN KEY FK_419F8EC0FC6CD52A');
+        $this->addSql('ALTER TABLE evaluation_ressource DROP FOREIGN KEY FK_419F8EC0FB88E14F');
         $this->addSql('ALTER TABLE fiche DROP FOREIGN KEY FK_4C13CC78180AA129');
         $this->addSql('ALTER TABLE fiche_favoris DROP FOREIGN KEY FK_91329FE8FB88E14F');
         $this->addSql('ALTER TABLE fiche_favoris DROP FOREIGN KEY FK_91329FE8DF522508');
@@ -97,6 +103,7 @@ final class Version20260211153113 extends AbstractMigration
         $this->addSql('ALTER TABLE quiz DROP FOREIGN KEY FK_A412FA924E89FE3A');
         $this->addSql('DROP TABLE chapitre');
         $this->addSql('DROP TABLE choix');
+        $this->addSql('DROP TABLE evaluation_ressource');
         $this->addSql('DROP TABLE fiche');
         $this->addSql('DROP TABLE fiche_favoris');
         $this->addSql('DROP TABLE fiche_join_requests');
@@ -111,6 +118,7 @@ final class Version20260211153113 extends AbstractMigration
         $this->addSql('DROP TABLE profil');
         $this->addSql('DROP TABLE question');
         $this->addSql('DROP TABLE quiz');
+        $this->addSql('DROP TABLE ressource');
         $this->addSql('DROP TABLE utilisateur');
         $this->addSql('DROP TABLE messenger_messages');
     }
