@@ -2,6 +2,211 @@
 
 {% block title %}Welcome to Education{% endblock %}
 
+{% block css %}
+    {{ parent() }}
+    <style>
+        .bibliotheque-section {
+            background: #f8f9fa;
+            padding: 80px 0 60px;
+        }
+        .bibliotheque-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+        .bibliotheque-subtitle {
+            color: #636e72;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+        .search-filters-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        .search-input {
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 14px 20px 14px 45px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        .filter-select {
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .filter-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .tag-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: #f0f0ff;
+            color: #667eea;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            margin: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tag-badge:hover {
+            background: #667eea;
+            color: white;
+        }
+        .resource-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+            overflow: hidden;
+            height: 100%;
+        }
+        .resource-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        .resource-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+        .resource-icon.pdf { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); }
+        .resource-icon.video { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); }
+        .resource-icon.exercices { background: linear-gradient(135deg, #55efc4 0%, #00b894 100%); }
+        .resource-icon.lien { background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); }
+        .resource-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        .resource-type-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .resource-type-badge.exercices { background: #d4f4dd; color: #00b894; }
+        .resource-type-badge.video { background: #e8e4ff; color: #6c5ce7; }
+        .resource-type-badge.pdf { background: #fff3cd; color: #e17055; }
+        .resource-stats {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            color: #636e72;
+            margin-bottom: 8px;
+        }
+        .resource-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        .resource-tag {
+            padding: 3px 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #636e72;
+        }
+        .download-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .sort-select {
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+        .create-resource-btn {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .create-resource-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+            color: white;
+        }
+        .hero-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .hero-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
  <!--? slider Area Start-->
         <section class="slider-area ">
@@ -22,6 +227,174 @@
                 </div>
             </div>
         </section>
+        
+<!-- Bibliothèque Section -->
+<div class="bibliotheque-section">
+    <div class="container">
+        <div class="text-center">
+            <h1 class="bibliotheque-title">Bibliothèque de Ressources</h1>
+            <p class="bibliotheque-subtitle">Trouvez cours, exercices, vidéos et annales pour votre préparation</p>
+        </div>
+
+        <div class="search-filters-card">
+            <form method="get" action="{{ path('app_bibliotheque_index') }}">
+                <div class="row g-3 mb-3">
+                    <div class="col-12">
+                        <div class="position-relative">
+                            <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <input type="text" name="q" class="form-control search-input" placeholder="Rechercher des ressources...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold text-muted">Filière</label>
+                        <select class="form-select filter-select" name="filiere">
+                            <option value="">Toutes les filières</option>
+                            <option value="math">Mathématiques</option>
+                            <option value="svt">Sciences de la Vie et de la Terre</option>
+                            <option value="info">Informatique</option>
+                            <option value="technique">Technique</option>
+                            <option value="lettre">Lettres</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold text-muted">Matière</label>
+                        <select class="form-select filter-select" name="matiere">
+                            <option value="">Toutes les matières</option>
+                            <option value="math">Mathématiques</option>
+                            <option value="physique">Physique</option>
+                            <option value="chimie">Chimie</option>
+                            <option value="svt">SVT</option>
+                            <option value="info">Informatique</option>
+                            <option value="francais">Français</option>
+                            <option value="anglais">Anglais</option>
+                            <option value="arabe">Arabe</option>
+                            <option value="philo">Philosophie</option>
+                            <option value="histoire">Histoire-Géographie</option>
+                            <option value="economie">Économie</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold text-muted">Type</label>
+                        <select name="typeFichier" class="form-select filter-select">
+                            <option value="">Tous les types</option>
+                            <option value="PDF">📄 PDF</option>
+                            <option value="VIDEO">🎬 Vidéo</option>
+                            <option value="LIEN">🔗 Lien</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold text-muted">Chapitre</label>
+                        <select name="categorie" class="form-select filter-select">
+                            <option value="">Tous les chapitres</option>
+                            <option value="Cours">Cours</option>
+                            <option value="Exercices">Exercices</option>
+                            <option value="Corrigé">Corrigé</option>
+                            <option value="Résumé">Résumé</option>
+                            <option value="Bac blanc">Bac blanc</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <span class="small fw-semibold text-muted">Tags populaires:</span>
+                    <span class="tag-badge">BAC 2024</span>
+                    <span class="tag-badge">Résumé</span>
+                    <span class="tag-badge">Corrigé</span>
+                    <span class="tag-badge">Nouveau</span>
+                </div>
+            </form>
+        </div>
+
+        <div class="results-header">
+            <div class="d-flex align-items-center gap-3">
+                <strong>{{ ressources|length }}</strong> ressources trouvées
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                {% if is_granted('ROLE_USER') %}
+                    <a href="{{ path('app_ressource_new') }}" class="create-resource-btn">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Créer une ressource
+                    </a>
+                {% endif %}
+                <select class="sort-select">
+                    <option>Plus récent</option>
+                    <option>Plus téléchargé</option>
+                    <option>Mieux noté</option>
+                </select>
+            </div>
+        </div>
+
+        {% if ressources is not empty %}
+            <div class="row g-4 mb-4">
+                {% for r in ressources %}
+                    <div class="col-md-4">
+                        <div class="resource-card">
+                            <div class="p-4">
+                                <div class="resource-icon {{ r.typeFichier|lower }}">
+                                    {% if r.typeFichier == 'PDF' %}
+                                        📄
+                                    {% elseif r.typeFichier == 'VIDEO' %}
+                                        🎬
+                                    {% elseif r.typeFichier == 'LIEN' %}
+                                        🔗
+                                    {% else %}
+                                        📝
+                                    {% endif %}
+                                </div>
+                                
+                                <h3 class="resource-title">{{ r.titre }}</h3>
+                                
+                                <span class="resource-type-badge {{ r.typeFichier|lower }}">
+                                    {{ r.typeFichier }}
+                                </span>
+                                
+                                <div class="resource-stats">
+                                    <span>⭐⭐⭐⭐⭐</span>
+                                    <span class="ms-1">{{ (r.noteMoyenne ?: 4.5)|number_format(1) }}</span>
+                                    <span class="ms-3">{{ r.nombreTelechargements }} téléchargements</span>
+                                </div>
+                                
+                                {% if r.tags %}
+                                    <div class="resource-tags">
+                                        {% for tag in r.tags|split(',') %}
+                                            {% if loop.index <= 2 %}
+                                                <span class="resource-tag">{{ tag|trim }}</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                
+                                {% if is_granted('ROLE_USER') %}
+                                    <a href="{{ path('app_bibliotheque_telecharger', {id: r.id}) }}" class="download-btn">
+                                        ⬇ Télécharger
+                                    </a>
+                                {% else %}
+                                    <a href="{{ path('app_register') }}" class="download-btn">
+                                        🔒 S'inscrire pour télécharger
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center">
+                <a href="{{ path('app_bibliotheque_index') }}" class="btn btn-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px; padding: 12px 40px;">
+                    Voir toutes les ressources
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
         <!-- ? services-area -->
         <div class="services-area">
             <div class="container">

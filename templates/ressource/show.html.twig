@@ -1,0 +1,179 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ ressource.titre }} | BacLab{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .resource-detail-container {
+            padding: 40px 20px;
+            background: #f8f9fa;
+            min-height: 100vh;
+            margin-top: 80px;
+        }
+        
+        .resource-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        .resource-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 20px;
+        }
+        
+        .info-table {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        
+        .info-table th {
+            width: 200px;
+            padding: 12px;
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2d3436;
+            border: 1px solid #e8e8e8;
+        }
+        
+        .info-table td {
+            padding: 12px;
+            color: #636e72;
+            border: 1px solid #e8e8e8;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-custom {
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        
+        .btn-secondary-custom {
+            background: #f8f9fa;
+            color: #636e72;
+            border: 2px solid #e8e8e8;
+        }
+        
+        .btn-secondary-custom:hover {
+            background: #e8e8e8;
+            color: #2d3436;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="resource-detail-container">
+    <div class="container">
+        <a href="{{ path('app_ressource_index') }}" class="btn btn-link mb-3">
+            <i class="fas fa-arrow-left me-2"></i>Retour à mes ressources
+        </a>
+
+        <div class="resource-card">
+            <h1 class="resource-title">{{ ressource.titre }}</h1>
+
+            <table class="info-table">
+                <tbody>
+                    <tr>
+                        <th>ID</th>
+                        <td>{{ ressource.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Titre</th>
+                        <td>{{ ressource.titre }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ ressource.description ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Auteur</th>
+                        <td>{{ ressource.auteur ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Type de fichier</th>
+                        <td>{{ ressource.typeFichier }}</td>
+                    </tr>
+                    <tr>
+                        <th>Catégorie</th>
+                        <td>{{ ressource.categorie ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tags</th>
+                        <td>{{ ressource.tags ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Statut</th>
+                        <td>
+                            <span class="badge bg-{{ ressource.statut == 'VALIDEE' ? 'success' : (ressource.statut == 'REJETEE' ? 'danger' : 'warning') }}">
+                                {{ ressource.statut }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Active</th>
+                        <td>
+                            <span class="badge bg-{{ ressource.estActive ? 'success' : 'secondary' }}">
+                                {{ ressource.estActive ? 'Oui' : 'Non' }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Vues</th>
+                        <td>{{ ressource.nombreVues }}</td>
+                    </tr>
+                    <tr>
+                        <th>Téléchargements</th>
+                        <td>{{ ressource.nombreTelechargements }}</td>
+                    </tr>
+                    <tr>
+                        <th>Note moyenne</th>
+                        <td>{{ ressource.noteMoyenne }}/5 ({{ ressource.getRatings()|length }} avis)</td>
+                    </tr>
+                    <tr>
+                        <th>Date d'ajout</th>
+                        <td>{{ ressource.dateAjout|date('d/m/Y H:i') }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="action-buttons">
+                <a href="{{ path('app_ressource_index') }}" class="btn-custom btn-secondary-custom">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour
+                </a>
+                <a href="{{ path('app_ressource_edit', {'id': ressource.id}) }}" class="btn-custom btn-primary-custom">
+                    <i class="fas fa-edit"></i>
+                    Modifier
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
