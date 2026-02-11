@@ -52,7 +52,7 @@ class ProfilController extends AbstractController
             return $this->redirectToRoute('app_profile');
         }
 
-        // ✅ Tokens "signés" (aléatoires) stockés en session pour l’étape de confirmation
+
         $disableToken = $tokenGen->generateToken();
         $deleteToken  = $tokenGen->generateToken();
 
@@ -67,9 +67,6 @@ class ProfilController extends AbstractController
         ]);
     }
 
-    // ===========================
-    //  Désactivation (2 étapes)
-    // ===========================
 
     #[Route('/disable/confirm/{token}', name: 'app_profile_disable_confirm', methods: ['GET', 'POST'])]
     public function disableConfirm(

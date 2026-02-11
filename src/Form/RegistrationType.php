@@ -25,14 +25,11 @@ class RegistrationType extends AbstractType
         new Assert\NotBlank([
             'message' => 'Veuillez entrer un mot de passe',
         ]),
-        new Assert\Length([
-            'min' => 8,
-            'minMessage' => 'Le mot de passe doit contenir au moins {{ limit }} caractères',
-        ]),
-        new Assert\Regex([
-            'pattern' => '/^(?=.*[0-9])(?=.*[\W_]).+$/',
-            'message' => 'Le mot de passe doit contenir au moins un chiffre et un caractère spécial',
-        ]),
+        new Assert\Length(min: 8, minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caractères'),
+        new Assert\Regex(
+            pattern: '/^(?=.*[0-9])(?=.*[\W_]).+$/',
+            message: 'Le mot de passe doit contenir au moins un chiffre et un caractère spécial',
+        ),
     ],
 ])
 

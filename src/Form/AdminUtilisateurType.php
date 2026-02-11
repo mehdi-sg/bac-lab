@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class AdminUtilisateurType extends AbstractType
 {
@@ -37,22 +38,22 @@ class AdminUtilisateurType extends AbstractType
                 'required' => false,
             ])
             ->add('plainPassword', PasswordType::class, [
-    'label' => 'Mot de passe',
-    'mapped' => false,
-    'constraints' => [
-        new Assert\NotBlank([
-            'message' => 'Veuillez entrer un mot de passe',
-        ]),
-        new Assert\Length([
-            'min' => 8,
-            'minMessage' => 'Le mot de passe doit contenir au moins {{ limit }} caractères',
-        ]),
-        new Assert\Regex([
-            'pattern' => '/^(?=.*[0-9])(?=.*[\W_]).+$/',
-            'message' => 'Le mot de passe doit contenir au moins un chiffre et un caractère spécial',
-        ]),
-    ],
-])
+                'label' => 'Mot de passe',
+                'mapped' => false,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Veuillez entrer un mot de passe',
+                    ]),
+                    new Assert\Length(
+                        min: 8,
+                        minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caractères',
+                    ),
+                    new Assert\Regex(
+                        '/^(?=.*[0-9])(?=.*[\W_]).+$/',
+                        message: 'Le mot de passe doit contenir au moins un chiffre et un caractère spécial',
+                    ),
+                ],
+            ])
             ->add('profil', ProfilEmbeddedType::class, [
                 'by_reference' => false,
             ]);
