@@ -37,13 +37,22 @@ class AdminUtilisateurType extends AbstractType
                 'required' => false,
             ])
             ->add('plainPassword', PasswordType::class, [
-                'label' => 'Mot de passe',
-                'mapped' => false,
-                'required' => !$isEdit,
-                'help' => $isEdit
-                    ? 'Laisser vide pour ne pas modifier'
-                    : 'Mot de passe requis à la création',
-            ])
+    'label' => 'Mot de passe',
+    'mapped' => false,
+    'constraints' => [
+        new Assert\NotBlank([
+            'message' => 'Veuillez entrer un mot de passe',
+        ]),
+        new Assert\Length([
+            'min' => 8,
+            'minMessage' => 'Le mot de passe doit contenir au moins {{ limit }} caractères',
+        ]),
+        new Assert\Regex([
+            'pattern' => '/^(?=.*[0-9])(?=.*[\W_]).+$/',
+            'message' => 'Le mot de passe doit contenir au moins un chiffre et un caractère spécial',
+        ]),
+    ],
+])
             ->add('profil', ProfilEmbeddedType::class, [
                 'by_reference' => false,
             ]);

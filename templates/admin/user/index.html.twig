@@ -227,7 +227,6 @@
       <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
         <div>
           <h2 class="title">Gestion des utilisateurs</h2>
-          <div class="sub">Rechercher, filtrer, modifier et gérer l’activation des comptes.</div>
         </div>
 
         <a class="btn-ghost" href="{{ path('admin_user_new') }}">
@@ -287,16 +286,17 @@
 
   {# ===== Filters ===== #}
   <div class="filters-card mb-3">
-    <form method="get" class="row g-2 align-items-center">
+    <form id="searchForm" class="row g-2 align-items-center">
       <div class="col-lg-5">
         <input class="form-control"
+               id="searchQ"
                name="q"
                value="{{ q }}"
                placeholder="Rechercher par email...">
       </div>
 
       <div class="col-lg-3">
-        <select class="form-select" name="status">
+        <select class="form-select" id="searchStatus" name="status">
           <option value="">Statut (tous)</option>
           <option value="active" {{ status == 'active' ? 'selected' : '' }}>Actifs</option>
           <option value="inactive" {{ status == 'inactive' ? 'selected' : '' }}>Inactifs</option>
@@ -304,7 +304,7 @@
       </div>
 
       <div class="col-lg-3">
-        <select class="form-select" name="role">
+        <select class="form-select" id="searchRole" name="role">
           <option value="">Rôle (tous)</option>
           <option value="ROLE_ADMIN" {{ role == 'ROLE_ADMIN' ? 'selected' : '' }}>Admin</option>
           <option value="ROLE_MODERATOR" {{ role == 'ROLE_MODERATOR' ? 'selected' : '' }}>Modérateur</option>
@@ -319,9 +319,9 @@
       </div>
 
       <div class="col-12 d-flex justify-content-end">
-        <a class="btn-ghost" href="{{ path('admin_user_index') }}">
+        <button class="btn-ghost" id="resetBtn" type="button">
           <i class="fa-solid fa-rotate-left"></i> Reset
-        </a>
+        </button>
       </div>
     </form>
   </div>
@@ -339,7 +339,7 @@
           </tr>
         </thead>
 
-        <tbody>
+        <tbody id="usersTableBody">
           {% for user in users %}
             <tr>
               <td>
@@ -406,5 +406,93 @@
   setTimeout(() => {
     document.querySelectorAll('.flash-auto').forEach(el => el.remove());
   }, 5000);
+
+  // Ajax search
+  const searchForm = document.getElementById('searchForm');
+  const searchQ = document.getElementById('searchQ');
+  const searchStatus = document.getElementById('searchStatus');
+  const searchRole = document.getElementById('searchRole');
+  const tableBody = document.getElementById('usersTableBody');
+
+  function renderUserRow(user) {
+    const statusHtml = user.isActive 
+      ? '<span class="pill success"><i class="fa-solid fa-circle-check"></i> Actif</span>' 
+      : '<span class="pill danger"><i class="fa-solid fa-circle-xmark"></i> Inactif</span>';
+    
+    let rolesHtml = '';
+    user.roles.forEach(r => {
+      let rcls = 'role-user';
+      if (r === 'ROLE_ADMIN') rcls = 'role-admin';
+      if (r === 'ROLE_MODERATOR') rcls = 'role-mod';
+      rolesHtml += `<span class="role-badge ${rcls}">${r}</span>`;
+    });
+
+    return `
+      <tr>
+        <td><div style="font-weight:950; color: var(--txt);">${user.email}</div></td>
+        <td>${rolesHtml}</td>
+        <td>${statusHtml}</td>
+        <td class="text-end">
+          <div class="actions">
+            <a class="icon-btn warn" title="Modifier" href="/admin/users/${user.id}/edit">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </a>
+            <a class="icon-btn info" title="Activer/Désactiver" href="/admin/users/${user.id}/toggle">
+              <i class="fa-solid fa-power-off"></i>
+            </a>
+            <form method="post" action="/admin/users/${user.id}/delete" 
+                  onsubmit="return confirm('Supprimer définitivement ce compte ?');" style="display:inline;">
+              <input type="hidden" name="_token" value="csrf_token_placeholder">
+              <button class="icon-btn danger" type="submit" title="Supprimer">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+    `;
+  }
+
+  function performSearch() {
+    const params = new URLSearchParams({
+      q: searchQ.value,
+      status: searchStatus.value,
+      role: searchRole.value
+    });
+
+    fetch(`/admin/users/search?${params}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.users.length === 0) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="4" class="text-center muted" style="padding: 22px; font-weight: 900;">
+                Aucun utilisateur trouvé.
+              </td>
+            </tr>
+          `;
+        } else {
+          tableBody.innerHTML = data.users.map(renderUserRow).join('');
+        }
+      })
+      .catch(err => console.error('Search error:', err));
+  }
+
+  searchForm.addEventListener('submit', e => {
+    e.preventDefault();
+    performSearch();
+  });
+
+  searchQ.addEventListener('input', () => performSearch());
+  searchStatus.addEventListener('change', () => performSearch());
+  searchRole.addEventListener('change', () => performSearch());
+
+  // Reset button handler
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    searchQ.value = '';
+    searchStatus.value = '';
+    searchRole.value = '';
+    performSearch();
+  });
 </script>
 {% endblock %}

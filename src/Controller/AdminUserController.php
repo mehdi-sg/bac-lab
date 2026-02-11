@@ -7,6 +7,7 @@ use App\Entity\Utilisateur;
 use App\Form\AdminUtilisateurType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -21,8 +22,8 @@ class AdminUserController extends AbstractController
     public function index(Request $request, EntityManagerInterface $em): Response
     {
         $q = trim((string) $request->query->get('q', ''));
-        $status = (string) $request->query->get('status', ''); // active|inactive|''
-        $role = (string) $request->query->get('role', '');     // ROLE_ADMIN|ROLE_MODERATOR|ROLE_USER|''
+        $status = (string) $request->query->get('status', '');
+        $role = (string) $request->query->get('role', '');
 
         $qb = $em->getRepository(\App\Entity\Utilisateur::class)->createQueryBuilder('u');
 
@@ -52,6 +53,53 @@ class AdminUserController extends AbstractController
         ]);
     }
 
+    #[Route('/search', name: 'admin_user_search', methods: ['GET'])]
+    public function search(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $q = trim((string) $request->query->get('q', ''));
+        $status = (string) $request->query->get('status', '');
+        $role = (string) $request->query->get('role', '');
+
+        $qb = $em->getRepository(\App\Entity\Utilisateur::class)->createQueryBuilder('u');
+
+        if ($q !== '') {
+            $qb->andWhere('LOWER(u.email) LIKE :q')
+               ->setParameter('q', '%'.mb_strtolower($q).'%');
+        }
+
+        if ($status === 'active') {
+            $qb->andWhere('u.isActive = 1');
+        } elseif ($status === 'inactive') {
+            $qb->andWhere('u.isActive = 0');
+        }
+
+        if ($role !== '') {
+            $qb->andWhere('u.roles LIKE :r')
+               ->setParameter('r', '%"'.$role.'"%');
+        }
+
+        $users = $qb->orderBy('u.email', 'ASC')->getQuery()->getResult();
+
+        $data = [];
+        foreach ($users as $user) {
+            $roles = [];
+            foreach ($user->getRoles() as $r) {
+                $roles[] = $r;
+            }
+            $data[] = [
+                'id' => $user->getId(),
+                'email' => $user->getEmail(),
+                'roles' => $roles,
+                'isActive' => $user->isActive(),
+            ];
+        }
+
+        return new JsonResponse([
+            'users' => $data,
+            'count' => count($data),
+        ]);
+    }
+
     #[Route('/new', name: 'admin_user_new')]
     public function new(
         Request $request,
@@ -62,7 +110,6 @@ class AdminUserController extends AbstractController
         $user->setIsActive(true);
         $user->setRoles(['ROLE_USER']);
 
-        // Create a new Profil and set it on the user
         $profil = new Profil();
         $profil->setUtilisateur($user);
         $user->setProfil($profil);
@@ -95,12 +142,34 @@ class AdminUserController extends AbstractController
         EntityManagerInterface $em,
         UserPasswordHasherInterface $hasher
     ): Response {
+        $originalProfil = $user->getProfil();
+
+        // Ensure user has a profil
+        if (!$originalProfil) {
+            $profil = new Profil();
+            $profil->setUtilisateur($user);
+            $user->setProfil($profil);
+            $em->persist($profil);
+        }
+
         $form = $this->createForm(AdminUtilisateurType::class, $user, [
             'is_edit' => true,
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Merge profil data manually to avoid duplicate
+            $formProfil = $form->get('profil')->getData();
+            if ($formProfil && $originalProfil) {
+                $originalProfil->setNom($formProfil->getNom());
+                $originalProfil->setPrenom($formProfil->getPrenom());
+                $originalProfil->setDateNaissance($formProfil->getDateNaissance());
+                $originalProfil->setGouvernorat($formProfil->getGouvernorat());
+                $originalProfil->setNiveau($formProfil->getNiveau());
+                $originalProfil->setFiliere($formProfil->getFiliere());
+                $user->setProfil($originalProfil);
+            }
+
             $plain = $form->get('plainPassword')->getData();
             if ($plain) {
                 $user->setPassword($hasher->hashPassword($user, $plain));
