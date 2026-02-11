@@ -25,6 +25,11 @@ class GroupeController extends AbstractController
     public function index(GroupeRepository $groupeRepository, MembreGroupeRepository $membreGroupeRepository, Request $request): Response
     {
         $user = $this->getUser();
+        
+        if (!$user instanceof UserInterface) {
+            return $this->redirectToRoute('app_login');
+        }
+        
         $filter = $request->query->get('filter', 'all');
         
         // Check if user is admin
@@ -40,8 +45,9 @@ class GroupeController extends AbstractController
         if ($user instanceof Utilisateur && !$isAdmin) {
             $userFiliere = $user->getProfil()?->getFiliere();
             if ($userFiliere) {
-                $queryBuilder->andWhere('g.filiere = :filiere')
-                            ->setParameter('filiere', $userFiliere);
+                $queryBuilder->leftJoin('g.filiere', 'f')
+                            ->andWhere('f.nom = :filiereName')
+                            ->setParameter('filiereName', $userFiliere);
             } else {
                 // If user has no filiere, show empty results
                 $queryBuilder->andWhere('1 = 0');
@@ -86,8 +92,9 @@ class GroupeController extends AbstractController
         if ($user instanceof Utilisateur && !$isAdmin) {
             $userFiliere = $user->getProfil()?->getFiliere();
             if ($userFiliere) {
-                $featuredQueryBuilder->andWhere('g.filiere = :filiere')
-                                    ->setParameter('filiere', $userFiliere);
+                $featuredQueryBuilder->leftJoin('g.filiere', 'f')
+                                    ->andWhere('f.nom = :filiereName')
+                                    ->setParameter('filiereName', $userFiliere);
             } else {
                 $featuredQueryBuilder->andWhere('1 = 0');
             }
@@ -584,7 +591,7 @@ class GroupeController extends AbstractController
         $user = $this->getUser();
         
         if (!$user instanceof UserInterface) {
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_login');
         }
         
         // Get user's joined groups + owned groups
