@@ -1,0 +1,69 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}Détails de la Matière{% endblock %}
+
+{% block body %}
+<style>
+    .main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+    .detail-card { background: white; border-radius: 12px; padding: 2.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .detail-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid #f1f5f9; }
+    .large-avatar { width: 64px; height: 64px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem; color: white; background: #6366f1; }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
+    .info-group label { display: block; font-size: 0.6875rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .info-group p { font-size: 1rem; font-weight: 600; color: #1e293b; }
+    .btn-back { display: inline-flex; align-items: center; gap: 0.5rem; color: #64748b; text-decoration: none; font-size: 0.875rem; margin-bottom: 1rem; transition: color 0.2s; }
+    .btn-back:hover { color: #1e293b; }
+    .actions-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #f1f5f9; display: flex; gap: 1rem; }
+    .status-badge { padding: 4px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; }
+    .status-badge.active { background: #dcfce7; color: #166534; }
+    .status-badge.inactive { background: #f1f5f9; color: #475569; }
+    .filiere-badge { background: rgba(99, 102, 241, 0.1); color: #6366f1; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+</style>
+
+<div class="main">
+    <a href="{{ path('matiere_index') }}" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Retour à la liste
+    </a>
+
+    <div class="detail-card">
+        <div class="detail-header">
+            <div class="large-avatar">{{ matiere.nom|first|upper }}</div>
+            <div>
+                <h1 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 0.25rem;">{{ matiere.nom }}</h1>
+                <p style="color: #64748b;">Référence : #{{ matiere.id }}</p>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-group">
+                <label>Nom de la matière</label>
+                <p>{{ matiere.nom }}</p>
+            </div>
+            <div class="info-group">
+                <label>Filière rattachée</label>
+                <div><span class="filiere-badge"><i class="fas fa-graduation-cap"></i> {{ matiere.filiere.nom }}</span></div>
+            </div>
+            <div class="info-group">
+                <label>Statut actuel</label>
+                <div>
+                    <span class="status-badge {{ matiere.actif ? 'active' : 'inactive' }}">
+                        {{ matiere.actif ? 'Active' : 'Inactive' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-footer">
+            <a href="{{ path('matiere_edit', {'id': matiere.id}) }}" class="btn-add" style="background: #6366f1; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-edit"></i> Modifier
+            </a>
+            <form action="{{ path('matiere_delete', {'id': matiere.id}) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ matiere.id) }}">
+                <button type="submit" style="background: white; color: #dc2626; border: 1px solid #fee2e2; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-trash-alt"></i> Supprimer
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

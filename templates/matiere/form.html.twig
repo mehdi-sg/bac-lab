@@ -1,353 +1,198 @@
-{% extends 'base.html.twig' %}
+{% extends 'back_base.html.twig' %}
 
-{% block title %}{{ edit ? 'Modifier Matière' : 'Ajouter Matière' }}{% endblock %}
+{% block title %}{{ edit ? 'Modifier Matière' : 'Ajouter Matière' }} | BacLab Admin{% endblock %}
 
 {% block body %}
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+    /* === SYSTEM DESIGN MODERNE (DARK GLASS) === */
+    :root {
+        --primary-glow: rgba(99, 102, 241, 0.5);
+        --accent: #6366f1;
+        --accent-dark: #4f46e5;
+        --glass-bg: rgba(15, 23, 42, 0.8);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
     }
 
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: #f8fafc;
-        color: #1e293b;
+    /* Background global pour forcer le mode sombre */
+    #main-content, .page-wrapper, body { 
+        background: #0f172a !important; 
     }
 
-    /* Topbar */
-    .topbar {
-        background: white;
-        border-bottom: 1px solid #e2e8f0;
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .brand {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .brand-icon {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-        border-radius: 8px;
+    .form-page {
+        min-height: 90vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        font-weight: 700;
+        padding: 2rem 1rem;
+        background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent),
+                    radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.15), transparent);
     }
 
-    .brand-text h1 {
-        font-size: 1.125rem;
-        font-weight: 700;
-        color: #1e293b;
-    }
+    .form-container { width: 100%; max-width: 500px; z-index: 1; }
 
-    /* Main */
-    .main {
-        max-width: 480px;
-        margin: 2rem auto;
-        padding: 0 1.5rem;
-    }
-
-    /* Form Card */
+    /* Carte Effet Verre */
     .form-card {
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.05);
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 2rem;
         overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.95) translateY(20px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
     .form-header {
-        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-        padding: 2rem;
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%);
+        padding: 3rem 2rem 2rem;
         text-align: center;
-        color: white;
+        border-bottom: 1px solid var(--glass-border);
     }
 
     .form-icon {
-        width: 56px;
-        height: 56px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-        font-size: 1.5rem;
+        width: 65px; height: 65px;
+        background: var(--accent);
+        border-radius: 1.25rem;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 1.5rem; font-size: 1.5rem; color: white;
+        box-shadow: 0 0 30px var(--primary-glow);
     }
 
-    .form-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        margin-bottom: 0.25rem;
-    }
+    .form-body { padding: 2.5rem; }
 
-    .form-subtitle {
-        font-size: 0.875rem;
-        opacity: 0.9;
-    }
-
-    .form-body {
-        padding: 1.5rem;
-    }
-
-    /* Form Groups */
-    .form-group {
-        margin-bottom: 1.25rem;
-    }
+    .form-group { margin-bottom: 1.8rem; }
 
     .form-label {
-        display: block;
-        font-size: 0.8125rem;
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 0.375rem;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
+        display: block; font-size: 0.75rem; font-weight: 800;
+        color: var(--accent); margin-bottom: 0.8rem;
+        text-transform: uppercase; letter-spacing: 1.5px;
     }
 
-    .input-wrap {
-        position: relative;
-    }
-
-    .form-input {
-        width: 100%;
-        padding: 0.75rem 1rem 0.75rem 2.5rem;
-        border: 2px solid #e5e7eb;
-        border-radius: 8px;
-        font-size: 0.9375rem;
-        transition: all 0.2s;
-        background: #f9fafb;
-    }
-
-    .form-input:focus {
-        outline: none;
-        border-color: #6366f1;
-        background: white;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-    }
+    /* Inputs Modernisés */
+    .input-wrapper { position: relative; }
 
     .input-icon {
-        position: absolute;
-        left: 0.875rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #9ca3af;
-        font-size: 0.9375rem;
+        position: absolute; left: 1.25rem; top: 50%;
+        transform: translateY(-50%); color: var(--text-muted);
+        transition: 0.3s;
     }
 
-    select.form-input {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-        background-position: right 0.75rem center;
-        background-repeat: no-repeat;
-        background-size: 1.25em;
-        padding-right: 2.5rem;
-    }
-
-    select.form-input option:disabled {
-        color: #9ca3af;
-        background: #f3f4f6;
-    }
-
-    /* Buttons */
-    .btn-primary {
+    .form-control-custom {
         width: 100%;
-        padding: 0.875rem;
-        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 0.9375rem;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        transition: all 0.2s;
-        box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3);
+        padding: 1rem 1rem 1rem 3rem;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--glass-border);
+        border-radius: 1rem;
+        color: var(--text-main);
+        transition: 0.3s;
     }
 
-    .btn-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+    .form-control-custom:focus {
+        outline: none; border-color: var(--accent);
+        background: rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
     }
 
-    .btn-secondary {
-        width: 100%;
-        padding: 0.75rem;
-        background: #f3f4f6;
-        color: #4b5563;
-        border: 2px solid #e5e7eb;
-        border-radius: 8px;
-        font-size: 0.9375rem;
-        font-weight: 600;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        margin-top: 0.75rem;
-        transition: all 0.2s;
+    /* Boutons NÉON */
+    .btn-group { display: flex; flex-direction: column; gap: 1rem; margin-top: 2.5rem; }
+    
+    .btn-primary-custom {
+        padding: 1.1rem; background: var(--accent); color: white;
+        border: none; border-radius: 1rem; font-weight: 700;
+        cursor: pointer; transition: 0.3s;
+        display: flex; align-items: center; justify-content: center; gap: 0.7rem;
+        text-transform: uppercase; letter-spacing: 1px;
     }
 
-    .btn-secondary:hover {
-        background: #e5e7eb;
-        color: #1f2937;
+    .btn-primary-custom:hover { 
+        background: var(--accent-dark); 
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
     }
 
-    /* Error */
-    .error-message {
-        color: #ef4444;
-        font-size: 0.8125rem;
-        margin-top: 0.375rem;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
+    .btn-secondary-custom {
+        padding: 1rem; text-align: center; color: var(--text-muted);
+        text-decoration: none; border: 1px solid var(--glass-border);
+        border-radius: 1rem; font-weight: 600; transition: 0.3s;
     }
 
-    /* Responsive */
-    @media (max-width: 640px) {
-        .main {
-            margin: 1rem auto;
-        }
-        
-        .form-header {
-            padding: 1.5rem;
-        }
-        
-        .form-body {
-            padding: 1.25rem;
-        }
-    }
+    .btn-secondary-custom:hover { background: rgba(255,255,255,0.05); color: white; }
+
+    .error-message { color: #ef4444; font-size: 0.8rem; margin-top: 0.5rem; }
 </style>
 
-<!-- Topbar -->
-<div class="topbar">
-    <div class="brand">
-        <div class="brand-icon">B</div>
-        <div class="brand-text">
-            <h1>{{ edit ? 'Modifier Matière' : 'Nouvelle Matière' }}</h1>
-        </div>
-    </div>
-    <a href="{{ path('matiere_index') }}" class="btn-secondary" style="width: auto; padding: 0.5rem 1rem; margin: 0; font-size: 0.875rem;">
-        <i class="fas fa-arrow-left"></i>
-        Retour
-    </a>
-</div>
-
-<!-- Main -->
-<div class="main">
-    <div class="form-card">
-        <div class="form-header">
-            <div class="form-icon">
-                <i class="fas {{ edit ? 'fa-edit' : 'fa-book' }}"></i>
+<div class="form-page">
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-header">
+                <div class="form-icon">
+                    <i class="fas {{ edit ? 'fa-pen-nib' : 'fa-plus' }}"></i>
+                </div>
+                <h1 style="font-size: 1.6rem; margin: 0; color: white; font-weight: 800;">
+                    {{ edit ? 'Mise à jour' : 'Initialisation' }}
+                </h1>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+                    Configuration du module d'enseignement
+                </p>
             </div>
-            <h2 class="form-title">{{ edit ? 'Modifier la matière' : 'Ajouter une matière' }}</h2>
-            <p class="form-subtitle">{{ edit ? 'Mettez à jour les informations' : 'Remplissez les détails ci-dessous' }}</p>
-        </div>
-        
-        <div class="form-body">
-            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-                
+
+            <div class="form-body">
+                {{ form_start(form, {'attr': {'id': 'matiere-form'}}) }}
+
                 <div class="form-group">
-                    <label class="form-label">Nom de la matière</label>
-                    <div class="input-wrap">
-                        <i class="fas fa-book input-icon"></i>
+                    <label class="form-label">Désignation</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-signature input-icon"></i>
                         {{ form_widget(form.nom, {
-                            'attr': {
-                                'class': 'form-input',
-                                'placeholder': 'Ex: Mathématiques',
-                                'required': true,
-                                'minlength': 2,
-                                'maxlength': 30
-                            }
+                            'attr': {'class': 'form-control-custom', 'placeholder': 'Ex: Mathématiques Spécialisées'}
                         }) }}
                     </div>
-                    {{ form_errors(form.nom) }}
+                    <div class="error-message">{{ form_errors(form.nom) }}</div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Niveau</label>
-                    <div class="input-wrap">
+                    <label class="form-label">Classification Filière</label>
+                    <div class="input-wrapper">
                         <i class="fas fa-layer-group input-icon"></i>
-                        {{ form_widget(form.niveau, {
-                            'attr': {
-                                'class': 'form-input',
-                                'id': 'matiere_niveau'
-                            }
-                        }) }}
-                    </div>
-                    {{ form_errors(form.niveau) }}
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Filière</label>
-                    <div class="input-wrap">
-                        <i class="fas fa-graduation-cap input-icon"></i>
                         {{ form_widget(form.filiere, {
-                            'attr': {
-                                'class': 'form-input',
-                                'id': 'matiere_filiere'
-                            }
+                            'attr': {'class': 'form-control-custom'}
                         }) }}
                     </div>
-                    {{ form_errors(form.filiere) }}
+                    <div class="error-message">{{ form_errors(form.filiere) }}</div>
                 </div>
 
-                <button type="submit" class="btn-primary">
-                    <i class="fas {{ edit ? 'fa-save' : 'fa-plus' }}"></i>
-                    {{ edit ? 'Enregistrer' : 'Ajouter' }}
-                </button>
+                {# Optionnel : Champ Actif si présent dans l'edit #}
+                {% if form.actif is defined %}
+                <div class="form-group">
+                     <label class="form-label">Statut Visibilité</label>
+                     <div class="d-flex align-items-center justify-content-between p-3" style="background: rgba(0,0,0,0.2); border-radius: 1rem; border: 1px solid var(--glass-border);">
+                         <span class="text-white small">Activer la matière</span>
+                         {{ form_widget(form.actif) }}
+                     </div>
+                </div>
+                {% endif %}
 
-            {{ form_end(form) }}
-            
-            <a href="{{ path('matiere_index') }}" class="btn-secondary">
-                <i class="fas fa-times"></i>
-                Annuler
-            </a>
+                <div class="btn-group">
+                    <button type="submit" class="btn-primary-custom">
+                        <i class="fas {{ edit ? 'fa-sync-alt' : 'fa-check' }}"></i>
+                        {{ edit ? 'Mettre à jour le système' : 'Confirmer la création' }}
+                    </button>
+                    
+                    <a href="{{ path('matiere_index') }}" class="btn-secondary-custom">
+                        Retour à la console
+                    </a>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const niveauSelect = document.getElementById('matiere_niveau');
-        const filiereSelect = document.getElementById('matiere_filiere');
-        if (!niveauSelect || !filiereSelect) return;
-
-        const filterFiliereOptions = () => {
-            const niveau = niveauSelect.value;
-            let hasVisibleSelected = false;
-
-            Array.from(filiereSelect.options).forEach((opt) => {
-                if (!opt.value) {
-                    opt.hidden = false;
-                    return;
-                }
-
-                const optNiveau = opt.getAttribute('data-niveau') || '';
-                const visible = !niveau || optNiveau === niveau;
-                opt.hidden = !visible;
-                if (visible && opt.selected) hasVisibleSelected = true;
-            });
-
-            if (!hasVisibleSelected) {
-                filiereSelect.value = '';
-            }
-        };
-
-        niveauSelect.addEventListener('change', filterFiliereOptions);
-        filterFiliereOptions();
-    });
-</script>
 {% endblock %}
