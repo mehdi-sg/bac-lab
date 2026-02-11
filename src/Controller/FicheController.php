@@ -22,6 +22,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Route('/fiche')]
 class FicheController extends AbstractController
@@ -95,6 +96,33 @@ class FicheController extends AbstractController
 
     }
 
+    // =============================
+    // CHAT API — Get user's fiches for sharing
+    // =============================
+    #[Route('/chat/api/fiches', name: 'chat_fiches', methods: ['GET'])]
+    public function chatFiches(FicheRepository $ficheRepository): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof Utilisateur) {
+            return $this->json(['success' => false, 'message' => 'Non connecté'], 401);
+        }
+        
+        $fiches = $ficheRepository->findBy(['utilisateur' => $user]);
+        $fichesData = [];
+        
+        foreach ($fiches as $fiche) {
+            $fichesData[] = [
+                'id' => $fiche->getId(),
+                'title' => $fiche->getTitle(),
+                'content' => substr($fiche->getContent(), 0, 100) . '...',
+            ];
+        }
+        
+        return $this->json([
+            'success' => true,
+            'fiches' => $fichesData,
+        ]);
+    }
 
     // =============================
     // NEW — Create new fiche
@@ -106,7 +134,12 @@ class FicheController extends AbstractController
         
         $fiche = new Fiche();
         $fiche->setCreatedAt(new \DateTimeImmutable());
-        $fiche->setUpdatedAt(new \DateTime());
+        
+        // Set the current user as the creator
+        $user = $this->getUser();
+        if ($user instanceof Utilisateur) {
+            $fiche->setUtilisateur($user);
+        }
 
         $form = $this->createForm(FicheType::class, $fiche);
         $form->handleRequest($request);

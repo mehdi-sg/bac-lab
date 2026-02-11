@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Créer un groupe - BacLab{% endblock %}
+{% block title %}Modifier le groupe - BacLab{% endblock %}
 
 {% block css %}
     {{ parent() }}
@@ -128,9 +128,9 @@
             <div class="col-lg-8">
                 <div class="card form-card shadow-lg">
                     <div class="form-header text-center">
-                        <i class="fas fa-users fa-3x mb-3"></i>
-                        <h3 class="font-weight-bold mb-2">Créer un groupe de révision</h3>
-                        <p class="mb-0 opacity-75">Créez un espace d'échange pour vos révisions</p>
+                        <i class="fas fa-edit fa-3x mb-3"></i>
+                        <h3 class="font-weight-bold mb-2">Modifier le groupe</h3>
+                        <p class="mb-0 opacity-75">{{ groupe.nom }}</p>
                     </div>
                     <div class="form-body">
                         
@@ -183,13 +183,13 @@
                             </div>
                             
                             <div class="d-flex justify-content-between mt-5">
-                                <a href="{{ path('groupe_index') }}" class="btn btn-cancel">
+                                <a href="{{ path('groupe_show', {'id': groupe.id}) }}" class="btn btn-cancel">
                                     <i class="fas fa-times mr-2"></i>
                                     Annuler
                                 </a>
                                 <button type="submit" class="btn btn-submit">
                                     <i class="fas fa-check mr-2"></i>
-                                    Créer le groupe
+                                    Enregistrer les modifications
                                 </button>
                             </div>
                             
@@ -211,6 +211,15 @@
         const help = document.getElementById('groupTypeHelp');
         
         if (toggle) {
+            // Initialize label based on current state
+            if (toggle.checked) {
+                label.textContent = 'Groupe public';
+                help.textContent = 'Tout le monde peut rejoindre et voir les messages';
+            } else {
+                label.textContent = 'Groupe privé';
+                help.textContent = 'Seuls les membres invités peuvent accéder au groupe';
+            }
+            
             toggle.addEventListener('change', function() {
                 if (this.checked) {
                     label.textContent = 'Groupe public';

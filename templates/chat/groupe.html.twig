@@ -465,13 +465,20 @@
                                     <i class="fas fa-ellipsis-v text-white" style="font-size: 14px;"></i>
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right glass-dark shadow-lg" style="border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
-                                    <a class="dropdown-item text-white py-2" href="#">
-                                        <i class="fas fa-user-plus mr-2"></i>Inviter des membres
+                                    {% if isOwner or isAdmin %}
+                                    <a class="dropdown-item text-white py-2" href="{{ path('groupe_edit', {'id': groupe.id}) }}">
+                                        <i class="fas fa-edit mr-2"></i>Modifier le groupe
                                     </a>
-                                    <a class="dropdown-item text-white py-2" href="#">
-                                        <i class="fas fa-cog mr-2"></i>Parametres
+                                    <a class="dropdown-item text-white py-2" href="#" id="membersBtn">
+                                        <i class="fas fa-users mr-2"></i>Gerer les membres
                                     </a>
-                                    {% if isMember or app.user.id == groupe.createur.id %}
+                                    {% endif %}
+                                    {% if isOwner or isAdmin %}
+                                    <div class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></div>
+                                    <a class="dropdown-item text-danger py-2" href="#" id="deleteGroupBtn">
+                                        <i class="fas fa-trash mr-2"></i>Supprimer le groupe
+                                    </a>
+                                    {% elseif isMember or app.user.id == groupe.createur.id %}
                                     <div class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></div>
                                     <a class="dropdown-item text-danger py-2" href="#" id="leaveGroupBtn">
                                         <i class="fas fa-sign-out-alt mr-2"></i>Quitter le groupe
@@ -560,6 +567,31 @@
                                                 <p class="mb-0 {% if isSent %}text-white{% else %}text-dark{% endif %}" style="font-size: 0.95rem; line-height: 1.5;">
                                                     {{ message.contenu|nl2br }}
                                                 </p>
+                                                
+                                                {# Display File Attachment #}
+                                                {% if message.filePath %}
+                                                <div class="mt-2 p-2 rounded" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;" onclick="window.open('{{ asset(message.filePath) }}', '_blank')">
+                                                    <div class="d-flex align-items-center text-white">
+                                                        <i class="fas fa-file mr-2" style="color: #48bb78;"></i>
+                                                        <span class="text-truncate" style="max-width: 200px;">{{ message.fileName ?? 'Fichier joint' }}</span>
+                                                        <i class="fas fa-download ml-2" style="font-size: 0.8rem;"></i>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                
+                                                {# Display Shared Fiche #}
+                                                {% if message.fiche %}
+                                                <div class="mt-2 p-2 rounded" style="background: rgba(72, 187, 120, 0.15); border: 1px solid rgba(72, 187, 120, 0.3);">
+                                                    <a href="{{ path('fiche_show', {'id': message.fiche.id}) }}" class="d-flex align-items-center text-white text-decoration-none">
+                                                        <i class="fas fa-file-alt mr-2" style="color: #48bb78;"></i>
+                                                        <div>
+                                                            <span class="d-block" style="font-size: 0.85rem;">{{ message.fiche.title }}</span>
+                                                            <small class="text-white-50" style="font-size: 0.7rem;">Fiche partagee</small>
+                                                        </div>
+                                                        <i class="fas fa-external-link-alt ml-auto" style="font-size: 0.8rem;"></i>
+                                                    </a>
+                                                </div>
+                                                {% endif %}
                                             </div>
                                             <div class="d-flex align-items-center {% if isSent %}justify-content-end{% endif %} mt-1 {% if not isSent %}ml-1{% else %}mr-1{% endif %}" style="gap: 8px;">
                                                 <small class="text-white-50" style="font-size: 0.65rem;">{{ message.createdAt|date('H:i') }}</small>
@@ -567,7 +599,7 @@
                                                 <i class="fas fa-check ml-1" style="color: #a5b4fc; font-size: 0.65rem;"></i>
                                                 {% endif %}
                                                 
-                                                <!-- Reply and Delete Buttons -->
+                                                <!-- Reply, Edit, and Delete Buttons -->
                                                 <div class="message-actions" style="opacity: 0.6; transition: opacity 0.2s;">
                                                     <button type="button" class="btn btn-sm p-1 reply-btn" 
                                                             data-message-id="{{ message.id }}"
@@ -577,11 +609,25 @@
                                                         <i class="fas fa-reply text-white-50" style="font-size: 0.75rem;"></i>
                                                     </button>
                                                     {% if isSent %}
+                                                    <button type="button" class="btn btn-sm p-1 edit-btn" 
+                                                            data-message-id="{{ message.id }}"
+                                                            data-message-content="{{ message.contenu }}"
+                                                            title="Editer"
+                                                            style="background: transparent; border: none;">
+                                                        <i class="fas fa-edit text-white-50" style="font-size: 0.75rem;"></i>
+                                                    </button>
                                                     <button type="button" class="btn btn-sm p-1 delete-btn" 
                                                             data-message-id="{{ message.id }}"
                                                             title="Supprimer"
                                                             style="background: transparent; border: none;">
                                                         <i class="fas fa-trash text-danger" style="font-size: 0.75rem;"></i>
+                                                    </button>
+                                                    {% elseif isAdmin %}
+                                                    <button type="button" class="btn btn-sm p-1 admin-delete-btn" 
+                                                            data-message-id="{{ message.id }}"
+                                                            title="Supprimer (Admin)"
+                                                            style="background: transparent; border: none;">
+                                                        <i class="fas fa-trash text-warning" style="font-size: 0.75rem;" title="Admin"></i>
                                                     </button>
                                                     {% endif %}
                                                 </div>
@@ -605,7 +651,7 @@
                                 </button>
                             </div>
                         </div>
-                        {% elseif not isMember and app.user %}
+                        {% elseif (not isMember and not isAdmin) and app.user %}
                         <div class="chat-input px-4 py-4">
                             <div class="group-info text-center p-4">
                                 <i class="fas fa-lock mb-3" style="color: #667eea; font-size: 2rem;"></i>
@@ -652,8 +698,41 @@
                                 </div>
                             </div>
                             
-                            <form class="d-flex align-items-center gap-3" id="chatForm" action="{{ path('chat_send_message', {'id': groupe.id}) }}" method="POST" style="width: 100%;">
+                            <!-- Fiche Selection (hidden by default) -->
+                            <div id="ficheIndicator" class="fiche-indicator mb-2 p-2 rounded d-none" style="background: rgba(72, 187, 120, 0.2); border: 1px solid rgba(72, 187, 120, 0.5); transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <small class="text-white">
+                                        <i class="fas fa-file-alt mr-2"></i>
+                                        <span id="selectedFicheTitle">Fiche selectionnee</span>
+                                    </small>
+                                    <button type="button" class="btn btn-sm p-0" id="cancelFicheBtn" style="background: transparent; border: none;">
+                                        <i class="fas fa-times text-white-50"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <form class="d-flex align-items-center gap-3" id="chatForm" action="{{ path('chat_send_message', {'id': groupe.id}) }}" method="POST" enctype="multipart/form-data" style="width: 100%;">
                                 <input type="hidden" name="parentMessageId" id="parentMessageId" value="">
+                                <input type="hidden" name="ficheId" id="ficheId" value="">
+                                
+                                <!-- Attachment Button -->
+                                <div class="position-relative dropup" style="flex-shrink: 0;">
+                                    <button type="button" class="emoji-btn" title="Piece jointe" id="attachBtn">
+                                        <i class="fas fa-paperclip" style="color: #94a3b8; font-size: 1.1rem;"></i>
+                                    </button>
+                                    <!-- Dropdown for file/fiche -->
+                                    <div class="dropdown-menu dropdown-menu-left glass-dark dropup-menu" id="attachDropdown" style="border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); min-width: 200px; bottom: 100% !important; top: auto !important; margin-bottom: 8px;">
+                                        <button type="button" class="dropdown-item text-white py-2" id="uploadFileBtn">
+                                            <i class="fas fa-file-upload mr-2"></i>Envoyer un fichier
+                                        </button>
+                                        <button type="button" class="dropdown-item text-white py-2" id="shareFicheBtn">
+                                            <i class="fas fa-file-alt mr-2"></i>Partager une fiche
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- File Input (hidden) -->
+                                <input type="file" id="fileInput" name="file" style="display: none;" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.png,.jpg,.jpeg,.gif">
                                 
                                 <div class="flex-grow-1" style="position: relative; min-width: 0;">
                                     <input type="text" class="form-control" 
@@ -663,9 +742,15 @@
                                            autocomplete="off"
                                            style="width: 100%;">
                                 </div>
-                                <button type="button" class="emoji-btn" title="Emoji" style="flex-shrink: 0;">
-                                    <i class="far fa-smile" style="color: #94a3b8; font-size: 1.2rem;"></i>
-                                </button>
+                                
+                                <!-- Selected File Badge (shown when file is selected) -->
+                                <div id="selectedFileBadge" class="d-none align-items-center px-2 py-1 rounded" style="background: rgba(102, 126, 234, 0.2); border: 1px solid rgba(102, 126, 234, 0.5); max-width: 150px;">
+                                    <small class="text-white text-truncate" id="selectedFileName" style="font-size: 0.8rem;"></small>
+                                    <button type="button" class="btn btn-sm p-0 ml-1" id="cancelFileBtn" style="background: transparent; border: none;">
+                                        <i class="fas fa-times text-white-50" style="font-size: 0.7rem;"></i>
+                                    </button>
+                                </div>
+                                
                                 <button type="submit" class="send-btn d-flex align-items-center justify-content-center border-0" style="flex-shrink: 0;">
                                     <i class="fas fa-paper-plane" style="color: #fff; font-size: 1.1rem;"></i>
                                 </button>
@@ -700,6 +785,27 @@
     </div>
 </div>
 
+<!-- Fiches Modal -->
+<div class="modal fade" id="fichesModal" tabindex="-1" role="dialog" aria-labelledby="fichesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content glass-dark" style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title text-white" id="fichesModalLabel">
+                    <i class="fas fa-file-alt mr-2"></i>Partager une fiche
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: transparent; border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="fichesList">
+                <div class="text-center py-4">
+                    <i class="fas fa-spinner fa-spin text-white-50" style="font-size: 1.5rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block js %}
@@ -720,6 +826,121 @@
         const requestsBtn = document.getElementById('requestsBtn');
         
         let replyingToMessageId = null;
+        let selectedFile = null;
+        let selectedFicheId = null;
+        
+        // File upload handlers
+        const attachBtn = document.getElementById('attachBtn');
+        const attachDropdown = document.getElementById('attachDropdown');
+        const fileInput = document.getElementById('fileInput');
+        const uploadFileBtn = document.getElementById('uploadFileBtn');
+        const shareFicheBtn = document.getElementById('shareFicheBtn');
+        const selectedFileBadge = document.getElementById('selectedFileBadge');
+        const selectedFileName = document.getElementById('selectedFileName');
+        const cancelFileBtn = document.getElementById('cancelFileBtn');
+        const ficheIndicator = document.getElementById('ficheIndicator');
+        const selectedFicheTitle = document.getElementById('selectedFicheTitle');
+        const cancelFicheBtn = document.getElementById('cancelFicheBtn');
+        
+        if (attachBtn && attachDropdown) {
+            attachBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                attachDropdown.classList.toggle('show');
+            });
+            
+            document.addEventListener('click', function() {
+                attachDropdown.classList.remove('show');
+            });
+            
+            attachDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+        
+        if (uploadFileBtn && fileInput) {
+            uploadFileBtn.addEventListener('click', function() {
+                fileInput.click();
+                attachDropdown.classList.remove('show');
+            });
+            
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    selectedFile = this.files[0];
+                    selectedFileName.textContent = selectedFile.name;
+                    selectedFileBadge.classList.remove('d-none');
+                    attachDropdown.classList.remove('show');
+                    messageInput.placeholder = 'Fichier selectionne...';
+                }
+            });
+        }
+        
+        if (cancelFileBtn && selectedFileBadge) {
+            cancelFileBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                selectedFile = null;
+                fileInput.value = '';
+                selectedFileBadge.classList.add('d-none');
+                messageInput.placeholder = 'Ecrivez votre message...';
+            });
+        }
+        
+        if (shareFicheBtn) {
+            shareFicheBtn.addEventListener('click', function() {
+                attachDropdown.classList.remove('show');
+                $('#fichesModal').modal('show');
+                
+                fetch('{{ path('chat_fiches') }}')
+                .then(response => response.json())
+                .then(data => {
+                    const fichesList = document.getElementById('fichesList');
+                    if (data.success && data.fiches.length > 0) {
+                        let html = '';
+                        data.fiches.forEach(function(fiche) {
+                            html += `
+                                <div class="d-flex align-items-center justify-content-between p-3 mb-2 rounded cursor-pointer" style="background: rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="selectFiche(${fiche.id}, '${escapeHtml(fiche.title)}')">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-file-alt mr-3" style="color: #667eea;"></i>
+                                        <div>
+                                            <p class="mb-0 text-white fw-medium" style="font-size: 0.9rem;">${escapeHtml(fiche.title)}</p>
+                                            <small class="text-white-50" style="font-size: 0.75rem;">${escapeHtml(fiche.content)}</small>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-chevron-right text-white-50" style="font-size: 0.8rem;"></i>
+                                </div>
+                            `;
+                        });
+                        fichesList.innerHTML = html;
+                    } else {
+                        fichesList.innerHTML = '<div class="text-center py-4"><p class="text-white-50 mb-0">Aucune fiche disponible</p></div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading fiches:', error);
+                    document.getElementById('fichesList').innerHTML = '<div class="text-center py-4"><p class="text-white-50 mb-0">Erreur lors du chargement des fiches</p></div>';
+                });
+            });
+        }
+        
+        if (cancelFicheBtn && ficheIndicator) {
+            cancelFicheBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                selectedFicheId = null;
+                document.getElementById('ficheId').value = '';
+                ficheIndicator.classList.add('d-none');
+                messageInput.placeholder = 'Ecrivez votre message...';
+            });
+        }
+        
+        window.selectFiche = function(ficheId, ficheTitle) {
+            selectedFicheId = ficheId;
+            document.getElementById('ficheId').value = ficheId;
+            selectedFicheTitle.textContent = ficheTitle;
+            ficheIndicator.classList.remove('d-none');
+            $('#fichesModal').modal('hide');
+            messageInput.placeholder = 'Fiche selectionnee...';
+        };
         
         function getCurrentTime() {
             const now = new Date();
@@ -747,21 +968,31 @@
                 e.preventDefault();
                 const message = messageInput.value.trim();
                 
-                if (!message) {
-                    messageInput.classList.add('is-invalid');
-                    messageInput.focus();
-                    return;
+                // Add temporary message to UI
+                let messageContent = '';
+                
+                // Add reply indicator if replying to a message
+                if (replyingToMessageId) {
+                    messageContent += `<div class="mb-2 p-2 rounded" style="background: rgba(102, 126, 234, 0.15); border-left: 3px solid #667eea;"><small class="d-block text-white-50" style="font-size: 0.7rem;"><i class="fas fa-reply mr-1"></i>Reponse a...</small></div>`;
                 }
                 
-                messageInput.classList.remove('is-invalid');
+                messageContent += `<p class="mb-0 text-white" style="font-size: 0.95rem; line-height: 1.5;">${escapeHtml(message)}</p>`;
                 
-                // Add temporary message to UI
+                // Add file badge if file is selected (clickable for download)
+                if (selectedFile) {
+                    messageContent += `<div class="mt-2 p-2 rounded" style="background: rgba(255, 255, 255, 0.1);"><i class="fas fa-file mr-2"></i>${escapeHtml(selectedFile.name)} <small class="text-white-50">(sera joint au message)</small></div>`;
+                }
+                
+                // Add fiche badge if fiche is selected
+                if (selectedFicheId) {
+                    messageContent += `<a href="/fiche/${selectedFicheId}" target="_blank" class="d-block mt-2 p-2 rounded text-decoration-none" style="background: rgba(72, 187, 120, 0.2);" onclick="event.stopPropagation();"><i class="fas fa-file-alt mr-2"></i>Fiche partagee</a>`;
+                }
+                
                 const messageHtml = `
                     <div class="message d-flex mb-3 justify-content-end new-message">
                         <div class="message-content">
-                            <div class="message-bubble sent p-3"
-                                 style="max-width: 70%;">
-                                <p class="mb-0 text-white" style="font-size: 0.95rem; line-height: 1.5;">${escapeHtml(message)}</p>
+                            <div class="message-bubble sent p-3" style="max-width: 70%;">
+                                ${messageContent}
                             </div>
                             <div class="d-flex align-items-center justify-content-end mt-1 mr-1">
                                 <small class="text-white-50" style="font-size: 0.65rem;">${getCurrentTime()}</small>
@@ -773,12 +1004,42 @@
                 chatMessages.insertAdjacentHTML('beforeend', messageHtml);
                 scrollToBottom();
                 
-                // Create form data AFTER capturing the message
+                // Create form data
                 const formData = new FormData();
                 formData.append('contenu', message);
                 
-                // Clear input immediately after capturing message
+                if (replyingToMessageId) {
+                    formData.append('replyTo', replyingToMessageId);
+                }
+                
+                if (selectedFile) {
+                    formData.append('file', selectedFile);
+                }
+                
+                if (selectedFicheId) {
+                    formData.append('ficheId', selectedFicheId);
+                }
+                
+                // Clear input immediately
                 messageInput.value = '';
+                messageInput.placeholder = 'Ecrivez votre message...';
+                
+                if (selectedFile) {
+                    selectedFile = null;
+                    fileInput.value = '';
+                    selectedFileBadge.classList.add('d-none');
+                }
+                
+                if (selectedFicheId) {
+                    selectedFicheId = null;
+                    document.getElementById('ficheId').value = '';
+                    ficheIndicator.classList.add('d-none');
+                }
+                
+                // Clear reply state
+                replyingToMessageId = null;
+                document.getElementById('parentMessageId').value = '';
+                replyIndicator.classList.add('d-none');
                 
                 // Send to server
                 fetch(chatForm.action, {
@@ -930,9 +1191,10 @@
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.success) {
-                                        // Refresh the modal
-                                        requestsBtn.click();
-                                        // Update badge
+                                        // Remove this request from the list visually
+                                        this.closest('.d-flex.align-items-center.justify-content-between').remove();
+                                        
+                                        // Update badge count
                                         const badge = requestsBtn.querySelector('.badge');
                                         if (badge) {
                                             let count = parseInt(badge.textContent) - 1;
@@ -942,6 +1204,12 @@
                                             } else {
                                                 badge.textContent = count;
                                             }
+                                        }
+                                        
+                                        // If no more requests, show empty message
+                                        const requestsList = document.getElementById('requestsList');
+                                        if (requestsList.children.length === 0) {
+                                            requestsList.innerHTML = '<p class="text-white-50 text-center py-4">Aucune demande en attente</p>';
                                         }
                                     } else {
                                         alert(data.error || 'Une erreur est survenue');
@@ -959,9 +1227,10 @@
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.success) {
-                                        // Refresh the modal
-                                        requestsBtn.click();
-                                        // Update badge
+                                        // Remove this request from the list visually
+                                        this.closest('.d-flex.align-items-center.justify-content-between').remove();
+                                        
+                                        // Update badge count
                                         const badge = requestsBtn.querySelector('.badge');
                                         if (badge) {
                                             let count = parseInt(badge.textContent) - 1;
@@ -971,6 +1240,12 @@
                                             } else {
                                                 badge.textContent = count;
                                             }
+                                        }
+                                        
+                                        // If no more requests, show empty message
+                                        const requestsList = document.getElementById('requestsList');
+                                        if (requestsList.children.length === 0) {
+                                            requestsList.innerHTML = '<p class="text-white-50 text-center py-4">Aucune demande en attente</p>';
                                         }
                                     } else {
                                         alert(data.error || 'Une erreur est survenue');
@@ -1018,8 +1293,9 @@
                 replyingToText.textContent = 'Reponse a: "' + messageContent + '"';
                 replyIndicator.classList.remove('d-none');
                 
-                // Update form action for reply
-                chatForm.action = '/chat/groupe/' + messageId + '/repondre';
+                // Update form action for reply (keep same endpoint, use replyTo field)
+                // chatForm.action = '/chat/groupe/' + messageId + '/reponder';
+                // Instead, we just set the parentMessageId field which is already in the form
                 
                 // Focus on input
                 messageInput.focus();
@@ -1073,7 +1349,308 @@
             }
         });
         
+        // Admin Delete handler - using event delegation
+        document.addEventListener('click', function(e) {
+            const adminDeleteBtn = e.target.closest('.admin-delete-btn');
+            if (adminDeleteBtn) {
+                const messageId = adminDeleteBtn.dataset.messageId;
+                
+                if (confirm('Etes-vous sur de vouloir supprimer ce message en tant qu\'admin ?')) {
+                    fetch('/chat/message/' + messageId + '/supprimer', {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Find and hide the message
+                            const messageElement = document.querySelector('[data-message-id="' + messageId + '"]');
+                            if (messageElement) {
+                                const messageBubble = messageElement.closest('.message');
+                                if (messageBubble) {
+                                    messageBubble.style.opacity = '0';
+                                    messageBubble.style.transform = 'translateY(-10px)';
+                                    setTimeout(() => {
+                                        messageBubble.remove();
+                                    }, 300);
+                                }
+                            }
+                        } else {
+                            alert(data.error || 'Une erreur est survenue');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue');
+                    });
+                }
+            }
+        });
+        
+        // Edit handler - using event delegation
+        let editingMessageId = null;
+        document.addEventListener('click', function(e) {
+            const editBtn = e.target.closest('.edit-btn');
+            if (editBtn) {
+                editingMessageId = editBtn.dataset.messageId;
+                const messageContent = editBtn.dataset.messageContent;
+                
+                // Set the textarea content
+                document.getElementById('editMessageContent').value = messageContent;
+                
+                // Show the modal
+                $('#editMessageModal').modal('show');
+            }
+        });
+        
+        // Save edit handler
+        document.getElementById('saveEditBtn').addEventListener('click', function() {
+            const newContent = document.getElementById('editMessageContent').value.trim();
+            
+            if (!newContent) {
+                alert('Le message ne peut pas être vide');
+                return;
+            }
+            
+            fetch('/chat/message/' + editingMessageId + '/editer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'contenu=' + encodeURIComponent(newContent)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the message content in the UI
+                    const messageElement = document.querySelector('[data-message-id="' + editingMessageId + '"]');
+                    if (messageElement) {
+                        const messageBubble = messageElement.closest('.message');
+                        if (messageBubble) {
+                            const contentPara = messageBubble.querySelector('.message-bubble p');
+                            if (contentPara) {
+                                contentPara.textContent = newContent;
+                            }
+                            
+                            // Update data attribute for future edits
+                            const editBtn = messageBubble.querySelector('.edit-btn');
+                            if (editBtn) {
+                                editBtn.dataset.messageContent = newContent;
+                            }
+                        }
+                    }
+                    
+                    $('#editMessageModal').modal('hide');
+                } else {
+                    alert(data.error || 'Une erreur est survenue');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue');
+            });
+        });
+        
+        // Members management handler
+        if (document.getElementById('membersBtn')) {
+            document.getElementById('membersBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                $('#membersModal').modal('show');
+                
+                fetch('{{ path('groupe_membres', {'id': groupe.id}) }}')
+                .then(response => response.json())
+                .then(data => {
+                    const membersList = document.getElementById('membersList');
+                    
+                    // Combine accepted members with any members we can get
+                    const members = data.requests || [];
+                    
+                    if (members.length > 0) {
+                        let html = '';
+                        members.forEach(function(member) {
+                            html += `
+                                <div class="d-flex align-items-center justify-content-between p-3 mb-2 rounded" style="background: rgba(255, 255, 255, 0.05);">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar rounded-xl d-flex align-items-center justify-content-center text-white mr-3" style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea, #764ba2);">
+                                            ${member.utilisateur.nom ? member.utilisateur.nom.charAt(0).toUpperCase() : '?'}
+                                        </div>
+                                        <div>
+                                            <p class="mb-0 text-white" style="font-size: 0.9rem;">${escapeHtml(member.utilisateur.nom || 'Membre')}</p>
+                                            <small class="text-white-50">${member.date || ''}</small>
+                                        </div>
+                                    </div>
+                                    ${member.utilisateur.id != {{ app.user.id }} ? `
+                                    <button class="btn btn-sm kick-member-btn" data-membre-id="${member.id}" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5);">
+                                        <i class="fas fa-user-times"></i>
+                                    </button>
+                                    ` : ''}
+                                </div>
+                            `;
+                        });
+                        membersList.innerHTML = html;
+                        
+                        // Add kick handler
+                        document.querySelectorAll('.kick-member-btn').forEach(function(btn) {
+                            btn.addEventListener('click', function() {
+                                const membreId = this.dataset.membreId;
+                                if (confirm('Etes-vous sur de vouloir expulser ce membre ?')) {
+                                    fetch('/groupes/' + {{ groupe.id }} + '/supprimer-membre/' + membreId, {
+                                        method: 'POST'
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            // Refresh the modal
+                                            document.getElementById('membersBtn').click();
+                                        } else {
+                                            alert(data.error || 'Une erreur est survenue');
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    } else {
+                        membersList.innerHTML = `
+                            <div class="text-center py-4">
+                                <i class="fas fa-users mb-3" style="color: #667eea; font-size: 2rem;"></i>
+                                <p class="text-white-50 mb-0">Aucun membre</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('membersList').innerHTML = `
+                        <div class="text-center py-4">
+                            <p class="text-white-50 mb-0">Une erreur est survenue</p>
+                        </div>
+                    `;
+                });
+            });
+        }
+        
+        // Delete group handler
+        if (document.getElementById('deleteGroupBtn')) {
+            document.getElementById('deleteGroupBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                $('#deleteGroupModal').modal('show');
+            });
+            
+            document.getElementById('confirmDeleteGroupBtn').addEventListener('click', function() {
+                fetch('/groupes/' + {{ groupe.id }} + '/supprimer', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = data.redirect || '{{ path('groupe_index') }}';
+                    } else {
+                        alert(data.error || 'Une erreur est survenue');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Une erreur est survenue');
+                });
+            });
+        }
+        
         scrollToBottom();
     });
 </script>
+
+<!-- Edit Message Modal -->
+<div class="modal fade" id="editMessageModal" tabindex="-1" role="dialog" aria-labelledby="editMessageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background: #1a1a2e; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <h5 class="modal-title text-white" id="editMessageModalLabel">
+                    <i class="fas fa-edit mr-2" style="color: #667eea;"></i>
+                    Modifier le message
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: transparent; border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <textarea id="editMessageContent" class="form-control" rows="4" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;" placeholder="Modifier votre message..."></textarea>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <button type="button" class="btn" data-dismiss="modal" style="background: transparent; color: #a0aec0; border: 1px solid rgba(255, 255, 255, 0.2);">Annuler</button>
+                <button type="button" class="btn" id="saveEditBtn" style="background: #667eea; color: white; border: none;">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Members Management Modal -->
+<div class="modal fade" id="membersModal" tabindex="-1" role="dialog" aria-labelledby="membersModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background: #1a1a2e; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <h5 class="modal-title text-white" id="membersModalLabel">
+                    <i class="fas fa-users mr-2" style="color: #667eea;"></i>
+                    Membres du groupe
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: transparent; border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="membersList" style="max-height: 400px; overflow-y: auto;">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Chargement...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Group Confirmation Modal -->
+<div class="modal fade" id="deleteGroupModal" tabindex="-1" role="dialog" aria-labelledby="deleteGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background: #1a1a2e; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <h5 class="modal-title text-white" id="deleteGroupModalLabel">
+                    <i class="fas fa-exclamation-triangle mr-2" style="color: #ef4444;"></i>
+                    Confirmer la suppression
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: transparent; border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-white mb-0">Etes-vous sur de vouloir supprimer ce groupe ? Cette action est irreversible et tous les messages seront supprimes.</p>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <button type="button" class="btn" data-dismiss="modal" style="background: transparent; color: #a0aec0; border: 1px solid rgba(255, 255, 255, 0.2);">Annuler</button>
+                <button type="button" class="btn" id="confirmDeleteGroupBtn" style="background: #ef4444; color: white; border: none;">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fiches Selection Modal -->
+<div class="modal fade" id="fichesModal" tabindex="-1" role="dialog" aria-labelledby="fichesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background: #1a1a2e; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <h5 class="modal-title text-white" id="fichesModalLabel">
+                    <i class="fas fa-file-alt mr-2" style="color: #667eea;"></i>
+                    Selectionner une fiche
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: transparent; border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="fichesList" style="max-height: 400px; overflow-y: auto;">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Chargement...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

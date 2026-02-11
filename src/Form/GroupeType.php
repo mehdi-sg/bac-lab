@@ -16,6 +16,8 @@ class GroupeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $isEdit = $options['is_edit'] ?? false;
+        
         $builder
             ->add('nom', TextType::class, [
                 'label' => 'Nom du groupe de révision',
@@ -23,7 +25,7 @@ class GroupeType extends AbstractType
                     'class' => 'form-control',
                     'placeholder' => 'Ex: Révision Math Techniques',
                 ],
-                'required' => false,
+                'required' => !$isEdit,
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description / Objectifs',
@@ -61,6 +63,7 @@ class GroupeType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Groupe::class,
+            'is_edit' => false,
             'attr' => [
                 'novalidate' => 'novalidate',
             ],

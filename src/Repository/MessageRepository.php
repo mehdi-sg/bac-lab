@@ -33,6 +33,8 @@ class MessageRepository extends ServiceEntityRepository
     public function findMessagesForGroupe(Groupe $groupe, string $sort = 'recent', int $limit = 50): array
     {
         $qb = $this->createQueryBuilder('m')
+            ->leftJoin('m.fiche', 'f')
+            ->addSelect('f')
             ->andWhere('m.groupe = :g')
             ->andWhere('m.deletedAt IS NULL')
             ->setParameter('g', $groupe)
