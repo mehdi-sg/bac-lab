@@ -470,6 +470,7 @@
                     setTimeout(() => {
                         notificationItem.remove();
                         updateBadgeCount();
+                        updateHeaderBadge();
                         // Check if empty
                         const remaining = document.querySelectorAll('.notification-item');
                         if (remaining.length === 0) {
@@ -500,10 +501,11 @@
                 const notificationItem = document.querySelector('[data-notification-id="' + notificationId + '"]');
                 if (notificationItem) {
                     notificationItem.style.opacity = '0';
-                    notificationItem.style.transform = 'translateX(-20px)';
+                    notificationItem.style.transform = 'translateX(20px)';
                     setTimeout(() => {
                         notificationItem.remove();
                         updateBadgeCount();
+                        updateHeaderBadge();
                         // Check if empty
                         const remaining = document.querySelectorAll('.notification-item');
                         if (remaining.length === 0) {
@@ -514,6 +516,22 @@
             }
         })
         .catch(error => console.error('Error:', error));
+    }
+
+    function updateHeaderBadge() {
+        fetch('/notifications/count')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('notification-badge');
+                if (badge) {
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                    } else {
+                        badge.textContent = '';
+                    }
+                }
+            })
+            .catch(error => console.log('Error updating notification count:', error));
     }
 
     document.addEventListener('DOMContentLoaded', function() {

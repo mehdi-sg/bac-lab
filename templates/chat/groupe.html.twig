@@ -974,7 +974,14 @@
                 messageInput.classList.remove('is-invalid');
                 
                 // Add temporary message to UI
-                let messageContent = `<p class="mb-0 text-white" style="font-size: 0.95rem; line-height: 1.5;">${escapeHtml(message)}</p>`;
+                let messageContent = '';
+                
+                // Add reply indicator if replying to a message
+                if (replyingToMessageId) {
+                    messageContent += `<div class="mb-2 p-2 rounded" style="background: rgba(102, 126, 234, 0.15); border-left: 3px solid #667eea;"><small class="d-block text-white-50" style="font-size: 0.7rem;"><i class="fas fa-reply mr-1"></i>Reponse a...</small></div>`;
+                }
+                
+                messageContent += `<p class="mb-0 text-white" style="font-size: 0.95rem; line-height: 1.5;">${escapeHtml(message)}</p>`;
                 
                 // Add file badge if file is selected (clickable for download)
                 if (selectedFile) {
@@ -1006,6 +1013,10 @@
                 const formData = new FormData();
                 formData.append('contenu', message);
                 
+                if (replyingToMessageId) {
+                    formData.append('replyTo', replyingToMessageId);
+                }
+                
                 if (selectedFile) {
                     formData.append('file', selectedFile);
                 }
@@ -1029,6 +1040,11 @@
                     document.getElementById('ficheId').value = '';
                     ficheIndicator.classList.add('d-none');
                 }
+                
+                // Clear reply state
+                replyingToMessageId = null;
+                document.getElementById('parentMessageId').value = '';
+                replyIndicator.classList.add('d-none');
                 
                 // Send to server
                 fetch(chatForm.action, {
@@ -1282,8 +1298,9 @@
                 replyingToText.textContent = 'Reponse a: "' + messageContent + '"';
                 replyIndicator.classList.remove('d-none');
                 
-                // Update form action for reply
-                chatForm.action = '/chat/groupe/' + messageId + '/repondre';
+                // Update form action for reply (keep same endpoint, use replyTo field)
+                // chatForm.action = '/chat/groupe/' + messageId + '/reponder';
+                // Instead, we just set the parentMessageId field which is already in the form
                 
                 // Focus on input
                 messageInput.focus();
@@ -1444,7 +1461,7 @@
                             btn.addEventListener('click', function() {
                                 const membreId = this.dataset.membreId;
                                 if (confirm('Etes-vous sur de vouloir expulser ce membre ?')) {
-                                    fetch('/groupes/' + {{ groupe.id }} + '/kicker/' + membreId, {
+                                    fetch('/groupes/' + {{ groupe.id }} + '/supprimer-membre/' + membreId, {
                                         method: 'POST'
                                     })
                                     .then(response => response.json())

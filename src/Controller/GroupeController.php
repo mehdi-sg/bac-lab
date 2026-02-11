@@ -498,21 +498,27 @@ class GroupeController extends AbstractController
         } else {
             $messages = [];
         }
-
-        // Get user's joined groups for sidebar
-        $userGroupes = [];
+        
+        // Get user's groups for sidebar
+        $userGroups = [];
         if ($user instanceof UserInterface) {
-            $userGroupes = $groupeRepository->findJoinedGroupsByUser($user);
-            
-            // Also include groups owned by the user
-            $ownedGroups = $groupeRepository->findBy(['createur' => $user]);
-            $seenIds = [];
-            foreach ($userGroupes as $g) {
-                $seenIds[] = $g->getId();
+            // Get groups user is member of
+            $userMemberships = $membreGroupeRepository->findBy(['utilisateur' => $user, 'statut' => 'ACCEPTED']);
+            foreach ($userMemberships as $membre) {
+                $userGroups[] = $membre->getGroupe();
             }
+            // Also add groups user owns
+            $ownedGroups = $groupeRepository->findBy(['createur' => $user]);
             foreach ($ownedGroups as $ownedGroup) {
-                if (!in_array($ownedGroup->getId(), $seenIds)) {
-                    $userGroupes[] = $ownedGroup;
+                $alreadyAdded = false;
+                foreach ($userGroups as $g) {
+                    if ($g->getId() === $ownedGroup->getId()) {
+                        $alreadyAdded = true;
+                        break;
+                    }
+                }
+                if (!$alreadyAdded) {
+                    $userGroups[] = $ownedGroup;
                 }
             }
         }
@@ -520,11 +526,11 @@ class GroupeController extends AbstractController
         return $this->render('chat/groupe.html.twig', [
             'groupe' => $groupe,
             'messages' => $messages,
-            'groupes' => $userGroupes,
             'isMember' => $isMember,
             'isOwner' => $isOwner,
-            'membership' => $membership,
+            'groupes' => $userGroups,
             'pendingRequestsCount' => $pendingRequestsCount,
+            'membership' => $membership,
         ]);
     }
 
@@ -532,220 +538,54 @@ class GroupeController extends AbstractController
     public function sendMessage(
         Request $request,
         Groupe $groupe,
-        EntityManagerInterface $entityManager,
+        MessageRepository $messageRepository,
         MembreGroupeRepository $membreGroupeRepository,
-        FicheRepository $ficheRepository
+        EntityManagerInterface $entityManager
     ): Response {
         $user = $this->getUser();
         
-        if (!$user instanceof Utilisateur) {
+        if (!$user instanceof UserInterface) {
             return $this->json(['error' => 'Vous devez être connecté'], 401);
         }
 
-        // Check if user is owner or accepted member
-        $isOwner = $groupe->getCreateur() === $user;
+        // Check if user is member or owner
+        $isOwner = ($groupe->getCreateur() === $user);
         
         if (!$isOwner) {
-            $membre = $membreGroupeRepository->findOneBy([
+            $membership = $membreGroupeRepository->findOneBy([
                 'utilisateur' => $user,
                 'groupe' => $groupe,
             ]);
             
-            if (!$membre || (!$membre->isAccepted() && $membre->getStatut() !== null)) {
+            if (!$membership || !$membership->isAccepted()) {
                 return $this->json(['error' => 'Vous devez être membre du groupe pour envoyer des messages'], 403);
             }
         }
 
         $contenu = $request->request->get('contenu', '');
-        $ficheId = $request->request->get('ficheId', null);
+        $replyTo = $request->request->get('replyTo', null);
         
-        // Handle file upload
-        $file = $request->files->get('file');
-        $filePath = null;
-        $fileName = null;
-        $typeMessage = 'TEXTE';
-        
-        if ($file) {
-            $uploadDir = $this->getParameter('kernel.project_dir') . '/public/uploads/chat/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-            
-            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $safeName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $originalName);
-            $extension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
-            $newFileName = $safeName . '_' . uniqid() . '.' . strtolower($extension);
-            
-            // Get MIME type BEFORE moving the file
-            $mimeType = $file->getMimeType() ?? '';
-            
-            $file->move($uploadDir, $newFileName);
-            $filePath = '/uploads/chat/' . $newFileName;
-            $fileName = $file->getClientOriginalName();
-            
-            // Set type based on file type
-            if (strpos($mimeType, 'image/') === 0) {
-                $typeMessage = 'IMAGE';
-            } elseif ($mimeType === 'application/pdf' || strtolower($extension) === 'pdf') {
-                $typeMessage = 'PDF';
-            }
-        }
-        
-        // Handle fiche reference
-        $fiche = null;
-        if ($ficheId) {
-            $fiche = $ficheRepository->find($ficheId);
-        }
-        
-        // Validate: at least one of contenu, file, or fiche must be present
-        if (empty(trim($contenu)) && !$file && !$fiche) {
+        if (empty(trim($contenu))) {
             return $this->json(['error' => 'Le message ne peut pas être vide'], 400);
         }
 
         $message = new Message();
         $message->setContenu($contenu);
-        $message->setTypeMessage($typeMessage);
         $message->setExpediteur($user);
         $message->setGroupe($groupe);
+        $message->setCreatedAt(new \DateTimeImmutable());
         
-        if ($filePath) {
-            $message->setFilePath($filePath);
-            $message->setFileName($fileName);
+        if ($replyTo) {
+            $parentMessage = $messageRepository->find($replyTo);
+            if ($parentMessage) {
+                $message->setParentMessage($parentMessage);
+            }
         }
-        
-        if ($fiche) {
-            $message->setFiche($fiche);
-            $message->setTypeMessage('FICHE');
-        }
-        
+
         $entityManager->persist($message);
         $entityManager->flush();
 
-        // Get user display name
-        $userName = 'Membre';
-        if ($user instanceof Utilisateur) {
-            $profil = $user->getProfil();
-            if ($profil !== null && $profil->getNom()) {
-                $userName = $profil->getNom();
-            } else {
-                $userName = explode('@', $user->getEmail())[0];
-            }
-        }
-
-        return $this->json([
-            'success' => true,
-            'message' => [
-                'id' => $message->getId(),
-                'contenu' => $message->getContenu(),
-                'createdAt' => $message->getCreatedAt()->format('d/m/Y H:i'),
-                'filePath' => $message->getFilePath(),
-                'fileName' => $message->getFileName(),
-                'fiche' => $fiche ? ['id' => $fiche->getId(), 'title' => $fiche->getTitle()] : null,
-                'expediteur' => [
-                    'nom' => $userName,
-                ],
-            ],
-        ]);
-    }
-
-    #[Route('/chat/groupe/{id}/repondre', name: 'chat_reply_message', methods: ['POST'])]
-    public function replyToMessage(
-        Request $request,
-        Message $parentMessage,
-        EntityManagerInterface $entityManager,
-        MembreGroupeRepository $membreGroupeRepository,
-        FicheRepository $ficheRepository
-    ): Response {
-        $user = $this->getUser();
-        
-        if (!$user instanceof Utilisateur) {
-            return $this->json(['error' => 'Vous devez être connecté'], 401);
-        }
-
-        $groupe = $parentMessage->getGroupe();
-        
-        // Check if user is owner or accepted member
-        $isOwner = $groupe->getCreateur() === $user;
-        
-        if (!$isOwner) {
-            $membre = $membreGroupeRepository->findOneBy([
-                'utilisateur' => $user,
-                'groupe' => $groupe,
-            ]);
-            
-            if (!$membre || (!$membre->isAccepted() && $membre->getStatut() !== null)) {
-                return $this->json(['error' => 'Vous devez être membre du groupe'], 403);
-            }
-        }
-
-        $contenu = $request->request->get('contenu', '');
-        $ficheId = $request->request->get('ficheId', null);
-        
-        // Handle file upload
-        $file = $request->files->get('file');
-        $filePath = null;
-        $fileName = null;
-        $typeMessage = 'TEXTE';
-        
-        if ($file) {
-            $uploadDir = $this->getParameter('kernel.project_dir') . '/public/uploads/chat/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-            
-            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $safeName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $originalName);
-            $extension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
-            $newFileName = $safeName . '_' . uniqid() . '.' . strtolower($extension);
-            
-            // Get MIME type BEFORE moving the file
-            $mimeType = $file->getMimeType() ?? '';
-            
-            $file->move($uploadDir, $newFileName);
-            $filePath = '/uploads/chat/' . $newFileName;
-            $fileName = $file->getClientOriginalName();
-            
-            // Set type based on file type
-            if (strpos($mimeType, 'image/') === 0) {
-                $typeMessage = 'IMAGE';
-            } elseif ($mimeType === 'application/pdf' || strtolower($extension) === 'pdf') {
-                $typeMessage = 'PDF';
-            }
-        }
-        
-        // Handle fiche reference
-        $fiche = null;
-        if ($ficheId) {
-            $fiche = $ficheRepository->find($ficheId);
-        }
-        
-        // Validate: at least one of contenido, file, or fiche must be present
-        if (empty(trim($contenu)) && !$file && !$fiche) {
-            return $this->json(['error' => 'Le message ne peut pas être vide'], 400);
-        }
-
-        $message = new Message();
-        $message->setContenu($contenu);
-        $message->setTypeMessage($typeMessage);
-        $message->setExpediteur($user);
-        $message->setGroupe($groupe);
-        $message->setParentMessage($parentMessage);
-        
-        if ($filePath) {
-            $message->setFilePath($filePath);
-            $message->setFileName($fileName);
-        }
-        
-        if ($fiche) {
-            $message->setFiche($fiche);
-            $message->setTypeMessage('FICHE');
-        }
-        
-        $entityManager->persist($message);
-        $entityManager->flush();
-
-        // Get user display name
-        $userName = 'Membre';
+        // Get user name for response
         $profil = $user->getProfil();
         if ($profil !== null && $profil->getNom()) {
             $userName = $profil->getNom();
@@ -759,14 +599,72 @@ class GroupeController extends AbstractController
                 'id' => $message->getId(),
                 'contenu' => $message->getContenu(),
                 'createdAt' => $message->getCreatedAt()->format('d/m/Y H:i'),
-                'parentMessage' => [
-                    'id' => $parentMessage->getId(),
-                    'contenu' => substr($parentMessage->getContenu(), 0, 50) . '...',
-                ],
+                'parentMessage' => $message->getParentMessage() ? [
+                    'id' => $message->getParentMessage()->getId(),
+                    'contenu' => substr($message->getParentMessage()->getContenu(), 0, 50) . '...',
+                ] : null,
                 'expediteur' => [
                     'nom' => $userName,
                 ],
             ],
+        ]);
+    }
+
+    #[Route('/chat/groupe/{id}/messages', name: 'chat_messages', methods: ['GET'])]
+    public function getMessages(
+        Groupe $groupe,
+        MessageRepository $messageRepository,
+        MembreGroupeRepository $membreGroupeRepository
+    ): Response {
+        $user = $this->getUser();
+        
+        // Check if user is member or owner
+        $isOwner = ($user && $groupe->getCreateur() === $user);
+        
+        if (!$isOwner && $user) {
+            $membership = $membreGroupeRepository->findOneBy([
+                'utilisateur' => $user,
+                'groupe' => $groupe,
+            ]);
+            
+            if (!$membership || !$membership->isAccepted()) {
+                return $this->json(['error' => 'Non autorisé'], 403);
+            }
+        } elseif (!$user) {
+            return $this->json(['error' => 'Non autorisé'], 403);
+        }
+
+        $messages = $messageRepository->findMessagesForGroupe($groupe, 'recent', 50);
+
+        $messagesData = [];
+        foreach ($messages as $message) {
+            $expediteur = $message->getExpediteur();
+            $profil = $expediteur->getProfil();
+            $userName = '';
+            if ($profil !== null && $profil->getNom()) {
+                $userName = $profil->getNom();
+            } else {
+                $userName = explode('@', $expediteur->getEmail())[0];
+            }
+
+            $messagesData[] = [
+                'id' => $message->getId(),
+                'contenu' => $message->getContenu(),
+                'createdAt' => $message->getCreatedAt()->format('d/m/Y H:i'),
+                'expediteur' => [
+                    'id' => $expediteur->getId(),
+                    'nom' => $userName,
+                ],
+                'replyTo' => $message->getParentMessage() ? [
+                    'id' => $message->getParentMessage()->getId(),
+                    'contenu' => substr($message->getParentMessage()->getContenu(), 0, 50) . '...',
+                ] : null,
+            ];
+        }
+
+        return $this->json([
+            'success' => true,
+            'messages' => $messagesData,
         ]);
     }
 
@@ -828,6 +726,43 @@ class GroupeController extends AbstractController
                 'id' => $message->getId(),
                 'contenu' => $message->getContenu(),
             ],
+        ]);
+    }
+
+    #[Route('/groupes/{id}/supprimer', name: 'groupe_delete', methods: ['POST'])]
+    public function deleteGroupe(
+        Groupe $groupe,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+        
+        if (!$user instanceof Utilisateur) {
+            return $this->json(['error' => 'Vous devez être connecté'], 401);
+        }
+
+        // Check if user is the creator (owner) of the group
+        if ($groupe->getCreateur() !== $user) {
+            return $this->json(['error' => 'Vous ne pouvez pas supprimer ce groupe'], 403);
+        }
+
+        // Delete related entities first
+        // Delete messages
+        foreach ($groupe->getMessages() as $message) {
+            $entityManager->remove($message);
+        }
+
+        // Delete members
+        foreach ($groupe->getMembres() as $membre) {
+            $entityManager->remove($membre);
+        }
+
+        // Delete the group
+        $entityManager->remove($groupe);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'redirect' => $this->generateUrl('groupe_index'),
         ]);
     }
 }

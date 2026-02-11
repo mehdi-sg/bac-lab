@@ -123,7 +123,7 @@ class NotificationController extends AbstractController
         }
 
         $membre->setStatut('ACCEPTED');
-        $notification->setRead(true);
+        $entityManager->remove($notification);
         
         // Create notification for the accepted user
         $requester = $membre->getUtilisateur();
@@ -179,14 +179,14 @@ class NotificationController extends AbstractController
         }
         
         if (!$membre instanceof MembreGroupe) {
-            // For old notifications without membre, just mark as read
-            $notification->setRead(true);
+            // For old notifications without membre, just remove it
+            $entityManager->remove($notification);
             $entityManager->flush();
             return $this->json(['success' => true]);
         }
 
         $membre->setStatut('REJECTED');
-        $notification->setRead(true);
+        $entityManager->remove($notification);
         
         // Create notification for the rejected user
         $requester = $membre->getUtilisateur();
