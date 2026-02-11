@@ -290,6 +290,7 @@
   margin-bottom: 20px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1021,7 +1022,7 @@
 /* Version content */
 .fiche-history-content {
   border-radius: var(--radius-sm);
-  background: var(--darker);
+  background: rgba(255, 255, 255, 0.02);
   color: var(--text-primary);
   border: 1px solid var(--card-border);
   padding: 16px;
@@ -1044,20 +1045,6 @@
   width: 100%;
   display: flex;
   justify-content: center;
-}
-
-/* ===== HISTORY CONTENT (LIGHT, NOT BLACK) ===== */
-.fiche-history-content {
-  background: rgba(255, 255, 255, 0.02);
-  color: var(--text-primary);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-sm);
-  padding: 16px;
-  white-space: pre-wrap;
-  word-break: break-word;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.875rem;
-  line-height: 1.6;
 }
 
 /* =========================================================
