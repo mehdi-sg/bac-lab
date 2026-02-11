@@ -465,7 +465,7 @@
                                     <i class="fas fa-ellipsis-v text-white" style="font-size: 14px;"></i>
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right glass-dark shadow-lg" style="border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
-                                    {% if isOwner %}
+                                    {% if isOwner or isAdmin %}
                                     <a class="dropdown-item text-white py-2" href="{{ path('groupe_edit', {'id': groupe.id}) }}">
                                         <i class="fas fa-edit mr-2"></i>Modifier le groupe
                                     </a>
@@ -473,9 +473,6 @@
                                         <i class="fas fa-users mr-2"></i>Gerer les membres
                                     </a>
                                     {% endif %}
-                                    <a class="dropdown-item text-white py-2" href="#">
-                                        <i class="fas fa-user-plus mr-2"></i>Inviter des membres
-                                    </a>
                                     {% if isOwner or isAdmin %}
                                     <div class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></div>
                                     <a class="dropdown-item text-danger py-2" href="#" id="deleteGroupBtn">
@@ -654,7 +651,7 @@
                                 </button>
                             </div>
                         </div>
-                        {% elseif not isMember and app.user %}
+                        {% elseif (not isMember and not isAdmin) and app.user %}
                         <div class="chat-input px-4 py-4">
                             <div class="group-info text-center p-4">
                                 <i class="fas fa-lock mb-3" style="color: #667eea; font-size: 2rem;"></i>

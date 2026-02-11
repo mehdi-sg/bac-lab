@@ -36,6 +36,18 @@ class GroupeController extends AbstractController
         // Build query to filter groups
         $queryBuilder = $groupeRepository->createQueryBuilder('g');
         
+        // Filter by user's filiere for non-admin users
+        if ($user instanceof Utilisateur && !$isAdmin) {
+            $userFiliere = $user->getProfil()?->getFiliere();
+            if ($userFiliere) {
+                $queryBuilder->andWhere('g.filiere = :filiere')
+                            ->setParameter('filiere', $userFiliere);
+            } else {
+                // If user has no filiere, show empty results
+                $queryBuilder->andWhere('1 = 0');
+            }
+        }
+        
         // Filter by visibility
         if ($filter === 'public') {
             $queryBuilder->andWhere('g.isPublic = true');
@@ -44,7 +56,7 @@ class GroupeController extends AbstractController
         }
         
         // For non-logged in users, only show public groups
-        // Admins can see all groups
+        // Admins can see all groups (already filtered by filiere above for non-admins)
         if (!$user instanceof UserInterface) {
             $queryBuilder->andWhere('g.isPublic = true');
         }
@@ -63,20 +75,25 @@ class GroupeController extends AbstractController
             }
         }
         
-        // Get statistics
-        $totalGroupes = count($groupes);
-        $publicGroupes = count(array_filter($groupes, fn($g) => $g->isPublic()));
-        $privateGroupes = $totalGroupes - $publicGroupes;
-        $myGroupes = count($userGroups);
-        
         // Get featured/hottest groups (most members)
-        $featuredGroups = $groupeRepository->createQueryBuilder('g')
+        $featuredQueryBuilder = $groupeRepository->createQueryBuilder('g')
             ->leftJoin('g.membres', 'm')
             ->groupBy('g.id')
             ->orderBy('COUNT(m.id)', 'DESC')
-            ->setMaxResults(3)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults(3);
+        
+        // Filter featured groups by user's filiere for non-admin users
+        if ($user instanceof Utilisateur && !$isAdmin) {
+            $userFiliere = $user->getProfil()?->getFiliere();
+            if ($userFiliere) {
+                $featuredQueryBuilder->andWhere('g.filiere = :filiere')
+                                    ->setParameter('filiere', $userFiliere);
+            } else {
+                $featuredQueryBuilder->andWhere('1 = 0');
+            }
+        }
+        
+        $featuredGroups = $featuredQueryBuilder->getQuery()->getResult();
         
         // Get filieres for filtering
         $filieres = ['Mathématiques', 'Sciences', 'Physique', 'Chimie', 'Technologie'];
@@ -85,12 +102,6 @@ class GroupeController extends AbstractController
             'groupes' => $groupes,
             'userMemberships' => $userMemberships,
             'currentFilter' => $filter,
-            'stats' => [
-                'total' => $totalGroupes,
-                'public' => $publicGroupes,
-                'private' => $privateGroupes,
-                'myGroups' => $myGroupes,
-            ],
             'featuredGroups' => $featuredGroups,
             'filieres' => $filieres,
             'isAdmin' => $isAdmin,
@@ -459,8 +470,9 @@ class GroupeController extends AbstractController
     ): Response {
         $user = $this->getUser();
         
-        // Only owner can accept members
-        if ($groupe->getCreateur() !== $user) {
+        // Only owner or admin can accept members
+        $isAdmin = ($user instanceof Utilisateur && $user->isAdmin());
+        if ($groupe->getCreateur() !== $user && !$isAdmin) {
             return $this->json(['error' => 'Non autorisé'], 403);
         }
 
@@ -499,8 +511,9 @@ class GroupeController extends AbstractController
     ): Response {
         $user = $this->getUser();
         
-        // Only owner can reject members
-        if ($groupe->getCreateur() !== $user) {
+        // Only owner or admin can reject members
+        $isAdmin = ($user instanceof Utilisateur && $user->isAdmin());
+        if ($groupe->getCreateur() !== $user && !$isAdmin) {
             return $this->json(['error' => 'Non autorisé'], 403);
         }
 
@@ -538,8 +551,9 @@ class GroupeController extends AbstractController
     ): Response {
         $user = $this->getUser();
         
-        // Only owner can remove members
-        if ($groupe->getCreateur() !== $user) {
+        // Only owner or admin can remove members
+        $isAdmin = ($user instanceof Utilisateur && $user->isAdmin());
+        if ($groupe->getCreateur() !== $user && !$isAdmin) {
             return $this->json(['error' => 'Non autorisé'], 403);
         }
 
@@ -709,10 +723,11 @@ class GroupeController extends AbstractController
             return $this->json(['error' => 'Vous devez être connecté'], 401);
         }
 
-        // Check if user is member or owner
+        // Check if user is member, owner, or admin
         $isOwner = ($groupe->getCreateur() === $user);
+        $isAdmin = ($user instanceof Utilisateur && $user->isAdmin());
         
-        if (!$isOwner) {
+        if (!$isOwner && !$isAdmin) {
             $membership = $membreGroupeRepository->findOneBy([
                 'utilisateur' => $user,
                 'groupe' => $groupe,
