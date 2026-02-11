@@ -1,0 +1,94 @@
+{{ form_start(form, { attr: { class: 'needs-validation' } }) }}
+
+<style>
+    /* Center all form inputs */
+    .form-control,
+    .form-select {
+        text-align: center;
+        text-align-last: center;
+    }
+    
+    .form-control::placeholder {
+        text-align: center;
+        opacity: 0.6;
+    }
+    
+    textarea.form-control {
+        text-align: left;
+        text-align-last: left;
+    }
+    
+    .form-select option {
+        text-align: center;
+    }
+    
+    /* Nice-select centering */
+    .nice-select {
+        text-align: center !important;
+        text-align-last: center !important;
+        width: 100%;
+        border-radius: 14px;
+        padding: 16px 20px !important;
+        border: 2px solid #e8e8e8;
+        height: auto;
+        line-height: normal;
+    }
+    
+    .nice-select:after {
+        right: 50% !important;
+        transform: translateX(50%) !important;
+        margin-right: 0 !important;
+    }
+    
+    .nice-select .list {
+        text-align: center;
+        width: 100%;
+    }
+    
+    .nice-select .list li {
+        text-align: center;
+    }
+</style>
+
+<div class="row g-3">
+    <div class="col-12">
+        {{ form_row(form.titre) }}
+    </div>
+
+    <div class="col-12">
+        {{ form_row(form.description) }}
+    </div>
+
+    <div class="col-md-6">
+        {{ form_row(form.auteur) }}
+    </div>
+
+    <div class="col-md-6">
+        {{ form_row(form.typeFichier) }}
+    </div>
+
+    <div class="col-md-6">
+        {{ form_row(form.categorie) }}
+    </div>
+
+    <div class="col-md-6">
+        {{ form_row(form.imageCouverture) }}
+    </div>
+
+    <div class="col-md-6">
+        {{ form_row(form.tags) }}
+    </div>
+
+    <div class="col-12 d-flex align-items-center">
+        {{ form_row(form.estActive) }}
+    </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+    <button class="btn btn-primary px-4">
+        {{ button_label|default('Enregistrer') }}
+    </button>
+    <a class="btn btn-outline-secondary" href="{{ path('app_ressource_index') }}">Retour</a>
+</div>
+
+{{ form_end(form) }}

@@ -3,8 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\RessourceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\DBAL\Types\Types;
+
 
 #[ORM\Entity(repositoryClass: RessourceRepository::class)]
 class Ressource
@@ -30,10 +34,7 @@ class Ressource
     private ?string $urlFichier = null;
 
     #[ORM\Column(length: 50)]
-    #[Assert\Choice(
-        choices: ['PDF', 'VIDEO', 'LIEN'],
-        message: 'Type de fichier invalide'
-    )]
+    #[Assert\Choice(choices: ['PDF', 'VIDEO', 'LIEN'], message: 'Type de fichier invalide')]
     private ?string $typeFichier = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -41,6 +42,9 @@ class Ressource
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tags = null;
+    
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $categorie = null;
 
     #[ORM\Column(nullable: true)]
     #[Assert\PositiveOrZero(message: 'La taille doit être positive')]
@@ -52,32 +56,31 @@ class Ressource
     #[ORM\Column(options: ['default' => 0])]
     private int $nombreTelechargements = 0;
 
-    #[ORM\Column(type: 'decimal', precision: 3, scale: 2, options: ['default' => 0])]
-    private float $noteMoyenne = 0.00;
+    #[ORM\Column(type: 'decimal', precision: 3, scale: 2, options: ['default' => '0.00'])]
+    private string $noteMoyenne = '0.00';
 
     #[ORM\Column(length: 50, options: ['default' => 'EN_ATTENTE'])]
     #[Assert\Choice(['EN_ATTENTE', 'VALIDEE', 'REJETEE'])]
     private string $statut = 'EN_ATTENTE';
 
-    #[ORM\Column]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private \DateTimeInterface $dateAjout;
 
     #[ORM\Column(options: ['default' => true])]
     private bool $estActive = true;
 
-
-    #[ORM\ManyToOne(inversedBy: 'ressources')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?TypeRessource $typeRessource = null;
-
-    public function getTypeRessource(): ?TypeRessource { return $this->typeRessource; }
-    public function setTypeRessource(?TypeRessource $typeRessource): self { $this->typeRessource = $typeRessource; return $this; }
- 
+    #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: EvaluationRessource::class, orphanRemoval: true)]
+    private Collection $evaluations;
 
     public function __construct()
     {
         $this->dateAjout = new \DateTime();
+        $this->evaluations = new ArrayCollection();
     }
+
+    // --------------------
+    // Getters / Setters
+    // --------------------
 
     public function getId(): ?int
     {
@@ -160,6 +163,17 @@ class Ressource
         $this->tags = $tags;
         return $this;
     }
+    
+    public function getCategorie(): ?string
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(?string $categorie): self
+    {
+        $this->categorie = $categorie;
+        return $this;
+    }
 
     public function getTailleFichier(): ?int
     {
@@ -171,6 +185,147 @@ class Ressource
         $this->tailleFichier = $tailleFichier;
         return $this;
     }
+
+    public function getNombreVues(): int
+    {
+        return $this->nombreVues;
+    }
+
+    public function setNombreVues(int $nombreVues): self
+    {
+        $this->nombreVues = $nombreVues;
+        return $this;
+    }
+
+    public function getNombreTelechargements(): int
+    {
+        return $this->nombreTelechargements;
+    }
+
+    public function setNombreTelechargements(int $nombreTelechargements): self
+    {
+        $this->nombreTelechargements = $nombreTelechargements;
+        return $this;
+    }
+
+    public function getNoteMoyenne(): string
+    {
+        return $this->noteMoyenne;
+    }
+
+    public function setNoteMoyenne(string $noteMoyenne): self
+    {
+        $this->noteMoyenne = $noteMoyenne;
+        return $this;
+    }
+
+    public function getStatut(): string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): self
+    {
+        $this->statut = $statut;
+        return $this;
+    }
+
+    public function getDateAjout(): \DateTimeInterface
+    {
+        return $this->dateAjout;
+    }
+
+    public function setDateAjout(\DateTimeInterface $dateAjout): self
+    {
+        $this->dateAjout = $dateAjout;
+        return $this;
+    }
+
+    public function isEstActive(): bool
+    {
+        return $this->estActive;
+    }
+
+    public function setEstActive(bool $estActive): self
+    {
+        $this->estActive = $estActive;
+        return $this;
+    }
+
+    // --------------------
+    // Collections
+    // --------------------
+
+    /**
+     * @return Collection<int, EvaluationRessource>
+     */
+    public function getEvaluations(): Collection
+    {
+        return $this->evaluations;
+    }
+
+    public function addEvaluation(EvaluationRessource $evaluation): self
+    {
+        if (!$this->evaluations->contains($evaluation)) {
+            $this->evaluations->add($evaluation);
+            $evaluation->setRessource($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvaluation(EvaluationRessource $evaluation): self
+    {
+        if ($this->evaluations->removeElement($evaluation)) {
+            if ($evaluation->getRessource() === $this) {
+                $evaluation->setRessource(null);
+            }
+        }
+
+        return $this;
+    }
+    
+    /**
+     * Get all comments from evaluations
+     * @return Collection<int, EvaluationRessource>
+     */
+    public function getComments(): Collection
+    {
+        return $this->evaluations->filter(fn($e) => $e->hasComment());
+    }
+    
+    /**
+     * Get all ratings from evaluations
+     * @return Collection<int, EvaluationRessource>
+     */
+    public function getRatings(): Collection
+    {
+        return $this->evaluations->filter(fn($e) => $e->hasRating());
+    }
+    
+    /**
+     * Calculate average rating
+     */
+    public function calculateAverageRating(): void
+    {
+        $ratings = $this->getRatings();
+        if ($ratings->count() === 0) {
+            $this->noteMoyenne = '0.00';
+            return;
+        }
+        
+        $sum = 0;
+        foreach ($ratings as $evaluation) {
+            $sum += $evaluation->getNote();
+        }
+        
+        $average = $sum / $ratings->count();
+        $this->noteMoyenne = number_format($average, 2, '.', '');
+    }
+
+    // --------------------
+    // Helpers
+    // --------------------
 
     public function incrementVues(): void
     {

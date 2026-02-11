@@ -24,6 +24,66 @@
         <link rel="stylesheet" href="{{ asset('front/css/slick.css') }}">
         <link rel="stylesheet" href="{{ asset('front/css/nice-select.css') }}">
         <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
+        <style>
+            .modern-navbar {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 15px 0;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            .modern-navbar .navbar-brand img {
+                height: 50px;
+                width: auto;
+            }
+            .modern-navbar .nav-link {
+                color: white !important;
+                font-weight: 500;
+                padding: 8px 20px !important;
+                transition: all 0.3s;
+                text-decoration: none;
+            }
+            .modern-navbar .nav-link:hover {
+                background: rgba(255,255,255,0.2);
+                border-radius: 6px;
+            }
+            .modern-navbar .btn-register {
+                background: white;
+                color: #667eea;
+                padding: 8px 24px;
+                border-radius: 6px;
+                font-weight: 600;
+                transition: all 0.3s;
+                text-decoration: none;
+                display: inline-block;
+            }
+            .modern-navbar .btn-register:hover {
+                background: #f0f0f0;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+            .modern-navbar .btn-login {
+                background: transparent;
+                color: white;
+                padding: 8px 24px;
+                border: 2px solid white;
+                border-radius: 6px;
+                font-weight: 600;
+                transition: all 0.3s;
+                text-decoration: none;
+                display: inline-block;
+            }
+            .modern-navbar .btn-login:hover {
+                background: white;
+                color: #667eea;
+            }
+            body {
+                padding-top: 80px;
+            }
+        </style>
     {% endblock %}
 </head>
 
@@ -39,59 +99,30 @@
         </div>
     </div>
     
-    <header>
-        <div class="header-area header-transparent">
-            <div class="main-header ">
-                <div class="header-bottom header-sticky">
-                    <div class="container-fluid">
-                        <div class="row align-items-center">
-                            <div class="col-xl-2 col-lg-2">
-                                <div class="logo">
-                                    <a href="{{ path('app_home') }}"><img  src="{{ asset('front/img/logo/logo.png') }}" style="width:100px;height:100px;" alt="BacLab Logo"></a>
-                                </div>
-                            </div>
-                            <div class="col-xl-10 col-lg-10">
-                                <div class="menu-wrapper d-flex align-items-center justify-content-end">
-                                    <div class="main-menu d-none d-lg-block">
-                                        <nav>
-                                            <ul id="navigation">                                                                                          
-                                                <li><a href="{{ path('app_home') }}">Accueil</a></li>
-                                                <li><a href="#">Révision</a>
-                                                    <ul class="submenu">
-                                                        <li><a href="#">Cours & PDF</a></li>
-                                                        <li><a href="#">Quiz & Tests</a></li>
-                                                        <li><a href="{{ path('fiche_index') }}">fiches & co-édition</a></li>
-                                                    </ul>
-                                                </li>
-                                                <li><a href="#">Orientation</a>
-                                                    <ul class="submenu">
-                                                        <li><a href="#">Calcul du Score</a></li>
-                                                        <li><a href="#">Guide des Filières</a></li>
-                                                    </ul>
-                                                </li>
-                                                <li><a href="#">Communauté</a></li>
-                                                
-                                                {% if is_granted('ROLE_USER') %}
-                                                    <li class="button-header"><a href="{{ path('app_profile') }}" class="btn">Mon Profil</a></li>
-                                                    <li class="button-header"><a href="{{ path('app_logout') }}" class="btn btn3">Déconnexion</a></li>
-                                                {% else %}
-                                                    <li class="button-header margin-left"><a href="{{ path('app_register') }}" class="btn">S'inscrire</a></li>
-                                                    <li class="button-header"><a href="{{ path('app_login') }}" class="btn btn3">Connexion</a></li>
-                                                {% endif %}
-                                            </ul>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div> 
-                            <div class="col-12">
-                                <div class="mobile_menu d-block d-lg-none"></div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Modern Navbar -->
+    <nav class="modern-navbar">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <a class="navbar-brand" href="{{ path('app_home') }}">
+                    <img src="{{ asset('front/img/logo/logo.png') }}" alt="BacLab Logo">
+                </a>
+                <div class="d-flex align-items-center gap-4">
+                    <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
+                    <a class="nav-link" href="{{ path('app_bibliotheque_index') }}">Révision</a>
+                    <a class="nav-link" href="#">Orientation</a>
+                    <a class="nav-link" href="#">Communauté</a>
+                    
+                    {% if is_granted('ROLE_USER') %}
+                        <a class="nav-link" href="{{ path('app_profile') }}">Mon Profil</a>
+                        <a class="btn-login" href="{{ path('app_logout') }}">Déconnexion</a>
+                    {% else %}
+                        <a class="btn-register" href="{{ path('app_register') }}">S'inscrire</a>
+                        <a class="btn-login" href="{{ path('app_login') }}">Connexion</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
-    </header>
+    </nav>
 
     <main>
         {% block body %}{% endblock %}

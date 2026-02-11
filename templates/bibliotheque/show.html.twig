@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ ressource.titre }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    <a href="{{ path('app_bibliotheque_index') }}" class="btn btn-link mb-3">← Retour</a>
+
+    <div class="card">
+        <div class="card-body">
+            <h1 class="h3">{{ ressource.titre }}</h1>
+
+            <div class="text-muted mb-2">
+                {{ ressource.typeFichier }}
+                {% if ressource.categorie %} • {{ ressource.categorie }}{% endif %}
+                {% if ressource.auteur %} • {{ ressource.auteur }}{% endif %}
+            </div>
+
+            {% if ressource.imageCouverture %}
+                <img src="{{ ressource.imageCouverture }}" class="img-fluid rounded mb-3" alt="cover">
+            {% endif %}
+
+            {% if ressource.description %}
+                <p>{{ ressource.description }}</p>
+            {% endif %}
+
+            {% if ressource.tags %}
+                <p><strong>Tags:</strong> {{ ressource.tags }}</p>
+            {% endif %}
+
+            <p class="mb-3">
+                👁 <strong>{{ ressource.nombreVues }}</strong> vues
+                • ⬇ <strong>{{ ressource.nombreTelechargements }}</strong> téléchargements
+                • ⭐ <strong>{{ ressource.noteMoyenne }}</strong>/5
+            </p>
+
+            <div class="d-flex gap-2">
+                <a class="btn btn-primary" href="{{ path('app_bibliotheque_telecharger', {id: ressource.id}) }}">
+                    Télécharger / Ouvrir
+                </a>
+
+                <button class="btn btn-outline-secondary" disabled title="Disponible après connexion">
+                    Ajouter aux favoris (login)
+                </button>
+
+                <button class="btn btn-outline-secondary" disabled title="Disponible après connexion">
+                    Commenter (login)
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

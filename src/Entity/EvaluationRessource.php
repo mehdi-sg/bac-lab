@@ -19,7 +19,8 @@ class EvaluationRessource
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    // Rating (from EvaluationRessource)
+    #[ORM\Column(nullable: true)]
     #[Assert\Range(
         min: 1,
         max: 5,
@@ -27,8 +28,32 @@ class EvaluationRessource
     )]
     private ?int $note = null;
 
+    // Comment (from CommentaireRessource)
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\Length(
+        min: 10, 
+        max: 1000, 
+        minMessage: 'Le commentaire doit contenir au moins {{ limit }} caractères', 
+        maxMessage: 'Le commentaire ne peut pas dépasser {{ limit }} caractères'
+    )]
+    private ?string $commentaire = null;
+
+    // Favorite flag (from FavoriRessource)
+    #[ORM\Column(type: 'boolean')]
+    private bool $estFavori = false;
+
+    // Report flag (from CommentaireRessource)
+    #[ORM\Column(type: 'boolean')]
+    private bool $estSignale = false;
+
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $dateEvaluation = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $dateCommentaire = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $dateFavori = null;
 
     #[ORM\ManyToOne(inversedBy: 'evaluations')]
     #[ORM\JoinColumn(nullable: false)]
@@ -53,9 +78,50 @@ class EvaluationRessource
         return $this->note;
     }
 
-    public function setNote(int $note): self
+    public function setNote(?int $note): self
     {
         $this->note = $note;
+        return $this;
+    }
+
+    public function getCommentaire(): ?string
+    {
+        return $this->commentaire;
+    }
+
+    public function setCommentaire(?string $commentaire): self
+    {
+        $this->commentaire = $commentaire;
+        if ($commentaire && !$this->dateCommentaire) {
+            $this->dateCommentaire = new \DateTime();
+        }
+        return $this;
+    }
+
+    public function isEstFavori(): bool
+    {
+        return $this->estFavori;
+    }
+
+    public function setEstFavori(bool $estFavori): self
+    {
+        $this->estFavori = $estFavori;
+        if ($estFavori && !$this->dateFavori) {
+            $this->dateFavori = new \DateTime();
+        } elseif (!$estFavori) {
+            $this->dateFavori = null;
+        }
+        return $this;
+    }
+
+    public function isEstSignale(): bool
+    {
+        return $this->estSignale;
+    }
+
+    public function setEstSignale(bool $estSignale): self
+    {
+        $this->estSignale = $estSignale;
         return $this;
     }
 
@@ -67,6 +133,28 @@ class EvaluationRessource
     public function setDateEvaluation(\DateTimeInterface $dateEvaluation): self
     {
         $this->dateEvaluation = $dateEvaluation;
+        return $this;
+    }
+
+    public function getDateCommentaire(): ?\DateTimeInterface
+    {
+        return $this->dateCommentaire;
+    }
+
+    public function setDateCommentaire(?\DateTimeInterface $dateCommentaire): self
+    {
+        $this->dateCommentaire = $dateCommentaire;
+        return $this;
+    }
+
+    public function getDateFavori(): ?\DateTimeInterface
+    {
+        return $this->dateFavori;
+    }
+
+    public function setDateFavori(?\DateTimeInterface $dateFavori): self
+    {
+        $this->dateFavori = $dateFavori;
         return $this;
     }
 
@@ -91,4 +179,21 @@ class EvaluationRessource
         $this->utilisateur = $utilisateur;
         return $this;
     }
+
+    /**
+     * Check if this evaluation has a rating
+     */
+    public function hasRating(): bool
+    {
+        return $this->note !== null;
+    }
+
+    /**
+     * Check if this evaluation has a comment
+     */
+    public function hasComment(): bool
+    {
+        return $this->commentaire !== null && trim($this->commentaire) !== '';
+    }
 }
+

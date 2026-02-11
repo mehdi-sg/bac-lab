@@ -1,0 +1,84 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}{{ ressource.titre }}{% endblock %}
+{% block page_title %}Détails de la Ressource{% endblock %}
+
+{% block body %}
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th width="200">ID</th>
+                    <td>{{ ressource.id }}</td>
+                </tr>
+                <tr>
+                    <th>Titre</th>
+                    <td>{{ ressource.titre }}</td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td>{{ ressource.description ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Auteur</th>
+                    <td>{{ ressource.auteur ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Type de fichier</th>
+                    <td>{{ ressource.typeFichier }}</td>
+                </tr>
+                <tr>
+                    <th>Catégorie</th>
+                    <td>{{ ressource.categorie ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Tags</th>
+                    <td>{{ ressource.tags ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Statut</th>
+                    <td>
+                        <span class="badge bg-{{ ressource.statut == 'VALIDEE' ? 'success' : (ressource.statut == 'REJETEE' ? 'danger' : 'warning') }}">
+                            {{ ressource.statut }}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Active</th>
+                    <td>
+                        <span class="badge bg-{{ ressource.estActive ? 'success' : 'secondary' }}">
+                            {{ ressource.estActive ? 'Oui' : 'Non' }}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Vues</th>
+                    <td>{{ ressource.nombreVues }}</td>
+                </tr>
+                <tr>
+                    <th>Téléchargements</th>
+                    <td>{{ ressource.nombreTelechargements }}</td>
+                </tr>
+                <tr>
+                    <th>Note moyenne</th>
+                    <td>{{ ressource.noteMoyenne }}/5</td>
+                </tr>
+                <tr>
+                    <th>Date d'ajout</th>
+                    <td>{{ ressource.dateAjout|date('d/m/Y H:i') }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="d-flex gap-2 mt-4">
+            <a href="{{ path('app_admin_ressource_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Retour
+            </a>
+            <a href="{{ path('app_admin_ressource_edit', {'id': ressource.id}) }}" class="btn btn-primary">
+                <i class="fas fa-edit me-2"></i>Modifier
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
