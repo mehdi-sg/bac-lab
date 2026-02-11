@@ -2,58 +2,282 @@
 
 {% block title %}{{ ressource.titre }}{% endblock %}
 
+{% block css %}
+    {{ parent() }}
+    <style>
+        .resource-detail-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 0;
+            margin-top: 80px;
+            color: white;
+        }
+        .resource-detail-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 40px;
+            margin-top: -30px;
+            position: relative;
+            z-index: 10;
+        }
+        .resource-icon-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .resource-icon-large.pdf { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); }
+        .resource-icon-large.video { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); }
+        .resource-icon-large.lien { background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); }
+        .btn-download {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        .btn-favoris {
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 14px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: white;
+        }
+        .btn-favoris:hover, .btn-favoris.active {
+            background: #667eea;
+            color: white;
+        }
+        .comment-section {
+            margin-top: 40px;
+        }
+        .comment-form {
+            background: #f8f9fa;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+        }
+        .comment-card {
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .rating-stars {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .rating-stars input[type="radio"] {
+            display: none;
+        }
+        .rating-stars label {
+            font-size: 32px;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .rating-stars label:hover,
+        .rating-stars label:hover ~ label,
+        .rating-stars input[type="radio"]:checked ~ label {
+            color: #fdcb6e;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-<div class="container mt-4">
+<div class="resource-detail-header">
+    <div class="container">
+        <a href="{{ path('app_bibliotheque_index') }}" class="btn btn-light btn-sm mb-3">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+</div>
+
+<div class="container mb-5">
     {% for label, messages in app.flashes %}
         {% for message in messages %}
-            <div class="alert alert-{{ label }}">{{ message }}</div>
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
         {% endfor %}
     {% endfor %}
 
-    <a href="{{ path('app_bibliotheque_index') }}" class="btn btn-link mb-3">← Retour</a>
+    <div class="resource-detail-card">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="resource-icon-large {{ ressource.typeFichier|lower }}">
+                    {% if ressource.typeFichier == 'PDF' %}
+                        📄
+                    {% elseif ressource.typeFichier == 'VIDEO' %}
+                        🎬
+                    {% elseif ressource.typeFichier == 'LIEN' %}
+                        🔗
+                    {% else %}
+                        📝
+                    {% endif %}
+                </div>
 
-    <div class="card">
-        <div class="card-body">
-            <h1 class="h3">{{ ressource.titre }}</h1>
+                <h1 class="h2 mb-3">{{ ressource.titre }}</h1>
 
-            <div class="text-muted mb-2">
-                {{ ressource.typeFichier }}
-                {% if ressource.categorie %} • {{ ressource.categorie }}{% endif %}
-                {% if ressource.auteur %} • {{ ressource.auteur }}{% endif %}
+                <div class="text-muted mb-3">
+                    <span class="badge bg-primary">{{ ressource.typeFichier }}</span>
+                    {% if ressource.categorie %}
+                        <span class="badge bg-secondary">{{ ressource.categorie }}</span>
+                    {% endif %}
+                    {% if ressource.auteur %}
+                        <span class="ms-2">Par {{ ressource.auteur }}</span>
+                    {% endif %}
+                </div>
+
+                {% if ressource.description %}
+                    <p class="lead">{{ ressource.description }}</p>
+                {% endif %}
+
+                {% if ressource.tags %}
+                    <div class="mb-3">
+                        <strong>Tags:</strong>
+                        {% for tag in ressource.tags|split(',') %}
+                            <span class="badge bg-light text-dark">{{ tag|trim }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="d-flex gap-4 mb-4">
+                    <div>
+                        <i class="fas fa-eye text-primary"></i>
+                        <strong>{{ ressource.nombreVues }}</strong> vues
+                    </div>
+                    <div>
+                        <i class="fas fa-download text-success"></i>
+                        <strong>{{ ressource.nombreTelechargements }}</strong> téléchargements
+                    </div>
+                    <div>
+                        <i class="fas fa-star text-warning"></i>
+                        <strong>{{ ressource.noteMoyenne|number_format(1) }}</strong>/5
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 flex-wrap">
+                    {% if is_granted('ROLE_USER') %}
+                        <a class="btn btn-download" href="{{ path('app_bibliotheque_telecharger', {id: ressource.id}) }}">
+                            <i class="fas fa-download"></i> Télécharger / Ouvrir
+                        </a>
+
+                        <form method="post" action="{{ path('app_evaluation_favoris_toggle', {id: ressource.id}) }}" class="d-inline">
+                            <button type="submit" class="btn btn-favoris">
+                                <i class="fas fa-heart"></i> Ajouter aux favoris
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="btn btn-download">
+                            <i class="fas fa-lock"></i> Connectez-vous pour télécharger
+                        </a>
+                    {% endif %}
+                </div>
             </div>
 
             {% if ressource.imageCouverture %}
-                <img src="{{ ressource.imageCouverture }}" class="img-fluid rounded mb-3" alt="cover">
+                <div class="col-md-4">
+                    <img src="{{ ressource.imageCouverture }}" class="img-fluid rounded" alt="cover">
+                </div>
             {% endif %}
+        </div>
+    </div>
 
-            {% if ressource.description %}
-                <p>{{ ressource.description }}</p>
-            {% endif %}
+    <!-- Section Notation et Commentaires -->
+    {% if is_granted('ROLE_USER') %}
+        <div class="comment-section">
+            <h3 class="mb-4">Évaluer cette ressource</h3>
+            
+            <div class="comment-form">
+                <form method="post" action="{{ path('app_evaluation_note', {id: ressource.id}) }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Votre note</label>
+                        <div class="rating-stars">
+                            <input type="radio" name="note" value="5" id="star5">
+                            <label for="star5">★</label>
+                            <input type="radio" name="note" value="4" id="star4">
+                            <label for="star4">★</label>
+                            <input type="radio" name="note" value="3" id="star3">
+                            <label for="star3">★</label>
+                            <input type="radio" name="note" value="2" id="star2">
+                            <label for="star2">★</label>
+                            <input type="radio" name="note" value="1" id="star1">
+                            <label for="star1">★</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-star"></i> Noter
+                    </button>
+                </form>
+            </div>
 
-            {% if ressource.tags %}
-                <p><strong>Tags:</strong> {{ ressource.tags }}</p>
-            {% endif %}
-
-            <p class="mb-3">
-                👁 <strong>{{ ressource.nombreVues }}</strong> vues
-                • ⬇ <strong>{{ ressource.nombreTelechargements }}</strong> téléchargements
-                • ⭐ <strong>{{ ressource.noteMoyenne }}</strong>/5
-            </p>
-
-            <div class="d-flex gap-2">
-                <a class="btn btn-primary" href="{{ path('app_bibliotheque_telecharger', {id: ressource.id}) }}">
-                    Télécharger / Ouvrir
-                </a>
-
-                <button class="btn btn-outline-secondary" disabled title="Disponible après connexion">
-                    Ajouter aux favoris (login)
-                </button>
-
-                <button class="btn btn-outline-secondary" disabled title="Disponible après connexion">
-                    Commenter (login)
-                </button>
+            <div class="comment-form">
+                <form method="post" action="{{ path('app_evaluation_commentaire', {id: ressource.id}) }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Votre commentaire</label>
+                        <textarea name="commentaire" class="form-control" rows="4" placeholder="Partagez votre avis sur cette ressource..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-comment"></i> Commenter
+                    </button>
+                </form>
             </div>
         </div>
+    {% else %}
+        <div class="alert alert-info mt-4">
+            <i class="fas fa-info-circle"></i>
+            <a href="{{ path('app_login') }}">Connectez-vous</a> pour noter et commenter cette ressource.
+        </div>
+    {% endif %}
+
+    <!-- Liste des commentaires -->
+    <div class="mt-5">
+        <h3 class="mb-4">Commentaires ({{ ressource.getComments()|length }})</h3>
+        
+        {% if ressource.getComments() is empty %}
+            <p class="text-muted">Aucun commentaire pour le moment. Soyez le premier à commenter!</p>
+        {% else %}
+            {% for evaluation in ressource.getComments() %}
+                <div class="comment-card">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <strong>
+                                {% if evaluation.utilisateur.profil %}
+                                    {{ evaluation.utilisateur.profil.nom }} {{ evaluation.utilisateur.profil.prenom }}
+                                {% else %}
+                                    {{ evaluation.utilisateur.email }}
+                                {% endif %}
+                            </strong>
+                            {% if evaluation.note %}
+                                <span class="ms-2">
+                                    {% for i in 1..5 %}
+                                        <i class="fas fa-star {{ i <= evaluation.note ? 'text-warning' : 'text-muted' }}"></i>
+                                    {% endfor %}
+                                </span>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">{{ evaluation.dateCommentaire|date('d/m/Y H:i') }}</small>
+                    </div>
+                    <p class="mb-0">{{ evaluation.commentaire }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
     </div>
 </div>
 {% endblock %}

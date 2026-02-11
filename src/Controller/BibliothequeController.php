@@ -18,15 +18,27 @@ class BibliothequeController extends AbstractController
         Request $request,
         RessourceRepository $ressourceRepository
     ): Response {
-        $q = $request->query->get('q'); // recherche
-        $typeId = $request->query->getInt('type'); // filtre type (id)
+        $q = $request->query->get('q');
+        $filiere = $request->query->get('filiere');
+        $matiere = $request->query->get('matiere');
+        $typeFichier = $request->query->get('typeFichier');
+        $categorie = $request->query->get('categorie');
 
-        $ressources = $ressourceRepository->findPublicRessources($q, $typeId ?: null);
+        $ressources = $ressourceRepository->findPublicRessources(
+            $q,
+            $filiere,
+            $matiere,
+            $typeFichier,
+            $categorie
+        );
 
         return $this->render('bibliotheque/index.html.twig', [
             'ressources' => $ressources,
             'q' => $q,
-            'typeId' => $typeId,
+            'filiere' => $filiere,
+            'matiere' => $matiere,
+            'typeFichier' => $typeFichier,
+            'categorie' => $categorie,
         ]);
     }
 

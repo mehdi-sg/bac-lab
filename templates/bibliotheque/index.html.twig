@@ -188,50 +188,50 @@
             <div class="row g-3 mb-3">
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold text-muted">Filière</label>
-                    <select class="form-select filter-select" name="filiere">
+                    <select class="form-select filter-select" name="filiere" onchange="this.form.submit()">
                         <option value="">Toutes les filières</option>
-                        <option value="math">Mathématiques</option>
-                        <option value="svt">Sciences de la Vie et de la Terre</option>
-                        <option value="info">Informatique</option>
-                        <option value="technique">Technique</option>
-                        <option value="lettre">Lettres</option>
+                        <option value="math" {{ filiere == 'math' ? 'selected' : '' }}>Mathématiques</option>
+                        <option value="svt" {{ filiere == 'svt' ? 'selected' : '' }}>Sciences de la Vie et de la Terre</option>
+                        <option value="info" {{ filiere == 'info' ? 'selected' : '' }}>Informatique</option>
+                        <option value="technique" {{ filiere == 'technique' ? 'selected' : '' }}>Technique</option>
+                        <option value="lettre" {{ filiere == 'lettre' ? 'selected' : '' }}>Lettres</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold text-muted">Matière</label>
-                    <select class="form-select filter-select" name="matiere">
+                    <select class="form-select filter-select" name="matiere" onchange="this.form.submit()">
                         <option value="">Toutes les matières</option>
-                        <option value="math">Mathématiques</option>
-                        <option value="physique">Physique</option>
-                        <option value="chimie">Chimie</option>
-                        <option value="svt">SVT</option>
-                        <option value="info">Informatique</option>
-                        <option value="francais">Français</option>
-                        <option value="anglais">Anglais</option>
-                        <option value="arabe">Arabe</option>
-                        <option value="philo">Philosophie</option>
-                        <option value="histoire">Histoire-Géographie</option>
-                        <option value="economie">Économie</option>
+                        <option value="math" {{ matiere == 'math' ? 'selected' : '' }}>Mathématiques</option>
+                        <option value="physique" {{ matiere == 'physique' ? 'selected' : '' }}>Physique</option>
+                        <option value="chimie" {{ matiere == 'chimie' ? 'selected' : '' }}>Chimie</option>
+                        <option value="svt" {{ matiere == 'svt' ? 'selected' : '' }}>SVT</option>
+                        <option value="info" {{ matiere == 'info' ? 'selected' : '' }}>Informatique</option>
+                        <option value="francais" {{ matiere == 'francais' ? 'selected' : '' }}>Français</option>
+                        <option value="anglais" {{ matiere == 'anglais' ? 'selected' : '' }}>Anglais</option>
+                        <option value="arabe" {{ matiere == 'arabe' ? 'selected' : '' }}>Arabe</option>
+                        <option value="philo" {{ matiere == 'philo' ? 'selected' : '' }}>Philosophie</option>
+                        <option value="histoire" {{ matiere == 'histoire' ? 'selected' : '' }}>Histoire-Géographie</option>
+                        <option value="economie" {{ matiere == 'economie' ? 'selected' : '' }}>Économie</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold text-muted">Type</label>
-                    <select name="typeFichier" class="form-select filter-select">
+                    <select name="typeFichier" class="form-select filter-select" onchange="this.form.submit()">
                         <option value="">Tous les types</option>
-                        <option value="PDF">📄 PDF</option>
-                        <option value="VIDEO">🎬 Vidéo</option>
-                        <option value="LIEN">🔗 Lien</option>
+                        <option value="PDF" {{ typeFichier == 'PDF' ? 'selected' : '' }}>📄 PDF</option>
+                        <option value="VIDEO" {{ typeFichier == 'VIDEO' ? 'selected' : '' }}>🎬 Vidéo</option>
+                        <option value="LIEN" {{ typeFichier == 'LIEN' ? 'selected' : '' }}>🔗 Lien</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label small fw-semibold text-muted">Chapitre</label>
-                    <select name="categorie" class="form-select filter-select">
-                        <option value="">Tous les chapitres</option>
-                        <option value="Cours">Cours</option>
-                        <option value="Exercices">Exercices</option>
-                        <option value="Corrigé">Corrigé</option>
-                        <option value="Résumé">Résumé</option>
-                        <option value="Bac blanc">Bac blanc</option>
+                    <label class="form-label small fw-semibold text-muted">Catégorie</label>
+                    <select name="categorie" class="form-select filter-select" onchange="this.form.submit()">
+                        <option value="">Toutes les catégories</option>
+                        <option value="Cours" {{ categorie == 'Cours' ? 'selected' : '' }}>Cours</option>
+                        <option value="Exercices" {{ categorie == 'Exercices' ? 'selected' : '' }}>Exercices</option>
+                        <option value="Corrigé" {{ categorie == 'Corrigé' ? 'selected' : '' }}>Corrigé</option>
+                        <option value="Résumé" {{ categorie == 'Résumé' ? 'selected' : '' }}>Résumé</option>
+                        <option value="Bac blanc" {{ categorie == 'Bac blanc' ? 'selected' : '' }}>Bac blanc</option>
                     </select>
                 </div>
             </div>
@@ -297,15 +297,9 @@
                                 </div>
                             {% endif %}
                             
-                            {% if is_granted('ROLE_USER') %}
-                                <a href="{{ path('app_bibliotheque_telecharger', {id: r.id}) }}" class="download-btn text-decoration-none">
-                                    ⬇ Télécharger
-                                </a>
-                            {% else %}
-                                <a href="{{ path('app_register') }}" class="download-btn text-decoration-none">
-                                    🔒 S'inscrire pour télécharger
-                                </a>
-                            {% endif %}
+                            <a href="{{ path('app_bibliotheque_show', {id: r.id}) }}" class="download-btn text-decoration-none">
+                                👁️ Voir
+                            </a>
                         </div>
                     </div>
                 </div>

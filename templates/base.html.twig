@@ -113,6 +113,7 @@
                     <a class="nav-link" href="#">Communauté</a>
                     
                     {% if is_granted('ROLE_USER') %}
+                        <a class="nav-link" href="{{ path('app_dashboard') }}">Mon Tableau de Bord</a>
                         <a class="nav-link" href="{{ path('app_profile') }}">Mon Profil</a>
                         <a class="btn-login" href="{{ path('app_logout') }}">Déconnexion</a>
                     {% else %}

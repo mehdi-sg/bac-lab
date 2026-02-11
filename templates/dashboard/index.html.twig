@@ -1,0 +1,370 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Tableau de Bord{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 60px 0;
+            margin-top: 80px;
+            color: white;
+        }
+        
+        .dashboard-container {
+            margin-top: -40px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+        
+        .stat-icon.resources { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .stat-icon.evaluations { background: linear-gradient(135deg, #fdcb6e, #e17055); }
+        .stat-icon.favoris { background: linear-gradient(135deg, #ff4d8d, #ff6b9d); }
+        .stat-icon.comments { background: linear-gradient(135deg, #00b894, #55efc4); }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: #2d3436;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: #636e72;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title i {
+            color: #667eea;
+        }
+        
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+        }
+        
+        .resource-item:hover {
+            background: #e8e9ff;
+            transform: translateX(4px);
+        }
+        
+        .resource-icon-small {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .resource-icon-small.pdf { background: linear-gradient(135deg, #ffeaa7, #fdcb6e); }
+        .resource-icon-small.video { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
+        .resource-icon-small.lien { background: linear-gradient(135deg, #74b9ff, #0984e3); }
+        
+        .resource-info {
+            flex: 1;
+        }
+        
+        .resource-name {
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 4px;
+        }
+        
+        .resource-meta {
+            font-size: 13px;
+            color: #636e72;
+        }
+        
+        .resource-badge {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-validee { background: #d4f4dd; color: #00b894; }
+        .badge-en-attente { background: #fff3cd; color: #e17055; }
+        .badge-rejetee { background: #ffe0e0; color: #d63031; }
+        
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-view {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-view:hover {
+            background: #5568d3;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #636e72;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            color: #dfe6e9;
+            margin-bottom: 16px;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .quick-action-btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .quick-action-btn.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .quick-action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+        
+        .quick-action-btn.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .quick-action-btn.secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="dashboard-header">
+    <div class="container">
+        <h1 class="display-5 fw-bold mb-2">Mon Tableau de Bord</h1>
+        <p class="lead mb-0">Gérez vos ressources, favoris et évaluations</p>
+    </div>
+</div>
+
+<div class="container dashboard-container mb-5">
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon evaluations">⭐</div>
+            <div class="stat-value">{{ totalEvaluations }}</div>
+            <div class="stat-label">Mes Évaluations</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon favoris">❤️</div>
+            <div class="stat-value">{{ totalFavoris }}</div>
+            <div class="stat-label">Mes Favoris</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon comments">💬</div>
+            <div class="stat-value">{{ totalCommentaires }}</div>
+            <div class="stat-label">Mes Commentaires</div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <a href="{{ path('app_bibliotheque_index') }}" class="quick-action-btn primary">
+            <i class="fas fa-book"></i> Parcourir la bibliothèque
+        </a>
+    </div>
+    
+    <div class="row">
+        <!-- Recent Evaluations -->
+        <div class="col-lg-12">
+            <div class="section-card">
+                <h2 class="section-title">
+                    <i class="fas fa-star"></i>
+                    Mes Évaluations Récentes
+                </h2>
+                
+                {% if recentEvaluations is empty %}
+                    <div class="empty-state">
+                        <i class="fas fa-star-half-alt"></i>
+                        <p>Vous n'avez pas encore évalué de ressources</p>
+                    </div>
+                {% else %}
+                    {% for evaluation in recentEvaluations %}
+                        {% if evaluation.ressource %}
+                            <div class="resource-item">
+                                <div class="resource-icon-small {{ evaluation.ressource.typeFichier|lower }}">
+                                    {% if evaluation.ressource.typeFichier == 'PDF' %}
+                                        📄
+                                    {% elseif evaluation.ressource.typeFichier == 'VIDEO' %}
+                                        🎬
+                                    {% else %}
+                                        🔗
+                                    {% endif %}
+                                </div>
+                                <div class="resource-info">
+                                    <div class="resource-name">{{ evaluation.ressource.titre }}</div>
+                                    <div class="resource-meta">
+                                        {% if evaluation.note %}
+                                            {% for i in 1..5 %}
+                                                <i class="fas fa-star {{ i <= evaluation.note ? 'text-warning' : 'text-muted' }}"></i>
+                                            {% endfor %}
+                                        {% endif %}
+                                        {% if evaluation.dateEvaluation %}
+                                            • {{ evaluation.dateEvaluation|date('d/m/Y') }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <a href="{{ path('app_bibliotheque_show', {id: evaluation.ressource.id}) }}" class="btn-action btn-view">
+                                    Voir
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Favoris -->
+    <div class="section-card">
+        <h2 class="section-title">
+            <i class="fas fa-heart"></i>
+            Mes Favoris
+        </h2>
+        
+        {% if favoris is empty %}
+            <div class="empty-state">
+                <i class="fas fa-heart"></i>
+                <p>Vous n'avez pas encore de favoris</p>
+            </div>
+        {% else %}
+            <div class="row">
+                {% for favori in favoris %}
+                    {% if favori.ressource %}
+                        <div class="col-md-6">
+                            <div class="resource-item">
+                                <div class="resource-icon-small {{ favori.ressource.typeFichier|lower }}">
+                                    {% if favori.ressource.typeFichier == 'PDF' %}
+                                        📄
+                                    {% elseif favori.ressource.typeFichier == 'VIDEO' %}
+                                        🎬
+                                    {% else %}
+                                        🔗
+                                    {% endif %}
+                                </div>
+                                <div class="resource-info">
+                                    <div class="resource-name">{{ favori.ressource.titre }}</div>
+                                    <div class="resource-meta">
+                                        ⭐ {{ favori.ressource.noteMoyenne|number_format(1) }}/5
+                                        • {{ favori.ressource.nombreTelechargements }} téléchargements
+                                    </div>
+                                </div>
+                                <a href="{{ path('app_bibliotheque_show', {id: favori.ressource.id}) }}" class="btn-action btn-view">
+                                    Voir
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

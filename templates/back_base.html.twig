@@ -272,8 +272,8 @@
 
         <div class="side-section-title">Navigation</div>
 
-        {# Dashboard (empty link) #}
-        <a class="nav-pill active" href="javascript:void(0)">
+        {# Dashboard #}
+        <a class="nav-pill {{ app.request.get('_route') starts with 'app_admin_dashboard' ? 'active' : '' }}" href="{{ path('app_admin_dashboard') }}">
             <div class="nav-icon">
                 <i class="fa-solid fa-gauge-high"></i>
             </div>
@@ -286,7 +286,7 @@
 
         <div class="side-section-title">Modules</div>
 
-        {# MODULE 1 #}
+        {# MODULE 1 - Users #}
         <a class="nav-pill" href="javascript:void(0)">
             <div class="nav-icon grad1"><i class="fa-solid fa-user-shield"></i></div>
             <div class="nav-text">
@@ -296,7 +296,7 @@
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
         </a>
 
-        {# MODULE 2 #}
+        {# MODULE 2 - Filières #}
         <a class="nav-pill" href="javascript:void(0)">
             <div class="nav-icon grad2"><i class="fa-solid fa-school"></i></div>
             <div class="nav-text">
@@ -306,42 +306,42 @@
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
         </a>
 
-        {# MODULE 3 #}
-        <a class="nav-pill" href="javascript:void(0)">
+        {# MODULE 3 - Ressources #}
+        <a class="nav-pill {{ app.request.get('_route') starts with 'app_admin_ressource' ? 'active' : '' }}" href="{{ path('app_admin_ressource_index') }}">
             <div class="nav-icon grad3"><i class="fa-solid fa-book-open-reader"></i></div>
             <div class="nav-text">
-                <strong>Module 3 — Bibliothèque</strong>
-                <span>Ressources & fichiers</span>
+                <strong>Module 3 — Ressources</strong>
+                <span>Bibliothèque & fichiers</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
         </a>
 
-        {# MODULE 4 #}
+        {# MODULE 4 - Evaluations #}
+        <a class="nav-pill {{ app.request.get('_route') starts with 'app_admin_evaluation' ? 'active' : '' }}" href="{{ path('app_admin_evaluation_index') }}">
+            <div class="nav-icon"><i class="fa-solid fa-star"></i></div>
+            <div class="nav-text">
+                <strong>Module 4 — Évaluations</strong>
+                <span>Notes & commentaires</span>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+        </a>
+
+        {# MODULE 5 - Collaboration #}
         <a class="nav-pill" href="javascript:void(0)">
             <div class="nav-icon"><i class="fa-solid fa-comments"></i></div>
             <div class="nav-text">
-                <strong>Module 4 — Collaboration</strong>
+                <strong>Module 5 — Collaboration</strong>
                 <span>Messenger & co-op</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
         </a>
 
-        {# MODULE 5 #}
+        {# MODULE 6 - Quiz #}
         <a class="nav-pill" href="javascript:void(0)">
             <div class="nav-icon"><i class="fa-solid fa-brain"></i></div>
             <div class="nav-text">
-                <strong>Module 5 — Quiz</strong>
+                <strong>Module 6 — Quiz</strong>
                 <span>Tests, scores</span>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
-        </a>
-
-        {# MODULE 6 #}
-        <a class="nav-pill" href="javascript:void(0)">
-            <div class="nav-icon"><i class="fa-solid fa-pen-ruler"></i></div>
-            <div class="nav-text">
-                <strong>Module 6 — Fiches</strong>
-                <span>Co-édition & notes</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
         </a>
@@ -360,7 +360,7 @@
             </div>
 
             <div class="d-flex gap-2 mt-3">
-                <a class="btn-ghost flex-fill text-center" href="javascript:void(0)">
+                <a class="btn-ghost flex-fill text-center" href="{{ path('app_logout') }}">
                     <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
                 </a>
             </div>
@@ -377,7 +377,7 @@
 
             <div class="topbar-actions">
                 <input class="search" type="text" placeholder="Rechercher (utilisateur, matière, ressource...)">
-                <a class="btn-ghost" href="javascript:void(0)">
+                <a class="btn-ghost" href="{{ path('app_home') }}">
                     <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Aller au site
                 </a>
             </div>

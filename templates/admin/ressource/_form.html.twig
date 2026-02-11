@@ -1,49 +1,30 @@
-{{ form_start(form, { attr: { class: 'needs-validation' } }) }}
-
-<div class="row g-3">
-    <div class="col-12">
-        {{ form_row(form.titre, { label: 'Titre' }) }}
-    </div>
-
-    <div class="col-12">
-        {{ form_row(form.description, { label: 'Description' }) }}
-    </div>
-
-    <div class="col-md-6">
-        {{ form_row(form.auteur, { label: 'Auteur' }) }}
-    </div>
-
-    <div class="col-md-6">
-        {{ form_row(form.typeFichier, { label: 'Type de fichier' }) }}
-    </div>
-
-    <div class="col-md-6">
-        {{ form_row(form.categorie, { label: 'Catégorie' }) }}
-    </div>
-
-    <div class="col-md-6">
-        {{ form_row(form.tags, { label: 'Tags' }) }}
-    </div>
-
-    <div class="col-12">
-        {{ form_row(form.imageCouverture, { label: 'Image de couverture (URL)' }) }}
-    </div>
-
-    <div class="col-12">
-        <div class="form-check">
-            {{ form_widget(form.estActive) }}
-            {{ form_label(form.estActive, 'Ressource active') }}
-        </div>
-    </div>
-</div>
-
-<div class="mt-4 d-flex gap-2">
-    <button class="btn btn-primary px-4">
-        <i class="fas fa-save me-2"></i>{{ button_label|default('Enregistrer') }}
+<!-- Form Submit Button Macro -->
+{% macro submit_button(button_label, icon_class = 'fas fa-save', button_id = null, disabled = false) %}
+    <button
+        type="submit"
+        class="btn-save{% if disabled %} disabled{% endif %}"
+        {% if button_id %}id="{{ button_id }}"{% endif %}
+        {% if disabled %}disabled="disabled" aria-disabled="true"{% else %}aria-enabled="true"{% endif %}
+        aria-label="{{ button_label|default('Enregistrer') }}"
+        data-loading-text="Enregistrement..."
+    >
+        <span class="btn-icon" aria-hidden="true">
+            <i class="{{ icon_class }}"></i>
+        </span>
+        <span class="btn-text">{{ button_label|default('Enregistrer') }}</span>
+        <span class="btn-shine" aria-hidden="true"></span>
     </button>
-    <a class="btn btn-outline-secondary" href="{{ path('app_admin_ressource_index') }}">
-        <i class="fas fa-arrow-left me-2"></i>Retour
+{% endmacro %}
+
+{% import _self as formMacros %}
+
+<!-- Form Actions -->
+<div class="form-actions">
+    {{ formMacros.submit_button(button_label|default('Enregistrer'), 'fas fa-save') }}
+    <a href="{{ path('app_admin_ressource_index') }}" class="btn-cancel" aria-label="Retour à la liste">
+        <span class="btn-icon" aria-hidden="true">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="btn-text">Retour</span>
     </a>
 </div>
-
-{{ form_end(form) }}
