@@ -1,37 +1,118 @@
 {% extends 'back_base.html.twig' %}
 
-{% block title %}{{ edit ? 'Modifier une filière' : 'Ajouter une filière' }}{% endblock %}
-
 {% block body %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8 col-sm-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white text-center">
-                    <h2>{{ edit ? 'Modifier une filière' : 'Ajouter une filière' }}</h2>
-                </div>
-                <div class="card-body">
-                    {{ form_start(form) }}
-                        <div class="mb-3">
-                            {{ form_label(form.nom) }}
-                            {{ form_widget(form.nom, {'attr': {'class': 'form-control form-control-lg'}}) }}
-                            {{ form_errors(form.nom) }}
-                        </div>
-                        <div class="mb-3">
-                            {{ form_label(form.niveau) }}
-                            {{ form_widget(form.niveau, {'attr': {'class': 'form-control form-control-lg'}}) }}
-                            {{ form_errors(form.niveau) }}
-                        </div>
-                        <div class="d-grid">
-                            <button class="btn btn-success btn-lg">{{ edit ? 'Modifier' : 'Ajouter' }}</button>
-                        </div>
-                    {{ form_end(form) }}
-                </div>
-                <div class="card-footer text-center">
-                    <a href="{{ path('filiere_index') }}" class="btn btn-secondary">Retour à la liste</a>
-                </div>
+<style>
+    .modern-form-wrapper {
+        background: #0f172a !important; 
+        padding: 50px !important;
+        border-radius: 40px !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6) !important;
+        max-width: 900px;
+        margin: 40px auto !important;
+        position: relative;
+    }
+
+    .modern-form-wrapper::after {
+        content: ""; position: absolute; top: -1px; left: 10%; width: 80%; height: 1px;
+        background: linear-gradient(90deg, transparent, #6366f1, transparent);
+    }
+
+    .modern-form-wrapper label {
+        color: #818cf8 !important;
+        font-weight: 800 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 2px !important;
+        font-size: 0.7rem !important;
+        margin-bottom: 12px !important;
+    }
+
+    .modern-form-wrapper input[type="text"], 
+    .modern-form-wrapper input[type="number"] {
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 2px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 18px !important;
+        color: #ffffff !important;
+        padding: 16px 20px !important;
+        font-size: 1rem !important;
+        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .modern-form-wrapper input:focus {
+        border-color: #6366f1 !important;
+        background: rgba(99, 102, 241, 0.05) !important;
+        box-shadow: 0 0 25px rgba(99, 102, 241, 0.2) !important;
+        transform: scale(1.01);
+    }
+
+    .status-panel {
+        background: rgba(99, 102, 241, 0.05);
+        border: 1px solid rgba(99, 102, 241, 0.1);
+        padding: 25px;
+        border-radius: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-glow {
+        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
+        border: none !important;
+        color: white !important;
+        padding: 20px !important;
+        border-radius: 20px !important;
+        font-weight: 900 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 2px !important;
+        box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3) !important;
+        transition: 0.3s !important;
+    }
+
+    .btn-glow:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(99, 102, 241, 0.5) !important; }
+</style>
+
+<div class="container py-5">
+    <div class="modern-form-wrapper">
+        <div class="d-flex align-items-center gap-4 mb-5">
+            <div style="width: 60px; height: 60px; background: #6366f1; border-radius: 18px; display: grid; place-items: center; box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);">
+                <i class="fas {{ filiere.id ? 'fa-sync' : 'fa-plus-circle' }} text-white fa-lg"></i>
+            </div>
+            <div>
+                <h2 class="text-white fw-black m-0">{{ filiere.id ? 'Modifier Filière' : 'Nouveau Protocole' }}</h2>
+                <p class="text-muted m-0 small">Identifiant de session : #{{ "now"|date("dmy-Hi") }}</p>
             </div>
         </div>
+
+        {{ form_start(form) }}
+            <div class="row g-4">
+                <div class="col-md-12">
+                    <label><i class="fas fa-tag me-2"></i> Nom de la filière académique</label>
+                    {{ form_widget(form.nom) }}
+                </div>
+                
+                <div class="col-md-6">
+                    <label><i class="fas fa-graduation-cap me-2"></i> Niveau d'études</label>
+                    {{ form_widget(form.niveau) }}
+                </div>
+
+                <div class="col-md-6">
+                    <label><i class="fas fa-eye me-2"></i> Statut du système</label>
+                    <div class="status-panel">
+                        <span class="text-white-50 small fw-bold">Rendre actif</span>
+                        <div class="form-check form-switch m-0">
+                            {{ form_widget(form.actif, {'attr': {'style': 'width: 3rem; height: 1.5rem;'}}) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5 pt-4 d-flex gap-3 align-items-center">
+                <button type="submit" class="btn-glow flex-grow-1">
+                    {{ filiere.id ? 'Propulser les modifications' : 'Enregistrer la nouvelle filière' }}
+                </button>
+                <a href="{{ path('filiere_index') }}" class="btn py-3 px-4 rounded-4 text-muted" style="text-decoration:none; border: 1px solid rgba(255,255,255,0.05);">Annuler</a>
+            </div>
+        {{ form_end(form) }}
     </div>
 </div>
 {% endblock %}
