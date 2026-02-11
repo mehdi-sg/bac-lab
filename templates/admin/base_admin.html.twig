@@ -315,6 +315,10 @@
                     <i class="fas fa-folder-open"></i>
                     <span>Ressources</span>
                 </a>
+                <a href="{{ path('app_admin_evaluation_index') }}" class="menu-item {% if app.request.get('_route') starts with 'app_admin_evaluation' %}active{% endif %}">
+                    <i class="fas fa-star"></i>
+                    <span>Évaluations</span>
+                </a>
                 <a href="#" class="menu-item">
                     <i class="fas fa-users"></i>
                     <span>Utilisateurs</span>
@@ -322,10 +326,6 @@
                 <a href="#" class="menu-item">
                     <i class="fas fa-comments"></i>
                     <span>Commentaires</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-star"></i>
-                    <span>Évaluations</span>
                 </a>
             </div>
             

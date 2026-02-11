@@ -2,100 +2,176 @@
 
 {% block title %}✏️ Modifier la fiche{% endblock %}
 
-{% block fiche_title %}
-✏️ Modifier la fiche
-{% endblock %}
+{% block fiche_title %}✏️ Modifier la fiche{% endblock %}
+{% block fiche_subtitle %}Écris → structure → visualise instantanément.{% endblock %}
 
 {% block fiche_content %}
 
 <div class="row justify-content-center">
-    <div class="col-lg-11">
+    <div class="col-12 col-xl-11">
 
-        <div class="card shadow-lg border-0 fiche-editor-card">
-            <div class="card-body p-5">
-
-                <p class="text-muted text-center mb-4">
-                    Modifie ta fiche et visualise le rendu en temps réel
-                </p>
+        <div class="card border-0 shadow-lg fiche-editor-shell">
+            <div class="card-body p-4 p-lg-5">
 
                 {{ form_start(form) }}
 
-                <!-- TITLE -->
-                <div class="mb-4">
-                    {{ form_label(form.title, '📌 Titre de la fiche', {
-                        'label_attr': {'class': 'form-label fw-semibold'}
-                    }) }}
-                    {{ form_widget(form.title, {
-                        'attr': {
-                            'class': 'form-control form-control-lg'
-                        }
-                    }) }}
-                </div>
-
-                <!-- TOOLBAR -->
-                <div class="fiche-toolbar mb-3">
-                    <button type="button" class="btn btn-sm btn-outline-warning"
-                            onclick="insertText('!! Définition\\n')">
-                        ⚠️ Définition
-                    </button>
-
-                    <button type="button" class="btn btn-sm btn-outline-info"
-                            onclick="insertText('>> Exemple\\n')">
-                        📘 Exemple
-                    </button>
-
-                    <button type="button" class="btn btn-sm btn-outline-success"
-                            onclick="insertText('!! Astuce\\n')">
-                        💡 Astuce
-                    </button>
-                </div>
-
-                <div class="row">
-                    <!-- TEXTAREA -->
-                    <div class="col-md-6">
-                        {{ form_label(form.content, '🧠 Contenu', {
+                <!-- TOP: TITLE + STATS -->
+                <div class="row g-3 align-items-end mb-4">
+                    <div class="col-lg-8">
+                        {{ form_label(form.title, '📌 Titre de la fiche', {
                             'label_attr': {'class': 'form-label fw-semibold'}
                         }) }}
-
-                        {{ form_widget(form.content, {
+                        {{ form_widget(form.title, {
                             'attr': {
-                                'class': 'form-control fiche-textarea',
-                                'rows': 16
+                                'class': 'form-control form-control-lg fiche-input',
+                                'placeholder': 'Ex: Dérivation, Suites, Probabilités...'
                             }
                         }) }}
+                        <div class="form-text">
+                            Un titre clair = une fiche retrouvée plus vite.
+                        </div>
                     </div>
 
-                    <!-- LIVE PREVIEW -->
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">👀 Aperçu en direct</label>
-
-                        <div id="preview" class="fiche-preview">
-                            <p class="text-muted">
-                                L’aperçu s’affichera ici…
-                            </p>
+                    <div class="col-lg-4">
+                        <div class="fiche-stats">
+                            <div class="fiche-stat">
+                                <div class="fiche-stat-label">Mots</div>
+                                <div class="fiche-stat-value" id="statWords">0</div>
+                            </div>
+                            <div class="fiche-stat">
+                                <div class="fiche-stat-label">Lignes</div>
+                                <div class="fiche-stat-value" id="statLines">0</div>
+                            </div>
+                            <div class="fiche-stat">
+                                <div class="fiche-stat-label">Lecture</div>
+                                <div class="fiche-stat-value" id="statRead">~0 min</div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ACTIONS -->
-                <div class="d-flex justify-content-between align-items-center mt-4">
+                <!-- TOOLBAR -->
+                <div class="fiche-toolbar2 mb-3">
+                    <button type="button" class="chip chip-warn" onclick="insertText('!! Définition\\n')">
+                        <span class="chip-ico">⚠️</span><span class="chip-txt">Important</span><span class="chip-kbd">Ctrl+1</span>
+                    </button>
 
-                    <div>
-                        <a href="{{ path('fiche_show', {id: fiche.id}) }}"
-                           class="btn btn-outline-secondary">
+                    <button type="button" class="chip chip-info" onclick="insertText('>> Exemple\n')">
+                        <span class="chip-ico">📘</span><span class="chip-txt">Exemple</span><span class="chip-kbd">Ctrl+2</span>
+                    </button>
+
+                    <button type="button" class="chip chip-good" onclick="insertText('!!+ Astuce\n')">
+                        <span class="chip-ico">💡</span><span class="chip-txt">Astuce</span><span class="chip-kbd">Ctrl+3</span>
+                    </button>
+
+                    <button type="button" class="chip chip-bad" onclick="insertText('!!- Piège\n')">
+                        <span class="chip-ico">🚫</span><span class="chip-txt">Piège</span><span class="chip-kbd">Ctrl+4</span>
+                    </button>
+
+                    <button type="button" class="chip chip-ques" onclick="insertText('?? Question\n')">
+                        <span class="chip-ico">❓</span><span class="chip-txt">Question</span><span class="chip-kbd">Ctrl+5</span>
+                    </button>
+
+                    <button type="button" class="chip chip-sec" onclick="insertText('== Section\n')">
+                        <span class="chip-ico">🧩</span><span class="chip-txt">Section</span><span class="chip-kbd">Ctrl+6</span>
+                    </button>
+
+                    <button class="chip chip-ghost ms-auto" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#syntaxHelp"
+                            aria-expanded="false" aria-controls="syntaxHelp">
+                        <span class="chip-ico">ℹ️</span><span class="chip-txt">Aide syntaxe</span>
+                    </button>
+                </div>
+
+                <!-- SYNTAX HELP -->
+                <div class="collapse" id="syntaxHelp">
+                    <div class="fiche-help mb-4">
+                        <div class="fiche-help-title">🧠 Syntaxe pédagogique</div>
+                        <div class="fiche-help-grid">
+                            <div class="help-item"><span class="badge bg-warning text-dark">!!</span> Notion importante / définition</div>
+                            <div class="help-item"><span class="badge bg-info text-dark">&gt;&gt;</span> Exemple / application</div>
+                            <div class="help-item"><span class="badge bg-success">!!+</span> Astuce / méthode</div>
+                            <div class="help-item"><span class="badge bg-danger">!!-</span> Piège / erreur fréquente</div>
+                            <div class="help-item"><span class="badge bg-primary">??</span> Question à retenir</div>
+                            <div class="help-item"><span class="badge bg-secondary">==</span> Titre de section</div>
+                        </div>
+
+                        <div class="fiche-help-inline mt-3">
+                            <span class="text-muted me-2">Inline :</span>
+                            <code>**gras**</code>
+                            <code>_italique_</code>
+                            <code>`terme`</code>
+                            <code>[[mot-clé]]</code>
+                            <code>- liste</code>
+                            <code>-></code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EDITOR + PREVIEW -->
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="fiche-panel">
+                            <div class="fiche-panel-head">
+                                <div class="fiche-panel-title">✍️ Édition</div>
+                                <div class="fiche-panel-hint">Structure en sections, ajoute des exemples.</div>
+                            </div>
+
+                            {# Force the textarea id so JS always finds it #}
+                            {{ form_widget(form.content, {
+                                'attr': {
+                                    'class': 'form-control fiche-textarea2',
+                                    'rows': 16,
+                                    'id': 'fiche_content',
+                                    'placeholder': "== Notions clés\n!! Définition...\n>> Exemple...\n- Point 1\n- Point 2\n\nAstuce: **important** et `termes`"
+                                }
+                            }) }}
+
+                            <div class="fiche-mini-hint">
+                                Tip: <code>==</code> pour structurer. <code>&gt;&gt;</code> pour donner des exemples.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="fiche-panel fiche-preview-sticky">
+                            <div class="fiche-panel-head">
+                                <div class="fiche-panel-title">👀 Aperçu</div>
+                                <div class="fiche-panel-hint">Rendu pédagogique (sécurisé).</div>
+                            </div>
+
+                            <div id="preview" class="fiche-preview2"></div>
+
+                            <div class="fiche-mini-hint">
+                                Aperçu sécurisé (anti XSS) : aucun HTML inséré ne sera exécuté.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM BAR -->
+                <div class="fiche-bottombar mt-4">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{{ path('fiche_show', {id: fiche.id}) }}" class="btn btn-outline-secondary">
                             ← Annuler
                         </a>
-
-                        <a href="{{ path('fiche_history', {id: fiche.id}) }}"
-                           class="btn btn-outline-primary ms-2">
+                        <a href="{{ path('fiche_history', {id: fiche.id}) }}" class="btn btn-outline-primary">
                             🕒 Historique
                         </a>
                     </div>
 
-                    <button class="btn btn-primary px-4">
-                        💾 Enregistrer
-                    </button>
+                    <div class="d-flex gap-3 align-items-center flex-wrap">
+                        {% if form.isPublic is defined %}
+                            <div class="form-check mb-0 fiche-public-check">
+                                {{ form_widget(form.isPublic, {'attr': {'class': 'form-check-input'}}) }}
+                                {{ form_label(form.isPublic, 'Fiche publique', {'label_attr': {'class': 'form-check-label'}}) }}
+                            </div>
+                        {% endif %}
 
+                        <button class="btn btn-primary px-4">
+                            💾 Enregistrer
+                        </button>
+                    </div>
                 </div>
 
                 {{ form_end(form) }}
@@ -107,7 +183,8 @@
 </div>
 
 {% endblock %}
+
 {% block js %}
-{{ parent() }}
-<script src="{{ asset('front/js/fiche-editor.js') }}"></script>
+    {{ parent() }}
+    <script src="{{ asset('front/js/fiche-editor.js') }}"></script>
 {% endblock %}

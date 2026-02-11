@@ -1,118 +1,193 @@
 <?php
 
-namespace App\Entity;
+    namespace App\Entity;
 
-use App\Repository\UtilisateurRepository;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+    use App\Repository\UtilisateurRepository;
+    use App\Entity\Profil;
+    use Doctrine\Common\Collections\ArrayCollection;
+    use Doctrine\Common\Collections\Collection;
+    use Doctrine\ORM\Mapping as ORM;
+    use Symfony\Component\Security\Core\User\UserInterface;
+    use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-#[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_USER_EMAIL', fields: ['email'])]
-class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
-{
-    // Constantes pour les rôles
-    public const ROLE_USER = 'ROLE_USER';
-    public const ROLE_MODERATOR = 'ROLE_MODERATOR';
-    public const ROLE_ADMIN = 'ROLE_ADMIN';
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 180)]
-    private string $email;
-
-    #[ORM\Column]
-    private array $roles = [];
-
-    #[ORM\Column]
-    private string $password;
-
-    // Propriété temporaire pour le formulaire d'inscription (non persistée en base)
-    private ?string $plainPassword = null;
-
-    #[ORM\Column]
-    private bool $isActive = true;
-
-    #[ORM\Column]
-    private \DateTimeImmutable $createdAt;
-
-    #[ORM\OneToOne(mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
-    private ?Profil $profil = null;
-
-    public function __construct()
+    #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
+    #[ORM\UniqueConstraint(name: 'UNIQ_USER_EMAIL', fields: ['email'])]
+    class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->roles = [self::ROLE_USER];
-    }
+        // Constantes pour les rôles
+        public const ROLE_USER = 'ROLE_USER';
+        public const ROLE_MODERATOR = 'ROLE_MODERATOR';
+        public const ROLE_ADMIN = 'ROLE_ADMIN';
 
-    public function getId(): ?int { return $this->id; }
+        #[ORM\Id]
+        #[ORM\GeneratedValue]
+        #[ORM\Column]
+        private ?int $id = null;
 
-    public function getEmail(): string { return $this->email; }
-    public function setEmail(string $email): self { $this->email = $email; return $this; }
+        #[ORM\Column(length: 180)]
+        private string $email;
 
-    public function getUserIdentifier(): string { return $this->email; }
+        #[ORM\Column]
+        private array $roles = [];
 
-    public function getRoles(): array { return array_unique($this->roles); }
-    public function setRoles(array $roles): self { $this->roles = $roles; return $this; }
+        #[ORM\Column]
+        private string $password;
 
-    public function getPassword(): string { return $this->password; }
-    public function setPassword(string $password): self { $this->password = $password; return $this; }
+        // Propriété temporaire pour le formulaire d'inscription (non persistée en base)
+        private ?string $plainPassword = null;
 
-    public function getPlainPassword(): ?string { return $this->plainPassword; }
-    public function setPlainPassword(?string $plainPassword): self { $this->plainPassword = $plainPassword; return $this; }
+        #[ORM\Column]
+        private bool $isActive = true;
 
-    public function isActive(): bool { return $this->isActive; }
+        #[ORM\Column]
+        private \DateTimeImmutable $createdAt;
 
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
+        #[ORM\OneToOne(mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
+        private ?Profil $profil = null;
 
-    public function getProfil(): ?Profil { return $this->profil; }
-    public function setProfil(Profil $profil): self
-    {
-        $this->profil = $profil;
-        return $this;
-    }
+        /**
+         * @var Collection<int, FicheModerateur>
+         */
+        #[ORM\OneToMany(targetEntity: FicheModerateur::class, mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
+        private Collection $ficheModerateur;
 
-    public function eraseCredentials(): void
-    {
-        // Efface le mot de passe en clair pour des raisons de sécurité
-        $this->plainPassword = null;
-    }
+        /**
+         * @var Collection<int, FicheJoinRequest>
+         */
+        #[ORM\OneToMany(targetEntity: FicheJoinRequest::class, mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
+        private Collection $ficheJoinRequests;
 
-    // Méthodes utilitaires pour la gestion des rôles
-    public function addRole(string $role): self
-    {
-        if (!in_array($role, $this->roles)) {
-            $this->roles[] = $role;
+        public function __construct()
+        {
+            $this->createdAt = new \DateTimeImmutable();
+            $this->roles = [self::ROLE_USER];
+            $this->ficheModerateur = new ArrayCollection();
+            $this->ficheJoinRequests = new ArrayCollection();
         }
-        return $this;
-    }
 
-    public function removeRole(string $role): self
-    {
-        $this->roles = array_diff($this->roles, [$role]);
-        return $this;
-    }
+        public function getId(): ?int { return $this->id; }
 
-    public function hasRole(string $role): bool
-    {
-        return in_array($role, $this->getRoles());
-    }
+        public function getEmail(): string { return $this->email; }
+        public function setEmail(string $email): self { $this->email = $email; return $this; }
 
-    public function isAdmin(): bool
-    {
-        return $this->hasRole(self::ROLE_ADMIN);
-    }
+        public function getUserIdentifier(): string { return $this->email; }
 
-    public function isModerator(): bool
-    {
-        return $this->hasRole(self::ROLE_MODERATOR);
-    }
+        public function getRoles(): array { return array_unique($this->roles); }
+        public function setRoles(array $roles): self { $this->roles = $roles; return $this; }
 
-    public function isUser(): bool
-    {
-        return $this->hasRole(self::ROLE_USER);
+        public function getPassword(): string { return $this->password; }
+        public function setPassword(string $password): self { $this->password = $password; return $this; }
+
+        public function getPlainPassword(): ?string { return $this->plainPassword; }
+        public function setPlainPassword(?string $plainPassword): self { $this->plainPassword = $plainPassword; return $this; }
+
+        public function isActive(): bool { return $this->isActive; }
+
+        public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
+
+        public function getProfil(): ?Profil { return $this->profil; }
+        public function setProfil(Profil $profil): self
+        {
+            $this->profil = $profil;
+            return $this;
+        }
+
+        public function eraseCredentials(): void
+        {
+            // Efface le mot de passe en clair pour des raisons de sécurité
+            $this->plainPassword = null;
+        }
+
+        // Méthodes utilitaires pour la gestion des rôles
+        public function addRole(string $role): self
+        {
+            if (!in_array($role, $this->roles)) {
+                $this->roles[] = $role;
+            }
+            return $this;
+        }
+
+        public function removeRole(string $role): self
+        {
+            $this->roles = array_diff($this->roles, [$role]);
+            return $this;
+        }
+
+        public function hasRole(string $role): bool
+        {
+            return in_array($role, $this->getRoles());
+        }
+
+        public function isAdmin(): bool
+        {
+            return $this->hasRole(self::ROLE_ADMIN);
+        }
+
+        public function isModerator(): bool
+        {
+            return $this->hasRole(self::ROLE_MODERATOR);
+        }
+
+        public function isUser(): bool
+        {
+            return $this->hasRole(self::ROLE_USER);
+        }
+
+        /**
+         * @return Collection<int, FicheModerateur>
+         */
+        public function getFicheModerateur(): Collection
+        {
+            return $this->ficheModerateur;
+        }
+
+        public function addFicheModerateur(FicheModerateur $ficheModerateur): self
+        {
+            if (!$this->ficheModerateur->contains($ficheModerateur)) {
+                $this->ficheModerateur->add($ficheModerateur);
+                $ficheModerateur->setUtilisateur($this);
+            }
+
+            return $this;
+        }
+
+        public function removeFicheModerateur(FicheModerateur $ficheModerateur): self
+        {
+            if ($this->ficheModerateur->removeElement($ficheModerateur)) {
+                if ($ficheModerateur->getUtilisateur() === $this) {
+                    $ficheModerateur->setUtilisateur(null);
+                }
+            }
+
+            return $this;
+        }
+
+        /**
+         * @return Collection<int, FicheJoinRequest>
+         */
+        public function getFicheJoinRequests(): Collection
+        {
+            return $this->ficheJoinRequests;
+        }
+
+        public function addFicheJoinRequest(FicheJoinRequest $ficheJoinRequest): self
+        {
+            if (!$this->ficheJoinRequests->contains($ficheJoinRequest)) {
+                $this->ficheJoinRequests->add($ficheJoinRequest);
+                $ficheJoinRequest->setUtilisateur($this);
+            }
+
+            return $this;
+        }
+
+        public function removeFicheJoinRequest(FicheJoinRequest $ficheJoinRequest): self
+        {
+            if ($this->ficheJoinRequests->removeElement($ficheJoinRequest)) {
+                if ($ficheJoinRequest->getUtilisateur() === $this) {
+                    $ficheJoinRequest->setUtilisateur(null);
+                }
+            }
+
+            return $this;
+        }
     }
-}

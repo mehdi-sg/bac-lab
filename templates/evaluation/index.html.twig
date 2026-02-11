@@ -1,0 +1,298 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Évaluations | BacLab{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .evaluations-container {
+            padding: 40px 20px;
+            background: #f8f9fa;
+            min-height: 100vh;
+            margin-top: 80px;
+        }
+        
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        .page-header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3436;
+        }
+        
+        .page-header p {
+            margin: 8px 0 0;
+            color: #636e72;
+        }
+        
+        .evaluations-grid {
+            display: grid;
+            gap: 24px;
+        }
+        
+        .evaluation-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        
+        .evaluation-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        
+        .evaluation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .resource-info h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 8px;
+        }
+        
+        .resource-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 0.85rem;
+            color: #636e72;
+        }
+        
+        .rating-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stars {
+            color: #fdcb6e;
+            font-size: 1.2rem;
+        }
+        
+        .comment-box {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 12px;
+            margin: 16px 0;
+        }
+        
+        .comment-box p {
+            margin: 0;
+            color: #2d3436;
+            line-height: 1.6;
+        }
+        
+        .evaluation-badges {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        .badge-custom {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .badge-favori {
+            background: #ff525220;
+            color: #ff5252;
+        }
+        
+        .evaluation-actions {
+            display: flex;
+            gap: 8px;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .btn-edit {
+            background: #e8eaff;
+            color: #667eea;
+        }
+        
+        .btn-edit:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-favori {
+            background: #ff525220;
+            color: #ff5252;
+        }
+        
+        .btn-favori:hover {
+            background: #ff5252;
+            color: white;
+        }
+        
+        .btn-delete {
+            background: #ffdddd;
+            color: #d63031;
+        }
+        
+        .btn-delete:hover {
+            background: #d63031;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #dfe6e9;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            color: #2d3436;
+            margin-bottom: 12px;
+        }
+        
+        .empty-state p {
+            color: #636e72;
+            margin-bottom: 24px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="evaluations-container">
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-star me-2"></i>Mes Évaluations</h1>
+            <p>Gérez vos notes, commentaires et favoris</p>
+        </div>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {% if evaluations is not empty %}
+            <div class="evaluations-grid">
+                {% for evaluation in evaluations %}
+                    <div class="evaluation-card">
+                        <div class="evaluation-header">
+                            <div class="resource-info">
+                                <h3>{{ evaluation.ressource.titre }}</h3>
+                                <div class="resource-meta">
+                                    <span>
+                                        <i class="fas fa-tag"></i>
+                                        {{ evaluation.ressource.categorie ?? 'Non catégorisé' }}
+                                    </span>
+                                    <span>
+                                        <i class="fas fa-calendar"></i>
+                                        {{ evaluation.dateEvaluation|date('d/m/Y') }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            {% if evaluation.note %}
+                                <div class="rating-display">
+                                    <span class="stars">
+                                        {% for i in 1..5 %}
+                                            <i class="fas fa-star{{ i <= evaluation.note ? '' : '-o' }}"></i>
+                                        {% endfor %}
+                                    </span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if evaluation.commentaire %}
+                            <div class="comment-box">
+                                <p>{{ evaluation.commentaire }}</p>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="evaluation-badges">
+                            {% if evaluation.estFavori %}
+                                <span class="badge-custom badge-favori">
+                                    <i class="fas fa-heart"></i> Favori
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="evaluation-actions">
+                            <a href="{{ path('app_evaluation_edit', {id: evaluation.id}) }}" class="btn-action btn-edit">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            
+                            <form method="post" action="{{ path('app_evaluation_toggle_favori', {id: evaluation.id}) }}" style="flex: 1;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle-favori' ~ evaluation.id) }}">
+                                <button type="submit" class="btn-action btn-favori" style="width: 100%;">
+                                    <i class="fas fa-heart"></i>
+                                    {{ evaluation.estFavori ? 'Retirer des favoris' : 'Ajouter aux favoris' }}
+                                </button>
+                            </form>
+                            
+                            <form method="post" action="{{ path('app_evaluation_delete', {id: evaluation.id}) }}" style="flex: 1;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ evaluation.id) }}">
+                                <button type="submit" class="btn-action btn-delete" style="width: 100%;" 
+                                        onclick="return confirm('Supprimer cette évaluation ?')">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-star"></i>
+                <h3>Aucune évaluation</h3>
+                <p>Vous n'avez pas encore évalué de ressource.</p>
+                <a href="{{ path('app_bibliotheque_index') }}" class="btn btn-primary">
+                    <i class="fas fa-book me-2"></i>Découvrir les ressources
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
