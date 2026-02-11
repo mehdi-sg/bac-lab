@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\Fiche;
 use App\Entity\Groupe;
 use App\Entity\Message;
 use App\Entity\MembreGroupe;
@@ -21,23 +22,78 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class GroupeController extends AbstractController
 {
     #[Route('/groupes', name: 'groupe_index')]
-    public function index(GroupeRepository $groupeRepository, MembreGroupeRepository $membreGroupeRepository): Response
+    public function index(GroupeRepository $groupeRepository, MembreGroupeRepository $membreGroupeRepository, Request $request): Response
     {
-        $groupes = $groupeRepository->findAll();
         $user = $this->getUser();
+        $filter = $request->query->get('filter', 'all');
+        
+        // Check if user is admin
+        $isAdmin = false;
+        if ($user instanceof Utilisateur && $user->isAdmin()) {
+            $isAdmin = true;
+        }
+        
+        // Build query to filter groups
+        $queryBuilder = $groupeRepository->createQueryBuilder('g');
+        
+        // Filter by visibility
+        if ($filter === 'public') {
+            $queryBuilder->andWhere('g.isPublic = true');
+        } elseif ($filter === 'private') {
+            $queryBuilder->andWhere('g.isPublic = false');
+        }
+        
+        // For non-logged in users, only show public groups
+        // Admins can see all groups
+        if (!$user instanceof UserInterface) {
+            $queryBuilder->andWhere('g.isPublic = true');
+        }
+        
+        $queryBuilder->orderBy('g.id', 'DESC');
+        $groupes = $queryBuilder->getQuery()->getResult();
         
         // Get user's memberships for each group
         $userMemberships = [];
+        $userGroups = [];
         if ($user instanceof UserInterface) {
             $membres = $membreGroupeRepository->findBy(['utilisateur' => $user]);
             foreach ($membres as $membre) {
                 $userMemberships[$membre->getGroupe()->getId()] = $membre;
+                $userGroups[] = $membre->getGroupe()->getId();
             }
         }
+        
+        // Get statistics
+        $totalGroupes = count($groupes);
+        $publicGroupes = count(array_filter($groupes, fn($g) => $g->isPublic()));
+        $privateGroupes = $totalGroupes - $publicGroupes;
+        $myGroupes = count($userGroups);
+        
+        // Get featured/hottest groups (most members)
+        $featuredGroups = $groupeRepository->createQueryBuilder('g')
+            ->leftJoin('g.membres', 'm')
+            ->groupBy('g.id')
+            ->orderBy('COUNT(m.id)', 'DESC')
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult();
+        
+        // Get filieres for filtering
+        $filieres = ['Mathématiques', 'Sciences', 'Physique', 'Chimie', 'Technologie'];
         
         return $this->render('groupe/index.html.twig', [
             'groupes' => $groupes,
             'userMemberships' => $userMemberships,
+            'currentFilter' => $filter,
+            'stats' => [
+                'total' => $totalGroupes,
+                'public' => $publicGroupes,
+                'private' => $privateGroupes,
+                'myGroups' => $myGroupes,
+            ],
+            'featuredGroups' => $featuredGroups,
+            'filieres' => $filieres,
+            'isAdmin' => $isAdmin,
         ]);
     }
 
@@ -56,24 +112,35 @@ class GroupeController extends AbstractController
         $form = $this->createForm(GroupeType::class, $groupe);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($groupe);
-            $entityManager->flush();
+        if ($form->isSubmitted()) {
+            if (!$form->isValid()) {
+                // Add flash message with form errors
+                $errors = [];
+                foreach ($form->getErrors(true, true) as $error) {
+                    $errors[] = $error->getMessage();
+                }
+                if (!empty($errors)) {
+                    $this->addFlash('error', implode(' ', $errors));
+                }
+            } else {
+                $entityManager->persist($groupe);
+                $entityManager->flush();
 
-            // Add creator as admin member
-            $membre = new MembreGroupe();
-            $membre->setUtilisateur($user);
-            $membre->setGroupe($groupe);
-            $membre->setRoleMembre('ADMIN');
-            $membre->setStatut('ACCEPTED');
-            $membre->setDateJoint(new \DateTimeImmutable());
-            
-            $entityManager->persist($membre);
-            $entityManager->flush();
+                // Add creator as admin member
+                $membre = new MembreGroupe();
+                $membre->setUtilisateur($user);
+                $membre->setGroupe($groupe);
+                $membre->setRoleMembre('ADMIN');
+                $membre->setStatut('ACCEPTED');
+                $membre->setDateJoint(new \DateTimeImmutable());
+                
+                $entityManager->persist($membre);
+                $entityManager->flush();
 
-            $this->addFlash('success', 'Votre groupe a été créé avec succès !');
-            
-            return $this->redirectToRoute('chat_groupe', ['id' => $groupe->getId()]);
+                $this->addFlash('success', 'Votre groupe a été créé avec succès !');
+                
+                return $this->redirectToRoute('chat_groupe', ['id' => $groupe->getId()]);
+            }
         }
 
         return $this->render('groupe/new.html.twig', [
@@ -94,6 +161,92 @@ class GroupeController extends AbstractController
             'groupe' => $groupe,
             'membres' => $membres,
         ]);
+    }
+
+    #[Route('/groupes/{id}/modifier', name: 'groupe_edit', methods: ['GET', 'POST'])]
+    public function edit(
+        Groupe $groupe,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+        
+        if (!$user instanceof Utilisateur) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Only owner can edit
+        if ($groupe->getCreateur() !== $user) {
+            $this->addFlash('error', 'Vous ne pouvez pas modifier ce groupe');
+            return $this->redirectToRoute('groupe_show', ['id' => $groupe->getId()]);
+        }
+
+        $form = $this->createForm(GroupeType::class, $groupe, [
+            'is_edit' => true,
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            if (!$form->isValid()) {
+                $errors = [];
+                foreach ($form->getErrors(true, true) as $error) {
+                    $errors[] = $error->getMessage();
+                }
+                if (!empty($errors)) {
+                    $this->addFlash('error', implode(' ', $errors));
+                }
+            } else {
+                $entityManager->flush();
+                $this->addFlash('success', 'Le groupe a été modifié avec succès !');
+                return $this->redirectToRoute('groupe_show', ['id' => $groupe->getId()]);
+            }
+        }
+
+        return $this->render('groupe/edit.html.twig', [
+            'groupe' => $groupe,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/groupes/{id}', name: 'groupe_update', methods: ['POST', 'PUT'])]
+    public function update(
+        Request $request,
+        Groupe $groupe,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+        
+        if (!$user instanceof Utilisateur) {
+            return $this->json(['error' => 'Vous devez être connecté'], 401);
+        }
+
+        // Only owner can update
+        if ($groupe->getCreateur() !== $user) {
+            return $this->json(['error' => 'Vous ne pouvez pas modifier ce groupe'], 403);
+        }
+
+        $form = $this->createForm(GroupeType::class, $groupe, [
+            'is_edit' => true,
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            return $this->json([
+                'success' => true,
+                'message' => 'Le groupe a été modifié avec succès',
+            ]);
+        }
+
+        $errors = [];
+        foreach ($form->getErrors(true, true) as $error) {
+            $errors[] = $error->getMessage();
+        }
+
+        return $this->json([
+            'success' => false,
+            'errors' => $errors,
+        ], 400);
     }
 
     #[Route('/groupes/{id}/rejoindre', name: 'groupe_join', methods: ['POST'])]
@@ -454,9 +607,15 @@ class GroupeController extends AbstractController
         $user = $this->getUser();
         $isMember = false;
         $isOwner = false;
+        $isAdmin = false;
         $membership = null;
         
         if ($user instanceof UserInterface) {
+            // Check if user is admin
+            if ($user instanceof Utilisateur && $user->isAdmin()) {
+                $isAdmin = true;
+            }
+            
             // Check if user is owner
             if ($groupe->getCreateur() === $user) {
                 $isOwner = true;
@@ -493,7 +652,7 @@ class GroupeController extends AbstractController
         }
 
         // Only show messages to members
-        if ($isMember || $isOwner) {
+        if ($isMember || $isOwner || $isAdmin) {
             $messages = $messageRepository->findMessagesForGroupe($groupe, 'recent', 50);
         } else {
             $messages = [];
@@ -528,6 +687,7 @@ class GroupeController extends AbstractController
             'messages' => $messages,
             'isMember' => $isMember,
             'isOwner' => $isOwner,
+            'isAdmin' => $isAdmin,
             'groupes' => $userGroups,
             'pendingRequestsCount' => $pendingRequestsCount,
             'membership' => $membership,
@@ -540,7 +700,8 @@ class GroupeController extends AbstractController
         Groupe $groupe,
         MessageRepository $messageRepository,
         MembreGroupeRepository $membreGroupeRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        \Symfony\Component\Validator\Validator\ValidatorInterface $validator
     ): Response {
         $user = $this->getUser();
         
@@ -564,16 +725,73 @@ class GroupeController extends AbstractController
 
         $contenu = $request->request->get('contenu', '');
         $replyTo = $request->request->get('replyTo', null);
+        $ficheId = $request->request->get('ficheId', null);
         
-        if (empty(trim($contenu))) {
-            return $this->json(['error' => 'Le message ne peut pas être vide'], 400);
+        // Handle file upload
+        $file = $request->files->get('file');
+        $filePath = null;
+        $fileName = null;
+        $typeMessage = 'TEXTE';
+        $fiche = null;
+        
+        if ($file) {
+            $typeMessage = 'IMAGE';
+            // Check if it's an image or other file type
+            $mimeType = $file->getMimeType() ?? 'application/octet-stream';
+            if (strpos($mimeType, 'image/') === 0) {
+                $typeMessage = 'IMAGE';
+            } elseif ($mimeType === 'application/pdf') {
+                $typeMessage = 'PDF';
+            }
+            
+            // Generate unique filename
+            $originalName = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();
+            $newFilename = uniqid() . '.' . $extension;
+            
+            // Move file to uploads directory
+            $uploadsDir = $this->getParameter('kernel.project_dir') . '/public/uploads/chat';
+            if (!file_exists($uploadsDir)) {
+                mkdir($uploadsDir, 0777, true);
+            }
+            
+            $file->move($uploadsDir, $newFilename);
+            $filePath = '/uploads/chat/' . $newFilename;
+            $fileName = $originalName;
+            
+            // If no text content, use filename as content
+            if (empty($contenu)) {
+                $contenu = $originalName;
+            }
         }
-
+        
+        // Handle fiche sharing
+        $fiche = null;
+        if (!empty($ficheId) && empty($contenu)) {
+            $fiche = $entityManager->getRepository(Fiche::class)->find((int) $ficheId);
+            if ($fiche) {
+                $contenu = 'Fiche: ' . $fiche->getTitle();
+            } else {
+                // Fiche not found, use default content
+                $contenu = 'Partage de fiche';
+            }
+        }
+        
         $message = new Message();
         $message->setContenu($contenu);
         $message->setExpediteur($user);
         $message->setGroupe($groupe);
         $message->setCreatedAt(new \DateTimeImmutable());
+        $message->setTypeMessage($typeMessage);
+        
+        if ($filePath) {
+            $message->setFilePath($filePath);
+            $message->setFileName($fileName);
+        }
+        
+        if ($fiche) {
+            $message->setFiche($fiche);
+        }
         
         if ($replyTo) {
             $parentMessage = $messageRepository->find($replyTo);
@@ -582,15 +800,31 @@ class GroupeController extends AbstractController
             }
         }
 
+        // Validate using Symfony's validator
+        $errors = $validator->validate($message);
+        
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[] = $error->getMessage();
+            }
+            return $this->json(['error' => implode(', ', $errorMessages)], 400);
+        }
+
         $entityManager->persist($message);
         $entityManager->flush();
 
         // Get user name for response
-        $profil = $user->getProfil();
-        if ($profil !== null && $profil->getNom()) {
-            $userName = $profil->getNom();
+        if ($user instanceof Utilisateur) {
+            $profil = $user->getProfil();
+            if ($profil !== null && $profil->getNom()) {
+                $userName = $profil->getNom();
+            } else {
+                $userName = explode('@', $user->getEmail())[0];
+            }
         } else {
-            $userName = explode('@', $user->getEmail())[0];
+            // Fallback for other UserInterface implementations
+            $userName = $user->getUserIdentifier();
         }
 
         return $this->json([
@@ -598,6 +832,7 @@ class GroupeController extends AbstractController
             'message' => [
                 'id' => $message->getId(),
                 'contenu' => $message->getContenu(),
+                'typeMessage' => $message->getTypeMessage(),
                 'createdAt' => $message->getCreatedAt()->format('d/m/Y H:i'),
                 'parentMessage' => $message->getParentMessage() ? [
                     'id' => $message->getParentMessage()->getId(),
@@ -606,6 +841,10 @@ class GroupeController extends AbstractController
                 'expediteur' => [
                     'nom' => $userName,
                 ],
+                'file' => $message->getFilePath() ? [
+                    'path' => $message->getFilePath(),
+                    'name' => $message->getFileName(),
+                ] : null,
             ],
         ]);
     }
@@ -679,8 +918,18 @@ class GroupeController extends AbstractController
             return $this->json(['error' => 'Vous devez être connecté'], 401);
         }
 
-        // Check if user is the sender
-        if ($message->getExpediteur() !== $user) {
+        // Check if user is the sender or is admin
+        $isSender = $message->getExpediteur() === $user;
+        $isAdmin = $user->isAdmin();
+        
+        // Check if user is owner of the group containing this message
+        $isGroupOwner = false;
+        $groupe = $message->getGroupe();
+        if ($groupe && $groupe->getCreateur() === $user) {
+            $isGroupOwner = true;
+        }
+        
+        if (!$isSender && !$isAdmin && !$isGroupOwner) {
             return $this->json(['error' => 'Vous ne pouvez pas supprimer ce message'], 403);
         }
 
@@ -740,8 +989,11 @@ class GroupeController extends AbstractController
             return $this->json(['error' => 'Vous devez être connecté'], 401);
         }
 
-        // Check if user is the creator (owner) of the group
-        if ($groupe->getCreateur() !== $user) {
+        // Check if user is the creator (owner) of the group or is admin
+        $isOwner = $groupe->getCreateur() === $user;
+        $isAdmin = $user->isAdmin();
+        
+        if (!$isOwner && !$isAdmin) {
             return $this->json(['error' => 'Vous ne pouvez pas supprimer ce groupe'], 403);
         }
 

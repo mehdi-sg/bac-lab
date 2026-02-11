@@ -6,88 +6,140 @@
     {{ parent() }}
     <style>
         .groupe-card {
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: none;
-            border-radius: 15px;
+            border-radius: 20px;
             overflow: hidden;
+            position: relative;
+        }
+        
+        .groupe-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .groupe-card:hover::before {
+            transform: scaleX(1);
         }
         
         .groupe-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2) !important;
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.25) !important;
         }
         
         .groupe-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px;
+            padding: 25px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .groupe-header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
         }
         
         .groupe-avatar {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
         .membre-badge {
             background: rgba(255, 255, 255, 0.2);
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.85rem;
+            backdrop-filter: blur(5px);
         }
         
         .stat-item {
             text-align: center;
-            padding: 15px;
+            padding: 20px 15px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
         }
         
         .stat-item .number {
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: bold;
-            color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .stat-item .label {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #6c757d;
+            margin-top: 5px;
         }
         
         .filiere-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: 600;
         }
         
         .filiere-badge.math {
-            background: rgba(102, 126, 234, 0.1);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(102, 126, 234, 0.05));
             color: #667eea;
         }
         
         .filiere-badge.science {
-            background: rgba(72, 187, 120, 0.1);
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.15), rgba(72, 187, 120, 0.05));
             color: #48bb78;
         }
         
         .filiere-badge.physique {
-            background: rgba(236, 201, 75, 0.1);
+            background: linear-gradient(135deg, rgba(236, 201, 75, 0.15), rgba(236, 201, 75, 0.05));
             color: #d69e2e;
         }
         
         .filiere-badge.chimie {
-            background: rgba(237, 137, 54, 0.1);
+            background: linear-gradient(135deg, rgba(237, 137, 54, 0.15), rgba(237, 137, 54, 0.05));
             color: #ed8936;
         }
         
+        .filiere-badge.technologie {
+            background: linear-gradient(135deg, rgba(159, 122, 234, 0.15), rgba(159, 122, 234, 0.05));
+            color: #9f7aea;
+        }
+        
         .filiere-badge.default {
-            background: rgba(102, 126, 234, 0.1);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(102, 126, 234, 0.05));
             color: #667eea;
         }
         
@@ -103,8 +155,8 @@
         
         .action-btn:hover {
             color: white;
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
         
         .action-btn-outline {
@@ -118,32 +170,108 @@
         }
         
         .action-btn-outline:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border-color: transparent;
+            transform: translateY(-2px);
         }
         
         .public-badge {
-            background: rgba(72, 187, 120, 0.2);
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.2), rgba(72, 187, 120, 0.1));
             color: #48bb78;
-            padding: 3px 10px;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .private-badge {
+            background: linear-gradient(135deg, rgba(237, 137, 54, 0.2), rgba(237, 137, 54, 0.1));
+            color: #ed8936;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .featured-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
             border-radius: 15px;
             font-size: 0.75rem;
         }
         
-        .private-badge {
-            background: rgba(237, 137, 54, 0.2);
-            color: #ed8936;
-            padding: 3px 10px;
-            border-radius: 15px;
-            font-size: 0.75rem;
+        .category-pill {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .category-pill:hover, .category-pill.active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .search-wrapper {
+            position: relative;
+            width: 200px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            cursor: pointer;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
     </style>
 {% endblock %}
 
 {% block body %}
 <!-- Hero Section -->
-<section class="hero-section d-flex align-items-center" style="padding-top: 100px; min-height: 60vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="hero-section d-flex align-items-center" style="padding-top: 100px; min-height: 50vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto text-center text-white">
@@ -158,21 +286,120 @@
     </div>
 </section>
 
+<!-- Stats Section -->
+<section class="py-4" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); margin-top: -30px; position: relative; z-index: 10;">
+    <div class="container">
+        <div class="row stats-section">
+            <div class="col-md-3 col-6 mb-3">
+                <div class="stat-item">
+                    <div class="number" data-count="{{ stats.total }}">0</div>
+                    <div class="label">Total Groupes</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="stat-item">
+                    <div class="number" data-count="{{ stats.public }}">0</div>
+                    <div class="label">Publics</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="stat-item">
+                    <div class="number" data-count="{{ stats.private }}">0</div>
+                    <div class="label">Privés</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="stat-item">
+                    <div class="number" data-count="{{ stats.myGroups }}">0</div>
+                    <div class="label">Mes Groupes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Groupes Section -->
 <section class="py-5" style="background: #f8f9fa;">
     <div class="container">
-        <div class="row mb-4">
-            <div class="col-lg-6">
-                <h2 class="font-weight-bold text-dark">Tous les groupes</h2>
-                <p class="text-muted">Découvrez et rejoignez des groupes de révision</p>
+        <!-- Featured Groups -->
+        {% if featuredGroups is not empty %}
+        <div class="row mb-5">
+            <div class="col-12">
+                <h4 class="font-weight-bold text-dark mb-4">
+                    <i class="fas fa-fire mr-2" style="color: #ed8936;"></i>
+                    Groupes Populaires
+                </h4>
+                <div class="row">
+                    {% for groupe in featuredGroups|slice(0, 3) %}
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <div class="featured-card shadow-sm h-100">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="groupe-avatar mr-3">{{ groupe.nom|first|upper }}</div>
+                                <div>
+                                    <h5 class="font-weight-bold mb-0">{{ groupe.nom }}</h5>
+                                    <span class="featured-badge">
+                                        <i class="fas fa-users mr-1"></i>
+                                        {{ groupe.membres.count }} membres
+                                    </span>
+                                </div>
+                            </div>
+                            <p class="mb-3" style="opacity: 0.9; font-size: 0.9rem;">
+                                {{ groupe.description[:100] }}{% if groupe.description|length > 100 %}...{% endif %}
+                            </p>
+                            <a href="{{ path('groupe_show', {'id': groupe.id}) }}" class="btn btn-light rounded-pill px-4">
+                                <i class="fas fa-arrow-right mr-2"></i>
+                                Découvrir
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-            <div class="col-lg-6">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Rechercher un groupe..." style="border-radius: 25px 0 0 25px; padding: 15px 20px;" id="searchGroupe">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary px-4" style="border-radius: 0 25px 25px 0; background: linear-gradient(135deg, #667eea, #764ba2); border: none;">
-                            <i class="fas fa-search"></i>
-                        </button>
+        </div>
+        {% endif %}
+        
+        <!-- Categories -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h4 class="font-weight-bold text-dark mb-3">
+                    <i class="fas fa-book mr-2" style="color: #667eea;"></i>
+                    Par Matière
+                </h4>
+                <div class="d-flex flex-wrap">
+                    <a href="{{ path('groupe_index') }}" class="category-pill {{ currentFilter == 'all' ? 'active' : '' }}" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+                        <i class="fas fa-th-large mr-1"></i> Tous
+                    </a>
+                    {% for filiere in filieres %}
+                    <span class="category-pill" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); color: #667eea;">
+                        <i class="fas fa-book-open mr-1"></i> {{ filiere }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div>
+                        <h2 class="font-weight-bold text-dark mb-0">Tous les groupes</h2>
+                        <p class="text-muted mb-0">Découvrez et rejoignez des groupes de révision</p>
+                    </div>
+                    <div class="d-flex align-items-center mt-3 mt-md-0">
+                        <div class="search-wrapper">
+                            <input type="text" class="search-input" placeholder="Rechercher..." id="searchGroupe">
+                            <i class="fas fa-search search-icon"></i>
+                        </div>
+                        <a href="{{ path('groupe_index', {'filter': 'all'}) }}" class="filter-btn {{ currentFilter == 'all' ? 'active' : '' }}" style="background: {{ currentFilter == 'all' ? 'linear-gradient(135deg, #667eea, #764ba2); color: white;' : '#e9ecef; color: #667eea;' }}">
+                            <i class="fas fa-list mr-1"></i> Tous
+                        </a>
+                        <a href="{{ path('groupe_index', {'filter': 'public'}) }}" class="filter-btn {{ currentFilter == 'public' ? 'active' : '' }}" style="background: {{ currentFilter == 'public' ? 'linear-gradient(135deg, #667eea, #764ba2); color: white;' : '#e9ecef; color: #667eea;' }}">
+                            <i class="fas fa-globe mr-1"></i> Publics
+                        </a>
+                        <a href="{{ path('groupe_index', {'filter': 'private'}) }}" class="filter-btn {{ currentFilter == 'private' ? 'active' : '' }}" style="background: {{ currentFilter == 'private' ? 'linear-gradient(135deg, #667eea, #764ba2); color: white;' : '#e9ecef; color: #667eea;' }}">
+                            <i class="fas fa-lock mr-1"></i> Privés
+                        </a>
                     </div>
                 </div>
             </div>
@@ -202,6 +429,8 @@
                             {% set filiereClass = 'physique' %}
                         {% elseif 'chimie' in filiereLower %}
                             {% set filiereClass = 'chimie' %}
+                        {% elseif 'technologie' in filiereLower %}
+                            {% set filiereClass = 'technologie' %}
                         {% endif %}
                     {% endif %}
                     
@@ -215,7 +444,13 @@
                                 {% if groupe.filiere %}
                                     <span class="filiere-badge {{ filiereClass }}">{{ groupe.filiere.nom }}</span>
                                 {% else %}
-                                    <span class="public-badge">{% if groupe.isPublic %}Public{% else %}Privé{% endif %}</span>
+                                    <span class="{{ groupe.isPublic ? 'public-badge' : 'private-badge' }}">
+                                        {% if groupe.isPublic %}
+                                            <i class="fas fa-globe mr-1"></i>Public
+                                        {% else %}
+                                            <i class="fas fa-lock mr-1"></i>Privé
+                                        {% endif %}
+                                    </span>
                                 {% endif %}
                             </div>
                             <div class="card-body">
@@ -293,6 +528,43 @@
 {{ parent() }}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Animated counter for stats
+        const animateCounters = () => {
+            document.querySelectorAll('.stat-item .number').forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-count'));
+                const duration = 1500;
+                const step = target / (duration / 16);
+                let current = 0;
+                
+                const updateCounter = () => {
+                    current += step;
+                    if (current < target) {
+                        counter.textContent = Math.floor(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+                
+                updateCounter();
+            });
+        };
+        
+        // Trigger animation when stats section is visible
+        const statsSection = document.querySelector('.stats-section');
+        if (statsSection) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounters();
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+            
+            observer.observe(statsSection);
+        }
+        
         const searchInput = document.getElementById('searchGroupe');
         const groupItems = document.querySelectorAll('.groupe-item');
         

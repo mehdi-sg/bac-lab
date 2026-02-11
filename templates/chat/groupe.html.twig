@@ -466,6 +466,9 @@
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right glass-dark shadow-lg" style="border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
                                     {% if isOwner %}
+                                    <a class="dropdown-item text-white py-2" href="{{ path('groupe_edit', {'id': groupe.id}) }}">
+                                        <i class="fas fa-edit mr-2"></i>Modifier le groupe
+                                    </a>
                                     <a class="dropdown-item text-white py-2" href="#" id="membersBtn">
                                         <i class="fas fa-users mr-2"></i>Gerer les membres
                                     </a>
@@ -473,20 +476,16 @@
                                     <a class="dropdown-item text-white py-2" href="#">
                                         <i class="fas fa-user-plus mr-2"></i>Inviter des membres
                                     </a>
-                                    <a class="dropdown-item text-white py-2" href="#">
-                                        <i class="fas fa-cog mr-2"></i>Parametres
-                                    </a>
-                                    {% if isMember or app.user.id == groupe.createur.id %}
+                                    {% if isOwner or isAdmin %}
                                     <div class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></div>
-                                    {% if isOwner %}
                                     <a class="dropdown-item text-danger py-2" href="#" id="deleteGroupBtn">
                                         <i class="fas fa-trash mr-2"></i>Supprimer le groupe
                                     </a>
-                                    {% else %}
+                                    {% elseif isMember or app.user.id == groupe.createur.id %}
+                                    <div class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></div>
                                     <a class="dropdown-item text-danger py-2" href="#" id="leaveGroupBtn">
                                         <i class="fas fa-sign-out-alt mr-2"></i>Quitter le groupe
                                     </a>
-                                    {% endif %}
                                     {% endif %}
                                 </div>
                             </div>
@@ -625,6 +624,13 @@
                                                             title="Supprimer"
                                                             style="background: transparent; border: none;">
                                                         <i class="fas fa-trash text-danger" style="font-size: 0.75rem;"></i>
+                                                    </button>
+                                                    {% elseif isAdmin %}
+                                                    <button type="button" class="btn btn-sm p-1 admin-delete-btn" 
+                                                            data-message-id="{{ message.id }}"
+                                                            title="Supprimer (Admin)"
+                                                            style="background: transparent; border: none;">
+                                                        <i class="fas fa-trash text-warning" style="font-size: 0.75rem;" title="Admin"></i>
                                                     </button>
                                                     {% endif %}
                                                 </div>
@@ -964,14 +970,6 @@
             chatForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 const message = messageInput.value.trim();
-                
-                if (!message && !selectedFile && !selectedFicheId) {
-                    messageInput.classList.add('is-invalid');
-                    messageInput.focus();
-                    return;
-                }
-                
-                messageInput.classList.remove('is-invalid');
                 
                 // Add temporary message to UI
                 let messageContent = '';
@@ -1324,6 +1322,43 @@
                 const messageId = deleteBtn.dataset.messageId;
                 
                 if (confirm('Etes-vous sur de vouloir supprimer ce message ?')) {
+                    fetch('/chat/message/' + messageId + '/supprimer', {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Find and hide the message
+                            const messageElement = document.querySelector('[data-message-id="' + messageId + '"]');
+                            if (messageElement) {
+                                const messageBubble = messageElement.closest('.message');
+                                if (messageBubble) {
+                                    messageBubble.style.opacity = '0';
+                                    messageBubble.style.transform = 'translateY(-10px)';
+                                    setTimeout(() => {
+                                        messageBubble.remove();
+                                    }, 300);
+                                }
+                            }
+                        } else {
+                            alert(data.error || 'Une erreur est survenue');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue');
+                    });
+                }
+            }
+        });
+        
+        // Admin Delete handler - using event delegation
+        document.addEventListener('click', function(e) {
+            const adminDeleteBtn = e.target.closest('.admin-delete-btn');
+            if (adminDeleteBtn) {
+                const messageId = adminDeleteBtn.dataset.messageId;
+                
+                if (confirm('Etes-vous sur de vouloir supprimer ce message en tant qu\'admin ?')) {
                     fetch('/chat/message/' + messageId + '/supprimer', {
                         method: 'POST'
                     })
