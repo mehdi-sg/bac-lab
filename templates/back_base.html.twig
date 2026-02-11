@@ -17,6 +17,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ asset('public\front\css\admin-crud.css') }}">
+
 
     <style>
         :root{
@@ -272,35 +275,43 @@
 
         <div class="side-section-title">Navigation</div>
 
-        {# Dashboard (empty link) #}
-        <a class="nav-pill active" href="javascript:void(0)">
-            <div class="nav-icon">
-                <i class="fa-solid fa-gauge-high"></i>
-            </div>
-            <div class="nav-text">
-                <strong>Dashboard</strong>
-                <span>Vue globale</span>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
-        </a>
+        {# Dashboard #}
+<a class="nav-pill {{ app.request.attributes.get('_route') == 'admin_dashboard' ? 'active' : '' }}"
+   href="{{ path('admin_dashboard') }}">
+
+    <div class="nav-icon">
+        <i class="fa-solid fa-gauge-high"></i>
+    </div>
+
+    <div class="nav-text">
+        <strong>Dashboard</strong>
+        <span>Vue globale</span>
+    </div>
+
+    <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+</a>
+
 
         <div class="side-section-title">Modules</div>
 
         {# MODULE 1 #}
-        <a class="nav-pill" href="javascript:void(0)">
-            <div class="nav-icon grad1"><i class="fa-solid fa-user-shield"></i></div>
-            <div class="nav-text">
-                <strong>Module 1 — User & Profil</strong>
-                <span>Comptes, rôles, profils</span>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
-        </a>
+<a class="nav-pill" href="{{ path('admin_user_index') }}">
+    <div class="nav-icon grad1">
+        <i class="fa-solid fa-user-shield"></i>
+    </div>
+    <div class="nav-text">
+        <strong>Users & Profils</strong>
+        <span>Comptes, rôles, profils</span>
+    </div>
+    <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+</a>
+
 
         {# MODULE 2 #}
         <a class="nav-pill" href="javascript:void(0)">
             <div class="nav-icon grad2"><i class="fa-solid fa-school"></i></div>
             <div class="nav-text">
-                <strong>Module 2 — Filières</strong>
+                <strong>Filières</strong>
                 <span>Matières, chapitres</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
@@ -310,7 +321,7 @@
         <a class="nav-pill" href="javascript:void(0)">
             <div class="nav-icon grad3"><i class="fa-solid fa-book-open-reader"></i></div>
             <div class="nav-text">
-                <strong>Module 3 — Bibliothèque</strong>
+                <strong>Bibliothèque</strong>
                 <span>Ressources & fichiers</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
@@ -318,9 +329,9 @@
 
         {# MODULE 4 #}
         <a class="nav-pill" href="javascript:void(0)">
-            <div class="nav-icon"><i class="fa-solid fa-comments"></i></div>
+            <div class="nav-icon grad1"><i class="fa-solid fa-comments"></i></div>
             <div class="nav-text">
-                <strong>Module 4 — Collaboration</strong>
+                <strong>Collaboration</strong>
                 <span>Messenger & co-op</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
@@ -328,9 +339,9 @@
 
         {# MODULE 5 #}
         <a class="nav-pill" href="javascript:void(0)">
-            <div class="nav-icon"><i class="fa-solid fa-brain"></i></div>
+            <div class="nav-icon grad2"><i class="fa-solid fa-brain"></i></div>
             <div class="nav-text">
-                <strong>Module 5 — Quiz</strong>
+                <strong>Quizzes</strong>
                 <span>Tests, scores</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
@@ -338,9 +349,9 @@
 
         {# MODULE 6 #}
         <a class="nav-pill" href="javascript:void(0)">
-            <div class="nav-icon"><i class="fa-solid fa-pen-ruler"></i></div>
+            <div class="nav-icon grad3"><i class="fa-solid fa-pen-ruler"></i></div>
             <div class="nav-text">
-                <strong>Module 6 — Fiches</strong>
+                <strong>Fiches</strong>
                 <span>Co-édition & notes</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
@@ -360,7 +371,7 @@
             </div>
 
             <div class="d-flex gap-2 mt-3">
-                <a class="btn-ghost flex-fill text-center" href="javascript:void(0)">
+                <a class="btn-ghost flex-fill text-center" href="{{ path('app_logout') }}">
                     <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
                 </a>
             </div>
@@ -375,12 +386,18 @@
                 <p>{% block page_subtitle %}BacLab • Admin space{% endblock %}</p>
             </div>
 
-            <div class="topbar-actions">
-                <input class="search" type="text" placeholder="Rechercher (utilisateur, matière, ressource...)">
-                <a class="btn-ghost" href="javascript:void(0)">
-                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Aller au site
-                </a>
-            </div>
+           <div class="topbar-actions">
+    <input class="search" type="text" placeholder="Rechercher (utilisateur, matière, ressource...)">
+
+    <a class="btn-ghost"
+       href="{{ path('app_home') }}"
+       target="_blank"
+       rel="noopener noreferrer">
+        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>
+        Aller au site
+    </a>
+</div>
+  
         </div>
 
         {% block body %}{% endblock %}

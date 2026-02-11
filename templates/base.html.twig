@@ -71,7 +71,7 @@
                                                 </li>
                                                 <li><a href="#">Communauté</a></li>
                                                 
-                                                {% if is_granted('ROLE_USER') %}
+                                                {% if app.user %}
                                                     <li class="button-header"><a href="{{ path('app_profile') }}" class="btn">Mon Profil</a></li>
                                                     <li class="button-header"><a href="{{ path('app_logout') }}" class="btn btn3">Déconnexion</a></li>
                                                 {% else %}

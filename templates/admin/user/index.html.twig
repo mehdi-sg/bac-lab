@@ -1,0 +1,207 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}Utilisateurs — BacLab Admin{% endblock %}
+
+{% block body %}
+<style>
+  .table-glass{
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.16);
+    box-shadow: 0 12px 30px rgba(0,0,0,.35);
+  }
+  .table-glass table{ margin:0; }
+  .table-glass thead th{
+    background: rgba(255,255,255,.06) !important;
+    color: rgba(234,240,255,.90) !important;
+    border-color: rgba(255,255,255,.10) !important;
+    font-weight: 900;
+  }
+  .table-glass tbody td{
+    background: transparent !important;
+    color: rgba(234,240,255,.88) !important;
+    border-color: rgba(255,255,255,.08) !important;
+    vertical-align: middle;
+    font-weight: 700;
+  }
+  .table-glass tbody tr:hover td{
+    background: rgba(255,255,255,.03) !important;
+  }
+  .pill{
+    display:inline-flex; align-items:center; gap:8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.05);
+    font-weight: 900;
+    font-size: 12px;
+  }
+  .pill.success{ border-color: rgba(46,211,255,.30); background: rgba(46,211,255,.12); }
+  .pill.danger{ border-color: rgba(255,77,141,.30); background: rgba(255,77,141,.12); }
+  .role-badge{
+    display:inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.05);
+    font-size: 12px;
+    font-weight: 900;
+    margin: 2px 6px 2px 0;
+    color: rgba(234,240,255,.88);
+  }
+  .actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    flex-wrap: wrap;
+  }
+  .icon-btn{
+    width: 36px; height: 36px;
+    display:inline-flex;
+    align-items:center; justify-content:center;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.06);
+    color: rgba(234,240,255,.92);
+    text-decoration:none;
+    font-weight: 900;
+  }
+  .icon-btn:hover{ background: rgba(255,255,255,.10); }
+  .icon-btn.warn{ border-color: rgba(255,184,108,.35); background: rgba(255,184,108,.10); }
+  .icon-btn.info{ border-color: rgba(46,211,255,.35); background: rgba(46,211,255,.10); }
+  .icon-btn.danger{ border-color: rgba(255,77,141,.35); background: rgba(255,77,141,.10); }
+  .muted{ color: rgba(234,240,255,.70); }
+</style>
+<style>
+  .flash-close{
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.06);
+    color: rgba(234,240,255,.85);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .flash-close:hover{
+    background: rgba(255,255,255,.12);
+  }
+</style>
+
+<div class="glass-card p-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+      <h2 style="margin:0;font-weight:900;">Gestion des utilisateurs</h2>
+      <div class="muted" style="font-weight:700;margin-top:6px;">
+        Ajouter, modifier, rôles, activation et suppression.
+      </div>
+    </div>
+
+    <a class="btn-ghost" href="{{ path('admin_user_new') }}">
+      <i class="fa-solid fa-user-plus me-2"></i> Ajouter un utilisateur
+    </a>
+  </div>
+
+  {# Flash messages #}
+{% for label, messages in app.flashes %}
+  {% for message in messages %}
+    <div class="mt-3 glass-card p-3 flash-msg"
+         style="border-color: rgba(46,211,255,.25); position: relative;">
+
+      {# Bouton fermer #}
+      <button type="button"
+              class="flash-close"
+              onclick="this.closest('.flash-msg').remove()"
+              aria-label="Fermer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <strong style="font-weight:900;">{{ label|upper }}</strong>
+      <div class="muted" style="font-weight:700;">{{ message }}</div>
+    </div>
+  {% endfor %}
+{% endfor %}
+
+
+  <div class="mt-4 table-glass">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th style="width:35%;">Email</th>
+          <th>Rôles</th>
+          <th style="width:14%;">Statut</th>
+          <th style="width:20%;" class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+          <tr>
+            <td>
+              <div style="font-weight:900;">{{ user.email }}</div>
+              
+            </td>
+
+            <td>
+              {% for r in user.roles %}
+                <span class="role-badge">{{ r }}</span>
+              {% endfor %}
+            </td>
+
+            <td>
+              {% if user.isActive %}
+                <span class="pill success"><i class="fa-solid fa-circle-check"></i> Actif</span>
+              {% else %}
+                <span class="pill danger"><i class="fa-solid fa-circle-xmark"></i> Inactif</span>
+              {% endif %}
+            </td>
+
+            <td class="text-end">
+              <div class="actions">
+
+                <a class="icon-btn warn" title="Modifier"
+                   href="{{ path('admin_user_edit', {id: user.id}) }}">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+
+                <a class="icon-btn info" title="Activer/Désactiver"
+                   href="{{ path('admin_user_toggle', {id: user.id}) }}">
+                  <i class="fa-solid fa-power-off"></i>
+                </a>
+
+                <form method="post"
+                      action="{{ path('admin_user_delete', {id: user.id}) }}"
+                      onsubmit="return confirm('Supprimer définitivement ce compte ?');"
+                      style="display:inline;">
+                  <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ user.id) }}">
+                  <button class="icon-btn danger" type="submit" title="Supprimer">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </form>
+
+              </div>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="4" class="text-center muted" style="padding:18px;font-weight:800;">
+              Aucun utilisateur trouvé.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+  setTimeout(() => {
+    document.querySelectorAll('.flash-msg').forEach(el => el.remove());
+  }, 5000);
+</script>
+
+{% endblock %}

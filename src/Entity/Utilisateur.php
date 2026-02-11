@@ -115,4 +115,10 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->hasRole(self::ROLE_USER);
     }
+
+    public function setIsActive(bool $isActive): self
+     {
+        $this->isActive = $isActive;
+        return $this;
+      }
 }

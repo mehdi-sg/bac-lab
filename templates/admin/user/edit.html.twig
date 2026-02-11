@@ -1,0 +1,188 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}Modifier utilisateur — BacLab Admin{% endblock %}
+
+{% block body %}
+<style>
+  .muted{ color: rgba(234,240,255,.70); }
+
+  .form-wrap{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 992px){
+    .form-wrap{ grid-template-columns: 1fr; }
+  }
+
+  .field-card{
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.16);
+  }
+
+  .field-label{
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgba(234,240,255,.72);
+    margin-bottom: 10px;
+  }
+
+  .glass-input .form-control,
+  .glass-input select{
+    width: 100%;
+    border-radius: 14px;
+    background: rgba(0,0,0,.18) !important;
+    border: 1px solid rgba(255,255,255,.14) !important;
+    color: rgba(234,240,255,.92) !important;
+    padding: 12px 12px !important;
+  }
+  .glass-input .form-control:focus,
+  .glass-input select:focus{
+    outline: none;
+    box-shadow: 0 0 0 .2rem rgba(46,211,255,.12);
+    border-color: rgba(46,211,255,.30) !important;
+  }
+
+  /* Roles chips */
+  .roles-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 10px;
+  }
+  .role-chip{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.05);
+    color: rgba(234,240,255,.90);
+    font-weight: 900;
+    cursor:pointer;
+    user-select:none;
+  }
+  .role-chip input{
+    accent-color: #7c5cff;
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Active switch look */
+  .switch-line{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 12px;
+    padding: 12px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.05);
+  }
+  .switch-line .hint{
+    font-weight: 800;
+    color: rgba(234,240,255,.85);
+  }
+  .switch-line input{
+    width: 18px;
+    height: 18px;
+    accent-color: #2ed3ff;
+  }
+
+  .help-text{
+    margin-top: 8px;
+    font-weight: 700;
+    font-size: 12px;
+    color: rgba(234,240,255,.68);
+  }
+
+  .form-actions{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+</style>
+
+<div class="glass-card p-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+      <h2 style="margin:0;font-weight:900;">Modifier utilisateur</h2>
+      <div class="muted" style="font-weight:700;margin-top:6px;">
+        Mettre à jour l’email, les rôles et le statut.
+      </div>
+    </div>
+
+    <div class="d-flex gap-2">
+      <a class="btn-ghost" href="{{ path('admin_user_toggle', {id: user.id}) }}">
+        <i class="fa-solid fa-power-off me-2"></i>
+        {{ user.isActive ? 'Désactiver' : 'Activer' }}
+      </a>
+      <a class="btn-ghost" href="{{ path('admin_user_index') }}">
+        <i class="fa-solid fa-arrow-left me-2"></i> Retour
+      </a>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    {{ form_start(form) }}
+
+    <div class="form-wrap">
+
+      {# Email #}
+      <div class="field-card glass-input">
+        <div class="field-label">Email</div>
+        {{ form_widget(form.email) }}
+        {{ form_errors(form.email) }}
+      </div>
+
+      {# Mot de passe #}
+      <div class="field-card glass-input">
+        <div class="field-label">Mot de passe</div>
+        {% if form.plainPassword is defined %}
+          {{ form_widget(form.plainPassword, { attr: { placeholder: 'Laisser vide pour ne pas modifier' } }) }}
+          <div class="help-text">Laisser vide pour ne pas modifier</div>
+          {{ form_errors(form.plainPassword) }}
+        {% endif %}
+      </div>
+
+      {# Rôles #}
+      <div class="field-card" style="grid-column: 1 / -1;">
+        <div class="field-label">Rôles</div>
+        <div class="roles-grid">
+          {% for choice in form.roles %}
+            <label class="role-chip">
+              {{ form_widget(choice) }}
+              <span>{{ choice.vars.label }}</span>
+            </label>
+          {% endfor %}
+        </div>
+        {{ form_errors(form.roles) }}
+      </div>
+
+      {# Compte actif #}
+      <div class="field-card" style="grid-column: 1 / -1;">
+        <div class="field-label">Compte</div>
+        <label class="switch-line">
+          <span class="hint">Compte actif</span>
+          {{ form_widget(form.isActive) }}
+        </label>
+        {{ form_errors(form.isActive) }}
+      </div>
+
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-ghost" type="submit">
+        <i class="fa-solid fa-floppy-disk me-2"></i> Enregistrer
+      </button>
+    </div>
+
+    {{ form_end(form) }}
+  </div>
+</div>
+{% endblock %}

@@ -21,6 +21,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+            
                 {{ form_start(form) }}
                 
                 <!-- Section Informations Personnelles -->
@@ -138,6 +139,32 @@
                         Enregistrer les modifications
                     </button>
                 </div>
+
+<!-- Zone dangereuse -->
+<div style="margin-top: 45px; border: 2px solid rgba(229,62,62,.25); background: rgba(229,62,62,.06); border-radius: 16px; padding: 22px;">
+    <h3 style="font-size: 22px; font-weight: 800; margin: 0; color: #1a202c;">
+        <i class="fas fa-exclamation-triangle" style="color:#e53e3e; margin-right:10px;"></i>
+    </h3>
+    <p style="margin: 10px 0 0; color: #4a5568; font-weight: 600;">
+        Désactivez votre compte ou supprimez-le définitivement (confirmation requise).
+    </p>
+
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px;">
+        <a href="{{ path('app_profile_disable_confirm', { token: disableToken }) }}"
+           style="padding: 14px 18px; font-weight: 800; border-radius: 12px; text-decoration: none;
+                  background: #f6ad55; color: #1a202c; box-shadow: 0 8px 18px rgba(246,173,85,.35);">
+            <i class="fas fa-power-off" style="margin-right:8px;"></i> Désactiver mon compte
+        </a>
+
+        <a href="{{ path('app_profile_delete_confirm', { token: deleteToken }) }}"
+           style="padding: 14px 18px; font-weight: 800; border-radius: 12px; text-decoration: none;
+                  background: #e53e3e; color: white; box-shadow: 0 8px 18px rgba(229,62,62,.35);">
+            <i class="fas fa-trash" style="margin-right:8px;"></i> Supprimer mon compte
+        </a>
+    </div>
+</div>
+
+
 
                 {{ form_end(form) }}
             </div>

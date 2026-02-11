@@ -15,9 +15,17 @@ return [
         '/_profiler/phpinfo' => [[['_route' => '_profiler_phpinfo', '_controller' => 'web_profiler.controller.profiler::phpinfoAction'], null, null, null, false, false, null]],
         '/_profiler/xdebug' => [[['_route' => '_profiler_xdebug', '_controller' => 'web_profiler.controller.profiler::xdebugAction'], null, null, null, false, false, null]],
         '/_profiler/open' => [[['_route' => '_profiler_open_file', '_controller' => 'web_profiler.controller.profiler::openAction'], null, null, null, false, false, null]],
+        '/admin' => [[['_route' => 'admin_dashboard', '_controller' => 'App\\Controller\\AdminController::dashboard'], null, null, null, true, false, null]],
+        '/admin/users' => [[['_route' => 'admin_user_index', '_controller' => 'App\\Controller\\AdminUserController::index'], null, null, null, true, false, null]],
+        '/admin/users/new' => [[['_route' => 'admin_user_new', '_controller' => 'App\\Controller\\AdminUserController::new'], null, null, null, false, false, null]],
         '/fiche' => [[['_route' => 'fiche_index', '_controller' => 'App\\Controller\\FicheController::index'], null, ['GET' => 0], null, true, false, null]],
         '/fiche/new' => [[['_route' => 'fiche_new', '_controller' => 'App\\Controller\\FicheController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
         '/home' => [[['_route' => 'app_home', '_controller' => 'App\\Controller\\HomeController::index'], null, null, null, false, false, null]],
+        '/profile' => [[['_route' => 'app_profile', '_controller' => 'App\\Controller\\ProfilController::index'], null, null, null, true, false, null]],
+        '/profile/edit' => [[['_route' => 'app_profile_edit', '_controller' => 'App\\Controller\\ProfilController::edit'], null, null, null, false, false, null]],
+        '/login' => [[['_route' => 'app_login', '_controller' => 'App\\Controller\\SecurityController::login'], null, null, null, false, false, null]],
+        '/logout' => [[['_route' => 'app_logout', '_controller' => 'App\\Controller\\SecurityController::logout'], null, null, null, false, false, null]],
+        '/register' => [[['_route' => 'app_register', '_controller' => 'App\\Controller\\SecurityController::register'], null, null, null, false, false, null]],
     ],
     [ // $regexpList
         0 => '{^(?'
@@ -39,15 +47,24 @@ return [
                         .')'
                     .')'
                 .')'
+                .'|/admin/users/([^/]++)/(?'
+                    .'|edit(*:231)'
+                    .'|toggle(*:245)'
+                    .'|delete(*:259)'
+                .')'
                 .'|/fiche/(?'
                     .'|([^/]++)(?'
-                        .'|(*:223)'
+                        .'|(*:289)'
                         .'|/(?'
-                            .'|edit(*:239)'
-                            .'|history(*:254)'
+                            .'|edit(*:305)'
+                            .'|history(*:320)'
                         .')'
                     .')'
-                    .'|fiche/([^/]++)/delete(*:285)'
+                    .'|fiche/([^/]++)/delete(*:351)'
+                .')'
+                .'|/profile/d(?'
+                    .'|isable/confirm/([^/]++)(*:396)'
+                    .'|elete/confirm/([^/]++)(*:426)'
                 .')'
             .')/?$}sDu',
     ],
@@ -60,11 +77,16 @@ return [
         168 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
         181 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
         191 => [[['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null]],
-        223 => [[['_route' => 'fiche_show', '_controller' => 'App\\Controller\\FicheController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        239 => [[['_route' => 'fiche_edit', '_controller' => 'App\\Controller\\FicheController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        254 => [[['_route' => 'fiche_history', '_controller' => 'App\\Controller\\FicheController::history'], ['id'], ['GET' => 0], null, false, false, null]],
-        285 => [
-            [['_route' => 'fiche_delete', '_controller' => 'App\\Controller\\FicheController::delete'], ['id'], ['POST' => 0], null, false, false, null],
+        231 => [[['_route' => 'admin_user_edit', '_controller' => 'App\\Controller\\AdminUserController::edit'], ['id'], null, null, false, false, null]],
+        245 => [[['_route' => 'admin_user_toggle', '_controller' => 'App\\Controller\\AdminUserController::toggle'], ['id'], null, null, false, false, null]],
+        259 => [[['_route' => 'admin_user_delete', '_controller' => 'App\\Controller\\AdminUserController::delete'], ['id'], ['POST' => 0], null, false, false, null]],
+        289 => [[['_route' => 'fiche_show', '_controller' => 'App\\Controller\\FicheController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        305 => [[['_route' => 'fiche_edit', '_controller' => 'App\\Controller\\FicheController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        320 => [[['_route' => 'fiche_history', '_controller' => 'App\\Controller\\FicheController::history'], ['id'], ['GET' => 0], null, false, false, null]],
+        351 => [[['_route' => 'fiche_delete', '_controller' => 'App\\Controller\\FicheController::delete'], ['id'], ['POST' => 0], null, false, false, null]],
+        396 => [[['_route' => 'app_profile_disable_confirm', '_controller' => 'App\\Controller\\ProfilController::disableConfirm'], ['token'], ['GET' => 0, 'POST' => 1], null, false, true, null]],
+        426 => [
+            [['_route' => 'app_profile_delete_confirm', '_controller' => 'App\\Controller\\ProfilController::deleteConfirm'], ['token'], ['GET' => 0, 'POST' => 1], null, false, true, null],
             [null, null, null, null, false, false, 0],
         ],
     ],
