@@ -602,13 +602,31 @@
         </a>
 
         {# MODULE 4 #}
-        <a class="nav-pill" href="javascript:void(0)">
+        <a class="nav-pill" href="{{ path('admin_groupes') }}">
             <div class="nav-icon grad1"><i class="fa-solid fa-comments"></i></div>
             <div class="nav-text">
-                <strong>Collaboration</strong>
-                <span>Messenger & co-op</span>
+                <strong>Groupes</strong>
+                <span>Gestion des groupes</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+        </a>
+        
+        {# SUB-MODULE 4.1 - Demandes #}
+        <a class="nav-pill" href="{{ path('admin_membre_groupe_demandes') }}" style="padding-left: 50px;">
+            <div class="nav-icon" style="width:32px;height:32px;border-radius:10px;font-size:12px;"><i class="fa-solid fa-user-clock"></i></div>
+            <div class="nav-text">
+                <strong>Demandes</strong>
+                <span>Adhésion en attente</span>
+            </div>
+        </a>
+        
+        {# SUB-MODULE 4.2 - Membres #}
+        <a class="nav-pill" href="{{ path('admin_membre_groupe_membres') }}" style="padding-left: 50px;">
+            <div class="nav-icon" style="width:32px;height:32px;border-radius:10px;font-size:12px;"><i class="fa-solid fa-users"></i></div>
+            <div class="nav-text">
+                <strong>Membres</strong>
+                <span>Tous les membres</span>
+            </div>
         </a>
 
        {# MODULE 5 #}
@@ -617,7 +635,7 @@
                 <i class="fa-solid fa-brain"></i>
             </div>
             <div class="nav-text">
-                <strong>Module 5 — Quiz</strong>
+                <strong>Module 6 — Quiz</strong>
                 <span>Tests, scores</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>

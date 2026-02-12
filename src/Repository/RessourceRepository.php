@@ -18,8 +18,10 @@ class RessourceRepository extends ServiceEntityRepository
     
 
     public function findPublicRessources(
-        ?string $q = null, 
-        ?string $typeFichier = null, 
+        ?string $q = null,
+        ?string $filiere = null,
+        ?string $matiere = null,
+        ?string $typeFichier = null,
         ?string $categorie = null,
         ?int $limit = null
     ): array {
@@ -30,19 +32,31 @@ class RessourceRepository extends ServiceEntityRepository
             ->setParameter('statut', 'VALIDEE')
             ->orderBy('r.dateAjout', 'DESC');
 
-        // Search query (titre, tags, auteur, description)
+        // Recherche par texte
         if ($q) {
             $qb->andWhere('LOWER(r.titre) LIKE :q OR LOWER(r.tags) LIKE :q OR LOWER(r.auteur) LIKE :q OR LOWER(r.description) LIKE :q')
                ->setParameter('q', '%'.mb_strtolower($q).'%');
         }
 
-        // Filter by type (PDF, VIDEO, LIEN)
+        // Filtre par filière
+        if ($filiere) {
+            $qb->andWhere('LOWER(r.filiere) = :filiere')
+               ->setParameter('filiere', mb_strtolower($filiere));
+        }
+
+        // Filtre par matière
+        if ($matiere) {
+            $qb->andWhere('LOWER(r.matiere) = :matiere')
+               ->setParameter('matiere', mb_strtolower($matiere));
+        }
+
+        // Filtre par type de fichier
         if ($typeFichier) {
             $qb->andWhere('r.typeFichier = :typeFichier')
                ->setParameter('typeFichier', $typeFichier);
         }
 
-        // Filter by category (Cours, Exercices, etc.)
+        // Filtre par catégorie
         if ($categorie) {
             $qb->andWhere('r.categorie = :categorie')
                ->setParameter('categorie', $categorie);

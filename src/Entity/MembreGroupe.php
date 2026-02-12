@@ -36,8 +36,8 @@ class MembreGroupe
     #[ORM\Column(length: 20)]
     #[Assert\NotBlank(message: "Le rôle du membre est obligatoire.")]
     #[Assert\Choice(
-        choices: ['MEMBRE', 'ANIMATEUR', 'ADMIN'],
-        message: "Le rôle choisi n'est pas valide (MEMBRE, ANIMATEUR ou ADMIN)."
+        choices: ['MEMBRE', 'MODERATEUR', 'ADMIN'],
+        message: "Le rôle choisi n'est pas valide (MEMBRE, MODERATEUR ou ADMIN)."
     )]
     private string $roleMembre = 'MEMBRE';
 
