@@ -40,7 +40,8 @@ class AdminUtilisateurType extends AbstractType
             ->add('plainPassword', PasswordType::class, [
                 'label' => 'Mot de passe',
                 'mapped' => false,
-                'constraints' => [
+                'required' => !$isEdit,
+                'constraints' => $isEdit ? [] : [
                     new Assert\NotBlank([
                         'message' => 'Veuillez entrer un mot de passe',
                     ]),

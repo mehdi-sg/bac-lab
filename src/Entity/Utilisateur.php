@@ -32,8 +32,7 @@
 
         #[ORM\Column]
         private string $password;
-
-        // Propriété temporaire pour le formulaire d'inscription (non persistée en base)
+        
         private ?string $plainPassword = null;
 
         #[ORM\Column]
@@ -82,6 +81,7 @@
         public function setPlainPassword(?string $plainPassword): self { $this->plainPassword = $plainPassword; return $this; }
 
         public function isActive(): bool { return $this->isActive; }
+        public function setIsActive(bool $isActive): self { $this->isActive = $isActive; return $this; }
 
         public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
 
