@@ -15,16 +15,34 @@ use Symfony\Component\Routing\Annotation\Route;
 class ChapitreController extends AbstractController
 {
     #[Route('/', name: 'chapitre_index', methods: ['GET'])]
-    public function index(Request $request, ChapitreRepository $chapitreRepository): Response
+    public function index(Request $request, ChapitreRepository $chapitreRepository, EntityManagerInterface $em): Response
     {
         $query = trim((string) $request->query->get('q', ''));
-        $chapitres = $query === ''
-            ? $chapitreRepository->findAll()
-            : $chapitreRepository->search($query);
+        $matiereId = $request->query->get('matiere');
+        
+        $selectedMatiere = null;
+        if ($matiereId) {
+            $selectedMatiere = $em->getRepository(\App\Entity\Matiere::class)->find($matiereId);
+        }
+
+        if ($matiereId && $selectedMatiere) {
+            $chapitres = $em->getRepository(\App\Entity\Chapitre::class)
+                ->createQueryBuilder('c')
+                ->where('c.matiere = :matiere')
+                ->setParameter('matiere', $selectedMatiere)
+                ->orderBy('c.ordre', 'ASC')
+                ->getQuery()
+                ->getResult();
+        } else {
+            $chapitres = $query === ''
+                ? $chapitreRepository->findAll()
+                : $chapitreRepository->search($query);
+        }
 
         return $this->render('chapitre/index.html.twig', [
             'chapitres' => $chapitres,
             'query' => $query,
+            'selectedMatiere' => $selectedMatiere,
         ]);
     }
 

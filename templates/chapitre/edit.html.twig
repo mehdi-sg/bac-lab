@@ -144,21 +144,15 @@
             <p style="color: rgba(255,255,255,0.4);">ID unique : <span style="color: #fff;">#{{ chapitre.id }}</span></p>
         </div>
 
-        {{ form_start(form) }}
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
             <div class="input-group">
                 <label class="label-pro">Nom du module</label>
                 {{ form_widget(form.titre, {'attr': {'class': 'input-pro', 'placeholder': 'Titre du chapitre...'}}) }}
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                <div class="input-group">
-                    <label class="label-pro">Catégorie</label>
-                    {{ form_widget(form.matiere, {'attr': {'class': 'input-pro'}}) }}
-                </div>
-                <div class="input-group">
-                    <label class="label-pro">Priorité</label>
-                    {{ form_widget(form.ordre, {'attr': {'class': 'input-pro'}}) }}
-                </div>
+            <div class="input-group">
+                <label class="label-pro">Catégorie</label>
+                {{ form_widget(form.matiere, {'attr': {'class': 'input-pro'}}) }}
             </div>
 
             <div class="input-group">

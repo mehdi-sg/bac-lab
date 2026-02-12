@@ -40,4 +40,14 @@ final class HomeController extends AbstractController
             'categorie' => $categorie,
         ]);
     }
+
+    #[Route('/filieres', name: 'app_filieres')]
+    public function filieres(\App\Repository\FiliereRepository $filiereRepository): Response
+    {
+        $filieres = $filiereRepository->findBy(['actif' => true], ['nom' => 'ASC']);
+        
+        return $this->render('Home/filieres.html.twig', [
+            'filieres' => $filieres,
+        ]);
+    }
 }

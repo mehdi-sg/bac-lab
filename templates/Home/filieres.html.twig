@@ -1,0 +1,367 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos Filières | BacLab{% endblock %}
+
+{% block body %}
+<style>
+    /* Hero Section */
+    .hero-filieres {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 5rem 0 3rem;
+        color: white;
+        text-align: center;
+    }
+    
+    .hero-filieres h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-filieres p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    /* Search & Filter Section */
+    .search-section {
+        background: white;
+        padding: 2rem 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    
+    .search-box {
+        max-width: 600px;
+        margin: 0 auto 1.5rem;
+        position: relative;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 50px;
+        font-size: 1rem;
+        transition: 0.3s;
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 1.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 1.2rem;
+    }
+
+    /* Filter Buttons */
+    .filter-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+        padding: 0.75rem 2rem;
+        border: 2px solid #e2e8f0;
+        background: white;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        color: #64748b;
+    }
+    
+    .filter-btn:hover {
+        border-color: #667eea;
+        color: #667eea;
+        transform: translateY(-2px);
+    }
+    
+    .filter-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: transparent;
+    }
+
+    /* Filières Grid */
+    .filieres-section {
+        padding: 3rem 0;
+        background: #f8fafc;
+    }
+    
+    .filieres-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .filiere-card {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        transition: 0.3s;
+        border: 2px solid transparent;
+    }
+    
+    .filiere-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        border-color: #667eea;
+    }
+    
+    .filiere-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+    }
+    
+    .filiere-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+    
+    .filiere-niveau {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: #f1f5f9;
+        color: #667eea;
+        border-radius: 50px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+    
+    .empty-icon {
+        font-size: 4rem;
+        color: #cbd5e1;
+        margin-bottom: 1rem;
+    }
+    
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-text {
+        color: #94a3b8;
+    }
+
+    /* Results Counter */
+    .results-counter {
+        text-align: center;
+        color: #64748b;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="hero-filieres">
+    <div class="container">
+        <h1>Découvrez Nos Filières</h1>
+        <p>Explorez toutes les filières disponibles et trouvez celle qui vous correspond</p>
+    </div>
+</section>
+
+<!-- Search & Filter Section -->
+<section class="search-section">
+    <div class="container">
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input 
+                type="text" 
+                id="search-input" 
+                class="search-input" 
+                placeholder="Rechercher une filière (ex: info, sciences, lettres...)"
+                autocomplete="off"
+            >
+        </div>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">
+                <i class="fas fa-th"></i> Toutes
+            </button>
+            <button class="filter-btn" data-filter="Bac">
+                <i class="fas fa-graduation-cap"></i> Baccalauréat
+            </button>
+            <button class="filter-btn" data-filter="Autre">
+                <i class="fas fa-star"></i> Autres Niveaux
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Filières Section -->
+<section class="filieres-section">
+    <div class="container">
+        <div class="results-counter" id="results-counter">
+            {{ filieres|length }} filière{{ filieres|length > 1 ? 's' : '' }} disponible{{ filieres|length > 1 ? 's' : '' }}
+        </div>
+        
+        <div class="filieres-grid" id="filieres-grid">
+            {% for filiere in filieres %}
+            <div class="filiere-card" data-niveau="{{ filiere.niveau }}" data-nom="{{ filiere.nom|lower }}">
+                <div class="filiere-icon">{{ filiere.nom|first|upper }}</div>
+                <h3 class="filiere-name">{{ filiere.nom }}</h3>
+                <span class="filiere-niveau">
+                    <i class="fas fa-layer-group"></i> Niveau {{ filiere.niveau }}
+                </span>
+            </div>
+            {% else %}
+            <div class="empty-state" style="grid-column: 1/-1;">
+                <div class="empty-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <h3 class="empty-title">Aucune filière disponible</h3>
+                <p class="empty-text">Les filières seront bientôt ajoutées</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="empty-state" id="no-results" style="display: none;">
+            <div class="empty-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h3 class="empty-title">Aucun résultat trouvé</h3>
+            <p class="empty-text">Essayez avec d'autres mots-clés</p>
+        </div>
+    </div>
+</section>
+
+<script>
+    const searchInput = document.getElementById('search-input');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const filiereCards = document.querySelectorAll('.filiere-card');
+    const resultsCounter = document.getElementById('results-counter');
+    const noResults = document.getElementById('no-results');
+    
+    let currentFilter = 'all';
+    
+    // Fonction de filtrage SIMPLE
+    function filterFilieres() {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+        
+        console.log('Recherche:', searchTerm); // Debug
+        
+        filiereCards.forEach(card => {
+            const nomElement = card.querySelector('.filiere-name');
+            if (!nomElement) return;
+            
+            const nom = nomElement.textContent;
+            const niveau = card.dataset.niveau;
+            
+            console.log('Filière:', nom); // Debug
+            
+            // Vérifier le filtre de niveau
+            const matchesFilter = currentFilter === 'all' || niveau === currentFilter;
+            
+            // Recherche simple : vérifie si un mot de la filière commence par le terme recherché
+            let matchesSearch = false;
+            
+            if (searchTerm === '') {
+                matchesSearch = true;
+            } else {
+                // Séparer le nom en mots
+                const words = nom.split(' ');
+                
+                // Vérifier si au moins un mot commence par le terme recherché
+                for (let word of words) {
+                    if (word.toLowerCase().startsWith(searchTerm)) {
+                        matchesSearch = true;
+                        console.log('Match trouvé:', word); // Debug
+                        break;
+                    }
+                }
+            }
+            
+            if (matchesFilter && matchesSearch) {
+                card.style.display = '';
+                visibleCount++;
+                
+                // Surligner les résultats
+                const originalText = nomElement.getAttribute('data-original') || nomElement.textContent;
+                
+                if (!nomElement.getAttribute('data-original')) {
+                    nomElement.setAttribute('data-original', originalText);
+                }
+                
+                if (searchTerm !== '') {
+                    // Surligner le début du mot trouvé
+                    const words = originalText.split(' ');
+                    const highlightedWords = words.map(word => {
+                        if (word.toLowerCase().startsWith(searchTerm)) {
+                            const matchPart = word.substring(0, searchTerm.length);
+                            const restPart = word.substring(searchTerm.length);
+                            return `<span style="background: #fbbf24; padding: 2px 4px; border-radius: 4px; font-weight: 700;">${matchPart}</span>${restPart}`;
+                        }
+                        return word;
+                    });
+                    nomElement.innerHTML = highlightedWords.join(' ');
+                } else {
+                    nomElement.textContent = originalText;
+                }
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Afficher/masquer le message "aucun résultat"
+        if (noResults) {
+            noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+        
+        // Mettre à jour le compteur
+        if (visibleCount === 0 && searchTerm !== '') {
+            resultsCounter.textContent = `Aucune filière ne commence par "${searchTerm}"`;
+            resultsCounter.style.color = '#ef4444';
+        } else {
+            resultsCounter.textContent = `${visibleCount} filière${visibleCount > 1 ? 's' : ''} trouvée${visibleCount > 1 ? 's' : ''}`;
+            resultsCounter.style.color = '#64748b';
+        }
+    }
+    
+    // Événement de recherche
+    searchInput.addEventListener('input', filterFilieres);
+    
+    // Événements des boutons de filtre
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentFilter = this.dataset.filter;
+            filterFilieres();
+        });
+    });
+</script>
+{% endblock %}

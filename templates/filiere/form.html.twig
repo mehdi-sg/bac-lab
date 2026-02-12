@@ -117,7 +117,7 @@
                     <p class="text-muted small">ID Session : <span class="text-info">#99{{ "now"|date("s") }}</span> • BacLab System</p>
                 </div>
 
-                {{ form_start(form) }}
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
                     
                     {# Champ NOM #}
                     <div class="mb-5 position-relative">
