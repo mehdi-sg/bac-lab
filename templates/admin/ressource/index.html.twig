@@ -252,6 +252,74 @@
             border-radius: 6px;
             font-size: 0.85rem;
         }
+        
+        .fab-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 1000;
+            text-decoration: none;
+            border: none;
+        }
+        
+        .fab-button:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #dfe6e9;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            color: #636e72;
+            margin-bottom: 15px;
+        }
+        
+        .empty-state p {
+            color: #b2bec3;
+            margin-bottom: 25px;
+        }
+        
+        .btn-create-first {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-create-first:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
     </style>
 {% endblock %}
 
@@ -392,9 +460,16 @@
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="8" class="text-center py-5">
-                                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">Aucune ressource trouvée</p>
+                            <td colspan="8" class="p-0">
+                                <div class="empty-state">
+                                    <i class="fas fa-folder-open"></i>
+                                    <h3>Aucune ressource disponible</h3>
+                                    <p>Commencez par créer votre première ressource pédagogique</p>
+                                    <a href="{{ path('app_admin_ressource_new') }}" class="btn-create-first">
+                                        <i class="fas fa-plus-circle"></i>
+                                        Créer ma première ressource
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     {% endfor %}
@@ -402,4 +477,9 @@
             </table>
         </div>
     </div>
+    
+    <!-- Floating Action Button -->
+    <a href="{{ path('app_admin_ressource_new') }}" class="fab-button" title="Créer une nouvelle ressource">
+        <i class="fas fa-plus"></i>
+    </a>
 {% endblock %}

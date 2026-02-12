@@ -143,6 +143,9 @@ Bienvenue, {{ app.user ? app.user.email : 'Admin' }} • Rôle: Administrateur
             </h4>
 
             <div class="d-grid gap-2">
+                <a href="{{ path('app_admin_ressource_new') }}" class="btn-ghost" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                    <i class="fa-solid fa-plus-circle me-2"></i> Créer une nouvelle ressource
+                </a>
                 <a href="{{ path('admin_user_index') }}" class="btn-ghost">
     <i class="fa-solid fa-layer-group me-2"></i> Gérer les utilisateurs
 </a>
