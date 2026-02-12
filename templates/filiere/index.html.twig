@@ -700,23 +700,16 @@
         </div>
         
         <div class="toolbar-section">
-            <form method="get" action="{{ path('filiere_index') }}" class="search-form">
-                <div class="search-input-wrapper">
-                    <i class="fas fa-search search-icon"></i>
-                    <input 
-                        type="text" 
-                        name="q" 
-                        value="{{ query|default('') }}" 
-                        class="search-input" 
-                        placeholder="Rechercher par nom ou niveau..."
-                        autocomplete="off"
-                    >
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-search"></i>
-                    <span class="sr-only">Rechercher</span>
-                </button>
-            </form>
+            <div class="search-input-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input 
+                    type="text" 
+                    id="search-filiere"
+                    class="search-input" 
+                    placeholder="Rechercher par nom ou niveau..."
+                    autocomplete="off"
+                >
+            </div>
         </div>
     </div>
 
@@ -916,6 +909,118 @@
         row.addEventListener('mouseenter', function() {
             this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
         });
+    });
+
+    // Recherche en temps réel avancée avec abréviations
+    const searchInput = document.getElementById('search-filiere');
+    const tableRows = document.querySelectorAll('.data-table tbody tr');
+    
+    // Fonction pour extraire les initiales d'un texte
+    function getInitials(text) {
+        return text
+            .toLowerCase()
+            .split(' ')
+            .map(word => word.charAt(0))
+            .join('');
+    }
+    
+    // Fonction pour vérifier si le terme correspond aux initiales
+    function matchesInitials(text, searchTerm) {
+        const initials = getInitials(text);
+        return initials.includes(searchTerm);
+    }
+    
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        let visibleCount = 0;
+        
+        tableRows.forEach(row => {
+            // Ignorer la ligne "aucune filière trouvée"
+            if (row.querySelector('.empty-state')) {
+                return;
+            }
+            
+            const nomElement = row.querySelector('.cell-name span');
+            const niveauElement = row.querySelector('.cell-level');
+            
+            if (!nomElement) return;
+            
+            const nom = nomElement.textContent.toLowerCase();
+            const niveau = niveauElement ? niveauElement.textContent.toLowerCase() : '';
+            
+            // Recherche avancée : 
+            // 1. Cherche le texte complet
+            const matchNom = nom.includes(searchTerm);
+            const matchNiveau = niveau.includes(searchTerm);
+            
+            // 2. Cherche par initiales (ex: "sc" pour "Sciences")
+            const matchInitials = matchesInitials(nomElement.textContent, searchTerm);
+            
+            if (searchTerm === '' || matchNom || matchNiveau || matchInitials) {
+                row.style.display = '';
+                visibleCount++;
+                
+                // Réinitialiser le surlignage
+                nomElement.innerHTML = nomElement.textContent;
+                
+                // Surligner le texte trouvé (seulement si correspondance exacte, pas initiales)
+                if (searchTerm !== '' && matchNom) {
+                    const regex = new RegExp(`(${searchTerm})`, 'gi');
+                    const originalText = nomElement.textContent;
+                    nomElement.innerHTML = originalText.replace(regex, '<span style="background: #fbbf24; color: #000; padding: 2px 4px; border-radius: 4px; font-weight: 800;">$1</span>');
+                } else if (searchTerm !== '' && matchInitials && !matchNom) {
+                    // Surligner les premières lettres si correspondance par initiales
+                    const words = nomElement.textContent.split(' ');
+                    const highlighted = words.map(word => {
+                        if (word.length > 0) {
+                            return '<span style="background: #a855f7; color: #fff; padding: 2px 4px; border-radius: 4px; font-weight: 800;">' + word.charAt(0) + '</span>' + word.slice(1);
+                        }
+                        return word;
+                    }).join(' ');
+                    nomElement.innerHTML = highlighted;
+                }
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Afficher un message si aucun résultat
+        const tbody = document.querySelector('.data-table tbody');
+        let noResultRow = tbody.querySelector('.no-result-row');
+        
+        if (visibleCount === 0 && searchTerm !== '') {
+            if (!noResultRow) {
+                noResultRow = document.createElement('tr');
+                noResultRow.className = 'no-result-row';
+                noResultRow.innerHTML = `
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <h3 class="empty-title">Aucun résultat pour "${searchTerm}"</h3>
+                            <p class="empty-text">Essayez avec le nom complet ou les initiales (ex: "sc" pour Sciences)</p>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(noResultRow);
+            } else {
+                noResultRow.querySelector('.empty-title').textContent = `Aucun résultat pour "${searchTerm}"`;
+            }
+            noResultRow.style.display = '';
+        } else if (noResultRow) {
+            noResultRow.style.display = 'none';
+        }
+        
+        // Mettre à jour le compteur
+        const statValue = document.querySelector('.stat-value');
+        if (statValue && searchTerm !== '') {
+            statValue.textContent = visibleCount;
+            statValue.style.color = visibleCount > 0 ? 'var(--primary)' : 'var(--danger)';
+        } else if (statValue) {
+            statValue.textContent = tableRows.length - (tbody.querySelector('.empty-state') ? 1 : 0);
+            statValue.style.color = 'var(--primary)';
+        }
     });
 </script>
 {% endblock %}

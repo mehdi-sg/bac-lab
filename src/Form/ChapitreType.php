@@ -19,7 +19,6 @@ class ChapitreType extends AbstractType
         $builder
             ->add('titre', TextType::class, ['label' => 'Titre'])
             ->add('contenu', TextareaType::class, ['label' => 'Contenu'])
-            ->add('ordre', IntegerType::class, ['label' => 'Ordre'])
             ->add('matiere', EntityType::class, [
                 'class' => Matiere::class,
                 'choice_label' => 'nom',
