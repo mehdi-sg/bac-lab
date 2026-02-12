@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 class Profil
@@ -13,22 +14,31 @@ class Profil
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: "Le nom est obligatoire.")]
+    #[Assert\Length(max: 50, maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères.")]
     private string $nom;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: "Le prénom est obligatoire.")]
+    #[Assert\Length(max: 50, maxMessage: "Le prénom ne peut pas dépasser {{ limit }} caractères.")]
     private string $prenom;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank(message: "Le niveau est obligatoire.")]
+    #[Assert\Choice(choices: ['1ère année', '2ème année', '3ème année', '4ème année', '5ème année', 'M1', 'M2'], message: "Le niveau doit être 1ère année, 2ème année, 3ème année, 4ème année, 5ème année, M1 ou M2.")]
     private string $niveau;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: "Le gouvernorat est obligatoire.")]
+    #[Assert\Length(max: 50, maxMessage: "Le gouvernorat ne peut pas dépasser {{ limit }} caractères.")]
     private string $gouvernorat;
 
     #[ORM\Column(type: 'date', nullable: true)]
     private ?\DateTimeInterface $dateNaissance = null;
 
-    #[ORM\Column(length: 100, nullable: true)]
-    private ?string $filiere = null;
+    #[ORM\ManyToOne(targetEntity: Filiere::class)]
+    #[ORM\JoinColumn(name: 'filiere_id', referencedColumnName: 'id', nullable: true)]
+    private ?Filiere $filiere = null;
 
     #[ORM\OneToOne(inversedBy: 'profil')]
     #[ORM\JoinColumn(nullable: false)]
@@ -51,8 +61,8 @@ class Profil
     public function getDateNaissance(): ?\DateTimeInterface { return $this->dateNaissance; }
     public function setDateNaissance(?\DateTimeInterface $date): self { $this->dateNaissance = $date; return $this; }
 
-    public function getFiliere(): ?string { return $this->filiere; }
-    public function setFiliere(?string $filiere): self { $this->filiere = $filiere; return $this; }
+    public function getFiliere(): ?Filiere { return $this->filiere; }
+    public function setFiliere(?Filiere $filiere): self { $this->filiere = $filiere; return $this; }
 
     public function setUtilisateur(Utilisateur $utilisateur): self
     {

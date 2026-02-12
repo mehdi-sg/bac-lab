@@ -254,6 +254,279 @@
             .sidebar-footer{ padding:10px; }
             .search{ display:none; }
         }
+        
+        /* ==========================================
+           ADMIN FICHE STYLES
+           ========================================== */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .admin-title {
+            font-size: 2rem;
+            font-weight: 900;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .admin-subtitle {
+            color: var(--muted);
+            font-size: 0.9375rem;
+            margin: 0.5rem 0 0;
+            font-weight: 600;
+        }
+        
+        .admin-card {
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+            overflow: hidden;
+        }
+        
+        .card-header-admin {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .card-body-admin {
+            padding: 1.5rem;
+        }
+        
+        .admin-input, .admin-input:focus {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            padding: 0.75rem 1rem;
+        }
+        
+        .admin-input:focus {
+            border-color: rgba(109, 91, 255, 0.5);
+            box-shadow: 0 0 0 3px rgba(109, 91, 255, 0.15);
+            outline: none;
+        }
+        
+        .admin-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .admin-btn-primary {
+            background: var(--grad1);
+            border-color: transparent;
+            color: white;
+        }
+        
+        .admin-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(109, 91, 255, 0.4);
+            color: white;
+        }
+        
+        .admin-btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+        }
+        
+        .admin-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+        }
+        
+        .admin-btn-danger {
+            background: linear-gradient(135deg, #FF4D8D, #FF6B6B);
+            border-color: transparent;
+            color: white;
+        }
+        
+        .admin-btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 77, 141, 0.4);
+            color: white;
+        }
+        
+        .admin-btn-icon {
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            transition: all 0.2s ease;
+        }
+        
+        .admin-btn-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+        
+        .admin-btn-icon.admin-btn-danger:hover {
+            background: linear-gradient(135deg, #FF4D8D, #FF6B6B);
+            color: white;
+        }
+        
+        .admin-table {
+            width: 100%;
+            color: var(--text);
+        }
+        
+        .admin-table thead th {
+            padding: 1rem 1.25rem;
+            font-weight: 800;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .admin-table tbody td {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+        
+        .admin-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .badge-id {
+            display: inline-block;
+            padding: 0.375rem 0.75rem;
+            background: rgba(109, 91, 255, 0.15);
+            border: 1px solid rgba(109, 91, 255, 0.3);
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: #6D5BFF;
+        }
+        
+        .fiche-icon-mini {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--grad1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .badge-filiere {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(46, 211, 255, 0.15);
+            border: 1px solid rgba(46, 211, 255, 0.3);
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: #2ED3FF;
+        }
+        
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            border: 1px solid;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .badge-status:hover {
+            transform: translateY(-2px);
+        }
+        
+        .badge-public {
+            background: rgba(53, 255, 182, 0.15);
+            border-color: rgba(53, 255, 182, 0.3);
+            color: #35FFB6;
+        }
+        
+        .badge-private {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--border);
+            color: var(--muted);
+        }
+        
+        .empty-state {
+            padding: 3rem;
+            text-align: center;
+            color: var(--muted);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+        
+        .admin-pagination {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .pagination .page-link {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem 0.75rem;
+            margin: 0 0.25rem;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+        
+        .pagination .page-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+        
+        .pagination .page-item.active .page-link {
+            background: var(--grad1);
+            border-color: transparent;
+            color: white;
+        }
+        
+        .pagination .page-item.disabled .page-link {
+            opacity: 0.5;
+        }
+        
+        .admin-modal .modal-content {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            backdrop-filter: blur(20px);
+            color: var(--text);
+        }
+        
+        .admin-modal .modal-header {
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .admin-modal .modal-footer {
+            border-top: 1px solid var(--border);
+        }
     </style>
 
     {% block stylesheets %}{% endblock %}
@@ -309,7 +582,7 @@
 
 
         {# MODULE 2 #}
-        <a class="nav-pill" href="javascript:void(0)">
+        <a class="nav-pill" href="{{ path('filiere_index') }}">
             <div class="nav-icon grad2"><i class="fa-solid fa-school"></i></div>
             <div class="nav-text">
                 <strong>Filières</strong>
@@ -329,13 +602,31 @@
         </a>
 
         {# MODULE 4 #}
-        <a class="nav-pill" href="javascript:void(0)">
+        <a class="nav-pill" href="{{ path('admin_groupes') }}">
             <div class="nav-icon grad1"><i class="fa-solid fa-comments"></i></div>
             <div class="nav-text">
-                <strong>Collaboration</strong>
-                <span>Messenger & co-op</span>
+                <strong>Groupes</strong>
+                <span>Gestion des groupes</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+        </a>
+        
+        {# SUB-MODULE 4.1 - Demandes #}
+        <a class="nav-pill" href="{{ path('admin_membre_groupe_demandes') }}" style="padding-left: 50px;">
+            <div class="nav-icon" style="width:32px;height:32px;border-radius:10px;font-size:12px;"><i class="fa-solid fa-user-clock"></i></div>
+            <div class="nav-text">
+                <strong>Demandes</strong>
+                <span>Adhésion en attente</span>
+            </div>
+        </a>
+        
+        {# SUB-MODULE 4.2 - Membres #}
+        <a class="nav-pill" href="{{ path('admin_membre_groupe_membres') }}" style="padding-left: 50px;">
+            <div class="nav-icon" style="width:32px;height:32px;border-radius:10px;font-size:12px;"><i class="fa-solid fa-users"></i></div>
+            <div class="nav-text">
+                <strong>Membres</strong>
+                <span>Tous les membres</span>
+            </div>
         </a>
 
        {# MODULE 5 #}
@@ -344,7 +635,7 @@
                 <i class="fa-solid fa-brain"></i>
             </div>
             <div class="nav-text">
-                <strong>Module 5 — Quiz</strong>
+                <strong>Module 6 — Quiz</strong>
                 <span>Tests, scores</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
@@ -352,8 +643,8 @@
 
 
         {# MODULE 6 #}
-        <a class="nav-pill" href="javascript:void(0)">
-            <div class="nav-icon grad3"><i class="fa-solid fa-pen-ruler"></i></div>
+        <a class="nav-pill" href="{{ path('admin_fiche_index') }}">
+            <div class="nav-icon"><i class="fa-solid fa-pen-ruler"></i></div>
             <div class="nav-text">
                 <strong>Fiches</strong>
                 <span>Co-édition & notes</span>

@@ -29,10 +29,18 @@
         <div class="col-md-4 mb-4">
             <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
                 <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 50px; color: white; font-weight: 800;">
-                    {{ profil.prenom|first|upper }}{{ profil.nom|first|upper }}
+                    {% if profil %}
+                        {{ profil.prenom|first|upper }}{{ profil.nom|first|upper }}
+                    {% else %}
+                        ??
+                    {% endif %}
                 </div>
                 <h2 style="font-size: 28px; font-weight: 700; color: #1a202c; margin-bottom: 5px;">
-                    {{ profil.prenom }} {{ profil.nom }}
+                    {% if profil %}
+                        {{ profil.prenom }} {{ profil.nom }}
+                    {% else %}
+                        Profil incomplet
+                    {% endif %}
                 </h2>
                 <p style="color: #718096; font-size: 16px; margin-bottom: 20px;">
                     <i class="fas fa-envelope" style="margin-right: 8px;"></i>
@@ -56,20 +64,24 @@
                     <div class="col-md-6 mb-3">
                         <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
                             <p style="font-size: 14px; color: #718096; margin-bottom: 5px; font-weight: 600;">Nom</p>
-                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">{{ profil.nom }}</p>
+                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">
+                                {% if profil %}{{ profil.nom }}{% else %}<span style="color: #a0aec0;">Non renseigné</span>{% endif %}
+                            </p>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
                             <p style="font-size: 14px; color: #718096; margin-bottom: 5px; font-weight: 600;">Prénom</p>
-                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">{{ profil.prenom }}</p>
+                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">
+                                {% if profil %}{{ profil.prenom }}{% else %}<span style="color: #a0aec0;">Non renseigné</span>{% endif %}
+                            </p>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
                             <p style="font-size: 14px; color: #718096; margin-bottom: 5px; font-weight: 600;">Date de Naissance</p>
                             <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">
-                                {% if profil.dateNaissance %}
+                                {% if profil and profil.dateNaissance %}
                                     {{ profil.dateNaissance|date('d/m/Y') }}
                                 {% else %}
                                     <span style="color: #a0aec0;">Non renseignée</span>
@@ -80,7 +92,9 @@
                     <div class="col-md-6 mb-3">
                         <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
                             <p style="font-size: 14px; color: #718096; margin-bottom: 5px; font-weight: 600;">Gouvernorat</p>
-                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">{{ profil.gouvernorat }}</p>
+                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">
+                                {% if profil %}{{ profil.gouvernorat }}{% else %}<span style="color: #a0aec0;">Non renseigné</span>{% endif %}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -96,14 +110,16 @@
                     <div class="col-md-6 mb-3">
                         <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
                             <p style="font-size: 14px; color: #718096; margin-bottom: 5px; font-weight: 600;">Niveau</p>
-                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">{{ profil.niveau }}</p>
+                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">
+                                {% if profil %}{{ profil.niveau }}{% else %}<span style="color: #a0aec0;">Non renseigné</span>{% endif %}
+                            </p>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
                             <p style="font-size: 14px; color: #718096; margin-bottom: 5px; font-weight: 600;">Filière</p>
                             <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">
-                                {% if profil.filiere %}
+                                {% if profil and profil.filiere %}
                                     {{ profil.filiere }}
                                 {% else %}
                                     <span style="color: #a0aec0;">Non renseignée</span>

@@ -106,6 +106,34 @@
         </div>
     </div>
 
+    {# Navigation entre modules #}
+    <div class="mb-3">
+        <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%); padding: 1.25rem; border-radius: 20px; border: 2px solid rgba(99, 102, 241, 0.25); display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+            <span style="font-weight: 800; color: #fff; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 1px;">Navigation rapide :</span>
+            <a href="{{ path('filiere_index') }}" style="background: rgba(255,255,255,0.1); color: #fff; padding: 0.625rem 1.25rem; border-radius: 12px; text-decoration: none; font-weight: 600; border: 1px solid rgba(255,255,255,0.15); transition: 0.3s;">
+                <i class="fas fa-graduation-cap me-2"></i>Aller aux Filières
+            </a>
+            <span style="background: linear-gradient(135deg, #6366f1, #a855f7); color: white; padding: 0.625rem 1.25rem; border-radius: 12px; font-weight: 700; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);">
+                <i class="fas fa-book me-2"></i>Matières (actuel)
+            </span>
+            <a href="{{ path('chapitre_index') }}" style="background: rgba(255,255,255,0.1); color: #fff; padding: 0.625rem 1.25rem; border-radius: 12px; text-decoration: none; font-weight: 600; border: 1px solid rgba(255,255,255,0.15); transition: 0.3s;">
+                <i class="fas fa-file-alt me-2"></i>Aller aux Chapitres
+            </a>
+        </div>
+    </div>
+
+    {# Breadcrumb Navigation #}
+    {% if selectedFiliere %}
+        <div class="mb-3">
+            <nav style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08);">
+                <ol class="breadcrumb mb-0" style="background: transparent;">
+                    <li class="breadcrumb-item"><a href="{{ path('filiere_index') }}" style="color: #2ED3FF;">Filières</a></li>
+                    <li class="breadcrumb-item active" style="color: #fff;">Matières</li>
+                </ol>
+            </nav>
+        </div>
+    {% endif %}
+
     <div class="glass-card-table">
         <table class="table-modern">
             <thead>
@@ -138,6 +166,7 @@
                         </div>
                     </td>
                     <td class="text-end">
+                        <a href="{{ path('chapitre_index', {'matiere': m.id}) }}" class="action-btn" style="background: rgba(245,158,11,0.2); border-color: rgba(245,158,11,0.3); color: #f59e0b;" title="Voir les chapitres"><i class="fas fa-file-alt"></i></a>
                         <a href="{{ path('matiere_show', {'id': m.id}) }}" class="action-btn" title="Voir"><i class="fas fa-eye"></i></a>
                         <a href="{{ path('matiere_edit', {'id': m.id}) }}" class="action-btn" style="color: #FFB86C;" title="Modifier"><i class="fas fa-pen"></i></a>
                     </td>

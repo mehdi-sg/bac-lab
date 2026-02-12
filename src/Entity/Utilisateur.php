@@ -64,6 +64,13 @@
             $this->ficheModerateur = new ArrayCollection();
             $this->ficheJoinRequests = new ArrayCollection();
         }
+        /**
+         * @var Collection<int, FicheFavori>
+         */
+        #[ORM\OneToMany(targetEntity: FicheFavori::class, mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
+        private Collection $ficheFavoris;
+
+
 
         public function getId(): ?int { return $this->id; }
 
@@ -72,7 +79,7 @@
 
         public function getUserIdentifier(): string { return $this->email; }
 
-        public function getRoles(): array { return array_unique($this->roles); }
+        public function getRoles(): array { return array_values(array_unique($this->roles)); }
         public function setRoles(array $roles): self { $this->roles = $roles; return $this; }
 
         public function getPassword(): string { return $this->password; }
@@ -185,6 +192,38 @@
             if ($this->ficheJoinRequests->removeElement($ficheJoinRequest)) {
                 if ($ficheJoinRequest->getUtilisateur() === $this) {
                     $ficheJoinRequest->setUtilisateur(null);
+                }
+            }
+
+            return $this;
+        }
+
+        /**
+         * @return Collection<int, FicheFavori>
+         */
+        public function getFicheFavoris(): Collection
+        {
+            if (!isset($this->ficheFavoris)) {
+                $this->ficheFavoris = new ArrayCollection();
+            }
+            return $this->ficheFavoris;
+        }
+
+        public function addFicheFavori(FicheFavori $ficheFavori): self
+        {
+            if (!$this->getFicheFavoris()->contains($ficheFavori)) {
+                $this->ficheFavoris->add($ficheFavori);
+                $ficheFavori->setUtilisateur($this);
+            }
+
+            return $this;
+        }
+
+        public function removeFicheFavori(FicheFavori $ficheFavori): self
+        {
+            if ($this->getFicheFavoris()->removeElement($ficheFavori)) {
+                if ($ficheFavori->getUtilisateur() === $this) {
+                    $ficheFavori->setUtilisateur(null);
                 }
             }
 

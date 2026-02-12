@@ -1,0 +1,258 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}Gestion des Fiches - Admin{% endblock %}
+
+{% block body %}
+<div class="admin-header">
+    <div>
+        <h1 class="admin-title">
+            <i class="fa-solid fa-book-open"></i>
+            Gestion des Fiches
+        </h1>
+        <p class="admin-subtitle">{{ total_fiches }} fiche(s) au total</p>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-5">
+            <label class="form-label">
+                <i class="fa-solid fa-search"></i> Rechercher
+            </label>
+            <input type="text" name="search" class="form-control admin-input" 
+                   placeholder="Titre ou contenu..." value="{{ search }}">
+        </div>
+        
+        <div class="col-md-3">
+            <label class="form-label">
+                <i class="fa-solid fa-eye"></i> Visibilité
+            </label>
+            <select name="isPublic" class="form-select admin-input">
+                <option value="">Toutes</option>
+                <option value="1" {{ isPublic == '1' ? 'selected' : '' }}>Publiques</option>
+                <option value="0" {{ isPublic == '0' ? 'selected' : '' }}>Privées</option>
+            </select>
+        </div>
+        
+        <div class="col-md-4 d-flex align-items-end gap-2">
+            <button type="submit" class="btn admin-btn admin-btn-primary">
+                <i class="fa-solid fa-filter"></i> Filtrer
+            </button>
+            <a href="{{ path('admin_fiche_index') }}" class="btn admin-btn admin-btn-secondary">
+                <i class="fa-solid fa-rotate-right"></i> Réinitialiser
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Fiches Table -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">ID</th>
+                    <th style="width: 30%">Titre</th>
+                    <th style="width: 15%">Filière</th>
+                    <th style="width: 10%">Visibilité</th>
+                    <th style="width: 15%">Date création</th>
+                    <th style="width: 15%">Dernière MAJ</th>
+                    <th style="width: 10%" class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fiche in fiches %}
+                <tr>
+                    <td>
+                        <span class="badge-id">#{{ fiche.id }}</span>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="fiche-icon-mini">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold">{{ fiche.title }}</div>
+                                <small class="text-muted">
+                                    {{ fiche.content|length > 60 ? fiche.content|slice(0, 60) ~ '...' : fiche.content }}
+                                </small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if fiche.filiere %}
+                            <span class="badge-filiere">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                {{ fiche.filiere.nom }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="post" action="{{ path('admin_fiche_toggle_public', {id: fiche.id}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle_public_' ~ fiche.id) }}">
+                            <button type="submit" class="badge-status {{ fiche.isPublic ? 'badge-public' : 'badge-private' }}">
+                                <i class="fa-solid {{ fiche.isPublic ? 'fa-eye' : 'fa-eye-slash' }}"></i>
+                                {{ fiche.isPublic ? 'Publique' : 'Privée' }}
+                            </button>
+                        </form>
+                    </td>
+                    <td>
+                        <div class="text-muted">
+                            <i class="fa-regular fa-calendar"></i>
+                            {{ fiche.createdAt|date('d/m/Y') }}
+                        </div>
+                        <small class="text-muted">{{ fiche.createdAt|date('H:i') }}</small>
+                    </td>
+                    <td>
+                        <div class="text-muted">
+                            <i class="fa-regular fa-clock"></i>
+                            {{ fiche.updatedAt|date('d/m/Y') }}
+                        </div>
+                        <small class="text-muted">{{ fiche.updatedAt|date('H:i') }}</small>
+                    </td>
+                    <td class="text-end">
+                        <div class="btn-group">
+                            <a href="{{ path('admin_fiche_show', {id: fiche.id}) }}" 
+                               class="btn btn-sm admin-btn-icon" title="Voir">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            <a href="{{ path('admin_fiche_moderateurs', {id: fiche.id}) }}" 
+                               class="btn btn-sm admin-btn-icon" title="Modérateurs">
+                                <i class="fa-solid fa-users"></i>
+                            </a>
+                            <a href="{{ path('fiche_show', {id: fiche.id}) }}" 
+                               class="btn btn-sm admin-btn-icon" title="Voir sur le site" target="_blank">
+                                <i class="fa-solid fa-external-link-alt"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm admin-btn-icon admin-btn-danger" 
+                                    onclick="confirmDelete({{ fiche.id }})" 
+                                    data-token="{{ csrf_token('delete_fiche_' ~ fiche.id) }}"
+                                    title="Supprimer">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center py-5">
+                        <div class="empty-state">
+                            <i class="fa-solid fa-inbox"></i>
+                            <p>Aucune fiche trouvée</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div class="admin-pagination">
+        <nav>
+            <ul class="pagination justify-content-center mb-0">
+                {% if current_page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('admin_fiche_index', {page: current_page - 1, search: search, isPublic: isPublic}) }}">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for page in 1..total_pages %}
+                    {% if page == current_page %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ page }}</span>
+                        </li>
+                    {% elseif page == 1 or page == total_pages or (page >= current_page - 2 and page <= current_page + 2) %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('admin_fiche_index', {page: page, search: search, isPublic: isPublic}) }}">
+                                {{ page }}
+                            </a>
+                        </li>
+                    {% elseif page == current_page - 3 or page == current_page + 3 %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if current_page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('admin_fiche_index', {page: current_page + 1, search: search, isPublic: isPublic}) }}">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content admin-modal">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fa-solid fa-triangle-exclamation text-danger"></i>
+                    Confirmer la suppression
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer cette fiche ?</p>
+                <p class="text-danger mb-0">
+                    <i class="fa-solid fa-exclamation-circle"></i>
+                    Cette action est irréversible.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn admin-btn admin-btn-secondary" data-bs-dismiss="modal">
+                    Annuler
+                </button>
+                <form method="post" id="deleteForm">
+                    <button type="submit" class="btn admin-btn admin-btn-danger">
+                        <i class="fa-solid fa-trash"></i> Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(ficheId) {
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    const form = document.getElementById('deleteForm');
+    
+    // Set the form action with the correct fiche ID
+    form.action = '{{ path('admin_fiche_delete', {id: 'PLACEHOLDER_ID'}) }}'.replace('PLACEHOLDER_ID', ficheId);
+    
+    // Add CSRF token as hidden input
+    const existingToken = form.querySelector('input[name="_token"]');
+    if (existingToken) {
+        existingToken.remove();
+    }
+    
+    const tokenInput = document.createElement('input');
+    tokenInput.type = 'hidden';
+    tokenInput.name = '_token';
+    tokenInput.value = generateCsrfToken(ficheId);
+    form.appendChild(tokenInput);
+    
+    modal.show();
+}
+
+function generateCsrfToken(ficheId) {
+    // Get the token from the data attribute we'll add to each delete button
+    const deleteBtn = document.querySelector(`button[onclick="confirmDelete(${ficheId})"]`);
+    return deleteBtn ? deleteBtn.dataset.token : '';
+}
+</script>
+{% endblock %}
