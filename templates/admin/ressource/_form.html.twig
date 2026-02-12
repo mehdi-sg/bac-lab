@@ -1,0 +1,192 @@
+{{ form_start(form, { attr: { class: 'needs-validation' } }) }}
+
+<!-- Section 1: Informations principales -->
+<div class="form-section">
+    <div class="form-section-title">
+        <i class="fas fa-info-circle"></i>
+        Informations principales
+    </div>
+    
+    <div class="row g-3">
+        <div class="col-12">
+            {{ form_row(form.titre, { 
+                label: 'Titre de la ressource',
+                attr: { 
+                    class: 'form-control',
+                    placeholder: 'Ex: Cours de mathématiques - Chapitre 1'
+                }
+            }) }}
+        </div>
+
+        <div class="col-12">
+            {{ form_row(form.description, { 
+                label: 'Description détaillée',
+                attr: { 
+                    class: 'form-control',
+                    placeholder: 'Décrivez le contenu de cette ressource...',
+                    rows: 4
+                }
+            }) }}
+        </div>
+
+        <div class="col-md-6">
+            {{ form_row(form.auteur, { 
+                label: 'Auteur',
+                attr: { 
+                    class: 'form-control',
+                    placeholder: 'Nom de l\'auteur'
+                }
+            }) }}
+        </div>
+
+        <div class="col-md-6">
+            {{ form_row(form.tags, { 
+                label: 'Tags (séparés par des virgules)',
+                attr: { 
+                    class: 'form-control',
+                    placeholder: 'Ex: mathématiques, algèbre, bac'
+                }
+            }) }}
+        </div>
+    </div>
+</div>
+
+<!-- Section 2: Type et catégorie -->
+<div class="form-section">
+    <div class="form-section-title">
+        <i class="fas fa-folder-open"></i>
+        Classification
+    </div>
+    
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">
+                Type de fichier
+                <span class="badge-type badge-pdf" id="typeBadge">PDF</span>
+            </label>
+            {{ form_widget(form.typeFichier, { 
+                attr: { 
+                    class: 'form-select',
+                    onchange: 'updateTypeBadge(this.value)'
+                }
+            }) }}
+            <small class="text-muted">Choisissez le format de votre ressource</small>
+        </div>
+
+        <div class="col-md-6">
+            {{ form_row(form.categorie, { 
+                label: 'Catégorie',
+                attr: { 
+                    class: 'form-select'
+                }
+            }) }}
+            <small class="text-muted">Type de contenu pédagogique</small>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: Média -->
+<div class="form-section">
+    <div class="form-section-title">
+        <i class="fas fa-image"></i>
+        Image de couverture
+    </div>
+    
+    <div class="row g-3">
+        <div class="col-12">
+            {{ form_row(form.imageCouverture, { 
+                label: 'URL de l\'image de couverture',
+                attr: { 
+                    class: 'form-control',
+                    placeholder: 'https://exemple.com/image.jpg',
+                    onchange: 'previewImage(this.value)'
+                }
+            }) }}
+            <small class="text-muted">Collez l'URL d'une image pour la couverture de votre ressource</small>
+            
+            <div class="preview-box mt-3" id="imagePreview" style="display: none;">
+                <img id="previewImg" src="" alt="Aperçu">
+                <p class="text-muted mt-2 mb-0">Aperçu de l'image</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section 4: Statut -->
+<div class="form-section">
+    <div class="form-section-title">
+        <i class="fas fa-toggle-on"></i>
+        Statut de publication
+    </div>
+    
+    <div class="form-check">
+        {{ form_widget(form.estActive, { attr: { class: 'form-check-input' } }) }}
+        {{ form_label(form.estActive, 'Ressource active et visible par les utilisateurs', { label_attr: { class: 'form-check-label' } }) }}
+    </div>
+    <small class="text-muted ms-4 d-block mt-2">
+        <i class="fas fa-info-circle me-1"></i>
+        Décochez cette option pour masquer temporairement la ressource
+    </small>
+</div>
+
+<!-- Actions -->
+<div class="mt-5 d-flex gap-3 flex-wrap">
+    <button type="submit" class="btn-save">
+        <i class="fas fa-save me-2"></i>{{ button_label|default('Enregistrer') }}
+    </button>
+    <a class="btn-back" href="{{ path('app_admin_ressource_index') }}">
+        <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+    </a>
+</div>
+
+{{ form_end(form) }}
+
+<script>
+    // Update type badge based on selection
+    function updateTypeBadge(type) {
+        const badge = document.getElementById('typeBadge');
+        badge.className = 'badge-type';
+        badge.textContent = type;
+        
+        if (type === 'PDF') {
+            badge.classList.add('badge-pdf');
+        } else if (type === 'VIDEO') {
+            badge.classList.add('badge-video');
+        } else if (type === 'LIEN') {
+            badge.classList.add('badge-lien');
+        }
+    }
+    
+    // Preview image
+    function previewImage(url) {
+        const preview = document.getElementById('imagePreview');
+        const img = document.getElementById('previewImg');
+        
+        if (url && url.trim() !== '') {
+            img.src = url;
+            preview.style.display = 'block';
+            
+            // Hide preview if image fails to load
+            img.onerror = function() {
+                preview.style.display = 'none';
+            };
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set initial badge
+        const typeSelect = document.querySelector('select[name*="typeFichier"]');
+        if (typeSelect) {
+            updateTypeBadge(typeSelect.value);
+        }
+        
+        // Preview existing image
+        const imageInput = document.querySelector('input[name*="imageCouverture"]');
+        if (imageInput && imageInput.value) {
+            previewImage(imageInput.value);
+        }
+    });
+</script>

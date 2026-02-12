@@ -1,190 +1,259 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}BacLab | {{ filiere.nom }}{% endblock %}
+{% block title %}BacLab | Mes Matières{% endblock %}
 
 {% block body %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
-    /* --- STYLE DU STEPPER --- */
+    /* --- DESIGN GLOBAL --- */
+    body { background-color: #f8f9fc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 80px 0 100px;
+        clip-path: ellipse(150% 100% at 50% 0%);
+        color: white;
+    }
+
     .stepper-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 25px; }
-    .step-num { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.3); text-decoration: none; transition: 0.3s; }
-    .step-num.active { background: #ffc107; color: #3b1a77; border-color: #ffc107; transform: scale(1.1); }
-    .step-num.done { background: rgba(255,255,255,0.9); color: #764ba2; border-color: #fff; }
+    .step-num { 
+        width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); color: #fff; 
+        font-weight: bold; display: flex; align-items: center; justify-content: center;
+        border: 2px solid rgba(255,255,255,0.3); text-decoration: none; transition: 0.3s;
+    }
+    .step-num.done { background: #fff; color: #764ba2; border-color: #fff; }
+    .step-num.active { background: #ffc107; color: #3b1a77; border-color: #ffc107; transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 193, 7, 0.4); }
     .step-line { width: 40px; height: 2px; background: rgba(255,255,255,0.2); }
 
-    .hero-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 120px 0 90px; clip-path: ellipse(150% 100% at 50% 0%); color: white; }
+    /* --- PLAN DE BATAILLE --- */
+    .planning-card { 
+        border-radius: 25px; 
+        background: linear-gradient(135deg, #5c6bc0 0%, #764ba2 100%);
+        margin-top: -60px;
+        border: none;
+        box-shadow: 0 15px 35px rgba(118, 75, 162, 0.3) !important;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* --- STYLE DES CARTES MATIÈRES --- */
+    .matiere-card {
+        border: none; border-radius: 20px;
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        background: #fff; height: 100%;
+        display: flex; flex-direction: column;
+    }
+    .matiere-card:hover { transform: translateY(-10px); box-shadow: 0 14px 28px rgba(0,0,0,0.1); }
     
-    /* --- STYLE MODE FOCUS --- */
+    .icon-box {
+        width: 70px; height: 70px; border-radius: 15px;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 20px; transition: 0.3s;
+    }
+    .matiere-card:hover .icon-box { transform: rotate(10deg) scale(1.1); }
+    
+    /* Couleurs par catégorie */
+    .icon-math { background: #fef2f2; color: #dc2626; }
+    .icon-physique { background: #eff6ff; color: #2563eb; }
+    .icon-svt { background: #f0fdf4; color: #16a34a; }
+    .icon-philo { background: #faf5ff; color: #9333ea; }
+    .icon-histoire { background: #fffbeb; color: #d97706; }
+    .icon-langue { background: #fff7ed; color: #ea580c; }
+    .charabia-info { background: #f8fafc; color: #475569; }
+    .icon-eco { background: #f0fdfa; color: #0d9488; }
+    .icon-sport { background: #fef2f2; color: #dc2626; }
+    .icon-art { background: #fdf2f8; color: #db2777; }
+    .icon-default { background: #f8f9ff; color: #667eea; }
+
+    .btn-modern {
+        background: linear-gradient(to right, #667eea, #764ba2);
+        border: none; color: white !important; border-radius: 50px; padding: 12px 25px; font-weight: 600;
+        transition: 0.3s;
+    }
+    .btn-modern:hover { opacity: 0.9; transform: scale(1.05); }
+
+    .animate-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
     #focusOverlay {
         display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(15, 23, 42, 0.98); z-index: 9999; color: white;
-        flex-direction: column; align-items: center; justify-content: center;
-        backdrop-filter: blur(10px);
+        flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px);
     }
-    .timer-text { font-size: 6rem; font-weight: 800; font-family: monospace; margin: 20px 0; color: #ffc107; }
-    .btn-focus-launcher { background: rgba(255,255,255,0.15); border: 1px dashed white; color: white; border-radius: 50px; padding: 5px 20px; font-size: 0.9rem; transition: 0.3s; margin-top: 15px; }
-    .btn-focus-launcher:hover { background: white; color: #764ba2; }
-
-    /* --- CARTES MATIÈRES --- */
-    .matiere-card { border: none; border-radius: 20px; background: #fff; height: 100%; transition: all 0.3s ease; position: relative; }
-    .matiere-card:hover { transform: translateY(-8px); box-shadow: 0 14px 28px rgba(0,0,0,0.1); }
-    .btn-fav { position: absolute; top: 15px; right: 15px; background: transparent; border: none; font-size: 1.4rem; color: #e2e8f0; cursor: pointer; transition: 0.3s; z-index: 10; }
-    .btn-fav.is-favorite { color: #ffc107; transform: scale(1.1); }
-    .icon-box { width: 60px; height: 60px; background: #f8f9ff; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: #667eea; margin-bottom: 20px; transition: 0.3s; }
-    .matiere-card:hover .icon-box { background: #667eea; color: white; transform: rotate(10deg); }
-    .btn-modern { background: linear-gradient(to right, #667eea, #764ba2); border: none; color: white !important; border-radius: 50px; padding: 10px 20px; font-weight: 600; }
-    .animate-up { animation: fadeInUp 0.7s ease-out forwards; }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 
 <div class="hero-section text-center">
     <div class="container animate-up">
         <div class="stepper-container">
-            <a href="{{ path('app_revision_filieres') }}" class="step-num done">1</a>
+            <a href="{{ path('app_revision_filieres') }}" class="step-num done"><i class="fas fa-check"></i></a>
             <div class="step-line"></div>
             <span class="step-num active">2</span>
             <div class="step-line"></div>
-            <span class="step-num disabled">3</span>
+            <span class="step-num">3</span>
         </div>
-
-        <span class="badge bg-white text-primary px-3 py-2 rounded-pill mb-3">Filière : {{ filiere.nom }}</span>
-        <h1 class="display-4 fw-bold mb-2">Mes Matières</h1>
-        
-        <div class="d-flex flex-column align-items-center gap-2 mt-3">
-            <button id="filterFavBtn" class="btn btn-filter-fav btn-outline-light rounded-pill px-4" onclick="toggleFilterFav()">
-                <i class="fas fa-star me-2"></i> Mes favoris
-            </button>
-            
-            <button onclick="startFocusMode()" class="btn btn-focus-launcher">
-                <i class="fas fa-stopwatch me-2"></i> Session Focus 25min (+100 XP)
-            </button>
-        </div>
+        <h1 class="display-4 fw-bold mb-3">Mes Matières</h1>
+        <p class="lead mb-4 opacity-75">Sélectionne une matière pour voir tes chapitres</p>
+        <button class="btn btn-warning rounded-pill px-4 fw-bold shadow-lg" onclick="startFocusMode()">
+            <i class="fas fa-stopwatch me-2"></i> Mode Focus (25min)
+        </button>
     </div>
 </div>
 
-<div class="container" style="margin-top: -60px; padding-bottom: 80px;">
-    <div class="row justify-content-center" id="matieresGrid">
+<div class="container pb-5">
+    <div class="card planning-card text-white p-4 mb-5 animate-up">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h4 class="fw-bold mb-2 text-white"><i class="fas fa-bolt text-warning me-2"></i> Ton Plan de Bataille</h4>
+                <p id="countdown-text" class="mb-0 opacity-75 fw-medium">Chargement du compte à rebours...</p>
+                <div class="mt-2">
+                    <span id="study-time-tracker" class="badge rounded-pill px-3 py-2" style="background: rgba(255,255,255,0.15);">🕒 0h 0min révisés</span>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <div class="xp-badge text-center shadow-sm d-inline-block p-3 rounded-4" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                    <span class="text-warning fw-bold small d-block mb-1">SCORE TOTAL</span>
+                    <span class="h2 fw-bold mb-0 text-white" id="global-xp-display">0</span>
+                    <span class="text-warning fw-bold ms-1">XP</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5 animate-up">
+        <div class="col-lg-6 mx-auto">
+            <div class="position-relative shadow-sm rounded-pill overflow-hidden bg-white">
+                <input type="text" id="liveSearch" class="form-control form-control-lg border-0 px-4" 
+                       placeholder="Rechercher une matière..." onkeyup="filterMatieres()">
+                <i class="fas fa-search position-absolute" style="right: 25px; top: 18px; color: #764ba2;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4" id="matieresGrid">
+        {% set matiereMap = {
+            'Mathématiques': ['fa-square-root-variable', 'icon-math'],
+            'Maths': ['fa-square-root-variable', 'icon-math'],
+            'Physique': ['fa-atom', 'icon-physique'],
+            'Chimie': ['fa-flask-vial', 'icon-physique'],
+            'SVT': ['fa-microscope', 'icon-svt'],
+            'Philosophie': ['fa-brain', 'icon-philo'],
+            'Histoire': ['fa-landmark', 'icon-histoire'],
+            'Géographie': ['fa-earth-africa', 'icon-histoire'],
+            'Français': ['fa-feather-pointed', 'icon-langue'],
+            'Anglais': ['fa-language', 'icon-langue'],
+            'Informatique': ['fa-laptop-code', 'charabia-info'],
+            'Économie': ['fa-chart-pie', 'icon-eco'],
+            'Sport': ['fa-person-running', 'icon-sport']
+        } %}
+
         {% for m in matieres %}
-            <div class="col-lg-4 col-md-6 mb-4 animate-up matiere-item" data-id="{{ m.id }}" style="animation-delay: {{ loop.index * 0.1 }}s">
+            {% set icon = 'fa-book-bookmark' %}
+            {% set colorClass = 'icon-default' %}
+            
+            {% for key, val in matiereMap %}
+                {% if key|lower in m.nom|lower %}
+                    {% set icon = val[0] %}
+                    {% set colorClass = val[1] %}
+                {% endif %}
+            {% endfor %}
+
+            <div class="col-lg-4 col-md-6 matiere-item animate-up" data-nom="{{ m.nom|lower }}" style="animation-delay: {{ loop.index0 * 0.1 }}s">
                 <div class="card matiere-card shadow-sm p-4 text-center">
-                    <button class="btn-fav" onclick="toggleFav('{{ m.id }}', this)"><i class="fas fa-star"></i></button>
+                    <div class="icon-box {{ colorClass }} shadow-sm">
+                        <i class="fas {{ icon }} fa-2x"></i>
+                    </div>
+                    <h3 class="fw-bold h4 mb-3" style="color: #2d3436;">{{ m.nom }}</h3>
                     
-                    <div class="icon-box mx-auto">
-                        {% if m.nom|lower matches '/math/' %} <i class="fas fa-calculator fa-lg"></i>
-                        {% elseif m.nom|lower matches '/physique/' or m.nom|lower matches '/science/' %} <i class="fas fa-flask fa-lg"></i>
-                        {% elseif m.nom|lower matches '/philo/' %} <i class="fas fa-lightbulb fa-lg"></i>
-                        {% elseif m.nom|lower matches '/histoire/' or m.nom|lower matches '/géo/' %} <i class="fas fa-globe-africa fa-lg"></i>
-                        {% elseif m.nom|lower matches '/informatique/' or m.nom|lower matches '/tic/' %} <i class="fas fa-laptop-code fa-lg"></i>
-                        {% elseif m.nom|lower matches '/anglais/' or m.nom|lower matches '/français/' or m.nom|lower matches '/arabe/' %} <i class="fas fa-language fa-lg"></i>
-                        {% elseif m.nom|lower matches '/économie/' or m.nom|lower matches '/gestion/' %} <i class="fas fa-chart-line fa-lg"></i>
-                        {% else %} <i class="fas fa-book-open fa-lg"></i> {% endif %}
+                    <div class="progress mb-4" style="height: 8px; border-radius: 10px; background: #f1f5f9;">
+                        {# On peut simuler une progression aléatoire ou réelle si disponible #}
+                        <div class="progress-bar bg-success" style="width: {{ random(30, 90) }}%"></div>
                     </div>
 
-                    <h3 class="fw-bold h5 mb-3 text-dark">{{ m.nom }}</h3>
-                    <a href="{{ path('app_revision_pdf', {'id': m.id}) }}" class="btn btn-modern w-100">Voir les cours <i class="fas fa-arrow-right ms-2"></i></a>
+                    <div class="mt-auto">
+                        <a href="{{ path('app_revision_chapitres', {id: m.id}) }}" class="btn btn-modern w-100">
+                            Réviser <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         {% endfor %}
     </div>
-    <div id="emptyFav" class="text-center d-none">
-        <div class="bg-white p-5 rounded-4 shadow-sm mx-auto" style="max-width: 500px;">
-            <i class="far fa-star fa-3x text-muted mb-3"></i>
-            <h5>Aucun favori pour le moment</h5>
-        </div>
-    </div>
 </div>
 
 <div id="focusOverlay">
-    <div class="text-center p-4">
-        <i class="fas fa-brain fa-3x text-warning mb-4"></i>
-        <h2 class="fw-bold">Mode Concentration</h2>
-        <p class="opacity-75">Révision en cours : <strong>{{ filiere.nom }}</strong></p>
-        
-        <div id="timerDisplay" class="timer-text">25:00</div>
-        
-        <div class="d-flex flex-column gap-3 align-items-center">
-            <button onclick="stopFocusMode(true)" class="btn btn-outline-danger rounded-pill px-5">Abandonner</button>
-            <small class="text-muted">La musique Lo-Fi vous aide à rester focus...</small>
-        </div>
-    </div>
-
-    <audio id="focusMusic" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
-    </audio>
+    <h2 class="fw-bold mb-0">MODE FOCUS</h2>
+    <p class="opacity-50">Reste concentré, ne quitte pas cette page</p>
+    <div id="timerDisplay" style="font-size: 8rem; font-weight: 800; color: #ffc107; font-family: 'Courier New', Courier, monospace;">25:00</div>
+    <button class="btn btn-outline-light rounded-pill px-5" onclick="stopFocusMode()">Abandonner</button>
 </div>
 
 <script>
-// --- LOGIQUE FOCUS ---
-let focusInterval;
-let timeLeft = 25 * 60;
-const music = document.getElementById('focusMusic');
+    // Filtre de recherche
+    function filterMatieres() {
+        let query = document.getElementById('liveSearch').value.toLowerCase();
+        document.querySelectorAll('.matiere-item').forEach(item => {
+            let name = item.getAttribute('data-nom');
+            item.style.display = name.includes(query) ? "block" : "none";
+        });
+    }
 
-function startFocusMode() {
-    document.getElementById('focusOverlay').style.display = 'flex';
-    music.play();
-    focusInterval = setInterval(() => {
-        timeLeft--;
-        const mins = Math.floor(timeLeft / 60);
-        const secs = timeLeft % 60;
-        document.getElementById('timerDisplay').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    // Compte à rebours Bac
+    function updateBacCountdown() {
+        const bacDate = new Date("2026-06-15T08:00:00");
+        const diff = bacDate - new Date();
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById('countdown-text').innerText = `Il te reste ${days} jours pour exploser ton score ! 🚀`;
+    }
+
+    // Timer Focus (Pomodoro)
+    let timerInterval;
+    function startFocusMode() {
+        document.getElementById('focusOverlay').style.display = 'flex';
+        let timeLeft = 25 * 60;
+        timerInterval = setInterval(() => {
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            document.getElementById('timerDisplay').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+                addXP(150);
+                alert("Félicitations ! Séance de focus terminée. +150 XP");
+                stopFocusMode();
+            }
+            timeLeft--;
+        }, 1000);
+    }
+
+    function stopFocusMode() {
+        clearInterval(timerInterval);
+        document.getElementById('focusOverlay').style.display = 'none';
+    }
+
+    // Système XP (Local Storage)
+    function addXP(amount) {
+        let currentXp = parseInt(localStorage.getItem('user_xp')) || 0;
+        let newXp = currentXp + amount;
+        localStorage.setItem('user_xp', newXp);
+        document.getElementById('global-xp-display').innerText = newXp;
+    }
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', () => {
+        updateBacCountdown();
         
-        if (timeLeft <= 0) finishSession();
-    }, 1000);
-}
+        // Charger XP
+        const savedXp = localStorage.getItem('user_xp') || 0;
+        document.getElementById('global-xp-display').innerText = savedXp;
 
-function stopFocusMode(confirmClose) {
-    if (confirmClose && !confirm("Abandonner ? Tu ne gagneras pas tes 100 XP !")) return;
-    clearInterval(focusInterval);
-    timeLeft = 25 * 60;
-    document.getElementById('focusOverlay').style.display = 'none';
-    music.pause();
-    music.currentTime = 0;
-}
-
-function finishSession() {
-    stopFocusMode(false);
-    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-    alert("Félicitations ! Tu as tenu 25 minutes. Tu gagnes +100 XP ! 🔥");
-    // Optionnel : sauvegarder l'XP
-    let xp = parseInt(localStorage.getItem('user_xp')) || 0;
-    localStorage.setItem('user_xp', xp + 100);
-}
-
-// --- LOGIQUE FAVORIS (EXISTANTE) ---
-let showOnlyFavs = false;
-function toggleFav(id, btn) {
-    btn.classList.toggle('is-favorite');
-    let favs = JSON.parse(localStorage.getItem('fav_matieres')) || [];
-    if (btn.classList.contains('is-favorite')) { if (!favs.includes(id)) favs.push(id); } 
-    else { favs = favs.filter(favId => favId !== id); }
-    localStorage.setItem('fav_matieres', JSON.stringify(favs));
-    if (showOnlyFavs && !btn.classList.contains('is-favorite')) { btn.closest('.matiere-item').style.display = 'none'; checkEmptyState(); }
-}
-
-function toggleFilterFav() {
-    const btnFilter = document.getElementById('filterFavBtn');
-    showOnlyFavs = !showOnlyFavs;
-    btnFilter.classList.toggle('active');
-    btnFilter.classList.toggle('btn-warning'); // Change couleur si actif
-    const favs = JSON.parse(localStorage.getItem('fav_matieres')) || [];
-    document.querySelectorAll('.matiere-item').forEach(item => {
-        const id = item.getAttribute('data-id');
-        item.style.display = showOnlyFavs ? (favs.includes(id) ? 'block' : 'none') : 'block';
+        // Charger Temps d'étude
+        let totalSec = parseInt(localStorage.getItem('total_study_time')) || 0;
+        let h = Math.floor(totalSec / 3600);
+        let m = Math.floor((totalSec % 3600) / 60);
+        document.getElementById('study-time-tracker').innerText = `🕒 ${h}h ${m}min révisés`;
     });
-    checkEmptyState();
-}
-
-function checkEmptyState() {
-    const itemsVisible = document.querySelectorAll('.matiere-item[style="display: block;"]').length;
-    document.getElementById('emptyFav').classList.toggle('d-none', !(showOnlyFavs && itemsVisible === 0));
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const favs = JSON.parse(localStorage.getItem('fav_matieres')) || [];
-    document.querySelectorAll('.matiere-item').forEach(item => { 
-        if (favs.includes(item.getAttribute('data-id'))) item.querySelector('.btn-fav').classList.add('is-favorite'); 
-    });
-});
 </script>
 {% endblock %}

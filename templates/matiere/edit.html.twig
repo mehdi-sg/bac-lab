@@ -1,0 +1,126 @@
+{% extends 'back_base.html.twig' %}
+{% form_theme form 'form/custom_theme.html.twig' %}
+
+{% block title %}Configuration Système | BacLab{% endblock %}
+
+{% block body %}
+<style>
+    /* FORCE LE FOND SOMBRE ET SUPPRIME LE BLANC DU PARENT */
+    #main-content, .page-wrapper, body { 
+        background: #0f172a !important; 
+    }
+
+    .modern-edit-wrapper {
+        min-height: 100vh;
+        background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent),
+                    radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.15), transparent);
+        padding: 40px 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .glass-card-premium {
+        background: rgba(30, 41, 59, 0.7) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 40px !important;
+        padding: 50px;
+        width: 100%;
+        max-width: 700px;
+        box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5);
+    }
+
+    .header-icon {
+        width: 70px; height: 70px;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        border-radius: 22px;
+        display: grid; place-items: center;
+        font-size: 1.8rem; color: white;
+        margin: 0 auto 20px;
+        box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Style des champs générés par Symfony */
+    .form-control-modern input, 
+    .form-control-modern select {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 18px !important;
+        color: #f8fafc !important;
+        padding: 16px 20px !important;
+        margin-bottom: 20px;
+        width: 100%;
+        transition: 0.3s ease;
+    }
+
+    .form-control-modern input:focus {
+        border-color: #6366f1 !important;
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.2) !important;
+        outline: none;
+    }
+
+    .label-tech {
+        color: #818cf8;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .btn-submit-modern {
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        border: none; color: white;
+        padding: 18px; border-radius: 20px;
+        width: 100%; font-weight: 800;
+        text-transform: uppercase; letter-spacing: 1px;
+        margin-top: 20px; transition: 0.3s;
+    }
+
+    .btn-submit-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
+    }
+</style>
+
+<div class="modern-edit-wrapper">
+    <div class="glass-card-premium">
+        <div class="text-center">
+            <div class="header-icon"><i class="fas fa-microchip"></i></div>
+            <h2 class="text-white fw-bold mb-1">Configuration Unité</h2>
+            <p class="text-muted mb-5 small">Module ID: #{{ matiere.id }}</p>
+        </div>
+
+        {{ form_start(form) }}
+            <div class="form-control-modern">
+                <label class="label-tech">Nom du module</label>
+                {{ form_widget(form.nom) }}
+                
+                <label class="label-tech">Filière parente</label>
+                {{ form_widget(form.filiere) }}
+                
+                <div class="row align-items-center mt-3 p-3" style="background: rgba(0,0,0,0.2); border-radius: 15px;">
+                    <div class="col">
+                        <span class="text-white fw-bold small">Statut de la matière</span>
+                    </div>
+                    <div class="col-auto">
+                        {{ form_widget(form.actif) }}
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit-modern">
+                <i class="fas fa-save me-2"></i> Enregistrer les changements
+            </button>
+            
+            <div class="text-center mt-4">
+                <a href="{{ path('matiere_index') }}" class="text-muted small text-decoration-none">
+                    <i class="fas fa-arrow-left me-1"></i> Annuler et retourner
+                </a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

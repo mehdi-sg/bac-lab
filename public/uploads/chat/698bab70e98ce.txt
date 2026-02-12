@@ -1,0 +1,344 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Collaboration & Entraide | BacLab{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    
+    {# 1. Icônes Google Material (Indispensable pour Swipe) #}
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    {# 2. CSS de Swipe (Chemins selon ton arborescence) #}
+    <link rel="stylesheet" href="{{ asset('front/chat/css/lib/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/chat/css/swipe.min.css') }}">
+
+    <style>
+        /* --- ISOLATION DU CHAT POUR ÉVITER LES CONFLITS AVEC BASE --- */
+        
+        #preloader-active { display: none !important; }
+
+        /* Ajustement de la hauteur entre ta navbar et ton footer */
+        main {
+            padding-top: 80px !important; /* Ajuste selon la taille de ton header BacLab */
+            background: #fdfdfd;
+        }
+
+        #swipe-chat-app .layout {
+            display: flex !important;
+            height: calc(100vh - 140px) !important;
+            width: 100% !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+        }
+
+        /* --- FIX DES BOUTONS (POUR UTILISER UNIQUEMENT LE STYLE SWIPE) --- */
+        
+        /* Reset global pour tous les boutons dans le chat */
+        #swipe-chat-app .btn {
+            padding: 0 !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            color: #bdbac2 !important; /* Couleur grise Swipe */
+            border-radius: 0 !important;
+            text-transform: none !important;
+            font-weight: normal !important;
+            letter-spacing: normal !important;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            height: auto !important;
+        }
+
+        #swipe-chat-app .btn:hover {
+            color: #2196F3 !important; /* Bleu Swipe */
+            background: transparent !important;
+        }
+
+        /* Fix : Bouton bleu de création / validation (ex: Modal) */
+        #swipe-chat-app .btn.button {
+            padding: 16px 25px !important;
+            width: 100% !important;
+            background: #2196F3 !important;
+            color: #fff !important;
+            border-radius: 6px !important;
+            box-shadow: 0 0 30px 5px rgba(0,0,0,.04) !important;
+            font-weight: 500 !important;
+        }
+        #swipe-chat-app .btn.button:hover {
+            opacity: 0.9 !important;
+            color: #fff !important;
+        }
+
+        /* Fix : Bouton d'attachement (Trombone) */
+        #swipe-chat-app .btn.attach {
+            background: #2196F3 !important;
+            color: #fff !important;
+            width: 56px !important;
+            height: 56px !important;
+            border-radius: 100% !important;
+            box-shadow: 0 5px 10px 4px rgba(0,0,0,.04) !important;
+            margin-left: 20px !important;
+        }
+
+        /* Fix : Bouton Ajouter un groupe (+) dans la sidebar */
+        #swipe-chat-app .sidebar .create {
+            background: #fff !important;
+            width: 50px !important;
+            height: 50px !important;
+            border-radius: 100% !important;
+            position: absolute !important;
+            bottom: 0 !important;
+            top: 30px !important;
+            right: 20px !important;
+            box-shadow: 0 0 30px 5px rgba(0,0,0,.04) !important;
+        }
+
+        /* Fix : Icônes Material (Pour éviter qu'elles ne s'affichent en texte) */
+        #swipe-chat-app .material-icons {
+            font-family: 'Material Icons' !important;
+            font-size: 24px !important;
+            line-height: 1 !important;
+            display: inline-block !important;
+        }
+
+        /* --- FEATURE ADVANCED : UI POUR LA RÉPONSE (REPLY) --- */
+        .quoted-container {
+            background: rgba(0, 0, 0, 0.05);
+            border-left: 3px solid #2196F3;
+            padding: 7px 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            font-size: 13px;
+            text-align: left;
+        }
+        .me .quoted-container {
+            border-left-color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        .reply-preview {
+            display: none;
+            background: #f5f5f5;
+            padding: 10px 15px;
+            border-top: 1px solid #ddd;
+            border-left: 5px solid #2196F3;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div id="swipe-chat-app"> <!-- Wrapper pour isoler le CSS -->
+    <div class="layout">
+        
+        <!-- 1. NAVIGATION GAUCHE (Icônes) -->
+        <div class="navigation">
+            <div class="container">
+                <div class="inside">
+                    <div class="nav nav-tab menu">
+                        <button class="btn">
+                            <img class="avatar-xl" src="https://ui-avatars.com/api/?name={{ app.user ? app.user.nom|url_encode : 'Bac' }}&background=2196F3&color=fff" alt="avatar">
+                        </button>
+                        <a href="#discussions" data-toggle="tab" class="active"><i class="material-icons active">chat_bubble_outline</i></a>
+                        <a href="#explore" data-toggle="tab"><i class="material-icons">explore</i></a>
+                        <a href="#settings" data-toggle="tab"><i class="material-icons">settings</i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. SIDEBAR (Liste des groupes de révision) -->
+        <div class="sidebar" id="sidebar">
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="tab-content">
+                        
+                        <div id="discussions" class="tab-pane fade active show">
+                            <div class="search">
+                                <!-- Feature Avancée : Recherche -->
+                                <form class="form-inline position-relative" action="{{ path('app_chat') }}" method="GET">
+                                    <input type="search" name="search" class="form-control" placeholder="Rechercher un groupe...">
+                                    <button type="submit" class="btn btn-link loop"><i class="material-icons">search</i></button>
+                                </form>
+                                <button class="btn create" data-toggle="modal" data-target="#modalCreateGroup"><i class="material-icons">add</i></button>
+                            </div>
+                            
+                            <div class="discussions">
+                                <h1>Groupes de Révision</h1>
+                                <div class="list-group" id="chats">
+                                    {% for g in groupes %}
+                                        <a href="{{ path('chat_show', {'id': g.id}) }}" class="single {% if currentGroupe and currentGroupe.id == g.id %}active{% endif %}">
+                                            <img class="avatar-md" src="https://ui-avatars.com/api/?name={{ g.nom|url_encode }}&background=random" alt="avatar">
+                                            <div class="data">
+                                                <h5>{{ g.nom }}</h5>
+                                                <p>{{ g.description|slice(0, 30) }}...</p>
+                                            </div>
+                                        </a>
+                                    {% else %}
+                                        <p class="text-center text-muted mt-4">Aucun groupe trouvé.</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. ZONE DE CHAT PRINCIPALE -->
+        <div class="main">
+            <div class="tab-content">
+                {% if currentGroupe %}
+                    <div class="babble tab-pane fade active show">
+                        <div class="chat">
+                            <!-- Header du Groupe -->
+                            <div class="top">
+                                <div class="container">
+                                    <div class="col-md-12">
+                                        <div class="inside">
+                                            <div class="data">
+                                                <h5>{{ currentGroupe.nom }}</h5>
+                                                <span>Filière: {{ currentGroupe.filiere ? currentGroupe.filiere.nom : 'Toutes filières' }}</span>
+                                            </div>
+                                            <button class="btn"><i class="material-icons">info</i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Messages du Groupe -->
+                            <div class="content" id="chatContent">
+                                <div class="container">
+                                    <div class="col-md-12">
+                                        {% for msg in messages %}
+                                            {# Simulation d'utilisateur pour mockup (à remplacer par app.user) #}
+                                            {% set isMe = (app.user and msg.expediteur.id == app.user.id) %}
+                                            <div class="message {{ isMe ? 'me' : '' }}">
+                                                {% if not isMe %}
+                                                    <img class="avatar-md" src="https://ui-avatars.com/api/?name={{ msg.expediteur.nom|url_encode }}" alt="avatar">
+                                                {% endif %}
+                                                <div class="text-main">
+                                                    <div class="text-group">
+                                                        <div class="text {{ isMe ? 'me' : '' }}">
+                                                            
+                                                            {# ADVANCED FEATURE : Affichage du message parent #}
+                                                            {% if msg.parentMessage %}
+                                                                <div class="quoted-container">
+                                                                    <small><strong>{{ msg.parentMessage.expediteur.nom }}</strong> a écrit :<br>
+                                                                    {{ msg.parentMessage.contenu|slice(0,40) }}...</small>
+                                                                </div>
+                                                            {% endif %}
+                                                            
+                                                            <p>{{ msg.contenu }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <span>{{ msg.createdAt|date('H:i') }} 
+                                                        <button class="btn btn-link p-0" onclick="prepareReply('{{ msg.id }}', '{{ msg.expediteur.nom }}', '{{ msg.contenu|e('js') }}')">
+                                                            <i class="material-icons" style="font-size:14px">reply</i>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Input pour envoyer un message -->
+                            <div class="container">
+                                <div class="col-md-12">
+                                    <div class="bottom">
+                                        <!-- Prévisualisation de la réponse (Advanced UI) -->
+                                        <div id="replyBar" class="reply-preview w-100">
+                                            <span id="replyText"></span>
+                                            <button type="button" class="btn" onclick="cancelReply()"><i class="material-icons">close</i></button>
+                                        </div>
+
+                                        <form action="{{ path('chat_send', {'id': currentGroupe.id}) }}" method="POST" class="position-relative w-100">
+                                            {# Champ caché pour l'ID du message auquel on répond #}
+                                            <input type="hidden" name="parent_id" id="parentIdField">
+                                            
+                                            {# PAS DE 'required' - Validation Côté Serveur uniquement #}
+                                            <textarea name="contenu" class="form-control" placeholder="Écrire un message..." rows="1"></textarea>
+                                            
+                                            <button type="submit" class="btn send"><i class="material-icons">send</i></button>
+                                        </form>
+                                        <label>
+                                            <input type="file" name="file">
+                                            <span class="btn attach"><i class="material-icons">attach_file</i></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Écran vide d'accueil -->
+                    <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                        <i class="material-icons md-48 text-muted">forum</i>
+                        <p class="text-muted mt-3">Sélectionnez un groupe de révision pour commencer l'entraide.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal CRUD : Créer un Groupe -->
+<div class="modal fade" id="modalCreateGroup" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="mb-0">Démarrer un groupe de révision</h5>
+            </div>
+            <form action="{{ path('groupe_new') }}" method="POST" class="modal-body pt-0">
+                <div class="form-group">
+                    <label>Nom du groupe :</label>
+                    <input type="text" name="nom" class="form-control" placeholder="Ex: Révision SVT Chapitre 1">
+                </div>
+                <div class="form-group">
+                    <label>Description :</label>
+                    <textarea name="description" class="form-control" placeholder="De quoi allez-vous parler ?"></textarea>
+                </div>
+                <button type="submit" class="btn button mt-3">Créer le groupe</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    {# On charge les JS du module chat pour garantir le fonctionnement de Swipe #}
+    <script src="{{ asset('front/chat/js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ asset('front/chat/js/vendor/popper.min.js') }}"></script>
+    <script src="{{ asset('front/chat/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('front/chat/js/swipe.min.js') }}"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Désactiver manuellement le preloader de base
+            $('#preloader-active').hide();
+
+            // Auto-scroll vers le dernier message
+            var chatDiv = document.getElementById("chatContent");
+            if(chatDiv) {
+                chatDiv.scrollTop = chatDiv.scrollHeight;
+            }
+        });
+
+        // Feature "Répondre" (Advanced Feature)
+        function prepareReply(id, user, text) {
+            document.getElementById('parentIdField').value = id;
+            document.getElementById('replyText').innerHTML = "<strong>Réponse à " + user + "</strong> : " + text.substring(0, 40) + "...";
+            document.getElementById('replyBar').style.display = 'flex';
+        }
+
+        function cancelReply() {
+            document.getElementById('parentIdField').value = "";
+            document.getElementById('replyBar').style.display = 'none';
+        }
+    </script>
+{% endblock %}

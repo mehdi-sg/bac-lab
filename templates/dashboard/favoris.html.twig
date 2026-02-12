@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Favoris{% endblock %}
+
+{% block body %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4"><i class="fas fa-heart text-danger"></i> Mes Favoris</h1>
+            
+            {% if favoris is empty %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Vous n'avez pas encore de ressources favorites.
+                    <a href="{{ path('app_ressource_index') }}" class="alert-link">Découvrir les ressources</a>
+                </div>
+            {% else %}
+                <div class="row">
+                    {% for evaluation in favoris %}
+                        {% set ressource = evaluation.ressource %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100">
+                                {% if ressource.imageCouverture %}
+                                    <img src="{{ ressource.imageCouverture }}" class="card-img-top" alt="{{ ressource.titre }}" style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="fas fa-book fa-3x text-white"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ ressource.titre }}</h5>
+                                    <p class="card-text text-muted small">
+                                        {{ ressource.description|length > 100 ? ressource.description|slice(0, 100) ~ '...' : ressource.description }}
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-primary">{{ ressource.typeFichier }}</span>
+                                        <div class="text-warning">
+                                            <i class="fas fa-star"></i> {{ ressource.noteMoyenne }}
+                                        </div>
+                                    </div>
+                                    <small class="text-muted d-block mt-2">
+                                        <i class="fas fa-heart text-danger"></i> Ajouté le {{ evaluation.dateFavori|date('d/m/Y') }}
+                                    </small>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <a href="{{ path('app_ressource_show', {id: ressource.id}) }}" class="btn btn-sm btn-primary w-100">
+                                        <i class="fas fa-eye"></i> Voir la ressource
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mt-3">
+                    <p class="text-muted">
+                        <i class="fas fa-heart"></i> Total : <strong>{{ favoris|length }}</strong> favori(s)
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

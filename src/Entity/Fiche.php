@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FicheRepository::class)]
+#[ORM\Table(name: 'fiche')]
 class Fiche
 {
     #[ORM\Id]
@@ -33,8 +34,12 @@ class Fiche
     #[ORM\Column(nullable: true)]
     private ?\DateTime $updatedAt = null;
 
-    #[ORM\Column(options: ['default' => false])]
-    private bool $isPublic = false;
+    #[ORM\Column]
+    private ?bool $isPublic = null;
+
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Utilisateur $utilisateur = null;
 
     /**
      * @var Collection<int, FicheVersion>
@@ -128,9 +133,30 @@ class Fiche
         return $this;
     }
 
-    public function isPublic(): bool { return $this->isPublic; }
-    public function setIsPublic(bool $isPublic): static { $this->isPublic = $isPublic; return $this; }
-    
+    public function isPublic(): ?bool
+    {
+        return $this->isPublic;
+    }
+
+    public function setIsPublic(bool $isPublic): static
+    {
+        $this->isPublic = $isPublic;
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, FicheVersion>
      */

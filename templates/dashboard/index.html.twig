@@ -1,0 +1,257 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Dashboard{% endblock %}
+
+{% block body %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-tachometer-alt text-primary"></i> 
+                Bienvenue, {{ app.user.nom ?? app.user.email }}!
+            </h1>
+            <p class="text-muted mb-4">Voici un aperçu de votre activité sur la plateforme</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-2">Évaluations</h6>
+                            <h2 class="mb-0 fw-bold">{{ stats.totalEvaluations }}</h2>
+                        </div>
+                        <div class="bg-white bg-opacity-25 rounded-circle p-3">
+                            <i class="fas fa-star fa-2x"></i>
+                        </div>
+                    </div>
+                    <a href="{{ path('app_dashboard_evaluations') }}" class="btn btn-light btn-sm mt-3">
+                        Voir tout <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-2">Commentaires</h6>
+                            <h2 class="mb-0 fw-bold">{{ stats.totalCommentaires }}</h2>
+                        </div>
+                        <div class="bg-white bg-opacity-25 rounded-circle p-3">
+                            <i class="fas fa-comment fa-2x"></i>
+                        </div>
+                    </div>
+                    <a href="{{ path('app_dashboard_commentaires') }}" class="btn btn-light btn-sm mt-3">
+                        Voir tout <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-2">Favoris</h6>
+                            <h2 class="mb-0 fw-bold">{{ stats.totalFavoris }}</h2>
+                        </div>
+                        <div class="bg-white bg-opacity-25 rounded-circle p-3">
+                            <i class="fas fa-heart fa-2x"></i>
+                        </div>
+                    </div>
+                    <a href="{{ path('app_dashboard_favoris') }}" class="btn btn-light btn-sm mt-3">
+                        Voir tout <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="fas fa-bolt text-warning"></i> Actions rapides
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-3 col-6 mb-3">
+                            <a href="{{ path('app_ressource_index') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-book d-block mb-2 fa-2x"></i>
+                                Bibliothèque
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <a href="{{ path('app_dashboard_ressources') }}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-upload d-block mb-2 fa-2x"></i>
+                                Mes Ressources
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <a href="{{ path('app_dashboard_telechargements') }}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-download d-block mb-2 fa-2x"></i>
+                                Téléchargements
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <a href="{{ path('app_dashboard_favoris') }}" class="btn btn-outline-danger w-100">
+                                <i class="fas fa-heart d-block mb-2 fa-2x"></i>
+                                Favoris
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Evaluations -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 pt-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-star text-warning"></i> Dernières évaluations
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recentEvaluations is empty %}
+                        <p class="text-muted text-center py-4">
+                            <i class="fas fa-info-circle"></i> Aucune évaluation pour le moment
+                        </p>
+                    {% else %}
+                        <div class="list-group list-group-flush">
+                            {% for evaluation in recentEvaluations %}
+                                <div class="list-group-item px-0 border-0 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <a href="{{ path('app_ressource_show', {id: evaluation.ressource.id}) }}" class="text-decoration-none">
+                                                <strong>{{ evaluation.ressource.titre }}</strong>
+                                            </a>
+                                            <div class="text-warning mt-1">
+                                                {% for i in 1..5 %}
+                                                    <i class="fas fa-star{% if i > evaluation.note %} text-muted{% endif %}"></i>
+                                                {% endfor %}
+                                            </div>
+                                            <small class="text-muted">{{ evaluation.dateEvaluation|date('d/m/Y') }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{{ path('app_dashboard_evaluations') }}" class="btn btn-sm btn-outline-primary">
+                                Voir toutes les évaluations
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Comments -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 pt-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-comment text-primary"></i> Derniers commentaires
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recentComments is empty %}
+                        <p class="text-muted text-center py-4">
+                            <i class="fas fa-info-circle"></i> Aucun commentaire pour le moment
+                        </p>
+                    {% else %}
+                        <div class="list-group list-group-flush">
+                            {% for evaluation in recentComments %}
+                                <div class="list-group-item px-0 border-0 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <a href="{{ path('app_ressource_show', {id: evaluation.ressource.id}) }}" class="text-decoration-none">
+                                                <strong>{{ evaluation.ressource.titre }}</strong>
+                                            </a>
+                                            <p class="mb-1 mt-1 text-muted small">
+                                                {{ evaluation.commentaire|length > 80 ? evaluation.commentaire|slice(0, 80) ~ '...' : evaluation.commentaire }}
+                                            </p>
+                                            <small class="text-muted">{{ evaluation.dateCommentaire|date('d/m/Y') }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{{ path('app_dashboard_commentaires') }}" class="btn btn-sm btn-outline-primary">
+                                Voir tous les commentaires
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Favorites -->
+    {% if recentFavoris is not empty %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0 pt-3">
+                        <h5 class="mb-0">
+                            <i class="fas fa-heart text-danger"></i> Favoris récents
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for evaluation in recentFavoris %}
+                                {% set ressource = evaluation.ressource %}
+                                <div class="col-md-4 col-lg-2 mb-3">
+                                    <a href="{{ path('app_ressource_show', {id: ressource.id}) }}" class="text-decoration-none">
+                                        <div class="card h-100 border-0 shadow-sm hover-shadow">
+                                            {% if ressource.imageCouverture %}
+                                                <img src="{{ ressource.imageCouverture }}" class="card-img-top" alt="{{ ressource.titre }}" style="height: 120px; object-fit: cover;">
+                                            {% else %}
+                                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 120px;">
+                                                    <i class="fas fa-book fa-2x text-muted"></i>
+                                                </div>
+                                            {% endif %}
+                                            <div class="card-body p-2">
+                                                <p class="card-text small mb-0 text-dark" style="font-size: 0.85rem;">
+                                                    {{ ressource.titre|length > 40 ? ressource.titre|slice(0, 40) ~ '...' : ressource.titre }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center mt-2">
+                            <a href="{{ path('app_dashboard_favoris') }}" class="btn btn-sm btn-outline-danger">
+                                Voir tous les favoris
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .hover-shadow {
+        transition: all 0.3s ease;
+    }
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+    }
+</style>
+{% endblock %}

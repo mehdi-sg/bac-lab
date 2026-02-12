@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confirmer la désactivation{% endblock %}
+
+{% block body %}
+<div class="container" style="padding: 80px 20px;">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      <div style="background:white;padding:34px;border-radius:16px;box-shadow:0 5px 20px rgba(0,0,0,.1);border:2px solid rgba(246,173,85,.35);">
+        <h2 style="font-weight:900;margin:0;">
+          <i class="fas fa-power-off" style="color:#f6ad55;margin-right:10px;"></i>
+          Confirmer la désactivation
+        </h2>
+        <p style="margin-top:10px;color:#4a5568;font-weight:600;">
+          Confirmez avec votre mot de passe.
+        </p>
+
+        {% for label, messages in app.flashes %}
+          {% for message in messages %}
+            <div style="margin-top:12px;padding:12px 14px;border-radius:12px;background:#fffaf0;border:1px solid rgba(246,173,85,.35);">
+              <strong>{{ label|upper }}</strong> — {{ message }}
+            </div>
+          {% endfor %}
+        {% endfor %}
+
+        <form method="post"
+              action="{{ path('app_profile_disable_confirm', { token: token }) }}"
+              style="margin-top:18px;"
+              onsubmit="return confirm('Désactiver votre compte ?');">
+
+          <input type="hidden" name="_token" value="{{ csrf_token('disable_account') }}">
+
+          <label style="display:block;font-weight:800;margin-bottom:8px;">Mot de passe</label>
+          <input type="password" name="password" required
+                 class="form-control"
+                 style="padding:14px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;">
+
+          <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap;">
+            <a href="{{ path('app_profile_edit') }}" class="btn btn-secondary">Annuler</a>
+            <button type="submit" class="btn btn-warning" style="font-weight:800;">Confirmer</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

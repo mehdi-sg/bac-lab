@@ -1,0 +1,85 @@
+{% extends 'back_base.html.twig' %}
+{% form_theme form 'form/custom_theme.html.twig' %}
+
+{% block title %}Nouvelle Matière | BacLab{% endblock %}
+
+{% block body %}
+<style>
+    /* MEME RESET POUR LE BACKGROUND */
+    #main-content, .page-wrapper, body { background: #0f172a !important; }
+
+    .modern-new-wrapper {
+        min-height: 100vh;
+        background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.1), transparent),
+                    radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.1), transparent);
+        padding: 40px 20px;
+        display: flex; justify-content: center;
+    }
+
+    .glass-card-premium {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 40px;
+        padding: 50px;
+        width: 100%; max-width: 700px;
+        box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5);
+    }
+
+    .header-icon-new {
+        width: 70px; height: 70px;
+        background: linear-gradient(135deg, #10b981, #6366f1);
+        border-radius: 22px;
+        display: grid; place-items: center;
+        font-size: 1.8rem; color: white;
+        margin: 0 auto 20px;
+        box-shadow: 0 15px 30px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Style des inputs */
+    .form-control-modern input, .form-control-modern select {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 18px !important;
+        color: white !important;
+        padding: 16px 20px !important;
+        margin-bottom: 20px; width: 100%;
+    }
+
+    .btn-create-modern {
+        background: linear-gradient(135deg, #10b981, #6366f1);
+        border: none; color: white;
+        padding: 18px; border-radius: 20px;
+        width: 100%; font-weight: 800;
+        text-transform: uppercase; margin-top: 20px;
+    }
+</style>
+
+<div class="modern-new-wrapper">
+    <div class="glass-card-premium">
+        <div class="text-center">
+            <div class="header-icon-new"><i class="fas fa-plus-circle"></i></div>
+            <h2 class="text-white fw-bold mb-1">Nouvelle Matière</h2>
+            <p class="text-muted mb-5 small">Initialisation d'une unité d'enseignement</p>
+        </div>
+
+        {{ form_start(form) }}
+            <div class="form-control-modern">
+                <label style="color: #10b981; font-size: 0.75rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; display: block;">Nom du module</label>
+                {{ form_widget(form.nom) }}
+                
+                <label style="color: #10b981; font-size: 0.75rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; display: block;">Affectation Filière</label>
+                {{ form_widget(form.filiere) }}
+            </div>
+
+            <button type="submit" class="btn-create-modern">
+                Créer la matière
+            </button>
+            
+            <div class="text-center mt-4">
+                <a href="{{ path('matiere_index') }}" class="text-muted small text-decoration-none">Annuler</a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

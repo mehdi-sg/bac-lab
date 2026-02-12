@@ -1,0 +1,19 @@
+{# templates/form/custom_theme.html.twig #}
+{% use "bootstrap_5_layout.html.twig" %}
+
+{# Style pour les lignes de formulaire #}
+{% block form_row %}
+    <div class="mb-4">
+        {{ form_label(form, null, {'label_attr': {'class': 'side-section-title ms-0 mb-2'}}) }}
+        {{ form_widget(form, {'attr': {'class': 'search w-100', 'style': 'max-width: 100%;'}}) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+
+{# Style pour les boutons de validation #}
+{% block button_widget %}
+    {% set attr = attr|merge({ 'class': attr.class|default('btn-ghost') }) %}
+    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>
+        {{ label|trans({}, translation_domain) }}
+    </button>
+{% endblock %}

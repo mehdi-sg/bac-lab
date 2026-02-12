@@ -1,0 +1,131 @@
+{% extends 'admin/dashboard.html.twig' %}
+
+{% block title %}Détails de l'Évaluation{% endblock %}
+{% block page_title %}Détails de l'Évaluation #{{ evaluation.id }}{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informations Générales</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th width="200">ID</th>
+                            <td>{{ evaluation.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Utilisateur</th>
+                            <td>{{ evaluation.utilisateur.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ressource</th>
+                            <td>
+                                <a href="{{ path('app_admin_ressource_show', {id: evaluation.ressource.id}) }}">
+                                    {{ evaluation.ressource.titre }}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Note</th>
+                            <td>
+                                {% if evaluation.note %}
+                                    <span style="color: #fdcb6e; font-size: 1.2rem;">
+                                        {% for i in 1..5 %}
+                                            <i class="fas fa-star{{ i <= evaluation.note ? '' : '-o' }}"></i>
+                                        {% endfor %}
+                                    </span>
+                                    <span class="ms-2">({{ evaluation.note }}/5)</span>
+                                {% else %}
+                                    <span class="text-muted">Aucune note</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Favori</th>
+                            <td>
+                                {% if evaluation.estFavori %}
+                                    <span class="badge bg-danger"><i class="fas fa-heart"></i> Oui</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Non</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Signalée</th>
+                            <td>
+                                {% if evaluation.estSignale %}
+                                    <span class="badge bg-warning"><i class="fas fa-flag"></i> Oui</span>
+                                {% else %}
+                                    <span class="badge bg-success">Non</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Date d'évaluation</th>
+                            <td>{{ evaluation.dateEvaluation|date('d/m/Y H:i') }}</td>
+                        </tr>
+                        {% if evaluation.dateCommentaire %}
+                        <tr>
+                            <th>Date du commentaire</th>
+                            <td>{{ evaluation.dateCommentaire|date('d/m/Y H:i') }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if evaluation.dateFavori %}
+                        <tr>
+                            <th>Date ajout favori</th>
+                            <td>{{ evaluation.dateFavori|date('d/m/Y H:i') }}</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if evaluation.commentaire %}
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-comment me-2"></i>Commentaire</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">{{ evaluation.commentaire }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ path('app_admin_evaluation_index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+                    </a>
+                    
+                    <form method="post" action="{{ path('app_admin_evaluation_toggle_report', {id: evaluation.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('toggle-report' ~ evaluation.id) }}">
+                        <button type="submit" class="btn btn-warning w-100">
+                            <i class="fas fa-flag me-2"></i>
+                            {{ evaluation.estSignale ? 'Désignaler' : 'Signaler' }}
+                        </button>
+                    </form>
+                    
+                    <form method="post" action="{{ path('app_admin_evaluation_delete', {id: evaluation.id}) }}" 
+                          onsubmit="return confirm('Supprimer définitivement cette évaluation ?')">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ evaluation.id) }}">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="fas fa-trash me-2"></i>Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -4,7 +4,12 @@
 
 {% block body %}
 <style>
-    /* --- STYLE DU STEPPER --- */
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 120px 0 80px;
+        clip-path: ellipse(150% 100% at 50% 0%);
+        color: white;
+    }
     .stepper-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 25px; }
     .step-num { 
         width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); color: #fff; 
@@ -15,40 +20,26 @@
     .step-num.disabled { opacity: 0.3; cursor: not-allowed; }
     .step-line { width: 40px; height: 2px; background: rgba(255,255,255,0.2); }
 
-    .hero-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 120px 0 80px;
-        clip-path: ellipse(150% 100% at 50% 0%);
-        color: white;
-    }
     .filiere-card {
-        border: none;
-        border-radius: 20px;
+        border: none; border-radius: 20px;
         transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-        overflow: hidden;
-        background: #fff;
+        background: #fff; height: 100%;
     }
-    .filiere-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 14px 28px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.08);
-    }
+    .filiere-card:hover { transform: translateY(-10px); box-shadow: 0 14px 28px rgba(0,0,0,0.1); }
+    
     .icon-box {
-        width: 70px;
-        height: 70px;
-        background: #f8f9ff;
-        border-radius: 15px;
+        width: 70px; height: 70px; background: #f8f9ff; border-radius: 15px;
         display: flex; align-items: center; justify-content: center;
         margin: 0 auto 20px; color: #667eea; transition: 0.3s;
     }
     .filiere-card:hover .icon-box { background: #667eea; color: white; transform: rotate(10deg); }
+    
     .btn-modern {
         background: linear-gradient(to right, #667eea, #764ba2);
         border: none; color: white !important; border-radius: 50px; padding: 10px 25px; font-weight: 600;
     }
-    .animate-up { animation: fadeInUp 0.8s ease-out forwards; }
+    .animate-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* Chatbot flottant : supprimé ici (global dans base.html.twig) */
 </style>
 
 <div class="hero-section text-center">
@@ -60,41 +51,31 @@
             <div class="step-line"></div>
             <span class="step-num disabled">3</span>
         </div>
-
         <h1 class="display-3 fw-bold mb-3">Réussissez votre Bac</h1>
-        <p class="lead opacity-75">Sélectionnez votre filière pour accéder aux ressources exclusives.</p>
+        <p class="lead opacity-75">Sélectionnez votre filière pour accéder aux ressources.</p>
     </div>
 </div>
 
-<div class="container" style="margin-top: -50px;">
+<div class="container" style="margin-top: -50px; padding-bottom: 50px;">
     <div class="row mb-4">
         <div class="col-lg-6 mx-auto">
-            <form method="get" action="{{ path('app_revision_filieres') }}" class="d-flex" style="gap:8px;">
-                <input type="text" name="q" value="{{ query|default('') }}" class="form-control form-control-lg" placeholder="Rechercher une filière">
-                <button class="btn btn-modern" type="submit">
-                    <i class="fas fa-search me-2"></i>Rechercher
-                </button>
+            <form method="get" class="d-flex shadow-sm rounded-pill bg-white p-2">
+                <input type="text" name="q" value="{{ query|default('') }}" class="form-control border-0 px-4" placeholder="Rechercher une filière...">
+                <button class="btn btn-modern rounded-pill" type="submit">Rechercher</button>
             </form>
         </div>
     </div>
     <div class="row">
         {% for f in filieres %}
-            <div class="col-lg-4 col-md-6 mb-4 animate-up">
+            <div class="col-lg-4 col-md-6 mb-4 animate-up" style="animation-delay: {{ loop.index0 * 0.1 }}s">
                 <div class="card filiere-card shadow-sm p-4 text-center">
-                    <div class="icon-box shadow-sm">
-                        <i class="fas fa-graduation-cap fa-2x"></i>
-                    </div>
+                    <div class="icon-box shadow-sm"><i class="fas fa-graduation-cap fa-2x"></i></div>
                     <h3 class="fw-bold h4 mb-2" style="color: #2d3436;">{{ f.nom }}</h3>
-                    <p class="text-muted small mb-4">Parcours {{ f.niveau }} • Ressources complètes</p>
-                    <a href="{{ path('app_revision_matieres', {'id': f.id}) }}" class="btn btn-modern">
-                        Explorer <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
+                    <p class="text-muted small mb-4">Niveau : {{ f.niveau }}</p>
+                    <a href="{{ path('app_revision_matieres', {'id': f.id}) }}" class="btn btn-modern">Explorer <i class="fas fa-arrow-right ms-2"></i></a>
                 </div>
             </div>
         {% endfor %}
     </div>
 </div>
-
-
-
 {% endblock %}
