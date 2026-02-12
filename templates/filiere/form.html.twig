@@ -1,0 +1,200 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}
+    {{ edit ? 'Protocol Edit' : 'New Entry' }} — BacLab
+{% endblock %}
+
+{% block page_title %}
+    {{ edit ? 'Configuration Filière' : 'Initialisation Filière' }}
+{% endblock %}
+
+{% block page_subtitle %}
+    Unité de gestion du cursus scolaire • v2.0
+{% endblock %}
+
+{% block body %}
+<style>
+    /* === DESIGN SYSTEM PRIVÉ (ISOLÉ) === */
+    .master-wrapper {
+        perspective: 1000px;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    /* Carte ultra-moderne avec profondeur */
+    .premium-form-card {
+        background: rgba(17, 25, 40, 0.65);
+        backdrop-filter: blur(25px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 35px;
+        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+        transition: transform 0.4s ease;
+    }
+
+    /* Effet de lueur au survol */
+    .premium-form-card:hover {
+        border-color: rgba(109, 91, 255, 0.4);
+    }
+
+    /* Inputs futuristes */
+    .modern-field {
+        background: rgba(0, 0, 0, 0.25) !important;
+        border: 2px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 18px !important;
+        color: #fff !important;
+        padding: 16px 22px !important;
+        font-size: 15px !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .modern-field:focus {
+        background: rgba(109, 91, 255, 0.05) !important;
+        border-color: #6d5bff !important;
+        box-shadow: 0 0 25px rgba(109, 91, 255, 0.2) !important;
+        transform: scale(1.01);
+    }
+
+    /* Labels néons */
+    .neon-label {
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: #6d5bff;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Bouton principal */
+    .btn-submit-action {
+        background: linear-gradient(135deg, #6d5bff 0%, #a855f7 100%);
+        border: none;
+        border-radius: 20px;
+        padding: 18px 35px;
+        color: white;
+        font-weight: 700;
+        letter-spacing: 1px;
+        transition: 0.3s;
+        box-shadow: 0 15px 35px rgba(109, 91, 255, 0.4);
+    }
+
+    .btn-submit-action:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 20px 45px rgba(109, 91, 255, 0.6);
+        color: white;
+    }
+
+    /* Animation d'entrée */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .icon-box-status {
+        width: 60px; height: 60px;
+        border-radius: 18px;
+        display: grid; place-items: center;
+        font-size: 1.5rem;
+    }
+</style>
+
+<div class="container-fluid master-wrapper">
+    <div class="row justify-content-center py-4">
+        <div class="col-xl-5 col-lg-7">
+            
+            <div class="premium-form-card p-5">
+                
+                {# Header du formulaire #}
+                <div class="text-center mb-5">
+                    <div class="icon-box-status mx-auto mb-3 {{ edit ? 'grad1' : 'grad3' }}">
+                        <i class="fa-solid {{ edit ? 'fa-pen-nib' : 'fa-rocket' }} text-white"></i>
+                    </div>
+                    <h2 class="fw-black text-white" style="letter-spacing: -1px;">
+                        {{ edit ? 'Propulser les changements' : 'Initialiser la filière' }}
+                    </h2>
+                    <p class="text-muted small">ID Session : <span class="text-info">#99{{ "now"|date("s") }}</span> • BacLab System</p>
+                </div>
+
+                {{ form_start(form) }}
+                    
+                    {# Champ NOM #}
+                    <div class="mb-5 position-relative">
+                        <label class="neon-label">
+                            <i class="fa-solid fa-signature"></i> Nom de la filière
+                        </label>
+                        {{ form_widget(form.nom, {
+                            'attr': {
+                                'class': 'modern-field w-100',
+                                'placeholder': 'Désignation complète...'
+                            }
+                        }) }}
+                        <div class="text-danger mt-2">
+                            {{ form_errors(form.nom) }}
+                        </div>
+                    </div>
+
+                    {# Champ NIVEAU #}
+                    <div class="mb-5">
+                        <label class="neon-label">
+                            <i class="fa-solid fa-layer-group"></i> Niveau d'études académique
+                        </label>
+                        {{ form_widget(form.niveau, {
+                            'attr': {
+                                'class': 'modern-field w-100',
+                                'placeholder': 'Ex: Terminale / 4ème année'
+                            }
+                        }) }}
+                        <div class="text-danger mt-2">
+                            {{ form_errors(form.niveau) }}
+                        </div>
+                    </div>
+
+                    {# Barre d'actions flottante #}
+                    <div class="d-flex flex-column gap-3 mt-4">
+                        <button type="submit" class="btn-submit-action d-flex align-items-center justify-content-center gap-3">
+                            <i class="fa-solid fa-shield-check"></i>
+                            <span>{{ edit ? 'SAUVEGARDER LES DONNÉES' : 'CRÉER L\'ENTITÉ' }}</span>
+                        </button>
+
+                        <a href="{{ path('filiere_index') }}" class="btn-ghost d-flex align-items-center justify-content-center py-3" style="border-radius: 18px; opacity: 0.7;">
+                            <i class="fa-solid fa-xmark me-2"></i> Annuler l'opération
+                        </a>
+                    </div>
+
+                {{ form_end(form) }}
+
+            </div>
+
+            {# Footer flottant #}
+            <div class="mt-5 text-center stagger-item">
+                <div class="p-3 rounded-pill d-inline-block" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                    <small class="text-muted">
+                        <i class="fa-solid fa-circle-check text-success me-2"></i>
+                        Signature numérique active • Enregistrement sécurisé
+                    </small>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        // Effet de mouvement parallaxe discret sur la carte
+        const card = document.querySelector('.premium-form-card');
+        document.addEventListener('mousemove', (e) => {
+            let xAxis = (window.innerWidth / 2 - e.pageX) / 45;
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 45;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        // Reset quand la souris sort
+        document.addEventListener('mouseleave', () => {
+            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
+    </script>
+{% endblock %}

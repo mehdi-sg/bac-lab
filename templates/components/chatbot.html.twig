@@ -1,0 +1,65 @@
+<div class="chatbot-section mb-4">
+    <h2>🤖 Chatbot</h2>
+    <input id="msg" placeholder="اكتب سؤالك">
+    <button onclick="send()">إرسال</button>
+    <p id="reply"></p>
+</div>
+
+
+
+
+<script>
+// Fonction pour le code en Arabe (Route /chatbot/ask)
+function send() {
+    const msg = document.getElementById('msg').value;
+
+    fetch('/chatbot/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('reply').innerText = data.reply || '';
+    });
+}
+
+// Fonction pour le code en Français (Route /chatbot/message)
+async function sendMessage() {
+    const message = document.getElementById("message").value;
+
+    const response = await fetch("/chatbot/message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+    });
+
+    const data = await response.json();
+    document.getElementById("response").innerText = data.reply;
+}
+</script>
+
+<style>
+    /* Petit style rapide pour que ce soit propre sur tes pages filières */
+    .chatbot-section {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        margin-top: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .chatbot-section input {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        width: 70%;
+    }
+    .chatbot-section button {
+        padding: 8px 15px;
+        background: #764ba2;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>

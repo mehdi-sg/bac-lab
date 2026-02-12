@@ -1,0 +1,154 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}Gestion des Matières{% endblock %}
+{% block page_title %}Matières Scolaires{% endblock %}
+
+{% block body %}
+<style>
+    /* FOND DYNAMIQUE POUR TOUTE LA PAGE */
+    body { background-color: #0a0f1d !important; color: #fff; }
+    
+    .page-bg-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+                          radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.1) 0px, transparent 50%);
+        z-index: -1;
+    }
+
+    .stats-row { display: flex; gap: 1.5rem; margin-bottom: 30px; }
+    
+    /* BOITES DE STATS GLASS */
+    .stat-box { 
+        background: rgba(255, 255, 255, 0.03); 
+        border: 1px solid rgba(255, 255, 255, 0.08); 
+        padding: 25px; 
+        border-radius: 24px; 
+        flex: 1;
+        backdrop-filter: blur(10px);
+    }
+    .stat-box h3 { font-size: 32px; font-weight: 800; color: #2ED3FF; margin: 0; }
+    .stat-box span { color: rgba(255,255,255,0.4); font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
+
+    /* TABLEAU ULTRA MODERNE */
+    .glass-card-table {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 30px;
+        padding: 20px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    }
+
+    .table-modern { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
+    .table-modern th { padding: 15px 20px; color: rgba(255,255,255,0.3); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; }
+    
+    .table-modern td { 
+        background: rgba(255, 255, 255, 0.02); 
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 18px 20px; 
+    }
+    
+    .table-modern td:first-child { border-left: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px 0 0 20px; }
+    .table-modern td:last-child { border-right: 1px solid rgba(255, 255, 255, 0.05); border-radius: 0 20px 20px 0; }
+
+    .avatar-circle {
+        width: 45px; height: 45px;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 800; color: white;
+        box-shadow: 0 8px 15px rgba(99, 102, 241, 0.2);
+    }
+
+    .badge-cyber {
+        background: rgba(46, 211, 255, 0.1);
+        color: #2ED3FF;
+        padding: 6px 14px;
+        border-radius: 10px;
+        font-size: 11px;
+        border: 1px solid rgba(46, 211, 255, 0.2);
+        font-weight: 600;
+    }
+
+    .btn-add-cyber {
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        color: white; border: none; padding: 15px 30px;
+        border-radius: 18px; font-weight: 700;
+        transition: 0.3s; text-decoration: none;
+        display: inline-flex; align-items: center; justify-content: center;
+    }
+    .btn-add-cyber:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4); color: white; }
+
+    .action-btn {
+        width: 38px; height: 38px;
+        border-radius: 12px;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: rgba(255,255,255,0.05);
+        color: white; border: 1px solid rgba(255,255,255,0.1);
+        transition: 0.3s; margin-left: 5px;
+    }
+    .action-btn:hover { background: #6366f1; border-color: #6366f1; transform: scale(1.1); }
+</style>
+
+<div class="page-bg-overlay"></div>
+
+<div class="container-fluid py-4">
+    <div class="stats-row">
+        <div class="stat-box">
+            <span>Volume Matières</span>
+            <h3>{{ matieres|length }}</h3>
+        </div>
+        <div class="stat-box d-flex align-items-center justify-content-end">
+            <a href="{{ path('matiere_new') }}" class="btn-add-cyber">
+                <i class="fas fa-plus-circle me-2"></i> Nouvelle Matière
+            </a>
+        </div>
+    </div>
+
+    <div class="glass-card-table">
+        <table class="table-modern">
+            <thead>
+                <tr>
+                    <th>Désignation</th>
+                    <th>Filière associée</th>
+                    <th>Disponibilité</th>
+                    <th class="text-end">Gestion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in matieres %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar-circle">{{ m.nom|first|upper }}</div>
+                            <div>
+                                <div class="fw-bold text-white">{{ m.nom }}</div>
+                                <div class="text-muted small">ID: #{{ m.id }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge-cyber">{{ m.filiere.nom }}</span></td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: {{ m.actif ? '#35FFB6' : '#FF4D8D' }}; box-shadow: 0 0 10px {{ m.actif ? '#35FFB6' : '#FF4D8D' }};"></div>
+                            <span style="color: {{ m.actif ? '#35FFB6' : '#FF4D8D' }}; font-size: 11px; font-weight: 800; letter-spacing: 1px;">
+                                {{ m.actif ? 'OPÉRATIONNEL' : 'HORS LIGNE' }}
+                            </span>
+                        </div>
+                    </td>
+                    <td class="text-end">
+                        <a href="{{ path('matiere_show', {'id': m.id}) }}" class="action-btn" title="Voir"><i class="fas fa-eye"></i></a>
+                        <a href="{{ path('matiere_edit', {'id': m.id}) }}" class="action-btn" style="color: #FFB86C;" title="Modifier"><i class="fas fa-pen"></i></a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-5">Aucune donnée système disponible.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

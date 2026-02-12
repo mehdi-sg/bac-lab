@@ -1,0 +1,198 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}{{ edit ? 'Modifier Matière' : 'Ajouter Matière' }} | BacLab Admin{% endblock %}
+
+{% block body %}
+<style>
+    /* === SYSTEM DESIGN MODERNE (DARK GLASS) === */
+    :root {
+        --primary-glow: rgba(99, 102, 241, 0.5);
+        --accent: #6366f1;
+        --accent-dark: #4f46e5;
+        --glass-bg: rgba(15, 23, 42, 0.8);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+    }
+
+    /* Background global pour forcer le mode sombre */
+    #main-content, .page-wrapper, body { 
+        background: #0f172a !important; 
+    }
+
+    .form-page {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent),
+                    radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.15), transparent);
+    }
+
+    .form-container { width: 100%; max-width: 500px; z-index: 1; }
+
+    /* Carte Effet Verre */
+    .form-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 2rem;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.95) translateY(20px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%);
+        padding: 3rem 2rem 2rem;
+        text-align: center;
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .form-icon {
+        width: 65px; height: 65px;
+        background: var(--accent);
+        border-radius: 1.25rem;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 1.5rem; font-size: 1.5rem; color: white;
+        box-shadow: 0 0 30px var(--primary-glow);
+    }
+
+    .form-body { padding: 2.5rem; }
+
+    .form-group { margin-bottom: 1.8rem; }
+
+    .form-label {
+        display: block; font-size: 0.75rem; font-weight: 800;
+        color: var(--accent); margin-bottom: 0.8rem;
+        text-transform: uppercase; letter-spacing: 1.5px;
+    }
+
+    /* Inputs Modernisés */
+    .input-wrapper { position: relative; }
+
+    .input-icon {
+        position: absolute; left: 1.25rem; top: 50%;
+        transform: translateY(-50%); color: var(--text-muted);
+        transition: 0.3s;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3rem;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--glass-border);
+        border-radius: 1rem;
+        color: var(--text-main);
+        transition: 0.3s;
+    }
+
+    .form-control-custom:focus {
+        outline: none; border-color: var(--accent);
+        background: rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+    }
+
+    /* Boutons NÉON */
+    .btn-group { display: flex; flex-direction: column; gap: 1rem; margin-top: 2.5rem; }
+    
+    .btn-primary-custom {
+        padding: 1.1rem; background: var(--accent); color: white;
+        border: none; border-radius: 1rem; font-weight: 700;
+        cursor: pointer; transition: 0.3s;
+        display: flex; align-items: center; justify-content: center; gap: 0.7rem;
+        text-transform: uppercase; letter-spacing: 1px;
+    }
+
+    .btn-primary-custom:hover { 
+        background: var(--accent-dark); 
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-secondary-custom {
+        padding: 1rem; text-align: center; color: var(--text-muted);
+        text-decoration: none; border: 1px solid var(--glass-border);
+        border-radius: 1rem; font-weight: 600; transition: 0.3s;
+    }
+
+    .btn-secondary-custom:hover { background: rgba(255,255,255,0.05); color: white; }
+
+    .error-message { color: #ef4444; font-size: 0.8rem; margin-top: 0.5rem; }
+</style>
+
+<div class="form-page">
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-header">
+                <div class="form-icon">
+                    <i class="fas {{ edit ? 'fa-pen-nib' : 'fa-plus' }}"></i>
+                </div>
+                <h1 style="font-size: 1.6rem; margin: 0; color: white; font-weight: 800;">
+                    {{ edit ? 'Mise à jour' : 'Initialisation' }}
+                </h1>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+                    Configuration du module d'enseignement
+                </p>
+            </div>
+
+            <div class="form-body">
+                {{ form_start(form, {'attr': {'id': 'matiere-form'}}) }}
+
+                <div class="form-group">
+                    <label class="form-label">Désignation</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-signature input-icon"></i>
+                        {{ form_widget(form.nom, {
+                            'attr': {'class': 'form-control-custom', 'placeholder': 'Ex: Mathématiques Spécialisées'}
+                        }) }}
+                    </div>
+                    <div class="error-message">{{ form_errors(form.nom) }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Classification Filière</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-layer-group input-icon"></i>
+                        {{ form_widget(form.filiere, {
+                            'attr': {'class': 'form-control-custom'}
+                        }) }}
+                    </div>
+                    <div class="error-message">{{ form_errors(form.filiere) }}</div>
+                </div>
+
+                {# Optionnel : Champ Actif si présent dans l'edit #}
+                {% if form.actif is defined %}
+                <div class="form-group">
+                     <label class="form-label">Statut Visibilité</label>
+                     <div class="d-flex align-items-center justify-content-between p-3" style="background: rgba(0,0,0,0.2); border-radius: 1rem; border: 1px solid var(--glass-border);">
+                         <span class="text-white small">Activer la matière</span>
+                         {{ form_widget(form.actif) }}
+                     </div>
+                </div>
+                {% endif %}
+
+                <div class="btn-group">
+                    <button type="submit" class="btn-primary-custom">
+                        <i class="fas {{ edit ? 'fa-sync-alt' : 'fa-check' }}"></i>
+                        {{ edit ? 'Mettre à jour le système' : 'Confirmer la création' }}
+                    </button>
+                    
+                    <a href="{{ path('matiere_index') }}" class="btn-secondary-custom">
+                        Retour à la console
+                    </a>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

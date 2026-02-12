@@ -1,0 +1,557 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}{{ edit ? 'Modifier' : 'Nouvelle' }} Question - Admin{% endblock %}
+
+{% block page_title %}{{ edit ? 'Modifier la Question' : 'Nouvelle Question' }}{% endblock %}
+{% block page_subtitle %}{{ edit ? 'Mise à jour de l\'énoncé et des choix' : 'Ajout d\'une question au quiz' }}{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .form-wrapper {
+        max-width: 860px;
+        margin: 0 auto;
+    }
+
+    /* ── Alert erreur ────────────────────────────── */
+    .alert-error {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px 18px;
+        border-radius: var(--radius);
+        border: 1px solid rgba(255,77,141,0.30);
+        background: rgba(255,77,141,0.10);
+        color: #FF4D8D;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 22px;
+    }
+    .alert-error ul { margin: 0; padding-left: 18px; }
+    .alert-error li { margin-bottom: 4px; }
+
+    /* ── Card ───────────────────────────────────── */
+    .form-card {
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(14px);
+        box-shadow: 0 18px 50px rgba(0,0,0,0.20);
+        padding: 36px;
+        margin-bottom: 20px;
+    }
+
+    .form-card-title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .form-card-icon {
+        width: 46px; height: 46px;
+        border-radius: 14px;
+        background: var(--grad3);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 18px; flex-shrink: 0;
+    }
+
+    .form-card-title h2 { font-size: 18px; font-weight: 900; margin: 0; }
+    .form-card-title p  { margin: 3px 0 0; color: var(--muted); font-size: 13px; font-weight: 600; }
+
+    /* ── Groups ─────────────────────────────────── */
+    .form-group { margin-bottom: 22px; }
+
+    .form-group label {
+        display: block;
+        font-size: 13px; font-weight: 800;
+        color: var(--muted);
+        margin-bottom: 8px;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(0,0,0,0.22);
+        color: var(--text);
+        font-size: 14px; font-family: inherit; font-weight: 600;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        appearance: none; -webkit-appearance: none;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: rgba(234,240,255,0.30); font-weight: 500; }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: rgba(109,91,255,0.60);
+        background: rgba(0,0,0,0.30);
+        box-shadow: 0 0 0 3px rgba(109,91,255,0.15);
+    }
+
+    .form-group select option { background: #0B1020; color: var(--text); }
+    .form-group textarea { min-height: 110px; resize: vertical; }
+
+    .form-group.has-error input,
+    .form-group.has-error textarea,
+    .form-group.has-error select {
+        border-color: rgba(255,77,141,0.55);
+        box-shadow: 0 0 0 3px rgba(255,77,141,0.12);
+    }
+
+    .field-error {
+        display: block; margin-top: 6px;
+        font-size: 12px; font-weight: 700; color: #FF4D8D;
+    }
+
+    .help-text {
+        display: block; margin-top: 6px;
+        font-size: 12px; font-weight: 600; color: var(--muted);
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+    /* ── Section séparée ────────────────────────── */
+    .form-section {
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.03);
+        padding: 24px;
+        margin-bottom: 22px;
+    }
+
+    .form-section-title {
+        display: flex; align-items: center; gap: 10px;
+        margin-bottom: 20px;
+        font-size: 14px; font-weight: 900;
+    }
+
+    .form-section-title .section-icon {
+        width: 32px; height: 32px; border-radius: 10px;
+        background: var(--grad1);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 13px;
+    }
+
+    /* ── Bouton changer type ────────────────────── */
+    .btn-change-type {
+        display: inline-flex; align-items: center; gap: 6px;
+        margin-top: 8px;
+        padding: 7px 14px; border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.05);
+        color: var(--muted);
+        font-size: 12px; font-weight: 800;
+        cursor: pointer; font-family: inherit;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .btn-change-type:hover {
+        background: rgba(255,255,255,0.09);
+        border-color: rgba(255,255,255,0.18);
+        color: var(--text);
+    }
+
+    /* ── Choix QCM ──────────────────────────────── */
+    .choices-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+
+    .choice-row {
+        display: flex; align-items: center; gap: 12px;
+    }
+
+    .choice-letter {
+        width: 38px; height: 38px; border-radius: 12px;
+        background: var(--grad1);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 14px; font-weight: 900;
+        flex-shrink: 0;
+    }
+
+    .choice-row input[type="text"] {
+        flex: 1;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(0,0,0,0.22);
+        color: var(--text);
+        font-size: 13px; font-weight: 600; font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .choice-row input[type="text"]:focus {
+        border-color: rgba(109,91,255,0.55);
+        box-shadow: 0 0 0 3px rgba(109,91,255,0.12);
+    }
+
+    .choice-row input[type="text"]::placeholder { color: rgba(234,240,255,0.28); }
+
+    .correct-toggle {
+        display: flex; align-items: center; gap: 7px;
+        padding: 8px 14px; border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.04);
+        cursor: pointer; white-space: nowrap;
+        transition: background 0.2s, border-color 0.2s;
+        flex-shrink: 0;
+    }
+
+    .correct-toggle input[type="checkbox"] {
+        width: 16px; height: 16px; cursor: pointer;
+        accent-color: #35FFB6;
+    }
+
+    .correct-toggle label {
+        font-size: 12px; font-weight: 800;
+        color: var(--muted); cursor: pointer;
+        text-transform: uppercase; letter-spacing: .03em;
+        margin: 0 !important;
+    }
+
+    .correct-toggle:has(input:checked) {
+        background: rgba(53,255,182,0.10);
+        border-color: rgba(53,255,182,0.30);
+    }
+
+    .correct-toggle:has(input:checked) label { color: #35FFB6; }
+
+    .btn-remove-choice {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 34px; height: 34px; border-radius: 10px;
+        border: 1px solid rgba(255,77,141,0.28);
+        background: rgba(255,77,141,0.10);
+        color: #FF4D8D;
+        font-size: 13px; cursor: pointer; font-family: inherit;
+        transition: background 0.2s, border-color 0.2s;
+        flex-shrink: 0;
+    }
+    .btn-remove-choice:hover { background: rgba(255,77,141,0.20); border-color: rgba(255,77,141,0.45); }
+
+    .btn-add-choice {
+        display: inline-flex; align-items: center; gap: 7px;
+        padding: 9px 18px; border-radius: 10px;
+        border: 1px solid rgba(46,211,255,0.30);
+        background: rgba(46,211,255,0.10);
+        color: #2ED3FF;
+        font-size: 12px; font-weight: 800; cursor: pointer; font-family: inherit;
+        transition: background 0.2s, border-color 0.2s;
+        margin-top: 4px;
+    }
+    .btn-add-choice:hover { background: rgba(46,211,255,0.18); border-color: rgba(46,211,255,0.50); }
+
+    /* ── Vrai / Faux ────────────────────────────── */
+    .vf-container { display: flex; gap: 14px; margin-top: 10px; }
+
+    .vf-option {
+        flex: 1; padding: 24px 16px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.04);
+        text-align: center; cursor: pointer;
+        transition: border-color 0.22s, background 0.22s, box-shadow 0.22s;
+        display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+
+    .vf-option input[type="radio"] { display: none; }
+
+    .vf-option:hover {
+        background: rgba(255,255,255,0.07);
+        border-color: rgba(255,255,255,0.20);
+    }
+
+    .vf-option.selected-vrai {
+        border-color: rgba(53,255,182,0.50);
+        background: rgba(53,255,182,0.08);
+        box-shadow: 0 0 0 3px rgba(53,255,182,0.10);
+    }
+
+    .vf-option.selected-faux {
+        border-color: rgba(255,77,141,0.50);
+        background: rgba(255,77,141,0.08);
+        box-shadow: 0 0 0 3px rgba(255,77,141,0.10);
+    }
+
+    .vf-icon { font-size: 30px; line-height: 1; }
+    .vf-label { font-size: 15px; font-weight: 900; }
+
+    /* ── Placeholder no-type ────────────────────── */
+    .no-type-placeholder {
+        display: flex; align-items: center; gap: 12px;
+        padding: 18px;
+        border-radius: 12px;
+        border: 1px dashed var(--border);
+        background: rgba(255,255,255,0.02);
+        color: var(--muted);
+        font-size: 13px; font-weight: 600;
+    }
+
+    /* ── Actions ────────────────────────────────── */
+    .form-actions {
+        display: flex; align-items: center; gap: 12px;
+        padding-top: 22px;
+        border-top: 1px solid var(--border);
+        flex-wrap: wrap;
+    }
+
+    .btn-save {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 12px 28px; border-radius: 14px;
+        border: 1px solid rgba(109,91,255,0.45);
+        background: var(--grad1); color: #fff;
+        font-weight: 800; font-size: 14px;
+        cursor: pointer; font-family: inherit;
+        transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 6px 24px rgba(109,91,255,0.28);
+    }
+    .btn-save:hover { opacity: .88; transform: translateY(-2px); box-shadow: 0 10px 32px rgba(109,91,255,0.38); }
+
+    .btn-cancel {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 12px 22px; border-radius: 14px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.05);
+        color: var(--muted);
+        font-weight: 800; font-size: 14px;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .btn-cancel:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.18); color: var(--text); }
+
+    @media (max-width: 768px) {
+        .form-row     { grid-template-columns: 1fr; }
+        .form-card    { padding: 22px; }
+        .vf-container { flex-direction: column; }
+        .choice-row   { flex-wrap: wrap; }
+        .form-actions { flex-direction: column; align-items: stretch; }
+        .btn-save, .btn-cancel { justify-content: center; }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="form-wrapper">
+
+    {# ── Erreurs ──────────────────────────────── #}
+    {% if errors is defined and errors is not empty %}
+        <div class="alert-error">
+            <i class="fa-solid fa-circle-exclamation" style="margin-top:2px;flex-shrink:0;"></i>
+            <ul>
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="form-card">
+
+        <div class="form-card-title">
+            <div class="form-card-icon">
+                <i class="fa-solid fa-circle-plus"></i>
+            </div>
+            <div>
+                <h2>Nouvelle Question</h2>
+                <p>Définissez l'énoncé, le type et les choix de réponses</p>
+            </div>
+        </div>
+
+        <form method="POST"
+              action="{{ path('admin_question_new', {id: quiz.id}) }}"
+              id="question-form">
+
+            <input type="hidden" name="choix_count" value="{{ choiceCount ?? 2 }}">
+
+            {# Énoncé #}
+            <div class="form-group">
+                <label for="enonce">Énoncé de la question <span style="color:#FF4D8D">*</span></label>
+                <textarea
+                    id="enonce"
+                    name="enonce"
+                    placeholder="Ex : Quelle est la dérivée de ln(x) ?"
+                >{{ (old.enonce ?? '') }}</textarea>
+                {% if old is defined and old.enonce is defined and old.enonce is empty and errors is defined and errors|length > 0 %}
+                    <span class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> Ce champ est obligatoire</span>
+                {% endif %}
+            </div>
+
+            {# Type + Score #}
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="type_question">Type de question <span style="color:#FF4D8D">*</span></label>
+                    <select id="type_question" name="type_question">
+                        <option value="">-- Sélectionner --</option>
+                        <option value="QCM"       {{ ((old.type_question ?? '') == 'QCM')       ? 'selected' : '' }}>QCM (Choix multiples)</option>
+                        <option value="VRAI_FAUX" {{ ((old.type_question ?? '') == 'VRAI_FAUX') ? 'selected' : '' }}>Vrai / Faux</option>
+                    </select>
+                    <button type="submit" name="action" value="change_type" class="btn-change-type">
+                        <i class="fa-solid fa-rotate"></i> Appliquer ce type
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label for="score">Points <span style="color:#FF4D8D">*</span></label>
+                    <input
+                        type="number"
+                        id="score"
+                        name="score"
+                        value="{{ (old.score ?? 1) }}"
+                        min="1" max="20"
+                        placeholder="1"
+                    >
+                    <span class="help-text">Entre 1 et 20 points</span>
+                </div>
+            </div>
+
+            {# Section choix #}
+            <div class="form-section">
+                <div class="form-section-title">
+                    <div class="section-icon"><i class="fa-solid fa-check-to-slot"></i></div>
+                    Choix de réponses
+                </div>
+
+                {# ── VRAI / FAUX ── #}
+                {% if (old.type_question ?? '') == 'VRAI_FAUX' %}
+
+                    <span class="help-text" style="margin-bottom:16px;">Sélectionnez la bonne réponse.</span>
+
+                    <div class="vf-container">
+                        {% set vf_correct = (old.choix_correct_vf is defined) ? old.choix_correct_vf : '' %}
+
+                        <label class="vf-option {{ vf_correct == '0' ? 'selected-vrai' : '' }}">
+                            <input type="radio" name="choix_correct_vf" value="0" {{ vf_correct == '0' ? 'checked' : '' }}>
+                            <div class="vf-icon">✅</div>
+                            <div class="vf-label">VRAI</div>
+                        </label>
+
+                        <label class="vf-option {{ vf_correct == '1' ? 'selected-faux' : '' }}">
+                            <input type="radio" name="choix_correct_vf" value="1" {{ vf_correct == '1' ? 'checked' : '' }}>
+                            <div class="vf-icon">❌</div>
+                            <div class="vf-label">FAUX</div>
+                        </label>
+                    </div>
+
+                    <input type="hidden" name="choix_libelle_0" value="Vrai">
+                    <input type="hidden" name="choix_libelle_1" value="Faux">
+                    <input type="hidden" name="choix_count" value="2">
+
+                {# ── QCM ── #}
+                {% elseif (old.type_question ?? '') == 'QCM' %}
+
+                    <span class="help-text" style="margin-bottom:16px;">Remplissez les choix et cochez la/les bonne(s) réponse(s).</span>
+
+                    {% set letters = ['A','B','C','D','E'] %}
+                    {% set max_choices = 5 %}
+                    {% set count = choiceCount ?? 2 %}
+
+                    {% set choix_libelles = [] %}
+                    {% set choix_corrects = [] %}
+
+                    {% if old.choix_libelle_0 is defined %}
+                        {% for i in 0..(count - 1) %}
+                            {% set choix_libelles = choix_libelles|merge([(attribute(old, 'choix_libelle_' ~ i) ?? '')]) %}
+                            {% set choix_corrects = choix_corrects|merge([(attribute(old, 'choix_correct_' ~ i) ?? '0')]) %}
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="choices-container" id="choices-container">
+                        {% for i in 0..(count - 1) %}
+                        <div class="choice-row">
+                            <div class="choice-letter">{{ letters[i] }}</div>
+                            <input
+                                type="text"
+                                name="choix_libelle_{{ i }}"
+                                placeholder="Texte du choix {{ letters[i] }}"
+                                value="{{ (choix_libelles[i] ?? '') }}"
+                            >
+                            <div class="correct-toggle">
+                                <input
+                                    type="checkbox"
+                                    name="choix_correct_{{ i }}"
+                                    id="correct_{{ i }}"
+                                    value="1"
+                                    {{ (choix_corrects[i] is defined and choix_corrects[i] == '1') ? 'checked' : '' }}
+                                >
+                                <label for="correct_{{ i }}">Correcte</label>
+                            </div>
+                            {% if count > 2 %}
+                                <button type="submit" name="action" value="remove_choice" class="btn-remove-choice" onclick="document.getElementById('remove_index').value={{ i }}">
+                                    <i class="fa-solid fa-xmark"></i>
+                                    <input type="hidden" id="remove_index" name="remove_index" value="{{ i }}">
+                                </button>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <input type="hidden" name="choix_count" value="{{ count }}">
+
+                    {% if count < max_choices %}
+                        <button type="submit" name="action" value="add_choice" class="btn-add-choice">
+                            <i class="fa-solid fa-plus"></i> Ajouter le choix {{ letters[count] }}
+                        </button>
+                    {% endif %}
+
+                    <span class="help-text" style="margin-top:10px;">{{ count }} / {{ max_choices }} choix (minimum 2)</span>
+
+                {# ── Aucun type ── #}
+                {% else %}
+                    <div class="no-type-placeholder">
+                        <i class="fa-solid fa-arrow-up" style="font-size:16px;"></i>
+                        Sélectionnez un type de question ci-dessus pour afficher les options de réponses.
+                    </div>
+                {% endif %}
+
+            </div>
+
+            {# Actions #}
+            <div class="form-actions">
+                <button type="submit" name="action" value="save" class="btn-save">
+                    <i class="fa-solid fa-floppy-disk"></i> Créer la Question
+                </button>
+                <a href="{{ path('admin_quiz_questions', {id: quiz.id}) }}" class="btn-cancel">
+                    <i class="fa-solid fa-xmark"></i> Annuler
+                </a>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const vfOptions = document.querySelectorAll('.vf-option');
+
+    vfOptions.forEach(function (option) {
+        option.addEventListener('click', function () {
+            vfOptions.forEach(function (opt) {
+                opt.classList.remove('selected-vrai', 'selected-faux');
+            });
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+                this.classList.add(radio.value === '0' ? 'selected-vrai' : 'selected-faux');
+            }
+        });
+    });
+
+    vfOptions.forEach(function (option) {
+        const radio = option.querySelector('input[type="radio"]');
+        if (radio && radio.checked) {
+            option.classList.add(radio.value === '0' ? 'selected-vrai' : 'selected-faux');
+        }
+    });
+});
+</script>
+{% endblock %}

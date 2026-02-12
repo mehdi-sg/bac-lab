@@ -1,0 +1,1656 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ groupe.nom }} - Chat - BacLab{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        /* Glassmorphism Base */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Animated Gradient Background */
+        .chat-section {
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #533483);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glowing Effects */
+        .glow-purple {
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.4), 0 0 60px rgba(118, 75, 162, 0.2);
+        }
+
+        .glow-green {
+            box-shadow: 0 0 20px rgba(72, 187, 120, 0.4);
+        }
+
+        /* Enhanced Chat Wrapper */
+        .chat-wrapper {
+            border-radius: 24px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            overflow: hidden;
+            height: calc(100vh - 200px);
+            max-height: calc(100vh - 120px);
+        }
+
+        /* Sidebar Styling */
+        .chat-sidebar {
+            background: rgba(255, 255, 255, 0.05);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            width: 280px !important;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .filter-tabs {
+            background: rgba(255, 255, 255, 0.03) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Conversation Items */
+        .conversation-item {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .conversation-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .conversation-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .conversation-item:hover {
+            background: rgba(102, 126, 234, 0.15) !important;
+            padding-left: calc(1rem + 3px);
+        }
+
+        .conversation-item.active {
+            background: rgba(102, 126, 234, 0.2) !important;
+            border-left: 3px solid #667eea;
+        }
+
+        .conversation-item.active::before {
+            transform: scaleY(1);
+        }
+
+        /* Online indicator */
+        .online-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            background: #48bb78;
+            border: 2px solid #1a1a2e;
+            border-radius: 50%;
+        }
+
+        /* Message Bubbles */
+        .message-bubble {
+            border-radius: 18px;
+            padding: 14px 18px;
+            position: relative;
+            max-width: 85% !important;
+            word-wrap: break-word;
+        }
+        
+        .message-bubble p {
+            font-size: 1rem !important;
+            line-height: 1.6 !important;
+        }
+        
+        .message-content small {
+            font-size: 0.85rem !important;
+        }
+
+        .message-bubble.sent {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-bubble.received {
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a1a2e;
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Date Separator */
+        .date-separator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        .date-separator span {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Message Actions - Always visible on hover */
+        .message-actions {
+            opacity: 0.5;
+            transition: opacity 0.2s ease;
+            display: flex;
+            gap: 4px;
+        }
+        
+        .message-actions .btn {
+            padding: 4px !important;
+            min-width: 28px;
+            height: 28px;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        /* Reply Indicator */
+        .reply-indicator {
+            background: rgba(102, 126, 234, 0.2);
+            border-left: 3px solid #667eea;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        /* Buttons */
+        .send-btn, .join-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-btn:hover, .join-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+            color: white;
+        }
+
+        .send-btn:active, .join-btn:active {
+            transform: translateY(0);
+        }
+
+        .emoji-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .emoji-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Form Controls */
+        .form-control {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+            border-radius: 12px !important;
+            padding: 14px 18px !important;
+            backdrop-filter: blur(10px);
+            font-size: 1rem !important;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3) !important;
+            outline: none !important;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Avatar */
+        .avatar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-weight: 600;
+        }
+
+        /* Dropdown */
+        .dropdown-menu {
+            background: rgba(15, 23, 42, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 12px !important;
+        }
+
+        .dropdown-item {
+            color: white !important;
+            border-radius: 8px !important;
+            margin: 4px 8px !important;
+            padding: 8px 16px !important;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.2) !important;
+        }
+
+        /* More Button */
+        .more-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .more-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Chat Input */
+        .chat-input {
+            background: rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 991.98px) {
+            .chat-sidebar {
+                display: none;
+            }
+            
+            .chat-wrapper {
+                border-radius: 0;
+                height: calc(100vh - 120px);
+                max-height: none;
+            }
+            
+            .chat-section {
+                padding-top: 70px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<section class="chat-section">
+    <div class="container-fluid px-4">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="chat-wrapper glow-purple d-flex" style="min-height: calc(100vh - 180px); max-height: calc(100vh - 100px);">
+                    
+                    <!-- Sidebar -->
+                    <div class="chat-sidebar" style="width: 280px; flex-shrink: 0; display: flex; flex-direction: column;">
+                        <div class="sidebar-header p-3" style="flex-shrink: 0;">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <h5 class="mb-0 text-white fw-bold">Mes Groupes</h5>
+                                <button class="more-btn" data-toggle="dropdown">
+                                    <i class="fas fa-plus text-white-50"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right glass-dark" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                                    <a class="dropdown-item text-white py-2" href="{{ path('groupe_new') }}">
+                                        <i class="fas fa-plus mr-2"></i>Creer un groupe
+                                    </a>
+                                    <a class="dropdown-item text-white py-2" href="{{ path('groupe_index') }}">
+                                        <i class="fas fa-globe mr-2"></i>Voir tous les groupes
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="conversations-list flex-grow-1" style="overflow-y: auto; flex-grow: 1;">
+                            {% if groupes is empty %}
+                                <div class="p-4 text-center">
+                                    <i class="fas fa-users mb-3" style="color: rgba(255, 255, 255, 0.3); font-size: 2rem;"></i>
+                                    <p class="text-white-50 mb-0">Aucun groupe rejoint</p>
+                                    <small class="text-white-50">Rejoignez ou creez un groupe pour discuter</small>
+                                    <div class="mt-3">
+                                        <a href="{{ path('groupe_index') }}" class="btn btn-sm" style="background: rgba(102, 126, 234, 0.2); color: #667eea; border: 1px dashed rgba(102, 126, 234, 0.5); border-radius: 12px;">
+                                            <i class="fas fa-search mr-2"></i>Explorer les groupes
+                                        </a>
+                                    </div>
+                                </div>
+                            {% else %}
+                                {% set currentRoute = app.request.attributes.get('_route') %}
+                                {% set currentId = app.request.attributes.get('id') %}
+                                
+                                {% for g in groupes %}
+                                    {% set isActive = (currentRoute == 'chat_groupe' and currentId == g.id) %}
+                                    <a href="{{ path('chat_groupe', {'id': g.id}) }}" class="conversation-item d-block p-3 {% if isActive %}active{% endif %}" style="text-decoration: none; color: inherit;">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-wrapper position-relative mr-3">
+                                                <div class="avatar rounded-xl d-flex align-items-center justify-content-center text-white fw-bold"
+                                                     style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea, #764ba2); font-size: 1.1rem;">
+                                                    {{ g.nom|first|upper }}
+                                                </div>
+                                                {% if g.isPublic %}
+                                                <span style="position: absolute; bottom: -2px; right: -2px; background: #48bb78; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #1a1a2e;">
+                                                    <i class="fas fa-globe-americas" style="color: white; font-size: 0.5rem;"></i>
+                                                </span>
+                                                {% else %}
+                                                <span style="position: absolute; bottom: -2px; right: -2px; background: #ed8936; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #1a1a2e;">
+                                                    <i class="fas fa-lock" style="color: white; font-size: 0.5rem;"></i>
+                                                </span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="flex-grow-1 overflow-hidden">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <h6 class="mb-0 text-white fw-medium" style="font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ g.nom }}</h6>
+                                                </div>
+                                                <p class="mb-0 text-white-50 small" style="font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if g.description %}
+                                                        {{ g.description[:30] }}...
+                                                    {% else %}
+                                                        {% set membreCount = g.membres|length %}
+                                                        {{ membreCount }} membre{{ membreCount > 1 ? 's' : '' }}
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Main Chat Area -->
+                    <div class="chat-main" style="background: rgba(255, 255, 255, 0.02); display: flex; flex-direction: column; height: 100%; overflow: hidden; flex: 1;">
+                        
+                        <!-- Chat Header -->
+                        <div class="chat-header d-flex align-items-center justify-content-between px-4 py-3" style="flex-shrink: 0; height: 70px;">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-wrapper position-relative mr-3">
+                                    <div class="avatar rounded-xl d-flex align-items-center justify-content-center text-white fw-bold"
+                                         style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea, #764ba2); font-size: 1.1rem;">
+                                        {{ groupe.nom|first|upper }}
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 text-white fw-medium" style="font-size: 1.05rem;">{{ groupe.nom }}</h5>
+                                    <small class="text-white-50">
+                                        {% if groupe.isPublic %}
+                                            <span style="color: #48bb78;"><i class="fas fa-globe mr-1"></i>Groupe public</span>
+                                        {% else %}
+                                            <span style="color: #ed8936;"><i class="fas fa-lock mr-1"></i>Groupe prive</span>
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="chat-actions d-flex align-items-center gap-2">
+                                {% if isOwner and pendingRequestsCount > 0 %}
+                                <a href="#" class="info-btn position-relative" title="Demandes en attente" id="requestsBtn">
+                                    <i class="fas fa-user-clock text-white" style="font-size: 14px;"></i>
+                                    <span class="position-absolute badge badge-danger" style="top: -5px; right: -5px; font-size: 0.65rem; padding: 3px 6px;">{{ pendingRequestsCount }}</span>
+                                </a>
+                                {% endif %}
+                                <a href="{{ path('groupe_show', {'id': groupe.id}) }}" class="info-btn" title="Informations">
+                                    <i class="fas fa-info-circle text-white" style="font-size: 14px;"></i>
+                                </a>
+                                <button class="more-btn" title="Plus d'options" data-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v text-white" style="font-size: 14px;"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right glass-dark shadow-lg" style="border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
+                                    {% if isOwner or isAdmin %}
+                                    <a class="dropdown-item text-white py-2" href="{{ path('groupe_edit', {'id': groupe.id}) }}">
+                                        <i class="fas fa-edit mr-2"></i>Modifier le groupe
+                                    </a>
+                                    <a class="dropdown-item text-white py-2" href="#" id="membersBtn">
+                                        <i class="fas fa-users mr-2"></i>Gerer les membres
+                                    </a>
+                                    {% endif %}
+                                    {% if isOwner or isAdmin %}
+                                    <div class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></div>
+                                    <a class="dropdown-item text-danger py-2" href="#" id="deleteGroupBtn">
+                                        <i class="fas fa-trash mr-2"></i>Supprimer le groupe
+                                    </a>
+                                    {% elseif isMember or app.user.id == groupe.createur.id %}
+                                    <div class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></div>
+                                    <a class="dropdown-item text-danger py-2" href="#" id="leaveGroupBtn">
+                                        <i class="fas fa-sign-out-alt mr-2"></i>Quitter le groupe
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Messages Area -->
+                        <div class="chat-messages flex-grow-1 p-4" id="chatMessages" style="overflow-y: auto; flex: 1; min-height: 0;">
+                            
+                            <!-- Group Info -->
+                            <div class="empty-state my-4">
+                                <div class="group-info d-inline-block p-4">
+                                    <i class="fas fa-users mb-3" style="color: #667eea; font-size: 2rem;"></i>
+                                    <p class="mb-1 text-white fw-medium">{{ groupe.nom }}</p>
+                                    <p class="mb-0 text-white-50 small">
+                                        {% if groupe.description %}
+                                            {{ groupe.description }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            {% if messages is empty %}
+                                <div class="empty-state my-4">
+                                    <i class="fas fa-comments empty-state-icon mb-3"></i>
+                                    <p class="text-white-50">Aucun message dans ce groupe</p>
+                                    <small class="text-white-50">Soyez le premier a envoyer un message !</small>
+                                </div>
+                            {% else %}
+                                {% for message in messages %}
+                                    {% set isSent = false %}
+                                    {% if app.user and message.expediteur and app.user.id == message.expediteur.id %}
+                                        {% set isSent = true %}
+                                    {% endif %}
+                                    
+                                    <!-- Date Separator -->
+                                    {% if loop.first or message.createdAt|date('Y-m-d') != messages[loop.index0 - 1].createdAt|date('Y-m-d') %}
+                                    <div class="date-separator text-center my-4">
+                                        <span class="px-4 py-2 rounded-pill fw-600">
+                                            {{ message.createdAt|date('d/m/Y') }}
+                                        </span>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div class="message d-flex mb-3 {% if isSent %}justify-content-end{% endif %}">
+                                        {% if not isSent %}
+                                        <div class="message-avatar mr-2">
+                                            <div class="avatar rounded-xl d-flex align-items-center justify-content-center text-white fw-bold"
+                                                 style="width: 38px; height: 38px; background: linear-gradient(135deg, #4facfe, #00f2fe); font-size: 0.85rem;">
+                                                {% if message.expediteur %}
+                                                    {% if message.expediteur.profil and message.expediteur.profil.nom %}
+                                                        {{ message.expediteur.profil.nom|first|upper }}
+                                                    {% else %}
+                                                        {{ message.expediteur.email|first|upper }}
+                                                    {% endif %}
+                                                {% else %}
+                                                    ?
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        <div class="message-content">
+                                            {% if message.parentMessage %}
+                                            <div class="reply-preview mb-2 p-2 rounded" style="background: rgba(102, 126, 234, 0.15); border-left: 3px solid #667eea;">
+                                                <small class="d-block text-white-50" style="font-size: 0.7rem;">
+                                                    <i class="fas fa-reply mr-1"></i>Reponse a {{ message.parentMessage.expediteur.profil.nom ?? message.parentMessage.expediteur.email|split('@')[0] }}
+                                                </small>
+                                                <small class="text-white-50" style="font-size: 0.75rem;">{{ message.parentMessage.contenu[:50] }}{{ message.parentMessage.contenu|length > 50 ? '...' : '' }}</small>
+                                            </div>
+                                            {% endif %}
+                                            
+                                            {% if not isSent and message.expediteur %}
+                                            <small class="text-white-50 ml-1 d-block mb-1" style="font-size: 0.75rem;">
+                                                {% if message.expediteur.profil and message.expediteur.profil.nom %}
+                                                    {{ message.expediteur.profil.nom }}
+                                                {% else %}
+                                                    {{ message.expediteur.email|split('@')[0] }}
+                                                {% endif %}
+                                            </small>
+                                            {% endif %}
+                                            <div class="message-bubble p-3 {% if isSent %}sent{% else %}received{% endif %}"
+                                                 style="max-width: 85% !important;">
+                                                <p class="mb-0 {% if isSent %}text-white{% else %}text-dark{% endif %}" style="font-size: 0.95rem; line-height: 1.5;">
+                                                    {{ message.contenu|nl2br }}
+                                                </p>
+                                                
+                                                {# Display File Attachment #}
+                                                {% if message.filePath %}
+                                                <div class="mt-2 p-2 rounded" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;" onclick="window.open('{{ asset(message.filePath) }}', '_blank')">
+                                                    <div class="d-flex align-items-center text-white">
+                                                        <i class="fas fa-file mr-2" style="color: #48bb78;"></i>
+                                                        <span class="text-truncate" style="max-width: 200px;">{{ message.fileName ?? 'Fichier joint' }}</span>
+                                                        <i class="fas fa-download ml-2" style="font-size: 0.8rem;"></i>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                
+                                                {# Display Shared Fiche #}
+                                                {% if message.fiche %}
+                                                <div class="mt-2 p-2 rounded" style="background: rgba(72, 187, 120, 0.15); border: 1px solid rgba(72, 187, 120, 0.3);">
+                                                    <a href="{{ path('fiche_show', {'id': message.fiche.id}) }}" class="d-flex align-items-center text-white text-decoration-none">
+                                                        <i class="fas fa-file-alt mr-2" style="color: #48bb78;"></i>
+                                                        <div>
+                                                            <span class="d-block" style="font-size: 0.85rem;">{{ message.fiche.title }}</span>
+                                                            <small class="text-white-50" style="font-size: 0.7rem;">Fiche partagee</small>
+                                                        </div>
+                                                        <i class="fas fa-external-link-alt ml-auto" style="font-size: 0.8rem;"></i>
+                                                    </a>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="d-flex align-items-center {% if isSent %}justify-content-end{% endif %} mt-1 {% if not isSent %}ml-1{% else %}mr-1{% endif %}" style="gap: 8px;">
+                                                <small class="text-white-50" style="font-size: 0.65rem;">{{ message.createdAt|date('H:i') }}</small>
+                                                {% if isSent %}
+                                                <i class="fas fa-check ml-1" style="color: #a5b4fc; font-size: 0.65rem;"></i>
+                                                {% endif %}
+                                                
+                                                <!-- Reply, Edit, and Delete Buttons -->
+                                                <div class="message-actions" style="opacity: 0.6; transition: opacity 0.2s;">
+                                                    <button type="button" class="btn btn-sm p-1 reply-btn" 
+                                                            data-message-id="{{ message.id }}"
+                                                            data-message-content="{{ message.contenu[:30] }}..."
+                                                            title="Repondre"
+                                                            style="background: transparent; border: none;">
+                                                        <i class="fas fa-reply text-white-50" style="font-size: 0.75rem;"></i>
+                                                    </button>
+                                                    {% if isSent %}
+                                                    <button type="button" class="btn btn-sm p-1 edit-btn" 
+                                                            data-message-id="{{ message.id }}"
+                                                            data-message-content="{{ message.contenu }}"
+                                                            title="Editer"
+                                                            style="background: transparent; border: none;">
+                                                        <i class="fas fa-edit text-white-50" style="font-size: 0.75rem;"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm p-1 delete-btn" 
+                                                            data-message-id="{{ message.id }}"
+                                                            title="Supprimer"
+                                                            style="background: transparent; border: none;">
+                                                        <i class="fas fa-trash text-danger" style="font-size: 0.75rem;"></i>
+                                                    </button>
+                                                    {% elseif isAdmin %}
+                                                    <button type="button" class="btn btn-sm p-1 admin-delete-btn" 
+                                                            data-message-id="{{ message.id }}"
+                                                            title="Supprimer (Admin)"
+                                                            style="background: transparent; border: none;">
+                                                        <i class="fas fa-trash text-warning" style="font-size: 0.75rem;" title="Admin"></i>
+                                                    </button>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Join Group Message (if not member) -->
+                        {% if membership and membership.isPending() %}
+                        <div class="chat-input px-4 py-4">
+                            <div class="group-info text-center p-4">
+                                <i class="fas fa-hourglass-half mb-3" style="color: #ed8936; font-size: 2rem;"></i>
+                                <p class="mb-3 text-white">
+                                    Votre demande de rejoindre est en attente de validation par le proprietaire.
+                                </p>
+                                <button class="btn" id="cancelRequestBtn" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5); border-radius: 12px; padding: 10px 20px;">
+                                    <i class="fas fa-times mr-2"></i>Annuler la demande
+                                </button>
+                            </div>
+                        </div>
+                        {% elseif (not isMember and not isAdmin) and app.user %}
+                        <div class="chat-input px-4 py-4">
+                            <div class="group-info text-center p-4">
+                                <i class="fas fa-lock mb-3" style="color: #667eea; font-size: 2rem;"></i>
+                                <p class="mb-3 text-white">
+                                    {% if groupe.isPublic %}
+                                        Vous devez rejoindre ce groupe pour envoyer des messages
+                                    {% else %}
+                                        Ce groupe est prive. Rejoignez-le pour participer aux discussions.
+                                    {% endif %}
+                                </p>
+                                <button class="join-btn" id="joinGroupBtn">
+                                    <i class="fas fa-user-plus mr-2"></i>
+                                    {% if groupe.isPublic %}
+                                        Rejoindre le groupe
+                                    {% else %}
+                                        Demander a rejoindre
+                                    {% endif %}
+                                </button>
+                            </div>
+                        </div>
+                        {% elseif not app.user %}
+                        <div class="chat-input px-4 py-4">
+                            <div class="group-info text-center p-4">
+                                <i class="fas fa-user-lock mb-3" style="color: #667eea; font-size: 2rem;"></i>
+                                <p class="mb-0 text-white">
+                                    <a href="{{ path('app_login') }}" style="color: #667eea; text-decoration: underline;">Connectez-vous</a> pour rejoindre ce groupe et envoyer des messages
+                                </p>
+                            </div>
+                        </div>
+                        {% else %}
+                        <!-- Chat Input (for members) -->
+                        <div class="chat-input px-4 py-3" style="background: rgba(255, 255, 255, 0.08) !important; border-top: 1px solid rgba(255, 255, 255, 0.1) !important; flex-shrink: 0; height: auto;">
+                            
+                            <!-- Reply Indicator (hidden by default) -->
+                            <div id="replyIndicator" class="reply-indicator mb-2 p-2 rounded d-none" style="transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <small class="text-white">
+                                        <i class="fas fa-reply mr-2"></i>
+                                        <span id="replyingToText">Reponse a...</span>
+                                    </small>
+                                    <button type="button" class="btn btn-sm p-0" id="cancelReplyBtn" style="background: transparent; border: none;">
+                                        <i class="fas fa-times text-white-50"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Fiche Selection (hidden by default) -->
+                            <div id="ficheIndicator" class="fiche-indicator mb-2 p-2 rounded d-none" style="background: rgba(72, 187, 120, 0.2); border: 1px solid rgba(72, 187, 120, 0.5); transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <small class="text-white">
+                                        <i class="fas fa-file-alt mr-2"></i>
+                                        <span id="selectedFicheTitle">Fiche selectionnee</span>
+                                    </small>
+                                    <button type="button" class="btn btn-sm p-0" id="cancelFicheBtn" style="background: transparent; border: none;">
+                                        <i class="fas fa-times text-white-50"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <form class="d-flex align-items-center gap-3" id="chatForm" action="{{ path('chat_send_message', {'id': groupe.id}) }}" method="POST" enctype="multipart/form-data" style="width: 100%;">
+                                <input type="hidden" name="parentMessageId" id="parentMessageId" value="">
+                                <input type="hidden" name="ficheId" id="ficheId" value="">
+                                
+                                <!-- Attachment Button -->
+                                <div class="position-relative dropup" style="flex-shrink: 0;">
+                                    <button type="button" class="emoji-btn" title="Piece jointe" id="attachBtn">
+                                        <i class="fas fa-paperclip" style="color: #94a3b8; font-size: 1.1rem;"></i>
+                                    </button>
+                                    <!-- Dropdown for file/fiche -->
+                                    <div class="dropdown-menu dropdown-menu-left glass-dark dropup-menu" id="attachDropdown" style="border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); min-width: 200px; bottom: 100% !important; top: auto !important; margin-bottom: 8px;">
+                                        <button type="button" class="dropdown-item text-white py-2" id="uploadFileBtn">
+                                            <i class="fas fa-file-upload mr-2"></i>Envoyer un fichier
+                                        </button>
+                                        <button type="button" class="dropdown-item text-white py-2" id="shareFicheBtn">
+                                            <i class="fas fa-file-alt mr-2"></i>Partager une fiche
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- File Input (hidden) -->
+                                <input type="file" id="fileInput" name="file" style="display: none;" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.png,.jpg,.jpeg,.gif">
+                                
+                                <div class="flex-grow-1" style="position: relative; min-width: 0;">
+                                    <input type="text" class="form-control" 
+                                           placeholder="Ecrivez votre message..."
+                                           name="contenu"
+                                           id="messageInput"
+                                           autocomplete="off"
+                                           style="width: 100%;">
+                                </div>
+                                
+                                <!-- Selected File Badge (shown when file is selected) -->
+                                <div id="selectedFileBadge" class="d-none align-items-center px-2 py-1 rounded" style="background: rgba(102, 126, 234, 0.2); border: 1px solid rgba(102, 126, 234, 0.5); max-width: 150px;">
+                                    <small class="text-white text-truncate" id="selectedFileName" style="font-size: 0.8rem;"></small>
+                                    <button type="button" class="btn btn-sm p-0 ml-1" id="cancelFileBtn" style="background: transparent; border: none;">
+                                        <i class="fas fa-times text-white-50" style="font-size: 0.7rem;"></i>
+                                    </button>
+                                </div>
+                                
+                                <button type="submit" class="send-btn d-flex align-items-center justify-content-center border-0" style="flex-shrink: 0;">
+                                    <i class="fas fa-paper-plane" style="color: #fff; font-size: 1.1rem;"></i>
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Requests Modal -->
+<div class="modal fade" id="requestsModal" tabindex="-1" role="dialog" aria-labelledby="requestsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content glass-dark" style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title text-white" id="requestsModalLabel">
+                    <i class="fas fa-user-clock mr-2"></i>Demandes en attente
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: transparent; border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="requestsList">
+                <div class="text-center py-4">
+                    <i class="fas fa-spinner fa-spin text-white-50" style="font-size: 1.5rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fiches Modal -->
+<div class="modal fade" id="fichesModal" tabindex="-1" role="dialog" aria-labelledby="fichesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content glass-dark" style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title text-white" id="fichesModalLabel">
+                    <i class="fas fa-file-alt mr-2"></i>Partager une fiche
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: transparent; border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="fichesList">
+                <div class="text-center py-4">
+                    <i class="fas fa-spinner fa-spin text-white-50" style="font-size: 1.5rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get DOM elements
+        const messageInput = document.getElementById('messageInput');
+        const chatForm = document.getElementById('chatForm');
+        const chatMessages = document.getElementById('chatMessages');
+        const joinGroupBtn = document.getElementById('joinGroupBtn');
+        const leaveGroupBtn = document.getElementById('leaveGroupBtn');
+        const cancelRequestBtn = document.getElementById('cancelRequestBtn');
+        const replyIndicator = document.getElementById('replyIndicator');
+        const replyingToText = document.getElementById('replyingToText');
+        const cancelReplyBtn = document.getElementById('cancelReplyBtn');
+        const parentMessageId = document.getElementById('parentMessageId');
+        const requestsBtn = document.getElementById('requestsBtn');
+        
+        let replyingToMessageId = null;
+        let selectedFile = null;
+        let selectedFicheId = null;
+        
+        // File upload handlers
+        const attachBtn = document.getElementById('attachBtn');
+        const attachDropdown = document.getElementById('attachDropdown');
+        const fileInput = document.getElementById('fileInput');
+        const uploadFileBtn = document.getElementById('uploadFileBtn');
+        const shareFicheBtn = document.getElementById('shareFicheBtn');
+        const selectedFileBadge = document.getElementById('selectedFileBadge');
+        const selectedFileName = document.getElementById('selectedFileName');
+        const cancelFileBtn = document.getElementById('cancelFileBtn');
+        const ficheIndicator = document.getElementById('ficheIndicator');
+        const selectedFicheTitle = document.getElementById('selectedFicheTitle');
+        const cancelFicheBtn = document.getElementById('cancelFicheBtn');
+        
+        if (attachBtn && attachDropdown) {
+            attachBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                attachDropdown.classList.toggle('show');
+            });
+            
+            document.addEventListener('click', function() {
+                attachDropdown.classList.remove('show');
+            });
+            
+            attachDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+        
+        if (uploadFileBtn && fileInput) {
+            uploadFileBtn.addEventListener('click', function() {
+                fileInput.click();
+                attachDropdown.classList.remove('show');
+            });
+            
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    selectedFile = this.files[0];
+                    selectedFileName.textContent = selectedFile.name;
+                    selectedFileBadge.classList.remove('d-none');
+                    attachDropdown.classList.remove('show');
+                    messageInput.placeholder = 'Fichier selectionne...';
+                }
+            });
+        }
+        
+        if (cancelFileBtn && selectedFileBadge) {
+            cancelFileBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                selectedFile = null;
+                fileInput.value = '';
+                selectedFileBadge.classList.add('d-none');
+                messageInput.placeholder = 'Ecrivez votre message...';
+            });
+        }
+        
+        if (shareFicheBtn) {
+            shareFicheBtn.addEventListener('click', function() {
+                attachDropdown.classList.remove('show');
+                $('#fichesModal').modal('show');
+                
+                fetch('{{ path('chat_fiches') }}')
+                .then(response => response.json())
+                .then(data => {
+                    const fichesList = document.getElementById('fichesList');
+                    if (data.success && data.fiches.length > 0) {
+                        let html = '';
+                        data.fiches.forEach(function(fiche) {
+                            html += `
+                                <div class="d-flex align-items-center justify-content-between p-3 mb-2 rounded cursor-pointer" style="background: rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="selectFiche(${fiche.id}, '${escapeHtml(fiche.title)}')">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-file-alt mr-3" style="color: #667eea;"></i>
+                                        <div>
+                                            <p class="mb-0 text-white fw-medium" style="font-size: 0.9rem;">${escapeHtml(fiche.title)}</p>
+                                            <small class="text-white-50" style="font-size: 0.75rem;">${escapeHtml(fiche.content)}</small>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-chevron-right text-white-50" style="font-size: 0.8rem;"></i>
+                                </div>
+                            `;
+                        });
+                        fichesList.innerHTML = html;
+                    } else {
+                        fichesList.innerHTML = '<div class="text-center py-4"><p class="text-white-50 mb-0">Aucune fiche disponible</p></div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading fiches:', error);
+                    document.getElementById('fichesList').innerHTML = '<div class="text-center py-4"><p class="text-white-50 mb-0">Erreur lors du chargement des fiches</p></div>';
+                });
+            });
+        }
+        
+        if (cancelFicheBtn && ficheIndicator) {
+            cancelFicheBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                selectedFicheId = null;
+                document.getElementById('ficheId').value = '';
+                ficheIndicator.classList.add('d-none');
+                messageInput.placeholder = 'Ecrivez votre message...';
+            });
+        }
+        
+        window.selectFiche = function(ficheId, ficheTitle) {
+            selectedFicheId = ficheId;
+            document.getElementById('ficheId').value = ficheId;
+            selectedFicheTitle.textContent = ficheTitle;
+            ficheIndicator.classList.remove('d-none');
+            $('#fichesModal').modal('hide');
+            messageInput.placeholder = 'Fiche selectionnee...';
+        };
+        
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function scrollToBottom() {
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 100);
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 300);
+        }
+        
+        // Handle form submission
+        if (chatForm) {
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const message = messageInput.value.trim();
+                
+                // Add temporary message to UI
+                let messageContent = '';
+                
+                // Add reply indicator if replying to a message
+                if (replyingToMessageId) {
+                    messageContent += `<div class="mb-2 p-2 rounded" style="background: rgba(102, 126, 234, 0.15); border-left: 3px solid #667eea;"><small class="d-block text-white-50" style="font-size: 0.7rem;"><i class="fas fa-reply mr-1"></i>Reponse a...</small></div>`;
+                }
+                
+                messageContent += `<p class="mb-0 text-white" style="font-size: 0.95rem; line-height: 1.5;">${escapeHtml(message)}</p>`;
+                
+                // Add file badge if file is selected (clickable for download)
+                if (selectedFile) {
+                    messageContent += `<div class="mt-2 p-2 rounded" style="background: rgba(255, 255, 255, 0.1);"><i class="fas fa-file mr-2"></i>${escapeHtml(selectedFile.name)} <small class="text-white-50">(sera joint au message)</small></div>`;
+                }
+                
+                // Add fiche badge if fiche is selected
+                if (selectedFicheId) {
+                    messageContent += `<a href="/fiche/${selectedFicheId}" target="_blank" class="d-block mt-2 p-2 rounded text-decoration-none" style="background: rgba(72, 187, 120, 0.2);" onclick="event.stopPropagation();"><i class="fas fa-file-alt mr-2"></i>Fiche partagee</a>`;
+                }
+                
+                const messageHtml = `
+                    <div class="message d-flex mb-3 justify-content-end new-message">
+                        <div class="message-content">
+                            <div class="message-bubble sent p-3" style="max-width: 70%;">
+                                ${messageContent}
+                            </div>
+                            <div class="d-flex align-items-center justify-content-end mt-1 mr-1">
+                                <small class="text-white-50" style="font-size: 0.65rem;">${getCurrentTime()}</small>
+                                <i class="fas fa-clock ml-1 text-white" style="font-size: 0.65rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                chatMessages.insertAdjacentHTML('beforeend', messageHtml);
+                scrollToBottom();
+                
+                // Create form data
+                const formData = new FormData();
+                formData.append('contenu', message);
+                
+                if (replyingToMessageId) {
+                    formData.append('replyTo', replyingToMessageId);
+                }
+                
+                if (selectedFile) {
+                    formData.append('file', selectedFile);
+                }
+                
+                if (selectedFicheId) {
+                    formData.append('ficheId', selectedFicheId);
+                }
+                
+                // Clear input immediately
+                messageInput.value = '';
+                messageInput.placeholder = 'Ecrivez votre message...';
+                
+                if (selectedFile) {
+                    selectedFile = null;
+                    fileInput.value = '';
+                    selectedFileBadge.classList.add('d-none');
+                }
+                
+                if (selectedFicheId) {
+                    selectedFicheId = null;
+                    document.getElementById('ficheId').value = '';
+                    ficheIndicator.classList.add('d-none');
+                }
+                
+                // Clear reply state
+                replyingToMessageId = null;
+                document.getElementById('parentMessageId').value = '';
+                replyIndicator.classList.add('d-none');
+                
+                // Send to server
+                fetch(chatForm.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const lastIcon = document.querySelector('.new-message:last-child .fa-clock');
+                        if (lastIcon) {
+                            lastIcon.className = 'fas fa-check ml-1 text-white';
+                        }
+                    } else {
+                        alert(data.error || 'Une erreur est survenue');
+                        const tempMsg = document.querySelector('.new-message:last-child');
+                        if (tempMsg) {
+                            tempMsg.remove();
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Une erreur est survenue lors de l\'envoi du message');
+                    const tempMsg = document.querySelector('.new-message:last-child');
+                    if (tempMsg) {
+                        tempMsg.remove();
+                    }
+                });
+            });
+        }
+        
+        // Handle Enter key in message input
+        if (messageInput) {
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (chatForm) {
+                        chatForm.dispatchEvent(new Event('submit'));
+                    }
+                }
+            });
+        }
+        
+        // Join group handler
+        if (joinGroupBtn) {
+            joinGroupBtn.addEventListener('click', function() {
+                fetch('{{ path('groupe_join', {'id': groupe.id}) }}', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Une erreur est survenue');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        }
+        
+        // Leave group handler
+        if (leaveGroupBtn) {
+            leaveGroupBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Etes-vous sur de vouloir quitter ce groupe ?')) {
+                    fetch('{{ path('groupe_leave', {'id': groupe.id}) }}', {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '{{ path('app_home') }}';
+                        } else {
+                            alert(data.message || 'Une erreur est survenue');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                }
+            });
+        }
+        
+        // Cancel request handler
+        if (cancelRequestBtn) {
+            cancelRequestBtn.addEventListener('click', function() {
+                if (confirm('Etes-vous sur de vouloir annuler votre demande ?')) {
+                    fetch('{{ path('groupe_leave', {'id': groupe.id}) }}', {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert(data.message || 'Une erreur est survenue');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                }
+            });
+        }
+        
+        // Requests modal handler
+        if (requestsBtn) {
+            requestsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                $('#requestsModal').modal('show');
+                
+                fetch('{{ path('groupe_requests', {'id': groupe.id}) }}')
+                .then(response => response.json())
+                .then(data => {
+                    const requestsList = document.getElementById('requestsList');
+                    
+                    if (data.success && data.requests.length > 0) {
+                        let html = '';
+                        data.requests.forEach(function(request) {
+                            html += `
+                                <div class="d-flex align-items-center justify-content-between p-3 mb-2 rounded" style="background: rgba(255, 255, 255, 0.05);">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar rounded-xl d-flex align-items-center justify-content-center text-white mr-3" style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea, #764ba2);">
+                                            ${request.utilisateur.nom.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <p class="mb-0 text-white" style="font-size: 0.9rem;">${escapeHtml(request.utilisateur.nom)}</p>
+                                            <small class="text-white-50">${request.date}</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm accept-request-btn" data-membre-id="${request.id}" style="background: rgba(72, 187, 120, 0.2); color: #48bb78; border: 1px solid rgba(72, 187, 120, 0.5);">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button class="btn btn-sm reject-request-btn" data-membre-id="${request.id}" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5);">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        requestsList.innerHTML = html;
+                        
+                        // Add event listeners for accept/reject buttons
+                        document.querySelectorAll('.accept-request-btn').forEach(function(btn) {
+                            btn.addEventListener('click', function() {
+                                const membreId = this.dataset.membreId;
+                                fetch('/groupes/' + {{ groupe.id }} + '/accepter/' + membreId, {
+                                    method: 'POST'
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        // Remove this request from the list visually
+                                        this.closest('.d-flex.align-items-center.justify-content-between').remove();
+                                        
+                                        // Update badge count
+                                        const badge = requestsBtn.querySelector('.badge');
+                                        if (badge) {
+                                            let count = parseInt(badge.textContent) - 1;
+                                            if (count <= 0) {
+                                                badge.remove();
+                                                requestsBtn.querySelector('.fa-user-clock').classList.remove('text-warning');
+                                            } else {
+                                                badge.textContent = count;
+                                            }
+                                        }
+                                        
+                                        // If no more requests, show empty message
+                                        const requestsList = document.getElementById('requestsList');
+                                        if (requestsList.children.length === 0) {
+                                            requestsList.innerHTML = '<p class="text-white-50 text-center py-4">Aucune demande en attente</p>';
+                                        }
+                                    } else {
+                                        alert(data.error || 'Une erreur est survenue');
+                                    }
+                                });
+                            });
+                        });
+                        
+                        document.querySelectorAll('.reject-request-btn').forEach(function(btn) {
+                            btn.addEventListener('click', function() {
+                                const membreId = this.dataset.membreId;
+                                fetch('/groupes/' + {{ groupe.id }} + '/rejeter/' + membreId, {
+                                    method: 'POST'
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        // Remove this request from the list visually
+                                        this.closest('.d-flex.align-items-center.justify-content-between').remove();
+                                        
+                                        // Update badge count
+                                        const badge = requestsBtn.querySelector('.badge');
+                                        if (badge) {
+                                            let count = parseInt(badge.textContent) - 1;
+                                            if (count <= 0) {
+                                                badge.remove();
+                                                requestsBtn.querySelector('.fa-user-clock').classList.remove('text-warning');
+                                            } else {
+                                                badge.textContent = count;
+                                            }
+                                        }
+                                        
+                                        // If no more requests, show empty message
+                                        const requestsList = document.getElementById('requestsList');
+                                        if (requestsList.children.length === 0) {
+                                            requestsList.innerHTML = '<p class="text-white-50 text-center py-4">Aucune demande en attente</p>';
+                                        }
+                                    } else {
+                                        alert(data.error || 'Une erreur est survenue');
+                                    }
+                                });
+                            });
+                        });
+                    } else if (data.success) {
+                        requestsList.innerHTML = `
+                            <div class="text-center py-4">
+                                <i class="fas fa-check-circle mb-3" style="color: #48bb78; font-size: 2rem;"></i>
+                                <p class="text-white-50 mb-0">Aucune demande en attente</p>
+                            </div>
+                        `;
+                    } else {
+                        requestsList.innerHTML = `
+                            <div class="text-center py-4">
+                                <p class="text-white-50 mb-0">${data.error || 'Une erreur est survenue'}</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('requestsList').innerHTML = `
+                        <div class="text-center py-4">
+                            <p class="text-white-50 mb-0">Une erreur est survenue</p>
+                        </div>
+                    `;
+                });
+            });
+        }
+        
+        // Reply handler - using event delegation
+        document.addEventListener('click', function(e) {
+            const replyBtn = e.target.closest('.reply-btn');
+            if (replyBtn) {
+                const messageId = replyBtn.dataset.messageId;
+                const messageContent = replyBtn.dataset.messageContent;
+                
+                replyingToMessageId = messageId;
+                parentMessageId.value = messageId;
+                
+                // Show reply indicator
+                replyingToText.textContent = 'Reponse a: "' + messageContent + '"';
+                replyIndicator.classList.remove('d-none');
+                
+                // Update form action for reply (keep same endpoint, use replyTo field)
+                // chatForm.action = '/chat/groupe/' + messageId + '/reponder';
+                // Instead, we just set the parentMessageId field which is already in the form
+                
+                // Focus on input
+                messageInput.focus();
+            }
+        });
+        
+        // Cancel reply handler
+        if (cancelReplyBtn) {
+            cancelReplyBtn.addEventListener('click', function() {
+                replyingToMessageId = null;
+                parentMessageId.value = '';
+                replyIndicator.classList.add('d-none');
+                chatForm.action = '{{ path('chat_send_message', {'id': groupe.id}) }}';
+            });
+        }
+        
+        // Delete handler - using event delegation
+        document.addEventListener('click', function(e) {
+            const deleteBtn = e.target.closest('.delete-btn');
+            if (deleteBtn) {
+                const messageId = deleteBtn.dataset.messageId;
+                
+                if (confirm('Etes-vous sur de vouloir supprimer ce message ?')) {
+                    fetch('/chat/message/' + messageId + '/supprimer', {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Find and hide the message
+                            const messageElement = document.querySelector('[data-message-id="' + messageId + '"]');
+                            if (messageElement) {
+                                const messageBubble = messageElement.closest('.message');
+                                if (messageBubble) {
+                                    messageBubble.style.opacity = '0';
+                                    messageBubble.style.transform = 'translateY(-10px)';
+                                    setTimeout(() => {
+                                        messageBubble.remove();
+                                    }, 300);
+                                }
+                            }
+                        } else {
+                            alert(data.error || 'Une erreur est survenue');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue');
+                    });
+                }
+            }
+        });
+        
+        // Admin Delete handler - using event delegation
+        document.addEventListener('click', function(e) {
+            const adminDeleteBtn = e.target.closest('.admin-delete-btn');
+            if (adminDeleteBtn) {
+                const messageId = adminDeleteBtn.dataset.messageId;
+                
+                if (confirm('Etes-vous sur de vouloir supprimer ce message en tant qu\'admin ?')) {
+                    fetch('/chat/message/' + messageId + '/supprimer', {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Find and hide the message
+                            const messageElement = document.querySelector('[data-message-id="' + messageId + '"]');
+                            if (messageElement) {
+                                const messageBubble = messageElement.closest('.message');
+                                if (messageBubble) {
+                                    messageBubble.style.opacity = '0';
+                                    messageBubble.style.transform = 'translateY(-10px)';
+                                    setTimeout(() => {
+                                        messageBubble.remove();
+                                    }, 300);
+                                }
+                            }
+                        } else {
+                            alert(data.error || 'Une erreur est survenue');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue');
+                    });
+                }
+            }
+        });
+        
+        // Edit handler - using event delegation
+        let editingMessageId = null;
+        document.addEventListener('click', function(e) {
+            const editBtn = e.target.closest('.edit-btn');
+            if (editBtn) {
+                editingMessageId = editBtn.dataset.messageId;
+                const messageContent = editBtn.dataset.messageContent;
+                
+                // Set the textarea content
+                document.getElementById('editMessageContent').value = messageContent;
+                
+                // Show the modal
+                $('#editMessageModal').modal('show');
+            }
+        });
+        
+        // Save edit handler
+        document.getElementById('saveEditBtn').addEventListener('click', function() {
+            const newContent = document.getElementById('editMessageContent').value.trim();
+            
+            if (!newContent) {
+                alert('Le message ne peut pas être vide');
+                return;
+            }
+            
+            fetch('/chat/message/' + editingMessageId + '/editer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'contenu=' + encodeURIComponent(newContent)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the message content in the UI
+                    const messageElement = document.querySelector('[data-message-id="' + editingMessageId + '"]');
+                    if (messageElement) {
+                        const messageBubble = messageElement.closest('.message');
+                        if (messageBubble) {
+                            const contentPara = messageBubble.querySelector('.message-bubble p');
+                            if (contentPara) {
+                                contentPara.textContent = newContent;
+                            }
+                            
+                            // Update data attribute for future edits
+                            const editBtn = messageBubble.querySelector('.edit-btn');
+                            if (editBtn) {
+                                editBtn.dataset.messageContent = newContent;
+                            }
+                        }
+                    }
+                    
+                    $('#editMessageModal').modal('hide');
+                } else {
+                    alert(data.error || 'Une erreur est survenue');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue');
+            });
+        });
+        
+        // Members management handler
+        if (document.getElementById('membersBtn')) {
+            document.getElementById('membersBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                $('#membersModal').modal('show');
+                
+                fetch('{{ path('groupe_membres', {'id': groupe.id}) }}')
+                .then(response => response.json())
+                .then(data => {
+                    const membersList = document.getElementById('membersList');
+                    
+                    // Combine accepted members with any members we can get
+                    const members = data.requests || [];
+                    
+                    if (members.length > 0) {
+                        let html = '';
+                        members.forEach(function(member) {
+                            html += `
+                                <div class="d-flex align-items-center justify-content-between p-3 mb-2 rounded" style="background: rgba(255, 255, 255, 0.05);">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar rounded-xl d-flex align-items-center justify-content-center text-white mr-3" style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea, #764ba2);">
+                                            ${member.utilisateur.nom ? member.utilisateur.nom.charAt(0).toUpperCase() : '?'}
+                                        </div>
+                                        <div>
+                                            <p class="mb-0 text-white" style="font-size: 0.9rem;">${escapeHtml(member.utilisateur.nom || 'Membre')}</p>
+                                            <small class="text-white-50">${member.date || ''}</small>
+                                        </div>
+                                    </div>
+                                    ${member.utilisateur.id != {{ app.user.id }} ? `
+                                    <button class="btn btn-sm kick-member-btn" data-membre-id="${member.id}" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5);">
+                                        <i class="fas fa-user-times"></i>
+                                    </button>
+                                    ` : ''}
+                                </div>
+                            `;
+                        });
+                        membersList.innerHTML = html;
+                        
+                        // Add kick handler
+                        document.querySelectorAll('.kick-member-btn').forEach(function(btn) {
+                            btn.addEventListener('click', function() {
+                                const membreId = this.dataset.membreId;
+                                if (confirm('Etes-vous sur de vouloir expulser ce membre ?')) {
+                                    fetch('/groupes/' + {{ groupe.id }} + '/supprimer-membre/' + membreId, {
+                                        method: 'POST'
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            // Refresh the modal
+                                            document.getElementById('membersBtn').click();
+                                        } else {
+                                            alert(data.error || 'Une erreur est survenue');
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    } else {
+                        membersList.innerHTML = `
+                            <div class="text-center py-4">
+                                <i class="fas fa-users mb-3" style="color: #667eea; font-size: 2rem;"></i>
+                                <p class="text-white-50 mb-0">Aucun membre</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('membersList').innerHTML = `
+                        <div class="text-center py-4">
+                            <p class="text-white-50 mb-0">Une erreur est survenue</p>
+                        </div>
+                    `;
+                });
+            });
+        }
+        
+        // Delete group handler
+        if (document.getElementById('deleteGroupBtn')) {
+            document.getElementById('deleteGroupBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                $('#deleteGroupModal').modal('show');
+            });
+            
+            document.getElementById('confirmDeleteGroupBtn').addEventListener('click', function() {
+                fetch('/groupes/' + {{ groupe.id }} + '/supprimer', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = data.redirect || '{{ path('groupe_index') }}';
+                    } else {
+                        alert(data.error || 'Une erreur est survenue');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Une erreur est survenue');
+                });
+            });
+        }
+        
+        scrollToBottom();
+    });
+</script>
+
+<!-- Edit Message Modal -->
+<div class="modal fade" id="editMessageModal" tabindex="-1" role="dialog" aria-labelledby="editMessageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background: #1a1a2e; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <h5 class="modal-title text-white" id="editMessageModalLabel">
+                    <i class="fas fa-edit mr-2" style="color: #667eea;"></i>
+                    Modifier le message
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: transparent; border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <textarea id="editMessageContent" class="form-control" rows="4" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;" placeholder="Modifier votre message..."></textarea>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <button type="button" class="btn" data-dismiss="modal" style="background: transparent; color: #a0aec0; border: 1px solid rgba(255, 255, 255, 0.2);">Annuler</button>
+                <button type="button" class="btn" id="saveEditBtn" style="background: #667eea; color: white; border: none;">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Members Management Modal -->
+<div class="modal fade" id="membersModal" tabindex="-1" role="dialog" aria-labelledby="membersModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background: #1a1a2e; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <h5 class="modal-title text-white" id="membersModalLabel">
+                    <i class="fas fa-users mr-2" style="color: #667eea;"></i>
+                    Membres du groupe
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: transparent; border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="membersList" style="max-height: 400px; overflow-y: auto;">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Chargement...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Group Confirmation Modal -->
+<div class="modal fade" id="deleteGroupModal" tabindex="-1" role="dialog" aria-labelledby="deleteGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background: #1a1a2e; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <h5 class="modal-title text-white" id="deleteGroupModalLabel">
+                    <i class="fas fa-exclamation-triangle mr-2" style="color: #ef4444;"></i>
+                    Confirmer la suppression
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: transparent; border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-white mb-0">Etes-vous sur de vouloir supprimer ce groupe ? Cette action est irreversible et tous les messages seront supprimes.</p>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <button type="button" class="btn" data-dismiss="modal" style="background: transparent; color: #a0aec0; border: 1px solid rgba(255, 255, 255, 0.2);">Annuler</button>
+                <button type="button" class="btn" id="confirmDeleteGroupBtn" style="background: #ef4444; color: white; border: none;">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fiches Selection Modal -->
+<div class="modal fade" id="fichesModal" tabindex="-1" role="dialog" aria-labelledby="fichesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background: #1a1a2e; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <h5 class="modal-title text-white" id="fichesModalLabel">
+                    <i class="fas fa-file-alt mr-2" style="color: #667eea;"></i>
+                    Selectionner une fiche
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: transparent; border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="fichesList" style="max-height: 400px; overflow-y: auto;">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Chargement...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

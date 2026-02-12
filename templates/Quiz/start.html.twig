@@ -1,0 +1,559 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Quiz en cours - {{ matiere|capitalize }} - BacLab{% endblock %}
+
+{% block css %}
+   {{ parent() }}
+    <style>
+        /* Background dégradé violet pour le header */
+        .header-area,
+        .header-area.header-transparent,
+        .header-sticky {
+            background: linear-gradient(90deg, #5b6fd8 0%, #8b5cf6 50%, #a855f7 100%) !important;
+        }
+
+       /* Texte blanc UNIQUEMENT pour le menu principal */
+.main-menu nav > ul > li > a {
+    color: white !important;
+}
+
+.main-menu nav > ul > li:hover > a {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Sous-menus : fond blanc avec texte BLEU */
+.main-menu nav ul li .submenu {
+    background: white !important;
+}
+
+.main-menu nav ul li .submenu li a {
+    color: #5b6fd8 !important;  /* Texte bleu */
+}
+
+.main-menu nav ul li .submenu li:hover a {
+    color: #8b5cf6 !important;  /* Violet au survol */
+    background: #f0f0f0;
+}
+
+        /* Logo */
+        .logo img {
+            filter: brightness(1.2);
+        }
+
+        body {
+            background: #f7fafc;
+        }
+
+        .slider-area {
+            display: none;
+        }
+
+        .quiz-container {
+            max-width: 900px;
+            margin: 120px auto 50px;
+            padding: 30px 15px;
+        }
+
+        .quiz-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .quiz-info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quiz-info-item i {
+            font-size: 24px;
+        }
+
+        .timer {
+            font-size: 32px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .timer.warning {
+            color: #ff6b6b;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .progress-bar-container {
+            background: rgba(255,255,255,0.2);
+            height: 8px;
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: white;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .question-card.active {
+            display: block;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .choices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .choice-item {
+            position: relative;
+        }
+
+        .choice-item input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .choice-label {
+            display: flex;
+            align-items: center;
+            padding: 20px 25px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            color: #2d3748;
+        }
+
+        .choice-label:hover {
+            background: #edf2f7;
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .choice-item input[type="radio"]:checked + .choice-label {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+            border-color: #667eea;
+            font-weight: 600;
+        }
+
+        .choice-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: white;
+            border: 2px solid #cbd5e0;
+            border-radius: 50%;
+            margin-right: 15px;
+            font-weight: 600;
+            color: #4a5568;
+            transition: all 0.3s;
+        }
+
+        .choice-item input[type="radio"]:checked + .choice-label .choice-letter {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-quiz {
+            padding: 15px 35px;
+            border-radius: 30px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-previous {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-previous:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-left: auto;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-next:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: auto;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(72, 187, 120, 0.3);
+        }
+
+        .question-indicator {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .indicator-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cbd5e0;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .indicator-dot.active {
+            background: #667eea;
+            transform: scale(1.3);
+        }
+
+        .indicator-dot.answered {
+            background: #48bb78;
+        }
+
+        .quiz-side-panel {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            max-width: 200px;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin-top: 100px;
+            }
+
+            .quiz-side-panel {
+                display: none;
+            }
+
+            .quiz-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .timer {
+                font-size: 24px;
+            }
+
+            .question-text {
+                font-size: 18px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="quiz-container">
+    
+    <!-- En-tête du quiz -->
+    <div class="quiz-header">
+        <div class="quiz-info">
+            <div>
+                <div class="quiz-info-item">
+                    <i class="fas fa-book"></i>
+                    <div>
+                        <div style="opacity: 0.9; font-size: 14px;">Matière</div>
+                        <div style="font-size: 18px; font-weight: 600;">{{ matiere|capitalize }}</div>
+                    </div>
+                </div>
+                <div class="quiz-info-item" style="margin-top: 10px;">
+                    <i class="fas fa-bookmark"></i>
+                    <div>
+                        <div style="opacity: 0.9; font-size: 14px;">Chapitre</div>
+                        <div style="font-size: 16px; font-weight: 500;">{{ chapitre }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timer" id="timer">
+                <i class="fas fa-clock"></i>
+                <span id="time-display">20:00</span>
+            </div>
+        </div>
+        
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <!-- Reste du code... -->
+
+    <!-- Formulaire du quiz -->
+    <form method="POST" action="{{ path('app_quiz_submit') }}" id="quiz-form">
+        
+        {% for question in questions %}
+        <div class="question-card {% if loop.first %}active{% endif %}" data-question="{{ loop.index }}">
+            <span class="question-number">Question {{ loop.index }} / {{ totalQuestions }}</span>
+            
+            <h3 class="question-text">{{ question.enonce }}</h3>
+            
+            <div class="choices-container">
+                {% for choix in question.choix %}
+                <div class="choice-item">
+                    <input 
+                        type="radio" 
+                        name="question_{{ question.id }}" 
+                        value="{{ choix.id }}" 
+                        id="choice_{{ choix.id }}"
+                        data-question="{{ loop.parent.loop.index }}"
+                    >
+                    <label for="choice_{{ choix.id }}" class="choice-label">
+                        <span class="choice-letter">
+    {% set letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'] %}
+    {{ letters[loop.index0] }}
+</span>
+                        <span>{{ choix.libelle }}</span>
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="navigation-buttons">
+                {% if not loop.first %}
+                <button type="button" class="btn-quiz btn-previous" onclick="previousQuestion()">
+                    <i class="fas fa-arrow-left"></i> Précédent
+                </button>
+                {% endif %}
+                
+                {% if not loop.last %}
+                <button type="button" class="btn-quiz btn-next" onclick="nextQuestion()" id="btn-next-{{ loop.index }}" disabled>
+                    Suivant <i class="fas fa-arrow-right"></i>
+                </button>
+                {% else %}
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-check-circle"></i> Terminer le Quiz
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+    </form>
+
+    <!-- Indicateurs de questions -->
+    <div class="question-indicator">
+        {% for i in 1..totalQuestions %}
+        <div class="indicator-dot {% if i == 1 %}active{% endif %}" onclick="goToQuestion({{ i }})" data-indicator="{{ i }}"></div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<!-- Panneau latéral (Desktop uniquement) -->
+<div class="quiz-side-panel">
+    <h4 style="font-size: 14px; margin-bottom: 15px; color: #4a5568;">Progression</h4>
+    <div style="text-align: center;">
+        <div style="font-size: 32px; font-weight: bold; color: #667eea;" id="answered-count">0</div>
+        <div style="font-size: 14px; color: #718096;">/ {{ totalQuestions }} répondues</div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+    {{ parent() }}
+
+    <script>
+        // Forcer la suppression du preloader
+        document.addEventListener('DOMContentLoaded', function() {
+            const preloader = document.getElementById('preloader-active');
+            if (preloader) {
+                preloader.style.display = 'none';
+            }
+        });
+
+        let currentQuestion = 1;
+        const totalQuestions = {{ totalQuestions }};
+        let answeredQuestions = new Set();
+
+        // Timer (20 minutes = 1200 secondes)
+        let timeRemaining = 1200;
+        const timerDisplay = document.getElementById('time-display');
+        const timerElement = document.getElementById('timer');
+
+        const timerInterval = setInterval(() => {
+            timeRemaining--;
+
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeRemaining === 300) {
+                timerElement.classList.add('warning');
+                alert('⏰ Attention ! Il ne vous reste que 5 minutes !');
+            }
+
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                alert('⏱️ Temps écoulé ! Le quiz sera soumis automatiquement.');
+                document.getElementById('quiz-form').submit();
+            }
+        }, 1000);
+
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const questionNum = parseInt(this.dataset.question);
+                answeredQuestions.add(questionNum);
+
+                const nextBtn = document.getElementById(`btn-next-${questionNum}`);
+                if (nextBtn) {
+                    nextBtn.disabled = false;
+                }
+
+                updateIndicators();
+                updateProgress();
+            });
+        });
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                showQuestion(currentQuestion + 1);
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 1) {
+                showQuestion(currentQuestion - 1);
+            }
+        }
+
+        function showQuestion(num) {
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            document
+                .querySelector(`.question-card[data-question="${num}"]`)
+                .classList.add('active');
+
+            currentQuestion = num;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateIndicators() {
+            document.querySelectorAll('.indicator-dot').forEach((dot, index) => {
+                if (answeredQuestions.has(index + 1)) {
+                    dot.classList.add('answered');
+                }
+            });
+
+            document.getElementById('answered-count').textContent = answeredQuestions.size;
+        }
+
+        function updateProgress() {
+            const percentage = (answeredQuestions.size / totalQuestions) * 100;
+            document.getElementById('progress-bar').style.width = percentage + '%';
+        }
+
+        window.addEventListener('beforeunload', function(e) {
+            if (answeredQuestions.size > 0 && answeredQuestions.size < totalQuestions) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+{% endblock %}

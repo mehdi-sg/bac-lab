@@ -11,54 +11,130 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/dashboard')]
 #[IsGranted('ROLE_USER')]
-final class DashboardController extends AbstractController
+class DashboardController extends AbstractController
 {
-    #[Route('', name: 'app_dashboard', methods: ['GET'])]
-    public function index(
-        RessourceRepository $ressourceRepository,
-        EvaluationRessourceRepository $evaluationRepository
-    ): Response {
+    public function __construct(
+        private RessourceRepository $ressourceRepository,
+        private EvaluationRessourceRepository $evaluationRepository
+    ) {
+    }
+
+    #[Route('', name: 'app_dashboard')]
+    public function index(): Response
+    {
         $user = $this->getUser();
         
-        // Get user evaluations
-        $myEvaluations = $evaluationRepository->findBy(['utilisateur' => $user]);
+        // Récupérer les statistiques de l'utilisateur
+        $allEvaluations = $this->evaluationRepository->findBy(['utilisateur' => $user]);
         
-        // Count favoris
-        $favorisCount = $evaluationRepository->count([
-            'utilisateur' => $user,
-            'estFavori' => true
-        ]);
+        $stats = [
+            'totalEvaluations' => count(array_filter($allEvaluations, fn($e) => $e->hasRating())),
+            'totalCommentaires' => count(array_filter($allEvaluations, fn($e) => $e->hasComment())),
+            'totalFavoris' => count(array_filter($allEvaluations, fn($e) => $e->isEstFavori())),
+        ];
         
-        // Count commentaires
-        $commentairesCount = 0;
-        foreach ($myEvaluations as $eval) {
-            if ($eval->getCommentaire()) {
-                $commentairesCount++;
-            }
-        }
-        
-        // Recent evaluations (5 dernières)
-        $recentEvaluations = $evaluationRepository->findBy(
-            ['utilisateur' => $user],
-            ['dateEvaluation' => 'DESC'],
+        // Récupérer les dernières évaluations
+        $recentEvaluations = array_slice(
+            array_filter($allEvaluations, fn($e) => $e->hasRating()),
+            0,
             5
         );
         
-        // Favoris (5 derniers)
-        $favoris = $evaluationRepository->findBy(
-            ['utilisateur' => $user, 'estFavori' => true],
-            ['dateFavori' => 'DESC'],
+        // Récupérer les derniers commentaires
+        $recentComments = array_slice(
+            array_filter($allEvaluations, fn($e) => $e->hasComment()),
+            0,
             5
         );
         
+        // Récupérer les favoris récents
+        $recentFavoris = array_slice(
+            array_filter($allEvaluations, fn($e) => $e->isEstFavori()),
+            0,
+            6
+        );
+
         return $this->render('dashboard/index.html.twig', [
-            'totalRessources' => 0, // Not available without user relation
-            'totalEvaluations' => count($myEvaluations),
-            'totalFavoris' => $favorisCount,
-            'totalCommentaires' => $commentairesCount,
-            'recentRessources' => [], // Not available without user relation
+            'stats' => $stats,
             'recentEvaluations' => $recentEvaluations,
-            'favoris' => $favoris,
+            'recentComments' => $recentComments,
+            'recentFavoris' => $recentFavoris,
+        ]);
+    }
+
+    #[Route('/evaluations', name: 'app_dashboard_evaluations')]
+    public function evaluations(): Response
+    {
+        $user = $this->getUser();
+        
+        // Récupérer toutes les évaluations de l'utilisateur
+        $allEvaluations = $this->evaluationRepository->findBy(
+            ['utilisateur' => $user],
+            ['dateEvaluation' => 'DESC']
+        );
+        
+        // Filtrer uniquement celles qui ont des notes
+        $evaluations = array_filter($allEvaluations, fn($e) => $e->hasRating());
+
+        return $this->render('dashboard/evaluations.html.twig', [
+            'evaluations' => $evaluations,
+        ]);
+    }
+
+    #[Route('/commentaires', name: 'app_dashboard_commentaires')]
+    public function commentaires(): Response
+    {
+        $user = $this->getUser();
+        
+        // Récupérer toutes les évaluations avec commentaires de l'utilisateur
+        $evaluations = $this->evaluationRepository->findBy(
+            ['utilisateur' => $user],
+            ['dateCommentaire' => 'DESC']
+        );
+        
+        // Filtrer uniquement celles qui ont des commentaires
+        $commentaires = array_filter($evaluations, fn($e) => $e->hasComment());
+
+        return $this->render('dashboard/commentaires.html.twig', [
+            'commentaires' => $commentaires,
+        ]);
+    }
+
+    #[Route('/telechargements', name: 'app_dashboard_telechargements')]
+    public function telechargements(): Response
+    {
+        // TODO: Implémenter l'historique des téléchargements
+        // Pour l'instant, on affiche un message
+        
+        return $this->render('dashboard/telechargements.html.twig', [
+            'message' => 'Fonctionnalité en cours de développement',
+        ]);
+    }
+
+    #[Route('/favoris', name: 'app_dashboard_favoris')]
+    public function favoris(): Response
+    {
+        $user = $this->getUser();
+        
+        // Récupérer toutes les évaluations marquées comme favoris
+        $favorisEvaluations = $this->evaluationRepository->findBy(
+            ['utilisateur' => $user, 'estFavori' => true],
+            ['dateFavori' => 'DESC']
+        );
+
+        return $this->render('dashboard/favoris.html.twig', [
+            'favoris' => $favorisEvaluations,
+        ]);
+    }
+    
+    #[Route('/ressources', name: 'app_dashboard_ressources')]
+    public function ressources(): Response
+    {
+        // TODO: Implémenter la liste des ressources créées par l'utilisateur
+        // Nécessite d'ajouter une relation ManyToOne vers Utilisateur dans l'entité Ressource
+        
+        return $this->render('dashboard/ressources.html.twig', [
+            'message' => 'Fonctionnalité en cours de développement',
         ]);
     }
 }

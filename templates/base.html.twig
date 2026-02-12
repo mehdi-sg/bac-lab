@@ -9,22 +9,23 @@
     
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('front/img/favicon.ico') }}">
 
-    {% block css %}
-        <link rel="stylesheet" href="{{ asset('front/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/owl.carousel.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/slicknav.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/flaticon.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/progressbar_barfiller.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/gijgo.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/animate.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/animated-headline.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/magnific-popup.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/fontawesome-all.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/themify-icons.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/slick.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/nice-select.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
-        <style>
+   {% block css %}
+    <link rel="stylesheet" href="{{ asset('front/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/slicknav.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/flaticon.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/progressbar_barfiller.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/gijgo.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/animate.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/animated-headline.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/magnific-popup.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/fontawesome-all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/themify-icons.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/slick.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/nice-select.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
+    
+    <style>
             .modern-navbar {
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 padding: 15px 0;
@@ -83,8 +84,218 @@
             body {
                 padding-top: 80px;
             }
-        </style>
-    {% endblock %}
+            
+            /* Fix navbar background and text colors */
+            .header-area {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            }
+            
+            .header-area.header-transparent {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            }
+            
+            .main-header {
+                background: transparent !important;
+            }
+            
+            .header-sticky.sticky-bar {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            
+            /* Navigation links styling */
+            #navigation > li > a {
+                color: white !important;
+                font-weight: 500;
+            }
+            
+            #navigation > li > a:hover {
+                color: #f0f0f0 !important;
+            }
+            
+            /* Submenu styling */
+            #navigation ul.submenu {
+                background: white !important;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+            
+            #navigation ul.submenu li a {
+                color: #333 !important;
+            }
+            
+            #navigation ul.submenu li a:hover {
+                background: #f8f9fa !important;
+                color: #667eea !important;
+            }
+            
+            /* Button styling */
+            .header-area .btn {
+                background: #5568d3 !important;
+                color: white !important;
+                border: none !important;
+                padding: 10px 25px !important;
+                border-radius: 6px !important;
+                font-weight: 600 !important;
+                transition: all 0.3s !important;
+            }
+            
+            .header-area .btn:hover {
+                background: #4556c2 !important;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+                color: white !important;
+            }
+            
+            .header-area .btn3 {
+                background: transparent !important;
+                color: white !important;
+                border: 2px solid white !important;
+            }
+            
+            .header-area .btn3:hover {
+                background: white !important;
+                color: #667eea !important;
+            }
+            
+            /* Notification bell styling */
+            .notification-bell {
+                position: relative;
+                display: inline-block;
+                padding: 8px 12px;
+            }
+            
+            .notification-bell svg {
+                width: 24px;
+                height: 24px;
+                color: white;
+            }
+            
+            .notification-bell:hover svg {
+                color: #f0f0f0;
+            }
+            
+        /* Footer optimisé */
+        .footer-area {
+            padding: 60px 0 30px !important;
+        }
+
+        .footer-bottom-area {
+            padding: 20px 0 !important;
+        }
+
+        .single-footer-caption {
+            margin-bottom: 30px !important;
+        }
+
+        .footer-tittle h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .footer-tittle ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .footer-tittle ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-tittle ul li a {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .footer-tittle ul li a:hover {
+            color: #fff;
+            padding-left: 5px;
+        }
+
+        .footer-contact li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .footer-contact li i {
+            color: #667eea;
+            margin-top: 3px;
+        }
+
+        .footer-social a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            color: #fff;
+            transition: all 0.3s;
+        }
+
+        .footer-social a:hover {
+            background: #667eea;
+            transform: translateY(-3px);
+        }
+
+        .footer-pera p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .footer-copy-right p {
+            margin: 0;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .footer-menu ul {
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            justify-content: end;
+        }
+
+        .footer-menu ul li a {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            transition: color 0.3s;
+        }
+
+        .footer-menu ul li a:hover {
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .footer-area {
+                padding: 40px 0 20px !important;
+            }
+            
+            .footer-menu ul {
+                justify-content: center !important;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .footer-bottom-area .row > div {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+{% endblock %}
 </head>
 
 <body>
@@ -99,27 +310,93 @@
         </div>
     </div>
     
-    <!-- Modern Navbar -->
-    <nav class="modern-navbar">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center">
-                <a class="navbar-brand" href="{{ path('app_home') }}">
-                    <img src="{{ asset('front/img/logo/logo.png') }}" alt="BacLab Logo">
-                </a>
-                <div class="d-flex align-items-center gap-4">
-                    <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
-                    <a class="nav-link" href="{{ path('app_bibliotheque_index') }}">Révision</a>
-                    <a class="nav-link" href="#">Orientation</a>
-                    <a class="nav-link" href="#">Communauté</a>
-                    
-                    {% if is_granted('ROLE_USER') %}
-                        <a class="nav-link" href="{{ path('app_dashboard') }}">Mon Tableau de Bord</a>
-                        <a class="nav-link" href="{{ path('app_profile') }}">Mon Profil</a>
-                        <a class="btn-login" href="{{ path('app_logout') }}">Déconnexion</a>
-                    {% else %}
-                        <a class="btn-register" href="{{ path('app_register') }}">S'inscrire</a>
-                        <a class="btn-login" href="{{ path('app_login') }}">Connexion</a>
-                    {% endif %}
+    <header>
+        <div class="header-area header-transparent">
+            <div class="main-header ">
+                <div class="header-bottom header-sticky">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <div class="col-xl-2 col-lg-2">
+                                <div class="logo">
+                                    <a href="{{ path('app_home') }}"><img  src="{{ asset('front/img/logo/logo.png') }}" style="width:100px;height:100px;" alt="BacLab Logo"></a>
+                                </div>
+                            </div>
+                            <div class="col-xl-10 col-lg-10">
+                                <div class="menu-wrapper d-flex align-items-center justify-content-end">
+                                    <div class="main-menu d-none d-lg-block">
+                                        <nav>
+                                            <ul id="navigation">                                                                                          
+                                                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                                                
+                                                <li><a href="{{ path('app_ressource_index') }}">Bibliothèque</a></li>
+                                                
+                                                <li><a href="#">Révision</a>
+                                                    <ul class="submenu">
+                                                        <li><a href="#">Cours & PDF</a></li>
+                                                        <li><a href="{{ path('app_quiz') }}">Quiz & Tests</a></li>
+                                                    </ul>
+                                                </li>
+                                                
+                                                <li><a href="#">Orientation</a>
+                                                    <ul class="submenu">
+                                                        <li><a href="#">Calcul du Score</a></li>
+                                                        <li><a href="#">Guide des Filières</a></li>
+                                                    </ul>
+                                                </li>
+                                                
+                                                <li><a href="#">Communauté</a>
+                                                    <ul class="submenu">
+                                                        <li><a href="{{ path('groupe_index') }}"><i class="fas fa-users mr-2"></i>Groupes de révision</a></li>
+                                                        <li><a href="{{ path('chat_index') }}"><i class="fas fa-comments mr-2"></i>Chat en direct</a></li>
+                                                    </ul>
+                                                </li>
+                                                
+                                                {% if is_granted('ROLE_USER') %}
+                                                    <li><a href="{{path('app_dashboard')}}">Dashboard</a>
+                                                        <ul class="submenu">
+                                                            <li><a href="{{ path('app_dashboard') }}"><i class="fas fa-tachometer-alt mr-2"></i>Vue d'ensemble</a></li>
+                                                            <li><a href="{{ path('app_dashboard_ressources') }}"><i class="fas fa-book mr-2"></i>Mes Ressources</a></li>
+                                                            <li><a href="{{ path('app_dashboard_evaluations') }}"><i class="fas fa-star mr-2"></i>Mes Évaluations</a></li>
+                                                            <li><a href="{{ path('app_dashboard_commentaires') }}"><i class="fas fa-comment mr-2"></i>Mes Commentaires</a></li>
+                                                            <li><a href="{{ path('app_dashboard_telechargements') }}"><i class="fas fa-download mr-2"></i>Téléchargements</a></li>
+                                                            <li><a href="{{ path('app_dashboard_favoris') }}"><i class="fas fa-heart mr-2"></i>Favoris</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    
+                                                    {% if is_granted('ROLE_MODERATOR') or is_granted('ROLE_ADMIN') %}
+                                                        <li><a href="#">Admin</a>
+                                                            <ul class="submenu">
+                                                                <li><a href="{{ path('app_admin_ressources') }}"><i class="fas fa-cog mr-2"></i>Gérer Ressources</a></li>
+                                                                <li><a href="{{ path('app_admin_commentaires') }}"><i class="fas fa-flag mr-2"></i>Modérer Commentaires</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    {% endif %}
+                                                    
+                                                    <li>
+                                                        <a href="{{ path('notifications_index') }}" class="notification-bell" title="Notifications">
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                                            </svg>
+                                                            <span id="notification-badge" class="badge-pulse">0</span>
+                                                        </a>
+                                                    </li>
+                                                    <li><a href="{{ path('app_profile') }}" class="btn">Mon Profil</a></li>
+                                                    <li><a href="{{ path('app_logout') }}" class="btn btn3">Déconnexion</a></li>
+                                                {% else %}
+                                                    <li class="margin-left"><a href="{{ path('app_register') }}" class="btn">S'inscrire</a></li>
+                                                    <li><a href="{{ path('app_login') }}" class="btn btn3">Connexion</a></li>
+                                                {% endif %}
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="col-12">
+                                <div class="mobile_menu d-block d-lg-none"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -129,26 +406,31 @@
         {% block body %}{% endblock %}
     </main>
 
-    <footer>
-        <div class="footer-wrappper footer-bg">
-            <div class="footer-area footer-padding">
-                <div class="container">
-                    <div class="row justify-content-between">
-                        <div class="col-xl-4 col-lg-5 col-md-4 col-sm-6">
-                            <div class="single-footer-caption mb-50">
-                                <div class="footer-logo mb-25">
-                                    <a href="#"><img src="{{ asset('front/img/logo/logo2_footer.png') }}" alt="BacLab Footer"></a>
+    {% include 'components/chatbot.html.twig' %}
+
+  <footer>
+    <div class="footer-wrappper footer-bg">
+        <div class="footer-area footer-padding">
+            <div class="container">
+                <div class="row justify-content-between">
+                    <!-- À propos -->
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                        <div class="single-footer-caption mb-50">
+                            <div class="footer-logo mb-20">
+                                <a href="{{ path('app_home') }}">
+                                    <img src="{{ asset('front/img/logo/logo2_footer.png') }}" alt="BacLab Footer" style="max-width: 120px;">
+                                </a>
+                            </div>
+                            <div class="footer-tittle">
+                                <div class="footer-pera">
+                                    <p style="font-size: 14px; line-height: 1.6;">Votre plateforme de révision et d'orientation pour réussir votre Bac.</p>
                                 </div>
-                                <div class="footer-tittle">
-                                    <div class="footer-pera">
-                                        <p>Votre succès au Bac commence par une révision structurée et une orientation éclairée.</p>
-                                    </div>
-                                </div>
-                                <div class="footer-social">
-                                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                                </div>
+                            </div>
+                            <div class="footer-social mt-20">
+                                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
                             </div>
                         </div>
                         <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5">
@@ -164,36 +446,75 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
-                            <div class="single-footer-caption mb-50">
-                                <div class="footer-tittle">
-                                    <h4>Orientation</h4>
-                                    <ul>
-                                        <li><a href="#">Calculer mon Score</a></li>
-                                        <li><a href="#">Filières Universitaires</a></li>
-                                        <li><a href="#">Guide de l'Orientation</a></li>
-                                    </ul>
-                                </div>
+                    </div>
+                    
+                    <!-- Liens rapides -->
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6">
+                        <div class="single-footer-caption mb-50">
+                            <div class="footer-tittle">
+                                <h4 style="font-size: 16px; margin-bottom: 20px;">Liens rapides</h4>
+                                <ul>
+                                    <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                                    <li><a href="#">À propos</a></li>
+                                    <li><a href="#">Contact</a></li>
+                                    <li><a href="#">FAQ</a></li>
+                                </ul>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="footer-bottom-area">
-                <div class="container">
-                    <div class="footer-border">
-                        <div class="row d-flex align-items-center">
-                            <div class="col-xl-12 ">
-                                <div class="footer-copy-right text-center">
-                                    <p>Copyright &copy; {{ "now"|date("Y") }} BacLab - Tous droits réservés</p>
-                                </div>
+                    
+                    <!-- Contact -->
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                        <div class="single-footer-caption mb-50">
+                            <div class="footer-tittle">
+                                <h4 style="font-size: 16px; margin-bottom: 20px;">Contact</h4>
+                                <ul class="footer-contact">
+                                    <li>
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>Tunis, Tunisie</span>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-envelope"></i>
+                                        <span>contact@baclab.tn</span>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-phone"></i>
+                                        <span>+216 XX XXX XXX</span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </footer> 
+        
+        <!-- Footer Bottom -->
+        <div class="footer-bottom-area" style="padding: 20px 0;">
+            <div class="container">
+                <div class="footer-border">
+                    <div class="row align-items-center">
+                        <div class="col-md-6 text-center text-md-start">
+                            <div class="footer-copy-right">
+                                <p style="margin: 0; font-size: 14px;">
+                                    Copyright &copy; {{ "now"|date("Y") }} BacLab - Tous droits réservés
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-center text-md-end">
+                            <div class="footer-menu">
+                                <ul style="margin: 0; padding: 0; list-style: none; display: flex; justify-content: center; justify-content: end; gap: 20px;">
+                                    <li><a href="#" style="font-size: 14px;">Politique de confidentialité</a></li>
+                                    <li><a href="#" style="font-size: 14px;">CGU</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
 
     {% block js %}
         <script src="{{ asset('front/js/vendor/modernizr-3.5.0.min.js') }}"></script>
@@ -221,6 +542,82 @@
         <script src="{{ asset('front/js/jquery.ajaxchimp.min.js') }}"></script>
         <script src="{{ asset('front/js/plugins.js') }}"></script>
         <script src="{{ asset('front/js/main.js') }}"></script>
+        <script>
+            // Fetch notification count
+            document.addEventListener('DOMContentLoaded', function() {
+                fetch('{{ path('notifications_count') }}')
+                    .then(response => response.json())
+                    .then(data => {
+                        const badge = document.getElementById('notification-badge');
+                        if (badge && data.count > 0) {
+                            badge.textContent = data.count;
+                        }
+                    })
+                    .catch(error => console.log('No notifications'));
+            });
+            (function () {
+                const btn = document.getElementById('chatbotBtn');
+                const win = document.getElementById('chatbotWindow');
+                const closeBtn = document.getElementById('chatbotClose');
+                const input = document.getElementById('chatbotInput');
+                const send = document.getElementById('chatbotSend');
+                const msgs = document.getElementById('chatbotMessages');
+
+                const addMsg = (text, who) => {
+                    const div = document.createElement('div');
+                    div.className = 'chatbot-msg ' + who;
+                    div.textContent = text;
+                    msgs.appendChild(div);
+                    msgs.scrollTop = msgs.scrollHeight;
+                };
+
+                const sendMessage = async () => {
+                    const text = (input.value || '').trim();
+                    if (!text) return;
+                    addMsg(text, 'user');
+                    input.value = '';
+
+                    try {
+                        send.disabled = true;
+                        input.disabled = true;
+                        const res = await fetch('/chatbot/message', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ message: text })
+                        });
+                        let data = null;
+                        try {
+                            data = await res.json();
+                        } catch (e) {
+                            data = { message: 'Réponse invalide du serveur.' };
+                        }
+                        if (!res.ok) {
+                            addMsg(data.message || 'Erreur serveur.', 'bot');
+                        } else {
+                            addMsg(data.message || 'Pas de réponse', 'bot');
+                        }
+                    } catch (e) {
+                        addMsg('Erreur de connexion. Réessaie.', 'bot');
+                    } finally {
+                        send.disabled = false;
+                        input.disabled = false;
+                        input.focus();
+                    }
+                };
+
+                btn.addEventListener('click', () => {
+                    win.style.display = 'flex';
+                    input.focus();
+                });
+                closeBtn.addEventListener('click', () => {
+                    win.style.display = 'none';
+                });
+                send.addEventListener('click', sendMessage);
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') sendMessage();
+                });
+            })();
+        </script>
     {% endblock %}
 </body>
 </html>

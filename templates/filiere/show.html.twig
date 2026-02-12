@@ -1,0 +1,62 @@
+{% extends 'back_base.html.twig' %}
+
+{% block body %}
+<style>
+    .glass-panel { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 2.5rem; }
+    .info-label { color: #6366f1; font-weight: 800; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .info-value { color: white; font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; }
+    .action-pill { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 1rem; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+    .action-pill:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); }
+</style>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="glass-panel">
+                <div class="d-flex align-items-center gap-4 mb-5">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 20px; display: grid; place-items: center; font-size: 2rem; color: white;">
+                        {{ filiere.nom|first|upper }}
+                    </div>
+                    <div>
+                        <h1 class="text-white fw-black m-0">{{ filiere.nom }}</h1>
+                        <span style="color: {{ filiere.actif ? '#10b981' : '#ef4444' }}; font-weight: bold; font-size: 0.8rem;">
+                            {{ filiere.actif ? '● FILIÈRE ACTIVE' : '○ FILIÈRE INACTIVE' }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-label">Identifiant</div>
+                        <div class="info-value">#{{ filiere.id }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-label">Niveau Académique</div>
+                        <div class="info-value">{{ filiere.niveau }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-label">Créé le</div>
+                        <div class="info-value text-muted">{{ filiere.createdAt|date('d/m/Y') }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="glass-panel d-flex flex-column gap-3">
+                <h5 class="text-white fw-bold mb-3">Actions</h5>
+                <a href="{{ path('filiere_edit', {id: filiere.id}) }}" class="action-pill">
+                    <i class="fas fa-pen text-primary"></i> Modifier les infos
+                </a>
+                <a href="{{ path('filiere_index') }}" class="action-pill">
+                    <i class="fas fa-arrow-left"></i> Retour à la liste
+                </a>
+                <hr style="border-color: rgba(255,255,255,0.1);">
+                <form method="post" action="{{ path('filiere_delete', {id: filiere.id}) }}" onsubmit="return confirm('Supprimer ?');">
+                    <button class="btn btn-link text-danger p-0 text-decoration-none small">Supprimer la filière</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

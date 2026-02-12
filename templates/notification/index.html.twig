@@ -1,0 +1,564 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Notifications - BacLab{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .notifications-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+        }
+
+        .notifications-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .notifications-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .notifications-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notifications-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .notifications-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .notifications-header .subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .notifications-header .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .notifications-body {
+            padding: 0;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 20px 25px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-item:hover {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, transparent 100%);
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item.unread {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, transparent 100%);
+        }
+
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 60%;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .notification-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .notification-item:hover .notification-icon {
+            transform: scale(1.1);
+        }
+
+        .notification-icon.join_request {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .notification-icon.join_accepted {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            box-shadow: 0 8px 20px rgba(72, 187, 120, 0.4);
+        }
+
+        .notification-icon.join_rejected {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .notification-icon.default {
+            background: linear-gradient(135deg, #a0aec0, #718096);
+            color: white;
+            box-shadow: 0 8px 20px rgba(160, 174, 192, 0.4);
+        }
+
+        .notification-content {
+            flex-grow: 1;
+            padding-left: 15px;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #1a202c;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            color: #718096;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #a0aec0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notification-time i {
+            font-size: 0.7rem;
+        }
+
+        .notification-action {
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+            display: flex;
+            gap: 8px;
+        }
+
+        .notification-item:hover .notification-action {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Always show action buttons for join requests */
+        .notification-actions-join {
+            opacity: 1 !important;
+            transform: translateX(0) !important;
+        }
+
+        .notification-action .btn {
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .notification-action .btn-accept {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            border: none;
+        }
+
+        .notification-action .btn-accept:hover {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+            color: white;
+        }
+
+        .notification-action .btn-reject {
+            background: transparent;
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        .notification-action .btn-reject:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* Join request specific styles */
+        .notification-item.join-request {
+            padding-right: 30px;
+        }
+
+        .notification-actions-join {
+            margin-left: 10px;
+        }
+
+        /* Empty State */
+        .empty-notifications {
+            text-align: center;
+            padding: 80px 40px;
+        }
+
+        .empty-notifications .icon-wrapper {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .empty-notifications i {
+            font-size: 3rem;
+            color: #cbd5e0;
+        }
+
+        .empty-notifications h4 {
+            color: #4a5568;
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+
+        .empty-notifications p {
+            color: #a0aec0;
+            font-size: 0.95rem;
+        }
+
+        /* Custom Scrollbar */
+        .notifications-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .notifications-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .notifications-body::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+
+        /* Notification Animations */
+        .notification-item {
+            animation: fadeInLeft 0.4s ease-out backwards;
+        }
+
+        .notification-item:nth-child(1) { animation-delay: 0.05s; }
+        .notification-item:nth-child(2) { animation-delay: 0.1s; }
+        .notification-item:nth-child(3) { animation-delay: 0.15s; }
+        .notification-item:nth-child(4) { animation-delay: 0.2s; }
+        .notification-item:nth-child(5) { animation-delay: 0.25s; }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 576px) {
+            .notifications-page {
+                padding: 20px 10px;
+            }
+
+            .notifications-card {
+                border-radius: 16px;
+            }
+
+            .notifications-header {
+                padding: 20px;
+            }
+
+            .notifications-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .notification-item {
+                padding: 15px 20px;
+            }
+
+            .notification-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="notifications-page">
+    <div class="notifications-container">
+        <div class="notifications-card">
+            <div class="notifications-header">
+                <h2>
+                    <i class="fas fa-bell mr-2"></i>Mes Notifications
+                </h2>
+                <p class="subtitle">Restez informé de toutes vos activités</p>
+                {% set unreadCount = 0 %}
+                {% for notification in notifications %}
+                    {% if not notification.isRead %}
+                        {% set unreadCount = unreadCount + 1 %}
+                    {% endif %}
+                {% endfor %}
+                {% if unreadCount > 0 %}
+                    <span class="badge">
+                        <i class="fas fa-circle mr-1" style="font-size: 0.6rem;"></i>
+                        {{ unreadCount }} non{{ unreadCount > 1 ? 's' : '' }} lu{{ unreadCount > 1 ? 's' : '' }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="notifications-body">
+                {% if notifications is empty %}
+                    <div class="empty-notifications">
+                        <div class="icon-wrapper">
+                            <i class="fas fa-bell-slash"></i>
+                        </div>
+                        <h4>Aucune notification</h4>
+                        <p>Vous êtes à jour ! Nous vous informerons lorsqu'il y aura du nouveau.</p>
+                    </div>
+                {% else %}
+                    {% for notification in notifications %}
+                        <div class="notification-item d-flex align-items-start {% if not notification.isRead %}unread{% endif %} {% if notification.type == 'join_request' %}join-request{% endif %}"
+                             data-notification-id="{{ notification.id }}">
+                            <div class="notification-icon {{ notification.type == 'join_request' ? 'join_request' : (notification.type == 'join_accepted' ? 'join_accepted' : (notification.type == 'join_rejected' ? 'join_rejected' : 'default')) }}">
+                                {% if notification.type == 'join_request' %}
+                                    <i class="fas fa-user-plus"></i>
+                                {% elseif notification.type == 'join_accepted' %}
+                                    <i class="fas fa-check"></i>
+                                {% elseif notification.type == 'join_rejected' %}
+                                    <i class="fas fa-times"></i>
+                                {% else %}
+                                    <i class="fas fa-bell"></i>
+                                {% endif %}
+                            </div>
+                            <div class="notification-content">
+                                <h6 class="notification-title">{{ notification.title }}</h6>
+                                <p class="notification-message">{{ notification.message }}</p>
+                                <div class="notification-time">
+                                    <i class="fas fa-clock"></i>
+                                    <span>{{ notification.createdAt|date('d M Y à H:i') }}</span>
+                                </div>
+                            </div>
+                            {% if notification.type == 'join_request' %}
+                            <div class="notification-action notification-actions-join">
+                                <button class="btn btn-accept" onclick="acceptRequest(event, {{ notification.id }})">
+                                    <i class="fas fa-check mr-1"></i>Accepter
+                                </button>
+                                <button class="btn btn-reject" onclick="rejectRequest(event, {{ notification.id }})">
+                                    <i class="fas fa-times mr-1"></i>Refuser
+                                </button>
+                            </div>
+                            {% elseif notification.link %}
+                            <div class="notification-action">
+                                <a href="{{ notification.link }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-external-link-alt mr-1"></i>Voir
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+{{ parent() }}
+<script>
+    function updateBadgeCount() {
+        const badge = document.querySelector('.notifications-header .badge');
+        if (badge) {
+            const currentCount = parseInt(badge.textContent) || 0;
+            if (currentCount > 1) {
+                badge.innerHTML = '<i class="fas fa-circle mr-1" style="font-size: 0.6rem;"></i>' + (currentCount - 1) + ' non lus';
+            } else {
+                badge.remove();
+            }
+        }
+    }
+
+    function acceptRequest(event, notificationId) {
+        event.stopPropagation();
+        fetch('/notifications/' + notificationId + '/accept', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Mark notification as read and remove
+                const notificationItem = document.querySelector('[data-notification-id="' + notificationId + '"]');
+                if (notificationItem) {
+                    notificationItem.style.opacity = '0';
+                    notificationItem.style.transform = 'translateX(-20px)';
+                    setTimeout(() => {
+                        notificationItem.remove();
+                        updateBadgeCount();
+                        updateHeaderBadge();
+                        // Check if empty
+                        const remaining = document.querySelectorAll('.notification-item');
+                        if (remaining.length === 0) {
+                            location.reload();
+                        }
+                    }, 300);
+                }
+                // Redirect if needed
+                if (data.redirect) {
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 500);
+                }
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function rejectRequest(event, notificationId) {
+        event.stopPropagation();
+        fetch('/notifications/' + notificationId + '/reject', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Mark notification as read and remove
+                const notificationItem = document.querySelector('[data-notification-id="' + notificationId + '"]');
+                if (notificationItem) {
+                    notificationItem.style.opacity = '0';
+                    notificationItem.style.transform = 'translateX(20px)';
+                    setTimeout(() => {
+                        notificationItem.remove();
+                        updateBadgeCount();
+                        updateHeaderBadge();
+                        // Check if empty
+                        const remaining = document.querySelectorAll('.notification-item');
+                        if (remaining.length === 0) {
+                            location.reload();
+                        }
+                    }, 300);
+                }
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function updateHeaderBadge() {
+        fetch('/notifications/count')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('notification-badge');
+                if (badge) {
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                    } else {
+                        badge.textContent = '';
+                    }
+                }
+            })
+            .catch(error => console.log('Error updating notification count:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mark individual as read on click
+        document.querySelectorAll('.notification-item').forEach(function(item) {
+            item.addEventListener('click', function(e) {
+                // Don't trigger if clicking on the action button
+                if (e.target.closest('.notification-action') || e.target.closest('a') || e.target.closest('button')) {
+                    return;
+                }
+
+                const notificationId = this.dataset.notificationId;
+                if (!notificationId) return;
+
+                fetch('/notifications/mark-read/' + notificationId, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.classList.remove('unread');
+                        updateBadgeCount();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>
+{% endblock %}

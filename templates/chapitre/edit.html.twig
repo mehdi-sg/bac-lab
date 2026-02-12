@@ -1,0 +1,180 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}Édition Master | BacLab Admin{% endblock %}
+
+{% block body %}
+<style>
+    /* 1. ANIMATION DE FOND DYNAMIQUE */
+    .edit-page {
+        min-height: 100vh;
+        background: #0f172a;
+        background-image: 
+            radial-gradient(circle at 20% 35%, rgba(245, 158, 11, 0.15) 0%, transparent 40%),
+            radial-gradient(circle at 80% 65%, rgba(59, 130, 246, 0.15) 0%, transparent 40%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        font-family: 'Inter', sans-serif;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Effet de lueur qui bouge derrière la carte */
+    .edit-page::before {
+        content: '';
+        position: absolute; width: 300px; height: 300px;
+        background: var(--brand, #f59e0b);
+        filter: blur(150px);
+        opacity: 0.1;
+        animation: float 10s infinite alternate;
+    }
+
+    @keyframes float { from { transform: translate(-100px, -100px); } to { transform: translate(100px, 100px); } }
+
+    /* 2. CARTE GLASSMORPHISM SANS BORDURES BLANCHES */
+    .neo-card {
+        width: 100%;
+        max-width: 800px;
+        background: rgba(255, 255, 255, 0.03); /* Très transparent */
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 2.5rem;
+        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+        padding: 4rem;
+        transition: 0.4s;
+    }
+
+    /* 3. TYPOGRAPHIE & TITRES */
+    .edit-header h2 {
+        color: #fff;
+        font-weight: 800;
+        letter-spacing: -1px;
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .status-badge {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+        padding: 6px 16px;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    /* 4. INPUTS "NEON GHOST" */
+    .input-group { margin-bottom: 2.5rem; position: relative; }
+    
+    .label-pro { 
+        color: rgba(255,255,255,0.5); 
+        font-size: 0.75rem; 
+        font-weight: 700; 
+        text-transform: uppercase; 
+        letter-spacing: 2px;
+        margin-left: 1rem;
+        margin-bottom: 0.8rem;
+        display: block;
+    }
+    
+    .input-pro {
+        width: 100%; 
+        padding: 1.2rem 1.5rem; 
+        border-radius: 1.2rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.2);
+        color: #fff;
+        font-size: 1rem; 
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .input-pro:focus {
+        outline: none;
+        border-color: #f59e0b;
+        background: rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+        transform: translateY(-2px);
+    }
+
+    /* 5. BOUTON ULTRA-MODERNE */
+    .btn-update {
+        background: #fff; 
+        color: #000; 
+        padding: 1.3rem 2.5rem;
+        border-radius: 1.2rem; 
+        border: none; 
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer; 
+        transition: 0.4s; 
+        width: 100%;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    }
+
+    .btn-update:hover { 
+        background: #f59e0b; 
+        color: #fff;
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(245, 158, 11, 0.3);
+    }
+
+    .link-cancel {
+        color: rgba(255,255,255,0.4);
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+        display: inline-block;
+        margin-top: 2rem;
+        width: 100%;
+        text-align: center;
+    }
+
+    .link-cancel:hover { color: #fff; }
+
+</style>
+
+<div class="edit-page">
+    <div class="neo-card">
+        <div class="edit-header" style="margin-bottom: 3.5rem; text-align: center;">
+            <span class="status-badge">Éditeur de Chapitre</span>
+            <h2>Configuration</h2>
+            <p style="color: rgba(255,255,255,0.4);">ID unique : <span style="color: #fff;">#{{ chapitre.id }}</span></p>
+        </div>
+
+        {{ form_start(form) }}
+            <div class="input-group">
+                <label class="label-pro">Nom du module</label>
+                {{ form_widget(form.titre, {'attr': {'class': 'input-pro', 'placeholder': 'Titre du chapitre...'}}) }}
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="input-group">
+                    <label class="label-pro">Catégorie</label>
+                    {{ form_widget(form.matiere, {'attr': {'class': 'input-pro'}}) }}
+                </div>
+                <div class="input-group">
+                    <label class="label-pro">Priorité</label>
+                    {{ form_widget(form.ordre, {'attr': {'class': 'input-pro'}}) }}
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="label-pro">Corps du texte</label>
+                {{ form_widget(form.contenu, {'attr': {'class': 'input-pro', 'style': 'min-height: 180px; resize: vertical;'}}) }}
+            </div>
+
+            <div style="margin-top: 1rem;">
+                <button type="submit" class="btn-update">
+                    VALIDER LES MODIFICATIONS
+                </button>
+                <a href="{{ path('chapitre_index') }}" class="link-cancel">
+                    Abandonner les changements
+                </a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

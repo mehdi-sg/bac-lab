@@ -1,0 +1,186 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mon Évaluation | BacLab{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .evaluation-form-container {
+            padding: 40px 20px;
+            background: #f8f9fa;
+            min-height: 100vh;
+            margin-top: 80px;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .form-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 8px;
+        }
+        
+        .form-header p {
+            color: #636e72;
+        }
+        
+        .resource-preview {
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .resource-preview h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 8px;
+        }
+        
+        .resource-preview p {
+            color: #636e72;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .rating-input {
+            margin-bottom: 30px;
+        }
+        
+        .rating-input label {
+            display: block;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 8px;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s;
+        }
+        
+        .form-group textarea:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+        
+        .btn-submit {
+            flex: 1;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-cancel {
+            padding: 14px 24px;
+            background: #f8f9fa;
+            color: #636e72;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-cancel:hover {
+            background: #e8e8e8;
+            color: #2d3436;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="evaluation-form-container">
+    <div class="container">
+        <div class="form-card">
+            <div class="form-header">
+                <h1><i class="fas fa-edit me-2"></i>Modifier mon Évaluation</h1>
+                <p>Mettez à jour votre avis</p>
+            </div>
+            
+            <div class="resource-preview">
+                <h3>{{ evaluation.ressource.titre }}</h3>
+                <p>{{ evaluation.ressource.description|slice(0, 150) }}{{ evaluation.ressource.description|length > 150 ? '...' : '' }}</p>
+            </div>
+
+            {{ form_start(form) }}
+                <div class="rating-input">
+                    <label>Votre note</label>
+                    {{ form_widget(form.note) }}
+                    {{ form_errors(form.note) }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form_label(form.commentaire, 'Votre commentaire (optionnel)') }}
+                    {{ form_widget(form.commentaire, {
+                        attr: {
+                            placeholder: 'Partagez votre expérience avec cette ressource...'
+                        }
+                    }) }}
+                    {{ form_errors(form.commentaire) }}
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                    </button>
+                    <a href="{{ path('app_evaluation_index') }}" class="btn-cancel">
+                        Annuler
+                    </a>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

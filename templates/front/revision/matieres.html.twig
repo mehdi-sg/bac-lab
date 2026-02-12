@@ -1,0 +1,259 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BacLab | Mes Matières{% endblock %}
+
+{% block body %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+    /* --- DESIGN GLOBAL --- */
+    body { background-color: #f8f9fc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 80px 0 100px;
+        clip-path: ellipse(150% 100% at 50% 0%);
+        color: white;
+    }
+
+    .stepper-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 25px; }
+    .step-num { 
+        width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); color: #fff; 
+        font-weight: bold; display: flex; align-items: center; justify-content: center;
+        border: 2px solid rgba(255,255,255,0.3); text-decoration: none; transition: 0.3s;
+    }
+    .step-num.done { background: #fff; color: #764ba2; border-color: #fff; }
+    .step-num.active { background: #ffc107; color: #3b1a77; border-color: #ffc107; transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 193, 7, 0.4); }
+    .step-line { width: 40px; height: 2px; background: rgba(255,255,255,0.2); }
+
+    /* --- PLAN DE BATAILLE --- */
+    .planning-card { 
+        border-radius: 25px; 
+        background: linear-gradient(135deg, #5c6bc0 0%, #764ba2 100%);
+        margin-top: -60px;
+        border: none;
+        box-shadow: 0 15px 35px rgba(118, 75, 162, 0.3) !important;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* --- STYLE DES CARTES MATIÈRES --- */
+    .matiere-card {
+        border: none; border-radius: 20px;
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        background: #fff; height: 100%;
+        display: flex; flex-direction: column;
+    }
+    .matiere-card:hover { transform: translateY(-10px); box-shadow: 0 14px 28px rgba(0,0,0,0.1); }
+    
+    .icon-box {
+        width: 70px; height: 70px; border-radius: 15px;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 20px; transition: 0.3s;
+    }
+    .matiere-card:hover .icon-box { transform: rotate(10deg) scale(1.1); }
+    
+    /* Couleurs par catégorie */
+    .icon-math { background: #fef2f2; color: #dc2626; }
+    .icon-physique { background: #eff6ff; color: #2563eb; }
+    .icon-svt { background: #f0fdf4; color: #16a34a; }
+    .icon-philo { background: #faf5ff; color: #9333ea; }
+    .icon-histoire { background: #fffbeb; color: #d97706; }
+    .icon-langue { background: #fff7ed; color: #ea580c; }
+    .charabia-info { background: #f8fafc; color: #475569; }
+    .icon-eco { background: #f0fdfa; color: #0d9488; }
+    .icon-sport { background: #fef2f2; color: #dc2626; }
+    .icon-art { background: #fdf2f8; color: #db2777; }
+    .icon-default { background: #f8f9ff; color: #667eea; }
+
+    .btn-modern {
+        background: linear-gradient(to right, #667eea, #764ba2);
+        border: none; color: white !important; border-radius: 50px; padding: 12px 25px; font-weight: 600;
+        transition: 0.3s;
+    }
+    .btn-modern:hover { opacity: 0.9; transform: scale(1.05); }
+
+    .animate-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    #focusOverlay {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(15, 23, 42, 0.98); z-index: 9999; color: white;
+        flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px);
+    }
+</style>
+
+<div class="hero-section text-center">
+    <div class="container animate-up">
+        <div class="stepper-container">
+            <a href="{{ path('app_revision_filieres') }}" class="step-num done"><i class="fas fa-check"></i></a>
+            <div class="step-line"></div>
+            <span class="step-num active">2</span>
+            <div class="step-line"></div>
+            <span class="step-num">3</span>
+        </div>
+        <h1 class="display-4 fw-bold mb-3">Mes Matières</h1>
+        <p class="lead mb-4 opacity-75">Sélectionne une matière pour voir tes chapitres</p>
+        <button class="btn btn-warning rounded-pill px-4 fw-bold shadow-lg" onclick="startFocusMode()">
+            <i class="fas fa-stopwatch me-2"></i> Mode Focus (25min)
+        </button>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="card planning-card text-white p-4 mb-5 animate-up">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h4 class="fw-bold mb-2 text-white"><i class="fas fa-bolt text-warning me-2"></i> Ton Plan de Bataille</h4>
+                <p id="countdown-text" class="mb-0 opacity-75 fw-medium">Chargement du compte à rebours...</p>
+                <div class="mt-2">
+                    <span id="study-time-tracker" class="badge rounded-pill px-3 py-2" style="background: rgba(255,255,255,0.15);">🕒 0h 0min révisés</span>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <div class="xp-badge text-center shadow-sm d-inline-block p-3 rounded-4" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                    <span class="text-warning fw-bold small d-block mb-1">SCORE TOTAL</span>
+                    <span class="h2 fw-bold mb-0 text-white" id="global-xp-display">0</span>
+                    <span class="text-warning fw-bold ms-1">XP</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5 animate-up">
+        <div class="col-lg-6 mx-auto">
+            <div class="position-relative shadow-sm rounded-pill overflow-hidden bg-white">
+                <input type="text" id="liveSearch" class="form-control form-control-lg border-0 px-4" 
+                       placeholder="Rechercher une matière..." onkeyup="filterMatieres()">
+                <i class="fas fa-search position-absolute" style="right: 25px; top: 18px; color: #764ba2;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4" id="matieresGrid">
+        {% set matiereMap = {
+            'Mathématiques': ['fa-square-root-variable', 'icon-math'],
+            'Maths': ['fa-square-root-variable', 'icon-math'],
+            'Physique': ['fa-atom', 'icon-physique'],
+            'Chimie': ['fa-flask-vial', 'icon-physique'],
+            'SVT': ['fa-microscope', 'icon-svt'],
+            'Philosophie': ['fa-brain', 'icon-philo'],
+            'Histoire': ['fa-landmark', 'icon-histoire'],
+            'Géographie': ['fa-earth-africa', 'icon-histoire'],
+            'Français': ['fa-feather-pointed', 'icon-langue'],
+            'Anglais': ['fa-language', 'icon-langue'],
+            'Informatique': ['fa-laptop-code', 'charabia-info'],
+            'Économie': ['fa-chart-pie', 'icon-eco'],
+            'Sport': ['fa-person-running', 'icon-sport']
+        } %}
+
+        {% for m in matieres %}
+            {% set icon = 'fa-book-bookmark' %}
+            {% set colorClass = 'icon-default' %}
+            
+            {% for key, val in matiereMap %}
+                {% if key|lower in m.nom|lower %}
+                    {% set icon = val[0] %}
+                    {% set colorClass = val[1] %}
+                {% endif %}
+            {% endfor %}
+
+            <div class="col-lg-4 col-md-6 matiere-item animate-up" data-nom="{{ m.nom|lower }}" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                <div class="card matiere-card shadow-sm p-4 text-center">
+                    <div class="icon-box {{ colorClass }} shadow-sm">
+                        <i class="fas {{ icon }} fa-2x"></i>
+                    </div>
+                    <h3 class="fw-bold h4 mb-3" style="color: #2d3436;">{{ m.nom }}</h3>
+                    
+                    <div class="progress mb-4" style="height: 8px; border-radius: 10px; background: #f1f5f9;">
+                        {# On peut simuler une progression aléatoire ou réelle si disponible #}
+                        <div class="progress-bar bg-success" style="width: {{ random(30, 90) }}%"></div>
+                    </div>
+
+                    <div class="mt-auto">
+                        <a href="{{ path('app_revision_chapitres', {id: m.id}) }}" class="btn btn-modern w-100">
+                            Réviser <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="focusOverlay">
+    <h2 class="fw-bold mb-0">MODE FOCUS</h2>
+    <p class="opacity-50">Reste concentré, ne quitte pas cette page</p>
+    <div id="timerDisplay" style="font-size: 8rem; font-weight: 800; color: #ffc107; font-family: 'Courier New', Courier, monospace;">25:00</div>
+    <button class="btn btn-outline-light rounded-pill px-5" onclick="stopFocusMode()">Abandonner</button>
+</div>
+
+<script>
+    // Filtre de recherche
+    function filterMatieres() {
+        let query = document.getElementById('liveSearch').value.toLowerCase();
+        document.querySelectorAll('.matiere-item').forEach(item => {
+            let name = item.getAttribute('data-nom');
+            item.style.display = name.includes(query) ? "block" : "none";
+        });
+    }
+
+    // Compte à rebours Bac
+    function updateBacCountdown() {
+        const bacDate = new Date("2026-06-15T08:00:00");
+        const diff = bacDate - new Date();
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById('countdown-text').innerText = `Il te reste ${days} jours pour exploser ton score ! 🚀`;
+    }
+
+    // Timer Focus (Pomodoro)
+    let timerInterval;
+    function startFocusMode() {
+        document.getElementById('focusOverlay').style.display = 'flex';
+        let timeLeft = 25 * 60;
+        timerInterval = setInterval(() => {
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            document.getElementById('timerDisplay').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+                addXP(150);
+                alert("Félicitations ! Séance de focus terminée. +150 XP");
+                stopFocusMode();
+            }
+            timeLeft--;
+        }, 1000);
+    }
+
+    function stopFocusMode() {
+        clearInterval(timerInterval);
+        document.getElementById('focusOverlay').style.display = 'none';
+    }
+
+    // Système XP (Local Storage)
+    function addXP(amount) {
+        let currentXp = parseInt(localStorage.getItem('user_xp')) || 0;
+        let newXp = currentXp + amount;
+        localStorage.setItem('user_xp', newXp);
+        document.getElementById('global-xp-display').innerText = newXp;
+    }
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', () => {
+        updateBacCountdown();
+        
+        // Charger XP
+        const savedXp = localStorage.getItem('user_xp') || 0;
+        document.getElementById('global-xp-display').innerText = savedXp;
+
+        // Charger Temps d'étude
+        let totalSec = parseInt(localStorage.getItem('total_study_time')) || 0;
+        let h = Math.floor(totalSec / 3600);
+        let m = Math.floor((totalSec % 3600) / 60);
+        document.getElementById('study-time-tracker').innerText = `🕒 ${h}h ${m}min révisés`;
+    });
+</script>
+{% endblock %}

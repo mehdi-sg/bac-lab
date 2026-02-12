@@ -1,0 +1,350 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}Gestion des Quiz - Admin{% endblock %}
+
+{% block page_title %}Module 5 — Quiz{% endblock %}
+{% block page_subtitle %}Gestion des quiz, tests & scores{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 22px;
+    }
+    .section-header h2 {
+        font-size: 20px;
+        font-weight: 900;
+        margin: 0;
+    }
+    .section-header p {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .btn-primary-admin {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 22px;
+        border-radius: 14px;
+        border: 1px solid rgba(109,91,255,0.45);
+        background: var(--grad1);
+        color: #fff;
+        font-weight: 800;
+        font-size: 14px;
+        text-decoration: none;
+        transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 6px 24px rgba(109,91,255,0.30);
+        white-space: nowrap;
+    }
+    .btn-primary-admin:hover {
+        opacity: .88;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 32px rgba(109,91,255,0.40);
+        color: #fff;
+    }
+
+    .flash-success {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 18px;
+        border-radius: var(--radius);
+        border: 1px solid rgba(53,255,182,0.25);
+        background: rgba(53,255,182,0.08);
+        color: #35FFB6;
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .stats-strip {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+    .stat-tile {
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(12px);
+        padding: 20px 22px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+    .stat-icon.g1 { background: var(--grad1); }
+    .stat-icon.g2 { background: var(--grad2); }
+    .stat-icon.g3 { background: var(--grad3); }
+    .stat-info strong {
+        display: block;
+        font-size: 26px;
+        font-weight: 900;
+        line-height: 1.1;
+    }
+    .stat-info span {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 700;
+    }
+
+    .quiz-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 18px;
+    }
+
+    .quiz-card {
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(14px);
+        box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+        position: relative;
+        overflow: hidden;
+    }
+    .quiz-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: var(--grad1);
+        opacity: 0;
+        transition: opacity 0.22s;
+    }
+    .quiz-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 22px 56px rgba(0,0,0,0.26);
+        border-color: rgba(255,255,255,0.18);
+    }
+    .quiz-card:hover::before { opacity: 1; }
+
+    .card-top {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+    .card-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        background: var(--grad1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+    .card-title {
+        font-size: 16px;
+        font-weight: 900;
+        line-height: 1.3;
+        flex: 1;
+        padding-top: 4px;
+    }
+
+    .badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 14px;
+    }
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 800;
+        border: 1px solid transparent;
+        white-space: nowrap;
+    }
+    .badge-niveau   { background: rgba(109,91,255,0.18); border-color: rgba(109,91,255,0.30); color: #b8a9ff; }
+    .badge-questions{ background: rgba(255,77,141,0.14);  border-color: rgba(255,77,141,0.28);  color: #ff9ec5; }
+    .badge-duree    { background: rgba(255,184,108,0.14); border-color: rgba(255,184,108,0.28); color: #ffcb7a; }
+
+    .card-desc {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+        margin-bottom: 20px;
+        flex: 1;
+    }
+    .card-divider {
+        height: 1px;
+        background: var(--border);
+        margin-bottom: 16px;
+    }
+
+    .card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .btn-sm {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+        border: 1px solid transparent;
+        cursor: pointer;
+        background: none;
+        transition: opacity 0.18s, transform 0.18s;
+        white-space: nowrap;
+    }
+    .btn-sm:hover { opacity: .78; transform: translateY(-1px); }
+
+    .btn-questions { background: rgba(46,211,255,0.15); border-color: rgba(46,211,255,0.30); color: #2ED3FF; }
+    .btn-edit      { background: rgba(53,255,182,0.12);  border-color: rgba(53,255,182,0.28);  color: #35FFB6; }
+    .btn-delete    { background: rgba(255,77,141,0.12);  border-color: rgba(255,77,141,0.28);  color: #FF4D8D; }
+
+    .empty-state {
+        border-radius: var(--radius);
+        border: 1px dashed var(--border);
+        background: rgba(255,255,255,0.03);
+        text-align: center;
+        padding: 70px 30px;
+    }
+    .empty-icon {
+        width: 72px; height: 72px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid var(--border);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 28px;
+        margin: 0 auto 20px;
+        color: var(--muted);
+    }
+    .empty-state h3 { font-weight: 900; font-size: 20px; margin-bottom: 8px; }
+    .empty-state p  { color: var(--muted); font-size: 14px; font-weight: 600; margin-bottom: 24px; }
+
+    @media (max-width: 768px) {
+        .stats-strip { grid-template-columns: 1fr 1fr; }
+        .quiz-grid   { grid-template-columns: 1fr; }
+        .section-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+
+    {% for message in app.flashes('success') %}
+        <div class="flash-success">
+            <i class="fa-solid fa-circle-check"></i> {{ message }}
+        </div>
+    {% endfor %}
+
+    {# Stats strip #}
+    <div class="stats-strip">
+        <div class="stat-tile">
+            <div class="stat-icon g1"><i class="fa-solid fa-brain"></i></div>
+            <div class="stat-info">
+                <strong>{{ quizzes|length }}</strong>
+                <span>Quiz total</span>
+            </div>
+        </div>
+        <div class="stat-tile">
+            <div class="stat-icon g2"><i class="fa-solid fa-circle-question"></i></div>
+            <div class="stat-info">
+                <strong>
+                    {% set total_q = 0 %}
+                    {% for q in quizzes %}{% set total_q = total_q + q.nbQuestions %}{% endfor %}
+                    {{ total_q }}
+                </strong>
+                <span>Questions au total</span>
+            </div>
+        </div>
+        <div class="stat-tile">
+            <div class="stat-icon g3"><i class="fa-solid fa-clock"></i></div>
+            <div class="stat-info">
+                <strong>
+                    {% set total_d = 0 %}
+                    {% for q in quizzes %}{% set total_d = total_d + q.duree %}{% endfor %}
+                    {{ total_d }} min
+                </strong>
+                <span>Durée cumulée</span>
+            </div>
+        </div>
+    </div>
+
+    {# Section header #}
+    <div class="section-header">
+        <div>
+            <h2>Liste des Quiz</h2>
+            <p>{{ quizzes|length }} quiz enregistré(s)</p>
+        </div>
+        <a href="{{ path('admin_quiz_new') }}" class="btn-primary-admin">
+            <i class="fa-solid fa-plus"></i> Nouveau Quiz
+        </a>
+    </div>
+
+    {% if quizzes|length > 0 %}
+        <div class="quiz-grid">
+            {% for quiz in quizzes %}
+            <div class="quiz-card">
+                <div class="card-top">
+                    <div class="card-icon"><i class="fa-solid fa-brain"></i></div>
+                    <div class="card-title">{{ quiz.titre }}</div>
+                </div>
+
+                <div class="badge-row">
+                    <span class="badge badge-niveau"><i class="fa-solid fa-layer-group"></i> {{ quiz.niveau }}</span>
+                    <span class="badge badge-questions"><i class="fa-solid fa-circle-question"></i> {{ quiz.nbQuestions }} question(s)</span>
+                    <span class="badge badge-duree"><i class="fa-solid fa-clock"></i> {{ quiz.duree }} min</span>
+                </div>
+
+                <p class="card-desc">{{ quiz.description|slice(0, 120) }}…</p>
+
+                <div class="card-divider"></div>
+
+                <div class="card-actions">
+                    <a href="{{ path('admin_quiz_questions', {id: quiz.id}) }}" class="btn-sm btn-questions">
+                        <i class="fa-solid fa-list-ul"></i> Questions
+                    </a>
+                    <a href="{{ path('admin_quiz_edit', {id: quiz.id}) }}" class="btn-sm btn-edit">
+                        <i class="fa-solid fa-pen-to-square"></i> Modifier
+                    </a>
+                    <form method="POST" action="{{ path('admin_quiz_delete', {id: quiz.id}) }}" style="display:inline;" onsubmit="return confirm('Supprimer ce quiz ? Cette action est irréversible.');">
+                        <button type="submit" class="btn-sm btn-delete">
+                            <i class="fa-solid fa-trash-can"></i> Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon"><i class="fa-solid fa-inbox"></i></div>
+            <h3>Aucun quiz pour le moment</h3>
+            <p>Commencez par créer votre premier quiz pour enrichir la plateforme.</p>
+            <a href="{{ path('admin_quiz_new') }}" class="btn-primary-admin">
+                <i class="fa-solid fa-plus"></i> Créer un quiz
+            </a>
+        </div>
+    {% endif %}
+
+{% endblock %}

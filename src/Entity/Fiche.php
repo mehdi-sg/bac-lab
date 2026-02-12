@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FicheRepository::class)]
+#[ORM\Table(name: 'fiche')]
 class Fiche
 {
     #[ORM\Id]
@@ -36,16 +37,48 @@ class Fiche
     #[ORM\Column]
     private ?bool $isPublic = null;
 
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Utilisateur $utilisateur = null;
+
     /**
      * @var Collection<int, FicheVersion>
      */
     #[ORM\OneToMany(targetEntity: FicheVersion::class, mappedBy: 'fiche')]
     private Collection $ficheVersions;
 
+    /**
+     * @var Collection<int, FicheModerateur>
+     */
+    #[ORM\OneToMany(targetEntity: FicheModerateur::class, mappedBy: 'fiche', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private Collection $moderateurs;
+
+    /**
+     * @var Collection<int, FicheJoinRequest>
+     */
+    #[ORM\OneToMany(targetEntity: FicheJoinRequest::class, mappedBy: 'fiche', cascade: ['persist', 'remove'])]
+    private Collection $joinRequests;
+
+    /**
+     * @var Collection<int, FicheFavori>
+     */
+    #[ORM\OneToMany(targetEntity: FicheFavori::class, mappedBy: 'fiche', cascade: ['persist', 'remove'])]
+    private Collection $favoris;
+
+    #[ORM\ManyToOne(targetEntity: Filiere::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Filiere $filiere = null;
+
     public function __construct()
+
     {
         $this->ficheVersions = new ArrayCollection();
+        $this->moderateurs = new ArrayCollection();
+        $this->joinRequests = new ArrayCollection();
+        $this->favoris = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -112,6 +145,18 @@ class Fiche
         return $this;
     }
 
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, FicheVersion>
      */
@@ -139,6 +184,133 @@ class Fiche
             }
         }
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FicheModerateur>
+     */
+    public function getModerateurs(): Collection
+    {
+        return $this->moderateurs;
+    }
+
+    public function addModerateur(FicheModerateur $moderateur): static
+    {
+        if (!$this->moderateurs->contains($moderateur)) {
+            $this->moderateurs->add($moderateur);
+            $moderateur->setFiche($this);
+        }
+
+        return $this;
+    }
+
+    public function removeModerateur(FicheModerateur $moderateur): static
+    {
+        if ($this->moderateurs->removeElement($moderateur)) {
+            if ($moderateur->getFiche() === $this) {
+                $moderateur->setFiche(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FicheJoinRequest>
+     */
+    public function getJoinRequests(): Collection
+    {
+        return $this->joinRequests;
+    }
+
+    public function addJoinRequest(FicheJoinRequest $joinRequest): static
+    {
+        if (!$this->joinRequests->contains($joinRequest)) {
+            $this->joinRequests->add($joinRequest);
+            $joinRequest->setFiche($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJoinRequest(FicheJoinRequest $joinRequest): static
+    {
+        if ($this->joinRequests->removeElement($joinRequest)) {
+            if ($joinRequest->getFiche() === $this) {
+                $joinRequest->setFiche(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Check if user is moderateur of this fiche
+     */
+    public function isModerateur(Utilisateur $utilisateur): bool
+    {
+        foreach ($this->moderateurs as $moderateur) {
+            if ($moderateur->getUtilisateur() === $utilisateur) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return Collection<int, FicheFavori>
+     */
+    public function getFavoris(): Collection
+    {
+        return $this->favoris;
+    }
+
+    public function addFavori(FicheFavori $favori): static
+    {
+        if (!$this->favoris->contains($favori)) {
+            $this->favoris->add($favori);
+            $favori->setFiche($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavori(FicheFavori $favori): static
+    {
+        if ($this->favoris->removeElement($favori)) {
+            if ($favori->getFiche() === $this) {
+                $favori->setFiche(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Check if fiche is favorited by a user
+     */
+    public function isFavoritedBy(Utilisateur $utilisateur): bool
+    {
+        foreach ($this->favoris as $favori) {
+            if ($favori->getUtilisateur() === $utilisateur) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getFiliere(): ?Filiere
+
+    {
+        return $this->filiere;
+    }
+
+    public function setFiliere(?Filiere $filiere): static
+    {
+        $this->filiere = $filiere;
         return $this;
     }
 }

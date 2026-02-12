@@ -3,18 +3,29 @@
 {% block css %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('front/css/fiche.css') }}">
-    
 {% endblock %}
+
+{% block body_class %}fiche-page{% endblock %}
 
 {% block body %}
 <div class="fiche-page">
 
     <section class="container py-5">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="mb-4 text-white">
+        <div class="row align-items-center mb-4">
+            <div class="col-12 col-lg-8">
+                <h1 class="mb-1 text-white">
                     {% block fiche_title %}{% endblock %}
                 </h1>
+
+                {# Optional subtitle (used by edit/new/show pages if needed) #}
+                <p class="text-white-50 mb-0">
+                    {% block fiche_subtitle %}{% endblock %}
+                </p>
+            </div>
+
+            {# Optional header actions (buttons on the right) #}
+            <div class="col-12 col-lg-4 mt-3 mt-lg-0 text-lg-end">
+                {% block fiche_header_actions %}{% endblock %}
             </div>
         </div>
 

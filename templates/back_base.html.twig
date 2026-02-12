@@ -17,6 +17,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ asset('public\front\css\admin-crud.css') }}">
+
 
     <style>
         :root{
@@ -234,6 +237,7 @@
         .btn-ghost:hover{
             background: rgba(255,255,255,0.08);
         }
+        
 
         /* Cards */
         .glass-card{
@@ -273,75 +277,86 @@
         <div class="side-section-title">Navigation</div>
 
         {# Dashboard #}
-        <a class="nav-pill {{ app.request.get('_route') starts with 'app_admin_dashboard' ? 'active' : '' }}" href="{{ path('app_admin_dashboard') }}">
-            <div class="nav-icon">
-                <i class="fa-solid fa-gauge-high"></i>
-            </div>
-            <div class="nav-text">
-                <strong>Dashboard</strong>
-                <span>Vue globale</span>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
-        </a>
+<a class="nav-pill {{ app.request.attributes.get('_route') == 'admin_dashboard' ? 'active' : '' }}"
+   href="{{ path('admin_dashboard') }}">
+
+    <div class="nav-icon">
+        <i class="fa-solid fa-gauge-high"></i>
+    </div>
+
+    <div class="nav-text">
+        <strong>Dashboard</strong>
+        <span>Vue globale</span>
+    </div>
+
+    <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+</a>
+
 
         <div class="side-section-title">Modules</div>
 
-        {# MODULE 1 - Users #}
-        <a class="nav-pill" href="javascript:void(0)">
-            <div class="nav-icon grad1"><i class="fa-solid fa-user-shield"></i></div>
+        {# MODULE 1 #}
+        <a class="nav-pill" href="{{ path('admin_user_index') }}">
+            <div class="nav-icon grad1">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
             <div class="nav-text">
-                <strong>Module 1 — User & Profil</strong>
+                <strong>Users & Profils</strong>
                 <span>Comptes, rôles, profils</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
         </a>
 
-        {# MODULE 2 - Filières #}
+
+        {# MODULE 2 #}
         <a class="nav-pill" href="javascript:void(0)">
             <div class="nav-icon grad2"><i class="fa-solid fa-school"></i></div>
             <div class="nav-text">
-                <strong>Module 2 — Filières</strong>
+                <strong>Filières</strong>
                 <span>Matières, chapitres</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
         </a>
 
-        {# MODULE 3 - Ressources #}
-        <a class="nav-pill {{ app.request.get('_route') starts with 'app_admin_ressource' ? 'active' : '' }}" href="{{ path('app_admin_ressource_index') }}">
+        {# MODULE 3 #}
+        <a class="nav-pill" href="{{path('app_admin_ressource_index')}}"">
             <div class="nav-icon grad3"><i class="fa-solid fa-book-open-reader"></i></div>
             <div class="nav-text">
-                <strong>Module 3 — Ressources</strong>
-                <span>Bibliothèque & fichiers</span>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
-        </a>
-
-        {# MODULE 4 - Evaluations #}
-        <a class="nav-pill {{ app.request.get('_route') starts with 'app_admin_evaluation' ? 'active' : '' }}" href="{{ path('app_admin_evaluation_index') }}">
-            <div class="nav-icon"><i class="fa-solid fa-star"></i></div>
-            <div class="nav-text">
-                <strong>Module 4 — Évaluations</strong>
-                <span>Notes & commentaires</span>
+                <strong>Bibliothèque</strong>
+                <span>Ressources & fichiers</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
         </a>
 
         {# MODULE 5 - Collaboration #}
         <a class="nav-pill" href="javascript:void(0)">
-            <div class="nav-icon"><i class="fa-solid fa-comments"></i></div>
+            <div class="nav-icon grad1"><i class="fa-solid fa-comments"></i></div>
             <div class="nav-text">
-                <strong>Module 5 — Collaboration</strong>
+                <strong>Collaboration</strong>
                 <span>Messenger & co-op</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
         </a>
 
-        {# MODULE 6 - Quiz #}
-        <a class="nav-pill" href="javascript:void(0)">
-            <div class="nav-icon"><i class="fa-solid fa-brain"></i></div>
+       {# MODULE 5 #}
+        <a class="nav-pill" href="{{ path('admin_quiz_index') }}">
+            <div class="nav-icon">
+                <i class="fa-solid fa-brain"></i>
+            </div>
             <div class="nav-text">
                 <strong>Module 6 — Quiz</strong>
                 <span>Tests, scores</span>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+        </a>
+
+
+        {# MODULE 6 #}
+        <a class="nav-pill" href="javascript:void(0)">
+            <div class="nav-icon grad3"><i class="fa-solid fa-pen-ruler"></i></div>
+            <div class="nav-text">
+                <strong>Fiches</strong>
+                <span>Co-édition & notes</span>
             </div>
             <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
         </a>
@@ -375,12 +390,159 @@
                 <p>{% block page_subtitle %}BacLab • Admin space{% endblock %}</p>
             </div>
 
-            <div class="topbar-actions">
-                <input class="search" type="text" placeholder="Rechercher (utilisateur, matière, ressource...)">
-                <a class="btn-ghost" href="{{ path('app_home') }}">
-                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Aller au site
-                </a>
+           <div class="topbar-actions">
+
+    <a class="btn-ghost"
+       href="{{ path('app_admin_evaluation_index') }}"
+       rel="noopener noreferrer">
+        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Aller au evaluation
+    </a>
+</div>
+
+{# Search Results Dropdown #}
+<div id="searchResultsDropdown" style="
+    position: fixed;
+    top: 80px;
+    right: 22px;
+    width: 380px;
+    max-height: 500px;
+    overflow-y: auto;
+    background: rgba(15, 23, 42, 0.98);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    z-index: 1000;
+    display: none;
+    backdrop-filter: blur(20px);
+">
+    <div id="searchResultsContent" style="padding: 16px;">
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.getElementById('globalSearchForm');
+    const searchInput = document.getElementById('globalSearchInput');
+    const dropdown = document.getElementById('searchResultsDropdown');
+    const dropdownContent = document.getElementById('searchResultsContent');
+    let searchTimeout;
+
+    function showLoading() {
+        dropdownContent.innerHTML = `
+            <div style="text-align:center;padding:20px;color:var(--muted);">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Recherche...
             </div>
+        `;
+        dropdown.style.display = 'block';
+    }
+
+    function showResults(data) {
+        if (!data.q || data.count === 0) {
+            dropdownContent.innerHTML = `
+                <div style="text-align:center;padding:20px;color:var(--muted);">
+                    <i class="fa-solid fa-search"></i> Aucune résultat pour "${data.q}"
+                </div>
+            `;
+        } else {
+            let html = `
+                <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.1);">
+                    <div style="font-weight:900;font-size:14px;">${data.count} résultat${data.count > 1 ? 's' : ''} pour "${data.q}"</div>
+                </div>
+            `;
+            
+            if (data.users && data.users.length > 0) {
+                html += `<div style="margin-bottom:12px;">
+                    <div style="font-weight:800;font-size:12px;color:var(--muted);margin-bottom:8px;">UTILISATEURS</div>`;
+                data.users.forEach(user => {
+                    const status = user.isActive 
+                        ? '<span class="pill success">Actif</span>' 
+                        : '<span class="pill danger">Inactif</span>';
+                    html += `
+                        <a href="/admin/users/${user.id}/edit" style="
+                            display:block;
+                            padding:10px 12px;
+                            margin-bottom:6px;
+                            border-radius:10px;
+                            background:rgba(255,255,255,0.04);
+                            border:1px solid rgba(255,255,255,0.06);
+                            text-decoration:none;
+                            color:var(--text);
+                            transition:0.15s ease;
+                        " onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+                            <div style="font-weight:900;font-size:14px;">${user.email}</div>
+                            <div style="margin-top:4px;">${status}</div>
+                        </a>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            html += `
+                <div style="text-align:center;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);">
+                    <a href="/admin/search?q=${encodeURIComponent(data.q)}" style="
+                        display:inline-block;
+                        padding:8px 16px;
+                        border-radius:10px;
+                        background:rgba(255,255,255,0.08);
+                        border:1px solid rgba(255,255,255,0.12);
+                        color:var(--text);
+                        font-weight:800;
+                        font-size:13px;
+                        text-decoration:none;
+                    ">Voir tous les résultats</a>
+                </div>
+            `;
+            
+            dropdownContent.innerHTML = html;
+        }
+        dropdown.style.display = 'block';
+    }
+
+    function hideDropdown() {
+        dropdown.style.display = 'none';
+    }
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const value = this.value.trim();
+        
+        if (value.length < 2) {
+            hideDropdown();
+            return;
+        }
+        
+        showLoading();
+        
+        searchTimeout = setTimeout(function() {
+            fetch(`/admin/search/ajax?q=${encodeURIComponent(value)}`)
+                .then(r => r.json())
+                .then(showResults)
+                .catch(err => {
+                    console.error(err);
+                    hideDropdown();
+                });
+        }, 300);
+    });
+
+    searchInput.addEventListener('focus', function() {
+        if (this.value.trim().length >= 2 && dropdown.style.display !== 'none') {
+            dropdown.style.display = 'block';
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+            hideDropdown();
+        }
+    });
+
+    searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        window.location.href = `/admin/search?q=${encodeURIComponent(searchInput.value.trim())}`;
+    });
+});
+</script>
+  
         </div>
 
         {% block body %}{% endblock %}
