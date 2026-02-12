@@ -83,6 +83,96 @@
             }
             body {
                 padding-top: 80px;
+            }
+            
+            /* Fix navbar background and text colors */
+            .header-area {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            }
+            
+            .header-area.header-transparent {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            }
+            
+            .main-header {
+                background: transparent !important;
+            }
+            
+            .header-sticky.sticky-bar {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            
+            /* Navigation links styling */
+            #navigation > li > a {
+                color: white !important;
+                font-weight: 500;
+            }
+            
+            #navigation > li > a:hover {
+                color: #f0f0f0 !important;
+            }
+            
+            /* Submenu styling */
+            #navigation ul.submenu {
+                background: white !important;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+            
+            #navigation ul.submenu li a {
+                color: #333 !important;
+            }
+            
+            #navigation ul.submenu li a:hover {
+                background: #f8f9fa !important;
+                color: #667eea !important;
+            }
+            
+            /* Button styling */
+            .header-area .btn {
+                background: white !important;
+                color: #667eea !important;
+                border: none !important;
+                padding: 10px 25px !important;
+                border-radius: 6px !important;
+                font-weight: 600 !important;
+                transition: all 0.3s !important;
+            }
+            
+            .header-area .btn:hover {
+                background: #f0f0f0 !important;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            }
+            
+            .header-area .btn3 {
+                background: transparent !important;
+                color: white !important;
+                border: 2px solid white !important;
+            }
+            
+            .header-area .btn3:hover {
+                background: white !important;
+                color: #667eea !important;
+            }
+            
+            /* Notification bell styling */
+            .notification-bell {
+                position: relative;
+                display: inline-block;
+                padding: 8px 12px;
+            }
+            
+            .notification-bell svg {
+                width: 24px;
+                height: 24px;
+                color: white;
+            }
+            
+            .notification-bell:hover svg {
+                color: #f0f0f0;
+            }
+            
         /* Footer optimisé */
         .footer-area {
             padding: 60px 0 30px !important;
@@ -236,26 +326,51 @@
                                         <nav>
                                             <ul id="navigation">                                                                                          
                                                 <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                                                
+                                                <li><a href="{{ path('app_ressource_index') }}">Bibliothèque</a></li>
+                                                
                                                 <li><a href="#">Révision</a>
                                                     <ul class="submenu">
                                                         <li><a href="#">Cours & PDF</a></li>
                                                         <li><a href="{{ path('app_quiz') }}">Quiz & Tests</a></li>
                                                     </ul>
                                                 </li>
+                                                
                                                 <li><a href="#">Orientation</a>
                                                     <ul class="submenu">
                                                         <li><a href="#">Calcul du Score</a></li>
-                                                        <li><a href="#">Guide des Filieres</a></li>
+                                                        <li><a href="#">Guide des Filières</a></li>
                                                     </ul>
                                                 </li>
-                                                <li><a href="#">Communaute</a>
+                                                
+                                                <li><a href="#">Communauté</a>
                                                     <ul class="submenu">
-                                                        <li><a href="{{ path('groupe_index') }}"><i class="fas fa-users mr-2"></i>Groupes de revision</a></li>
+                                                        <li><a href="{{ path('groupe_index') }}"><i class="fas fa-users mr-2"></i>Groupes de révision</a></li>
                                                         <li><a href="{{ path('chat_index') }}"><i class="fas fa-comments mr-2"></i>Chat en direct</a></li>
                                                     </ul>
                                                 </li>
                                                 
                                                 {% if is_granted('ROLE_USER') %}
+                                                    <li><a href="{{path('app_dashboard')}}">Dashboard</a>
+                                                        <ul class="submenu">
+                                                            <li><a href="{{ path('app_dashboard') }}"><i class="fas fa-tachometer-alt mr-2"></i>Vue d'ensemble</a></li>
+                                                            <li><a href="{{ path('app_dashboard_ressources') }}"><i class="fas fa-book mr-2"></i>Mes Ressources</a></li>
+                                                            <li><a href="{{ path('app_dashboard_evaluations') }}"><i class="fas fa-star mr-2"></i>Mes Évaluations</a></li>
+                                                            <li><a href="{{ path('app_dashboard_commentaires') }}"><i class="fas fa-comment mr-2"></i>Mes Commentaires</a></li>
+                                                            <li><a href="{{ path('app_dashboard_telechargements') }}"><i class="fas fa-download mr-2"></i>Téléchargements</a></li>
+                                                            <li><a href="{{ path('app_dashboard_favoris') }}"><i class="fas fa-heart mr-2"></i>Favoris</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    
+                                                    {% if is_granted('ROLE_MODERATOR') or is_granted('ROLE_ADMIN') %}
+                                                        <li><a href="#">Admin</a>
+                                                            <ul class="submenu">
+                                                                <li><a href="{{ path('app_admin_ressources') }}"><i class="fas fa-cog mr-2"></i>Gérer Ressources</a></li>
+                                                                <li><a href="{{ path('app_admin_commentaires') }}"><i class="fas fa-flag mr-2"></i>Modérer Commentaires</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    {% endif %}
+                                                    
                                                     <li>
                                                         <a href="{{ path('notifications_index') }}" class="notification-bell" title="Notifications">
                                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -266,7 +381,7 @@
                                                         </a>
                                                     </li>
                                                     <li><a href="{{ path('app_profile') }}" class="btn">Mon Profil</a></li>
-                                                    <li><a href="{{ path('app_logout') }}" class="btn btn3">Deconnexion</a></li>
+                                                    <li><a href="{{ path('app_logout') }}" class="btn btn3">Déconnexion</a></li>
                                                 {% else %}
                                                     <li class="margin-left"><a href="{{ path('app_register') }}" class="btn">S'inscrire</a></li>
                                                     <li><a href="{{ path('app_login') }}" class="btn btn3">Connexion</a></li>

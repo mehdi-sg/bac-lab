@@ -8,62 +8,131 @@
         .bibliotheque-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 60px 0 80px;
-            margin-top: 80px;
+            margin-top: 0;
             color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .bibliotheque-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            opacity: 0.3;
         }
         .search-filters-card {
             background: white;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            padding: 30px;
+            padding: 35px;
             margin-top: -50px;
             position: relative;
             z-index: 10;
         }
         .search-input {
-            border: 2px solid #e8e8e8;
-            border-radius: 12px;
-            padding: 14px 20px 14px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 14px 20px 14px 50px;
             font-size: 15px;
             transition: all 0.3s;
+            background: white;
+            width: 100%;
         }
         .search-input:focus {
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: white;
+            outline: none;
         }
         .search-icon {
             position: absolute;
-            left: 16px;
+            left: 18px;
             top: 50%;
             transform: translateY(-50%);
             color: #999;
+            z-index: 10;
+            pointer-events: none;
         }
         .filter-select {
-            border: 2px solid #e8e8e8;
-            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             padding: 12px 16px;
             font-size: 14px;
             transition: all 0.3s;
+            background: white;
+            cursor: pointer;
+            width: 100%;
         }
         .filter-select:focus {
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: white;
+            outline: none;
+        }
+        .filter-select:hover {
+            border-color: #b8b8b8;
+        }
+        .form-label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+        .form-label i {
+            color: #667eea;
+            margin-right: 6px;
         }
         .tag-badge {
             display: inline-block;
-            padding: 6px 16px;
-            background: #f0f0ff;
+            padding: 8px 18px;
+            background: linear-gradient(135deg, #f0f0ff 0%, #e8e4ff 100%);
             color: #667eea;
             border-radius: 20px;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             margin: 4px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            user-select: none;
         }
         .tag-badge:hover {
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        .btn-outline-secondary {
+            border: 2px solid #e0e0e0 !important;
+            color: #636e72 !important;
+            border-radius: 10px !important;
+            padding: 10px 20px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s !important;
+            background: white !important;
+        }
+        .btn-outline-secondary:hover {
+            background: #fff5f5 !important;
+            border-color: #dc3545 !important;
+            color: #dc3545 !important;
+        }
+        .btn-primary.filter-search-btn {
+            border-radius: 10px !important;
+            padding: 10px 20px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border: none !important;
+            color: white !important;
+        }
+        .btn-primary.filter-search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
         }
         .resource-card {
             background: white;
@@ -89,7 +158,6 @@
         }
         .resource-icon.pdf { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); }
         .resource-icon.video { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); }
-        .resource-icon.exercices { background: linear-gradient(135deg, #55efc4 0%, #00b894 100%); }
         .resource-icon.lien { background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); }
         .resource-title {
             font-size: 16px;
@@ -107,9 +175,9 @@
             text-transform: uppercase;
             margin-bottom: 12px;
         }
-        .resource-type-badge.exercices { background: #d4f4dd; color: #00b894; }
         .resource-type-badge.video { background: #e8e4ff; color: #6c5ce7; }
         .resource-type-badge.pdf { background: #fff3cd; color: #e17055; }
+        .resource-type-badge.lien { background: #d4f4dd; color: #00b894; }
         .resource-stats {
             display: flex;
             align-items: center;
@@ -142,6 +210,9 @@
             font-size: 14px;
             transition: all 0.3s;
             cursor: pointer;
+            text-decoration: none;
+            display: block;
+            text-align: center;
         }
         .download-btn:hover {
             transform: translateY(-2px);
@@ -153,12 +224,45 @@
             justify-content: space-between;
             align-items: center;
             margin: 30px 0 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        .sort-select {
-            border: 1px solid #e8e8e8;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 13px;
+        .results-count {
+            font-size: 1.1rem;
+            color: #2d3436;
+        }
+        .results-count strong {
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .no-results i {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+        .no-results h3 {
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+        .no-results p {
+            color: #636e72;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 768px) {
+            .results-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
         }
     </style>
 {% endblock %}
@@ -173,92 +277,178 @@
 
 <div class="container">
     <div class="search-filters-card">
-        <form method="get">
-            <div class="row g-3 mb-3">
+        <form method="get" id="filterForm">
+            <div class="row g-3 mb-4">
                 <div class="col-12">
                     <div class="position-relative">
                         <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        <input type="text" name="q" value="{{ q }}" class="form-control search-input" placeholder="Rechercher des ressources...">
+                        <input type="text" name="q" id="searchInput" value="{{ q }}" class="form-control search-input" placeholder="Rechercher des ressources...">
                     </div>
                 </div>
             </div>
             
-            <div class="row g-3 mb-3">
-                <div class="col-md-3">
-                    <label class="form-label small fw-semibold text-muted">Filière</label>
-                    <select class="form-select filter-select" name="filiere">
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 col-sm-6">
+                    <label class="form-label">
+                        <i class="fas fa-graduation-cap"></i> Filière
+                    </label>
+                    <select class="form-select filter-select" name="filiere" id="filiereSelect">
                         <option value="">Toutes les filières</option>
-                        <option value="math">Mathématiques</option>
-                        <option value="svt">Sciences de la Vie et de la Terre</option>
-                        <option value="info">Informatique</option>
-                        <option value="technique">Technique</option>
-                        <option value="lettre">Lettres</option>
+                        <option value="math" {{ filiere == 'math' ? 'selected' : '' }}>Mathématiques</option>
+                        <option value="svt" {{ filiere == 'svt' ? 'selected' : '' }}>Sciences de la Vie et de la Terre</option>
+                        <option value="info" {{ filiere == 'info' ? 'selected' : '' }}>Informatique</option>
+                        <option value="technique" {{ filiere == 'technique' ? 'selected' : '' }}>Technique</option>
+                        <option value="lettre" {{ filiere == 'lettre' ? 'selected' : '' }}>Lettres</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label small fw-semibold text-muted">Matière</label>
-                    <select class="form-select filter-select" name="matiere">
+                <div class="col-md-3 col-sm-6">
+                    <label class="form-label">
+                        <i class="fas fa-book"></i> Matière
+                    </label>
+                    <select class="form-select filter-select" name="matiere" id="matiereSelect">
                         <option value="">Toutes les matières</option>
-                        <option value="math">Mathématiques</option>
-                        <option value="physique">Physique</option>
-                        <option value="chimie">Chimie</option>
-                        <option value="svt">SVT</option>
-                        <option value="info">Informatique</option>
-                        <option value="francais">Français</option>
-                        <option value="anglais">Anglais</option>
-                        <option value="arabe">Arabe</option>
-                        <option value="philo">Philosophie</option>
-                        <option value="histoire">Histoire-Géographie</option>
-                        <option value="economie">Économie</option>
+                        <option value="math" {{ matiere == 'math' ? 'selected' : '' }}>Mathématiques</option>
+                        <option value="physique" {{ matiere == 'physique' ? 'selected' : '' }}>Physique</option>
+                        <option value="chimie" {{ matiere == 'chimie' ? 'selected' : '' }}>Chimie</option>
+                        <option value="svt" {{ matiere == 'svt' ? 'selected' : '' }}>SVT</option>
+                        <option value="info" {{ matiere == 'info' ? 'selected' : '' }}>Informatique</option>
+                        <option value="francais" {{ matiere == 'francais' ? 'selected' : '' }}>Français</option>
+                        <option value="anglais" {{ matiere == 'anglais' ? 'selected' : '' }}>Anglais</option>
+                        <option value="arabe" {{ matiere == 'arabe' ? 'selected' : '' }}>Arabe</option>
+                        <option value="philo" {{ matiere == 'philo' ? 'selected' : '' }}>Philosophie</option>
+                        <option value="histoire" {{ matiere == 'histoire' ? 'selected' : '' }}>Histoire-Géographie</option>
+                        <option value="economie" {{ matiere == 'economie' ? 'selected' : '' }}>Économie</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label small fw-semibold text-muted">Type</label>
-                    <select name="typeFichier" class="form-select filter-select">
+                <div class="col-md-3 col-sm-6">
+                    <label class="form-label">
+                        <i class="fas fa-file"></i> Type
+                    </label>
+                    <select name="typeFichier" id="typeSelect" class="form-select filter-select">
                         <option value="">Tous les types</option>
-                        <option value="PDF">📄 PDF</option>
-                        <option value="VIDEO">🎬 Vidéo</option>
-                        <option value="LIEN">🔗 Lien</option>
+                        <option value="PDF" {{ typeFichier == 'PDF' ? 'selected' : '' }}>📄 PDF</option>
+                        <option value="VIDEO" {{ typeFichier == 'VIDEO' ? 'selected' : '' }}>🎬 Vidéo</option>
+                        <option value="LIEN" {{ typeFichier == 'LIEN' ? 'selected' : '' }}>🔗 Lien</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label small fw-semibold text-muted">Chapitre</label>
-                    <select name="categorie" class="form-select filter-select">
-                        <option value="">Tous les chapitres</option>
-                        <option value="Cours">Cours</option>
-                        <option value="Exercices">Exercices</option>
-                        <option value="Corrigé">Corrigé</option>
-                        <option value="Résumé">Résumé</option>
-                        <option value="Bac blanc">Bac blanc</option>
+                <div class="col-md-3 col-sm-6">
+                    <label class="form-label">
+                        <i class="fas fa-folder"></i> Catégorie
+                    </label>
+                    <select name="categorie" id="categorieSelect" class="form-select filter-select">
+                        <option value="">Toutes les catégories</option>
+                        <option value="Cours" {{ categorie == 'Cours' ? 'selected' : '' }}>Cours</option>
+                        <option value="Exercices" {{ categorie == 'Exercices' ? 'selected' : '' }}>Exercices</option>
+                        <option value="Corrigé" {{ categorie == 'Corrigé' ? 'selected' : '' }}>Corrigé</option>
+                        <option value="Résumé" {{ categorie == 'Résumé' ? 'selected' : '' }}>Résumé</option>
+                        <option value="Bac blanc" {{ categorie == 'Bac blanc' ? 'selected' : '' }}>Bac blanc</option>
                     </select>
                 </div>
             </div>
 
-            <div class="d-flex align-items-center gap-2">
-                <span class="small fw-semibold text-muted">Tags populaires:</span>
-                <span class="tag-badge">BAC 2024</span>
-                <span class="tag-badge">Résumé</span>
-                <span class="tag-badge">Corrigé</span>
-                <span class="tag-badge">Nouveau</span>
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="small fw-semibold text-muted me-2">Tags populaires:</span>
+                    <span class="tag-badge" onclick="searchByTag(event, 'BAC 2024')">BAC 2024</span>
+                    <span class="tag-badge" onclick="searchByTag(event, 'Résumé')">Résumé</span>
+                    <span class="tag-badge" onclick="searchByTag(event, 'Corrigé')">Corrigé</span>
+                    <span class="tag-badge" onclick="searchByTag(event, 'Nouveau')">Nouveau</span>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2" id="clearFiltersBtn" onclick="clearFilters(event)">
+                        <i class="fas fa-times"></i>
+                        <span>Effacer</span>
+                    </button>
+                            <button type="submit" class="btn btn-primary btn-sm d-flex align-items-center gap-2 filter-search-btn">
+                                <i class="fas fa-search"></i>
+                                <span>Rechercher</span>
+                            </button>
+                    
+                </div>
             </div>
         </form>
     </div>
 
+    <script>
+        // Auto-submit form when filters change
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('filterForm');
+            const searchInput = document.getElementById('searchInput');
+            const filiereSelect = document.getElementById('filiereSelect');
+            const matiereSelect = document.getElementById('matiereSelect');
+            const typeSelect = document.getElementById('typeSelect');
+            const categorieSelect = document.getElementById('categorieSelect');
+            
+            // Debounce function for search input
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    form.submit();
+                }, 500); // Wait 500ms after user stops typing
+            });
+            
+            // Auto-submit on select change
+            [filiereSelect, matiereSelect, typeSelect, categorieSelect].forEach(function(select) {
+                select.addEventListener('change', function() {
+                    form.submit();
+                });
+            });
+            
+            // Check if any filters are active and show/hide clear button
+            const hasFilters = (searchInput && searchInput.value) || 
+                              (filiereSelect && filiereSelect.value) ||
+                              (matiereSelect && matiereSelect.value) ||
+                              (typeSelect && typeSelect.value) ||
+                              (categorieSelect && categorieSelect.value);
+            
+            const clearBtn = document.getElementById('clearFiltersBtn');
+            if (clearBtn && !hasFilters) {
+                clearBtn.style.display = 'none';
+            }
+        });
+        
+        function clearFilters(event) {
+            if (event) event.preventDefault();
+            
+            // Clear all form inputs
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filiereSelect').selectedIndex = 0;
+            document.getElementById('matiereSelect').selectedIndex = 0;
+            document.getElementById('typeSelect').selectedIndex = 0;
+            document.getElementById('categorieSelect').selectedIndex = 0;
+            
+            // Redirect to bibliotheque page without query parameters
+            window.location.href = '{{ path('app_bibliotheque_index') }}';
+            return false;
+        }
+
+        function searchByTag(event, tag) {
+            if (event) event.preventDefault();
+            
+            document.getElementById('searchInput').value = tag;
+            document.getElementById('filterForm').submit();
+            return false;
+        }
+    </script>
+
     <div class="results-header">
-        <div>
-            <strong>{{ ressources|length }}</strong> ressources trouvées
+        <div class="results-count">
+            <strong>{{ ressources|length }}</strong> ressource{{ ressources|length > 1 ? 's' : '' }} trouvée{{ ressources|length > 1 ? 's' : '' }}
         </div>
-        <select class="sort-select">
-            <option>Plus récent</option>
-            <option>Plus téléchargé</option>
-            <option>Mieux noté</option>
-        </select>
     </div>
 
     {% if ressources is empty %}
-        <div class="alert alert-info text-center">Aucune ressource trouvée.</div>
+        <div class="no-results">
+            <i class="fas fa-search"></i>
+            <h3>Aucune ressource trouvée</h3>
+            <p>Essayez de modifier vos critères de recherche ou d'effacer les filtres</p>
+            <button type="button" class="btn btn-primary" onclick="clearFilters(event)">
+                <i class="fas fa-redo me-2"></i> Réinitialiser les filtres
+            </button>
+        </div>
     {% else %}
         <div class="row g-4 mb-5">
             {% for r in ressources %}

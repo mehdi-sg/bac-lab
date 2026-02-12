@@ -296,16 +296,16 @@
         <div class="side-section-title">Modules</div>
 
         {# MODULE 1 #}
-<a class="nav-pill" href="{{ path('admin_user_index') }}">
-    <div class="nav-icon grad1">
-        <i class="fa-solid fa-user-shield"></i>
-    </div>
-    <div class="nav-text">
-        <strong>Users & Profils</strong>
-        <span>Comptes, rôles, profils</span>
-    </div>
-    <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
-</a>
+        <a class="nav-pill" href="{{ path('admin_user_index') }}">
+            <div class="nav-icon grad1">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <div class="nav-text">
+                <strong>Users & Profils</strong>
+                <span>Comptes, rôles, profils</span>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+        </a>
 
 
         {# MODULE 2 #}
@@ -319,7 +319,7 @@
         </a>
 
         {# MODULE 3 #}
-        <a class="nav-pill" href="javascript:void(0)">
+        <a class="nav-pill" href="{{path('app_admin_ressource_index')}}"">
             <div class="nav-icon grad3"><i class="fa-solid fa-book-open-reader"></i></div>
             <div class="nav-text">
                 <strong>Bibliothèque</strong>
@@ -339,16 +339,16 @@
         </a>
 
        {# MODULE 5 #}
-<a class="nav-pill" href="{{ path('admin_quiz_index') }}">
-    <div class="nav-icon">
-        <i class="fa-solid fa-brain"></i>
-    </div>
-    <div class="nav-text">
-        <strong>Module 5 — Quiz</strong>
-        <span>Tests, scores</span>
-    </div>
-    <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
-</a>
+        <a class="nav-pill" href="{{ path('admin_quiz_index') }}">
+            <div class="nav-icon">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <div class="nav-text">
+                <strong>Module 5 — Quiz</strong>
+                <span>Tests, scores</span>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="opacity:.6"></i>
+        </a>
 
 
         {# MODULE 6 #}
@@ -393,10 +393,9 @@
            <div class="topbar-actions">
 
     <a class="btn-ghost"
-       href="{{ path('app_home') }}"
-       target="_blank"
+       href="{{ path('app_admin_evaluation_index') }}"
        rel="noopener noreferrer">
-        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Aller au site
+        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Aller au evaluation
     </a>
 </div>
 

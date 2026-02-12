@@ -118,7 +118,7 @@ Bienvenue, {{ app.user ? app.user.email : 'Admin' }} • Rôle: Administrateur
                 <div class="col-12">
                     <div style="padding:14px;border-radius:16px;border:1px solid rgba(255,255,255,0.10);background: rgba(0,0,0,0.15);">
                         <div class="d-flex flex-wrap gap-2">
-                            <a class="btn-ghost" href="javascript:void(0)">
+                            <a class="btn-ghost" href="{{path('app_admin_ressource_index')}}">
                                 <i class="fa-solid fa-book-open-reader me-1"></i> Bibliothèque
                             </a>
                             <a class="btn-ghost" href="javascript:void(0)">

@@ -17,33 +17,43 @@ class RessourceRepository extends ServiceEntityRepository
     }
     
 
-    public function findPublicRessources(?string $q = null, ?int $typeId = null, ?int $limit = null): array
-  {
-    $qb = $this->createQueryBuilder('r')
-        ->andWhere('r.estActive = :active')
-        ->andWhere('r.statut = :statut')
-        ->setParameter('active', true)
-        ->setParameter('statut', 'VALIDEE')
-        ->orderBy('r.dateAjout', 'DESC');
+    public function findPublicRessources(
+        ?string $q = null, 
+        ?string $typeFichier = null, 
+        ?string $categorie = null,
+        ?int $limit = null
+    ): array {
+        $qb = $this->createQueryBuilder('r')
+            ->andWhere('r.estActive = :active')
+            ->andWhere('r.statut = :statut')
+            ->setParameter('active', true)
+            ->setParameter('statut', 'VALIDEE')
+            ->orderBy('r.dateAjout', 'DESC');
 
-    if ($q) {
-        $qb->andWhere('LOWER(r.titre) LIKE :q OR LOWER(r.tags) LIKE :q OR LOWER(r.auteur) LIKE :q')
-           ->setParameter('q', '%'.mb_strtolower($q).'%');
+        // Search query (titre, tags, auteur, description)
+        if ($q) {
+            $qb->andWhere('LOWER(r.titre) LIKE :q OR LOWER(r.tags) LIKE :q OR LOWER(r.auteur) LIKE :q OR LOWER(r.description) LIKE :q')
+               ->setParameter('q', '%'.mb_strtolower($q).'%');
+        }
+
+        // Filter by type (PDF, VIDEO, LIEN)
+        if ($typeFichier) {
+            $qb->andWhere('r.typeFichier = :typeFichier')
+               ->setParameter('typeFichier', $typeFichier);
+        }
+
+        // Filter by category (Cours, Exercices, etc.)
+        if ($categorie) {
+            $qb->andWhere('r.categorie = :categorie')
+               ->setParameter('categorie', $categorie);
+        }
+
+        if ($limit) {
+            $qb->setMaxResults($limit);
+        }
+
+        return $qb->getQuery()->getResult();
     }
-
-    // Note: typeId parameter is deprecated since TypeRessource entity was removed
-    // Keeping parameter for backward compatibility but not using it
-    if ($typeId) {
-        // No longer filtering by typeRessource since it was removed
-        // Use categorie field instead if needed in the future
-    }
-
-    if ($limit) {
-        $qb->setMaxResults($limit);
-    }
-
-    return $qb->getQuery()->getResult();
- }
 
 
 

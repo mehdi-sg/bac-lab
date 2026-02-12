@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Ressources{% endblock %}
+
+{% block body %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4"><i class="fas fa-book text-success"></i> Mes Ressources</h1>
+            
+            <div class="alert alert-warning">
+                <i class="fas fa-tools"></i> <strong>Fonctionnalité en cours de développement</strong>
+                <p class="mb-0 mt-2">La gestion de vos ressources sera bientôt disponible. Cette fonctionnalité vous permettra de :</p>
+                <ul class="mt-2 mb-0">
+                    <li>Voir toutes les ressources que vous avez créées</li>
+                    <li>Modifier ou supprimer vos ressources</li>
+                    <li>Suivre les statistiques (vues, téléchargements, notes)</li>
+                    <li>Gérer les commentaires sur vos ressources</li>
+                </ul>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{{ path('app_ressource_index') }}" class="btn btn-primary">
+                    <i class="fas fa-book"></i> Découvrir les ressources
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

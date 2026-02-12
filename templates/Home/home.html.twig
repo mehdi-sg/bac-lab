@@ -24,53 +24,111 @@
             background: white;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            padding: 30px;
+            padding: 35px;
             margin-bottom: 40px;
         }
         .search-input {
-            border: 2px solid #e8e8e8;
-            border-radius: 12px;
-            padding: 14px 20px 14px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 14px 20px 14px 50px;
             font-size: 15px;
             transition: all 0.3s;
+            background: white;
+            width: 100%;
         }
         .search-input:focus {
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: white;
+            outline: none;
         }
         .search-icon {
             position: absolute;
-            left: 16px;
+            left: 18px;
             top: 50%;
             transform: translateY(-50%);
             color: #999;
+            z-index: 10;
+            pointer-events: none;
         }
         .filter-select {
-            border: 2px solid #e8e8e8;
-            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             padding: 12px 16px;
             font-size: 14px;
             transition: all 0.3s;
+            background: white;
+            cursor: pointer;
+            width: 100%;
+            appearance: auto;
         }
         .filter-select:focus {
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: white;
+            outline: none;
+        }
+        .filter-select:hover {
+            border-color: #b8b8b8;
+        }
+        .form-label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+        .form-label i {
+            color: #667eea;
+            margin-right: 6px;
         }
         .tag-badge {
             display: inline-block;
-            padding: 6px 16px;
-            background: #f0f0ff;
+            padding: 8px 18px;
+            background: linear-gradient(135deg, #f0f0ff 0%, #e8e4ff 100%);
             color: #667eea;
             border-radius: 20px;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             margin: 4px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            user-select: none;
         }
         .tag-badge:hover {
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        .btn-outline-secondary {
+            border: 2px solid #e0e0e0 !important;
+            color: #636e72 !important;
+            border-radius: 10px !important;
+            padding: 10px 20px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s !important;
+            background: white !important;
+        }
+        .btn-outline-secondary:hover {
+            background: #fff5f5 !important;
+            border-color: #dc3545 !important;
+            color: #dc3545 !important;
+        }
+        .btn-primary.filter-search-btn {
+            border-radius: 10px !important;
+            padding: 10px 20px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border: none !important;
+            color: white !important;
+        }
+        .btn-primary.filter-search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
         }
         .resource-card {
             background: white;
@@ -193,23 +251,115 @@
         .hero-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 14px 30px;
+            padding: 16px 40px;
             border-radius: 30px;
             font-weight: 600;
             text-decoration: none;
             transition: all 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
         .hero-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
             color: white;
+        }
+        
+        /* Enhanced Hero Section */
+        .slider-area {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .slider-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            opacity: 0.3;
+        }
+        .hero__caption h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .hero__caption p {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        /* Improved Results Header */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .results-count {
+            font-size: 1.1rem;
+            color: #2d3436;
+        }
+        .results-count strong {
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+        
+        /* No Results Message */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .no-results i {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+        .no-results h3 {
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+        .no-results p {
+            color: #636e72;
+            margin-bottom: 20px;
+        }
+        
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .hero__caption h1 {
+                font-size: 2.5rem;
+            }
+            .hero__caption p {
+                font-size: 1rem;
+            }
+            .results-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .filter-select, .search-input {
+                font-size: 14px;
+            }
         }
     </style>
 {% endblock %}
 
 {% block body %}
  <!--? slider Area Start-->
-        <section class="slider-area ">
+        <section class="slider-area">
             <div class="slider-active">
                 <!-- Single Slider -->
                 <div class="single-slider slider-height d-flex align-items-center">
@@ -217,9 +367,11 @@
                         <div class="row">
                             <div class="col-xl-6 col-lg-7 col-md-12">
                                 <div class="hero__caption">
-                                    <h1 data-animation="fadeInLeft" data-delay="0.2s">Online learning<br> platform</h1>
-                                    <p data-animation="fadeInLeft" data-delay="0.4s">Build skills with courses, certificates, and degrees online from world-class universities and companies</p>
-                                    <a href="#" class="btn hero-btn" data-animation="fadeInLeft" data-delay="0.7s">Join for Free</a>
+                                    <h1 data-animation="fadeInLeft" data-delay="0.2s">Préparez votre<br> Baccalauréat</h1>
+                                    <p data-animation="fadeInLeft" data-delay="0.4s">Accédez à des milliers de ressources pédagogiques : cours, exercices, vidéos et annales pour réussir votre bac</p>
+                                    <a href="#bibliotheque" class="btn hero-btn" data-animation="fadeInLeft" data-delay="0.7s">
+                                        <i class="fas fa-book-open me-2"></i> Découvrir les ressources
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -229,7 +381,7 @@
         </section>
         
 <!-- Bibliothèque Section -->
-<div class="bibliotheque-section">
+<div class="bibliotheque-section" id="bibliotheque">
     <div class="container">
         <div class="text-center">
             <h1 class="bibliotheque-title">Bibliothèque de Ressources</h1>
@@ -249,89 +401,114 @@
                     </div>
                 </div>
                 
-                <div class="row g-3 mb-3">
-                    <div class="col-md-3">
-                        <label class="form-label small fw-semibold text-muted">Filière</label>
-                        <select class="form-select filter-select" name="filiere">
-                            <option value="">Toutes les filières</option>
-                            <option value="math">Mathématiques</option>
-                            <option value="svt">Sciences de la Vie et de la Terre</option>
-                            <option value="info">Informatique</option>
-                            <option value="technique">Technique</option>
-                            <option value="lettre">Lettres</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small fw-semibold text-muted">Matière</label>
-                        <select class="form-select filter-select" name="matiere">
-                            <option value="">Toutes les matières</option>
-                            <option value="math">Mathématiques</option>
-                            <option value="physique">Physique</option>
-                            <option value="chimie">Chimie</option>
-                            <option value="svt">SVT</option>
-                            <option value="info">Informatique</option>
-                            <option value="francais">Français</option>
-                            <option value="anglais">Anglais</option>
-                            <option value="arabe">Arabe</option>
-                            <option value="philo">Philosophie</option>
-                            <option value="histoire">Histoire-Géographie</option>
-                            <option value="economie">Économie</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small fw-semibold text-muted">Type</label>
-                        <select name="typeFichier" class="form-select filter-select">
-                            <option value="">Tous les types</option>
-                            <option value="PDF">📄 PDF</option>
-                            <option value="VIDEO">🎬 Vidéo</option>
-                            <option value="LIEN">🔗 Lien</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small fw-semibold text-muted">Chapitre</label>
-                        <select name="categorie" class="form-select filter-select">
-                            <option value="">Tous les chapitres</option>
-                            <option value="Cours">Cours</option>
-                            <option value="Exercices">Exercices</option>
-                            <option value="Corrigé">Corrigé</option>
-                            <option value="Résumé">Résumé</option>
-                            <option value="Bac blanc">Bac blanc</option>
-                        </select>
-                    </div>
-                </div>
+                    <!-- Filter Selects -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3 col-sm-6">
+                            <label class="form-label">
+                                <i class="fas fa-graduation-cap"></i> Filière
+                            </label>
+                            <select class="form-select filter-select" name="filiere" id="filiereSelect">
+                                <option value="">Toutes les filières</option>
+                                <option value="math" {{ app.request.query.get('filiere') == 'math' ? 'selected' : '' }}>Mathématiques</option>
+                                <option value="svt" {{ app.request.query.get('filiere') == 'svt' ? 'selected' : '' }}>Sciences de la Vie et de la Terre</option>
+                                <option value="info" {{ app.request.query.get('filiere') == 'info' ? 'selected' : '' }}>Informatique</option>
+                                <option value="technique" {{ app.request.query.get('filiere') == 'technique' ? 'selected' : '' }}>Technique</option>
+                                <option value="lettre" {{ app.request.query.get('filiere') == 'lettre' ? 'selected' : '' }}>Lettres</option>
+                            </select>
+                        </div>
 
-                <div class="d-flex align-items-center gap-2">
-                    <span class="small fw-semibold text-muted">Tags populaires:</span>
-                    <span class="tag-badge">BAC 2024</span>
-                    <span class="tag-badge">Résumé</span>
-                    <span class="tag-badge">Corrigé</span>
-                    <span class="tag-badge">Nouveau</span>
-                </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label class="form-label">
+                                <i class="fas fa-book"></i> Matière
+                            </label>
+                            <select class="form-select filter-select" name="matiere" id="matiereSelect">
+                                <option value="">Toutes les matières</option>
+                                <option value="math" {{ app.request.query.get('matiere') == 'math' ? 'selected' : '' }}>Mathématiques</option>
+                                <option value="physique" {{ app.request.query.get('matiere') == 'physique' ? 'selected' : '' }}>Physique</option>
+                                <option value="chimie" {{ app.request.query.get('matiere') == 'chimie' ? 'selected' : '' }}>Chimie</option>
+                                <option value="svt" {{ app.request.query.get('matiere') == 'svt' ? 'selected' : '' }}>SVT</option>
+                                <option value="info" {{ app.request.query.get('matiere') == 'info' ? 'selected' : '' }}>Informatique</option>
+                                <option value="francais" {{ app.request.query.get('matiere') == 'francais' ? 'selected' : '' }}>Français</option>
+                                <option value="anglais" {{ app.request.query.get('matiere') == 'anglais' ? 'selected' : '' }}>Anglais</option>
+                                <option value="arabe" {{ app.request.query.get('matiere') == 'arabe' ? 'selected' : '' }}>Arabe</option>
+                                <option value="philo" {{ app.request.query.get('matiere') == 'philo' ? 'selected' : '' }}>Philosophie</option>
+                                <option value="histoire" {{ app.request.query.get('matiere') == 'histoire' ? 'selected' : '' }}>Histoire-Géographie</option>
+                                <option value="economie" {{ app.request.query.get('matiere') == 'economie' ? 'selected' : '' }}>Économie</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 col-sm-6">
+                            <label class="form-label">
+                                <i class="fas fa-file"></i> Type
+                            </label>
+                            <select name="typeFichier" id="typeSelect" class="form-select filter-select">
+                                <option value="">Tous les types</option>
+                                <option value="PDF" {{ app.request.query.get('typeFichier') == 'PDF' ? 'selected' : '' }}>📄 PDF</option>
+                                <option value="VIDEO" {{ app.request.query.get('typeFichier') == 'VIDEO' ? 'selected' : '' }}>🎬 Vidéo</option>
+                                <option value="LIEN" {{ app.request.query.get('typeFichier') == 'LIEN' ? 'selected' : '' }}>🔗 Lien</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label class="form-label">
+                                <i class="fas fa-folder"></i> Catégorie
+                            </label>
+                            <select name="categorie" id="categorieSelect" class="form-select filter-select">
+                                <option value="">Toutes les catégories</option>
+                                <option value="Cours" {{ app.request.query.get('categorie') == 'Cours' ? 'selected' : '' }}>Cours</option>
+                                <option value="Exercices" {{ app.request.query.get('categorie') == 'Exercices' ? 'selected' : '' }}>Exercices</option>
+                                <option value="Corrigé" {{ app.request.query.get('categorie') == 'Corrigé' ? 'selected' : '' }}>Corrigé</option>
+                                <option value="Résumé" {{ app.request.query.get('categorie') == 'Résumé' ? 'selected' : '' }}>Résumé</option>
+                                <option value="Bac blanc" {{ app.request.query.get('categorie') == 'Bac blanc' ? 'selected' : '' }}>Bac blanc</option>
+                            </select>
+                        </div>
+                    </div>
+                
+                    <!-- Tags & Action Buttons -->
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="small fw-semibold text-muted me-2">Tags populaires:</span>
+                            <span class="tag-badge" onclick="searchByTag(event, 'BAC 2024')">BAC 2024</span>
+                            <span class="tag-badge" onclick="searchByTag(event, 'Résumé')">Résumé</span>
+                            <span class="tag-badge" onclick="searchByTag(event, 'Corrigé')">Corrigé</span>
+                            <span class="tag-badge" onclick="searchByTag(event, 'Nouveau')">Nouveau</span>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2" id="clearFiltersBtn" onclick="clearFilters(event)">
+                                <i class="fas fa-times"></i>
+                                <span>Effacer</span>
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-sm d-flex align-items-center gap-2 filter-search-btn">
+                                <i class="fas fa-search"></i>
+                                <span>Rechercher</span>
+                            </button>
+                        </div>
+                    </div>
             </form>
         </div>
-
         <div class="results-header">
-            <div class="d-flex align-items-center gap-3">
-                <strong>{{ ressources|length }}</strong> ressources trouvées
+            <div class="results-count">
+                <strong>{{ ressources|length }}</strong> ressource{{ ressources|length > 1 ? 's' : '' }} trouvée{{ ressources|length > 1 ? 's' : '' }}
             </div>
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
                 {% if is_granted('ROLE_USER') %}
                     <a href="{{ path('app_ressource_new') }}" class="create-resource-btn">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        Créer une ressource
+                        <i class="fas fa-plus-circle"></i>
+                        Ajouter une ressource
                     </a>
                 {% endif %}
-                <select class="sort-select">
-                    <option>Plus récent</option>
-                    <option>Plus téléchargé</option>
-                    <option>Mieux noté</option>
-                </select>
             </div>
         </div>
 
-        {% if ressources is not empty %}
+        {% if ressources is empty %}
+            <div class="no-results">
+                <i class="fas fa-search"></i>
+                <h3>Aucune ressource trouvée</h3>
+                <p>Essayez de modifier vos critères de recherche ou d'effacer les filtres</p>
+                <button type="button" class="btn btn-primary" onclick="clearFilters(event)">
+                    <i class="fas fa-redo me-2"></i> Réinitialiser les filtres
+                </button>
+            </div>
+        {% else %}
             <div class="row g-4 mb-4">
                 {% for r in ressources %}
                     <div class="col-md-4">
@@ -372,12 +549,12 @@
                                 {% endif %}
                                 
                                 {% if is_granted('ROLE_USER') %}
-                                    <a href="{{ path('app_bibliotheque_telecharger', {id: r.id}) }}" class="download-btn">
-                                        ⬇ Télécharger
+                                    <a href="{{ path('app_ressource_show', {id: r.id}) }}" class="download-btn">
+                                        👁️ Voir la ressource
                                     </a>
                                 {% else %}
-                                    <a href="{{ path('app_register') }}" class="download-btn">
-                                        🔒 S'inscrire pour télécharger
+                                    <a href="{{ path('app_login') }}" class="download-btn">
+                                        🔒 Connexion requise
                                     </a>
                                 {% endif %}
                             </div>
@@ -386,9 +563,9 @@
                 {% endfor %}
             </div>
             
-            <div class="text-center">
-                <a href="{{ path('app_bibliotheque_index') }}" class="btn btn-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px; padding: 12px 40px;">
-                    Voir toutes les ressources
+            <div class="text-center mt-4">
+                <a href="{{ path('app_bibliotheque_index', app.request.query.all) }}" class="btn btn-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px; padding: 14px 45px; font-weight: 600; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                    <i class="fas fa-book-open me-2"></i> Voir toutes les ressources
                 </a>
             </div>
         {% endif %}
@@ -396,7 +573,7 @@
 </div>
 
         <!-- ? services-area -->
-        <div class="services-area">
+        <div class=row g-4 mb-4>
             <div class="container">
                 <div class="row justify-content-sm-center">
                     <div class="col-lg-4 col-md-6 col-sm-8">
