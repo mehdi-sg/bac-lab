@@ -207,6 +207,17 @@
             color: #636e72;
             font-size: 0.9rem;
         }
+        
+        .btn-add {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-add:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
     </style>
 {% endblock %}
 
@@ -249,6 +260,9 @@
     <div class="table-card">
         <div class="table-header">
             <h2>Liste des Groupes</h2>
+            <a href="{{ path('groupe_new') }}" class="btn btn-add">
+                <i class="fas fa-plus"></i> Ajouter un groupe
+            </a>
         </div>
 
         <div class="table-responsive">
