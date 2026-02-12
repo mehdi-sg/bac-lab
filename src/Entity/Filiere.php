@@ -26,8 +26,8 @@ class Filiere
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank(message: "Le niveau est obligatoire.")]
     #[Assert\Choice(
-        choices: ['BAC', 'L1', 'L2', 'L3', 'M1', 'M2'],
-        message: "Le niveau doit être BAC, L1, L2, L3, M1 ou M2."
+        choices: ['Bac', 'Autre'],
+        message: "Le niveau doit être Bac ou Autre."
     )]
     private ?string $niveau = null;
 

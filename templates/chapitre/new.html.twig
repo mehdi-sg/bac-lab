@@ -86,28 +86,17 @@
             <p style="color: #64748b; margin-top: 0.5rem;">Donnez vie à vos idées pédagogiques</p>
         </div>
 
-        {{ form_start(form) }}
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
             <label class="form-label">Titre du chapitre</label>
             <div class="input-wrapper">
                 <i class="fas fa-heading"></i>
                 {{ form_widget(form.titre, {'attr': {'class': 'custom-input', 'placeholder': 'Ex: Introduction à l\'Algèbre'}}) }}
             </div>
 
-            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1rem;">
-                <div>
-                    <label class="form-label">Matière</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-book"></i>
-                        {{ form_widget(form.matiere, {'attr': {'class': 'custom-input'}}) }}
-                    </div>
-                </div>
-                <div>
-                    <label class="form-label">Ordre</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-sort-numeric-down"></i>
-                        {{ form_widget(form.ordre, {'attr': {'class': 'custom-input'}}) }}
-                    </div>
-                </div>
+            <label class="form-label">Matière</label>
+            <div class="input-wrapper">
+                <i class="fas fa-book"></i>
+                {{ form_widget(form.matiere, {'attr': {'class': 'custom-input'}}) }}
             </div>
 
             <label class="form-label">Contenu</label>
