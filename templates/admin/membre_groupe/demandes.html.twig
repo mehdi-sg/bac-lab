@@ -1,0 +1,350 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}Demandes d'adhésion - Administration{% endblock %}
+{% block page_title %}Demandes d'adhésion aux Groupes{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .stat-icon.total { background: linear-gradient(135deg, #ffc10720, #ff980020); color: #ffc107; }
+        .stat-icon.today { background: linear-gradient(135deg, #667eea20, #764ba220); color: #667eea; }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+        
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid #e8e8e8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3436;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: #f8f9fa;
+        }
+        
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: #636e72;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 16px 20px;
+            border-top: 1px solid #f0f0f0;
+            color: #2d3436;
+        }
+        
+        tbody tr {
+            transition: background 0.2s;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .btn-action {
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-accept {
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+            border: 1px solid rgba(72, 187, 120, 0.5);
+        }
+        
+        .btn-accept:hover {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .btn-reject {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+        
+        .btn-reject:hover {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-view {
+            background: #e8eaff;
+            color: #667eea;
+        }
+        
+        .btn-view:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #2d3436;
+        }
+        
+        .user-email {
+            font-size: 0.85rem;
+            color: #636e72;
+        }
+        
+        .group-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .group-badge.public {
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+        }
+        
+        .group-badge.private {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-badge.pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        
+        .status-badge.accepted {
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+        }
+        
+        .status-badge.rejected {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon total">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-value">{{ stats.total }}</div>
+            <div class="stat-label">Demandes en attente</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon today">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="stat-value">{{ stats.today }}</div>
+            <div class="stat-label">Aujourd'hui</div>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-header">
+            <h2>Demandes d'adhésion</h2>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Groupe</th>
+                        <th>Date de demande</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for demande in demandes %}
+                        {% set user = demande.utilisateur %}
+                        {% set groupe = demande.groupe %}
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">
+                                        {% if user.profil and user.profil.nom %}
+                                            {{ user.profil.nom|first|upper }}
+                                        {% else %}
+                                            {{ user.email|first|upper }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="user-details">
+                                        <span class="user-name">
+                                            {% if user.profil and user.profil.nom %}
+                                                {{ user.profil.nom }}
+                                            {% else %}
+                                                {{ user.email|split('@')[0] }}
+                                            {% endif %}
+                                        </span>
+                                        <span class="user-email">{{ user.email }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{{ path('admin_groupe_show', {'id': groupe.id}) }}" class="group-badge {{ groupe.isPublic ? 'public' : 'private' }}">
+                                    <i class="fas {{ groupe.isPublic ? 'fa-globe' : 'fa-lock' }}"></i>
+                                    {{ groupe.nom }}
+                                </a>
+                            </td>
+                            <td>{{ demande.dateJoint|date('d/m/Y H:i') }}</td>
+                            <td>
+                                <span class="status-badge {{ demande.statut|lower }}">
+                                    {{ demande.statut }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <form method="post" action="{{ path('admin_membre_groupe_accepter', {'id': demande.id}) }}" style="display: inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('accepter' ~ demande.id) }}">
+                                        <button type="submit" class="btn-action btn-accept" onclick="return confirm('Accepter cette demande d\'adhésion ?')">
+                                            <i class="fas fa-check"></i> Accepter
+                                        </button>
+                                    </form>
+                                    <form method="post" action="{{ path('admin_membre_groupe_rejeter', {'id': demande.id}) }}" style="display: inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('rejeter' ~ demande.id) }}">
+                                        <button type="submit" class="btn-action btn-reject" onclick="return confirm('Rejeter cette demande d\'adhésion ?')">
+                                            <i class="fas fa-times"></i> Rejeter
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="fas fa-check-circle fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">Aucune demande en attente</p>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
