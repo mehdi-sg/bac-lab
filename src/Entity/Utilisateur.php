@@ -89,6 +89,7 @@
         public function setPlainPassword(?string $plainPassword): self { $this->plainPassword = $plainPassword; return $this; }
 
         public function isActive(): bool { return $this->isActive; }
+        public function setIsActive(bool $isActive): self { $this->isActive = $isActive; return $this; }
 
         public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
 

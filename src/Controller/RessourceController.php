@@ -35,13 +35,14 @@ final class RessourceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // User resources need validation
-            $ressource->setStatut('EN_ATTENTE');
+            // Auto-validate for testing (remove in production)
+            $ressource->setStatut('VALIDEE');
+            $ressource->setEstActive(true);
             
             $entityManager->persist($ressource);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Ressource créée avec succès. Elle sera visible après validation par un administrateur.');
+            $this->addFlash('success', 'Ressource créée avec succès et validée automatiquement.');
             return $this->redirectToRoute('app_ressource_index', [], Response::HTTP_SEE_OTHER);
         }
 

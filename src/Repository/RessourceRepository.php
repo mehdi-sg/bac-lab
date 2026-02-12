@@ -38,18 +38,6 @@ class RessourceRepository extends ServiceEntityRepository
                ->setParameter('q', '%'.mb_strtolower($q).'%');
         }
 
-        // Filtre par filière
-        if ($filiere) {
-            $qb->andWhere('LOWER(r.filiere) = :filiere')
-               ->setParameter('filiere', mb_strtolower($filiere));
-        }
-
-        // Filtre par matière
-        if ($matiere) {
-            $qb->andWhere('LOWER(r.matiere) = :matiere')
-               ->setParameter('matiere', mb_strtolower($matiere));
-        }
-
         // Filtre par type de fichier
         if ($typeFichier) {
             $qb->andWhere('r.typeFichier = :typeFichier')

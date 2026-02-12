@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Repository\RessourceRepository;
 use App\Repository\EvaluationRessourceRepository;
+use App\Repository\FicheFavoriRepository;
+use App\Repository\FicheModerateurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,7 +17,9 @@ class DashboardController extends AbstractController
 {
     public function __construct(
         private RessourceRepository $ressourceRepository,
-        private EvaluationRessourceRepository $evaluationRepository
+        private EvaluationRessourceRepository $evaluationRepository,
+        private FicheFavoriRepository $ficheFavoriRepository,
+        private FicheModerateurRepository $ficheModerateurRepository
     ) {
     }
 
@@ -27,10 +31,18 @@ class DashboardController extends AbstractController
         // Récupérer les statistiques de l'utilisateur
         $allEvaluations = $this->evaluationRepository->findBy(['utilisateur' => $user]);
         
+        // Récupérer les fiches favorites
+        $fichesFavorites = $this->ficheFavoriRepository->findBy(['utilisateur' => $user]);
+        
+        // Récupérer les fiches où l'utilisateur est modérateur/propriétaire
+        $fichesModerees = $this->ficheModerateurRepository->findBy(['utilisateur' => $user]);
+        
         $stats = [
             'totalEvaluations' => count(array_filter($allEvaluations, fn($e) => $e->hasRating())),
             'totalCommentaires' => count(array_filter($allEvaluations, fn($e) => $e->hasComment())),
             'totalFavoris' => count(array_filter($allEvaluations, fn($e) => $e->isEstFavori())),
+            'totalFichesFavorites' => count($fichesFavorites),
+            'totalFichesCrees' => count(array_filter($fichesModerees, fn($m) => $m->isOwner())),
         ];
         
         // Récupérer les dernières évaluations
@@ -47,18 +59,28 @@ class DashboardController extends AbstractController
             5
         );
         
-        // Récupérer les favoris récents
+        // Récupérer les favoris récents (ressources)
         $recentFavoris = array_slice(
             array_filter($allEvaluations, fn($e) => $e->isEstFavori()),
             0,
             6
         );
+        
+        // Récupérer les fiches favorites récentes
+        $recentFichesFavorites = array_slice($fichesFavorites, 0, 6);
+        
+        // Récupérer les fiches créées récemment
+        $fichesCrees = array_filter($fichesModerees, fn($m) => $m->isOwner());
+        usort($fichesCrees, fn($a, $b) => $b->getFiche()->getCreatedAt() <=> $a->getFiche()->getCreatedAt());
+        $recentFichesCrees = array_slice($fichesCrees, 0, 6);
 
         return $this->render('dashboard/index.html.twig', [
             'stats' => $stats,
             'recentEvaluations' => $recentEvaluations,
             'recentComments' => $recentComments,
             'recentFavoris' => $recentFavoris,
+            'recentFichesFavorites' => $recentFichesFavorites,
+            'recentFichesCrees' => $recentFichesCrees,
         ]);
     }
 
@@ -116,14 +138,21 @@ class DashboardController extends AbstractController
     {
         $user = $this->getUser();
         
-        // Récupérer toutes les évaluations marquées comme favoris
+        // Récupérer toutes les évaluations marquées comme favoris (ressources)
         $favorisEvaluations = $this->evaluationRepository->findBy(
             ['utilisateur' => $user, 'estFavori' => true],
             ['dateFavori' => 'DESC']
         );
+        
+        // Récupérer les fiches favorites
+        $fichesFavorites = $this->ficheFavoriRepository->findBy(
+            ['utilisateur' => $user],
+            ['createdAt' => 'DESC']
+        );
 
         return $this->render('dashboard/favoris.html.twig', [
             'favoris' => $favorisEvaluations,
+            'fichesFavorites' => $fichesFavorites,
         ]);
     }
     

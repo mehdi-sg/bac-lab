@@ -25,8 +25,8 @@ class BibliothequeController extends AbstractController
         $filiere = $request->query->get('filiere');
         $matiere = $request->query->get('matiere');
 
-        // Find resources with filters
-        $ressources = $ressourceRepository->findPublicRessources($q, $typeFichier, $categorie);
+        // Find resources with filters (correct parameter order)
+        $ressources = $ressourceRepository->findPublicRessources($q, $filiere, $matiere, $typeFichier, $categorie);
 
         return $this->render('bibliotheque/index.html.twig', [
             'ressources' => $ressources,
