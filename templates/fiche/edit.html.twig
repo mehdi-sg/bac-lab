@@ -1,5 +1,10 @@
 {% extends 'fiche/_layout.html.twig' %}
 
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('front/css/fiche-editor.css') }}">
+{% endblock %}
+
 {% block title %}✏️ Modifier la fiche{% endblock %}
 
 {% block fiche_title %}✏️ Modifier la fiche{% endblock %}
@@ -13,22 +18,64 @@
         <div class="card border-0 shadow-lg fiche-editor-shell">
             <div class="card-body p-4 p-lg-5">
 
-                {{ form_start(form) }}
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-                <!-- TOP: TITLE + STATS -->
+                <!-- TOP: TITLE + FILIERE + STATS -->
                 <div class="row g-3 align-items-end mb-4">
-                    <div class="col-lg-8">
-                        {{ form_label(form.title, '📌 Titre de la fiche', {
-                            'label_attr': {'class': 'form-label fw-semibold'}
-                        }) }}
+                    <div class="col-lg-5">
+                        <label for="{{ form.title.vars.id }}" class="form-label fw-semibold">📌 Titre de la fiche</label>
                         {{ form_widget(form.title, {
                             'attr': {
                                 'class': 'form-control form-control-lg fiche-input',
                                 'placeholder': 'Ex: Dérivation, Suites, Probabilités...'
                             }
                         }) }}
-                        <div class="form-text">
-                            Un titre clair = une fiche retrouvée plus vite.
+                        {{ form_errors(form.title) }}
+                        {% if not form.title.vars.valid %}
+                        {% else %}
+                            <div class="form-text">
+                                Un titre clair = une fiche retrouvée plus vite.
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-lg-3">
+                        <label class="form-label fw-semibold">🎓 Filière</label>
+                        <div class="fiche-form-select-wrapper">
+                            <select name="{{ form.filiere.vars.full_name }}" id="filiere_native" class="fiche-form-select-native">
+                                <option value="">Sélectionnez une filière</option>
+                                {% for choice in form.filiere.vars.choices %}
+                                    <option value="{{ choice.value }}" {{ form.filiere.vars.value == choice.value ? 'selected' : '' }}>
+                                        {{ choice.label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <div class="fiche-form-select-custom" id="filiere_form_custom">
+                                <div class="fiche-form-select-trigger">
+                                    <span class="fiche-form-select-value">
+                                        {% if form.filiere.vars.value %}
+                                            {% for choice in form.filiere.vars.choices %}
+                                                {% if choice.value == form.filiere.vars.value %}
+                                                    {{ choice.label }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            Sélectionnez une filière
+                                        {% endif %}
+                                    </span>
+                                    <i class="fa fa-chevron-down fiche-form-select-arrow"></i>
+                                </div>
+                                <div class="fiche-form-select-dropdown">
+                                    <div class="fiche-form-select-option {{ form.filiere.vars.value == '' ? 'selected' : '' }}" data-value="">
+                                        Sélectionnez une filière
+                                    </div>
+                                    {% for choice in form.filiere.vars.choices %}
+                                        <div class="fiche-form-select-option {{ form.filiere.vars.value == choice.value ? 'selected' : '' }}" data-value="{{ choice.value }}">
+                                            {{ choice.label }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -56,23 +103,23 @@
                         <span class="chip-ico">⚠️</span><span class="chip-txt">Important</span><span class="chip-kbd">Ctrl+1</span>
                     </button>
 
-                    <button type="button" class="chip chip-info" onclick="insertText('>> Exemple\n')">
+                    <button type="button" class="chip chip-info" onclick="insertText('>> Exemple\\n')">
                         <span class="chip-ico">📘</span><span class="chip-txt">Exemple</span><span class="chip-kbd">Ctrl+2</span>
                     </button>
 
-                    <button type="button" class="chip chip-good" onclick="insertText('!!+ Astuce\n')">
+                    <button type="button" class="chip chip-good" onclick="insertText('!!+ Astuce\\n')">
                         <span class="chip-ico">💡</span><span class="chip-txt">Astuce</span><span class="chip-kbd">Ctrl+3</span>
                     </button>
 
-                    <button type="button" class="chip chip-bad" onclick="insertText('!!- Piège\n')">
+                    <button type="button" class="chip chip-bad" onclick="insertText('!!- Piège\\n')">
                         <span class="chip-ico">🚫</span><span class="chip-txt">Piège</span><span class="chip-kbd">Ctrl+4</span>
                     </button>
 
-                    <button type="button" class="chip chip-ques" onclick="insertText('?? Question\n')">
+                    <button type="button" class="chip chip-ques" onclick="insertText('?? Question\\n')">
                         <span class="chip-ico">❓</span><span class="chip-txt">Question</span><span class="chip-kbd">Ctrl+5</span>
                     </button>
 
-                    <button type="button" class="chip chip-sec" onclick="insertText('== Section\n')">
+                    <button type="button" class="chip chip-sec" onclick="insertText('== Section\\n')">
                         <span class="chip-ico">🧩</span><span class="chip-txt">Section</span><span class="chip-kbd">Ctrl+6</span>
                     </button>
 
@@ -89,7 +136,7 @@
                         <div class="fiche-help-title">🧠 Syntaxe pédagogique</div>
                         <div class="fiche-help-grid">
                             <div class="help-item"><span class="badge bg-warning text-dark">!!</span> Notion importante / définition</div>
-                            <div class="help-item"><span class="badge bg-info text-dark">&gt;&gt;</span> Exemple / application</div>
+                            <div class="help-item"><span class="badge bg-info text-dark">>></span> Exemple / application</div>
                             <div class="help-item"><span class="badge bg-success">!!+</span> Astuce / méthode</div>
                             <div class="help-item"><span class="badge bg-danger">!!-</span> Piège / erreur fréquente</div>
                             <div class="help-item"><span class="badge bg-primary">??</span> Question à retenir</div>
@@ -117,7 +164,6 @@
                                 <div class="fiche-panel-hint">Structure en sections, ajoute des exemples.</div>
                             </div>
 
-                            {# Force the textarea id so JS always finds it #}
                             {{ form_widget(form.content, {
                                 'attr': {
                                     'class': 'form-control fiche-textarea2',
@@ -126,9 +172,10 @@
                                     'placeholder': "== Notions clés\n!! Définition...\n>> Exemple...\n- Point 1\n- Point 2\n\nAstuce: **important** et `termes`"
                                 }
                             }) }}
+                            {{ form_errors(form.content) }}
 
                             <div class="fiche-mini-hint">
-                                Tip: <code>==</code> pour structurer. <code>&gt;&gt;</code> pour donner des exemples.
+                                Tip: <code>==</code> pour structurer. <code>>></code> pour donner des exemples.
                             </div>
                         </div>
                     </div>
@@ -151,29 +198,39 @@
 
                 <!-- BOTTOM BAR -->
                 <div class="fiche-bottombar mt-4">
-                    <div class="d-flex gap-2 flex-wrap">
-                        <a href="{{ path('fiche_show', {id: fiche.id}) }}" class="btn btn-outline-secondary">
-                            ← Annuler
-                        </a>
-                        <a href="{{ path('fiche_history', {id: fiche.id}) }}" class="btn btn-outline-primary">
-                            🕒 Historique
-                        </a>
-                    </div>
-
-                    <div class="d-flex gap-3 align-items-center flex-wrap">
-                        {% if form.isPublic is defined %}
-                            <div class="form-check mb-0 fiche-public-check">
-                                {{ form_widget(form.isPublic, {'attr': {'class': 'form-check-input'}}) }}
-                                {{ form_label(form.isPublic, 'Fiche publique', {'label_attr': {'class': 'form-check-label'}}) }}
-                            </div>
-                        {% endif %}
-
-                        <button class="btn btn-primary px-4">
-                            💾 Enregistrer
-                        </button>
+                    <div class="d-flex gap-3 flex-wrap align-items-center justify-content-between">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{{ path('fiche_show', {id: fiche.id}) }}" class="btn btn-glass btn-glass-secondary">
+                                ← Annuler
+                            </a>
+                            <a href="{{ path('fiche_history', {id: fiche.id}) }}" class="btn btn-glass btn-glass-secondary">
+                                🕒 Historique
+                            </a>
+                            
+                            <!-- CHECKBOX PERSONNALISÉ POUR FICHE PUBLIQUE -->
+                            {% if form.isPublic is defined %}
+                                <div class="form-check-custom ms-xl-2">
+                                    {{ form_widget(form.isPublic, {
+                                        'attr': {
+                                            'class': 'form-check-input fiche-public-checkbox',
+                                            'id': 'fiche_isPublic'
+                                        }
+                                    }) }}
+                                    <label for="fiche_isPublic" class="form-check-label fiche-public-label">🌐 Fiche publique</label>
+                                    <div class="fiche-public-hint">Visible par tous les utilisateurs</div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex gap-3 align-items-center flex-wrap">
+                            <button class="btn btn-glass btn-glass-primary" type="submit" id="submitBtn">
+                                💾 Enregistrer
+                            </button>
+                        </div>
                     </div>
                 </div>
 
+                {% do form.filiere.setRendered %}
                 {{ form_end(form) }}
 
             </div>
@@ -187,4 +244,40 @@
 {% block js %}
     {{ parent() }}
     <script src="{{ asset('front/js/fiche-editor.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Custom Form Select for Filiere
+            const customSelect = document.getElementById('filiere_form_custom');
+            const nativeSelect = document.getElementById('filiere_native');
+            
+            if (customSelect && nativeSelect) {
+                const trigger = customSelect.querySelector('.fiche-form-select-trigger');
+                const valueDisplay = customSelect.querySelector('.fiche-form-select-value');
+                const dropdown = customSelect.querySelector('.fiche-form-select-dropdown');
+                const options = dropdown.querySelectorAll('.fiche-form-select-option');
+                
+                trigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    customSelect.classList.toggle('active');
+                });
+                
+                options.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const value = this.dataset.value;
+                        nativeSelect.value = value;
+                        valueDisplay.textContent = this.textContent.replace('✓ ', '');
+                        options.forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+                        customSelect.classList.remove('active');
+                    });
+                });
+                
+                document.addEventListener('click', function(e) {
+                    if (!customSelect.contains(e.target)) {
+                        customSelect.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
 {% endblock %}

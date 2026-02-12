@@ -2,11 +2,6 @@
 
 {% block title %}Mes fiches - BAC Lab{% endblock %}
 
-{% block css %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('front/css/fiche.css') }}">
-{% endblock %}
-
 {% block body_class %}fiche-my-fiches-page{% endblock %}
 
 {% block fiche_title %}{% endblock %}
@@ -104,74 +99,17 @@
                     <a href="{{ path('fiche_edit', {'id': fiche.id}) }}" class="fiche-btn fiche-btn-secondary">
                         <i class="fa fa-edit"></i>
                     </a>
-                    <button type="button" class="fiche-btn fiche-btn-danger" data-toggle="modal" data-target="#deleteModal{{ fiche.id }}">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Delete Modal -->
-            <div class="fiche-modal-overlay" id="deleteModal{{ fiche.id }}" tabindex="-1" role="dialog">
-                <div class="fiche-modal">
-                    <div class="fiche-modal-header" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
-                        <h5 class="mb-0">
-                            <i class="fa fa-exclamation-triangle mr-2"></i>
-                            Confirmer la suppression
-                        </h5>
-                    </div>
-                    <div class="fiche-modal-body">
-                        <i class="fa fa-trash fa-4x text-danger opacity-50 mb-3 d-block"></i>
-                        <p class="mb-1">Êtes-vous sûr de vouloir supprimer cette fiche ?</p>
-                        <h6 class="text-success" style="color: #11998e !important;">{{ fiche.title }}</h6>
-                        <p class="text-danger mt-3 mb-0">
-                            <small><i class="fa fa-exclamation-circle mr-1"></i>Cette action est irréversible.</small>
-                        </p>
-                    </div>
-                    <div class="fiche-modal-footer">
-                        <button type="button" class="fiche-btn fiche-btn-secondary" data-dismiss="modal">
-                            <i class="fa fa-times mr-1"></i>Annuler
+                    <form action="{{ path('fiche_delete', {'id': fiche.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette fiche ? Cette action est irréversible.');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_fiche_' ~ fiche.id) }}">
+                        <button type="submit" class="fiche-btn fiche-btn-danger">
+                            <i class="fa fa-trash"></i>
                         </button>
-                        <form action="{{ path('fiche_delete', {'id': fiche.id}) }}" method="post" class="d-inline">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_fiche_' ~ fiche.id) }}">
-                            <button type="submit" class="fiche-btn fiche-btn-danger">
-                                <i class="fa fa-trash mr-1"></i>Supprimer
-                            </button>
-                        </form>
-                    </div>
+                    </form>
                 </div>
             </div>
         {% endfor %}
     </div>
 {% endif %}
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Modal handling
-    const modals = document.querySelectorAll('.fiche-modal-overlay');
-    modals.forEach(modal => {
-        const closeBtn = modal.querySelector('[data-dismiss="modal"]');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                modal.classList.remove('active');
-            });
-        }
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('active');
-            }
-        });
-    });
-    
-    // Open modal on button click
-    const deleteButtons = document.querySelectorAll('[data-target^="#deleteModal"]');
-    deleteButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const target = btn.getAttribute('data-target');
-            document.querySelector(target).classList.add('active');
-        });
-    });
-});
-</script>
 
 <style>
 .fiche-my-fiches-page .fiche-page{

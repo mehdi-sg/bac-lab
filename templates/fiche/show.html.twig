@@ -1,56 +1,62 @@
 {% extends 'fiche/_layout.html.twig' %}
 
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('front/css/fiche-show.css') }}">
+{% endblock %}
+
 {% block title %}{{ fiche.title }} - BAC Lab{% endblock %}
 
 {% block fiche_title %}
-    <div class="fiche-hero-title">
+    <div class="fiche-title-icon">
         <i class="fa fa-graduation-cap"></i>
-        <span>{{ fiche.title }}</span>
     </div>
+    <span class="fiche-title-text">{{ fiche.title }}</span>
 {% endblock %}
 
 {% block fiche_subtitle %}
-    <div class="fiche-hero-subtitle">
-        {% if is_moderateur %}
-            <span class="fiche-card-badge me-2">
-                <i class="fa fa-check-circle"></i>Vous êtes modérateur
-            </span>
-        {% endif %}
-        {% if is_favorited %}
-            <span class="fiche-card-badge me-2" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #ef4444;">
-                <i class="fa fa-heart"></i>Favori
-            </span>
-        {% endif %}
-        <span class="fiche-card-date">
-            <i class="fa fa-calendar-alt"></i>
-            {{ fiche.createdAt|date('d/m/Y') }}
+    {% if is_moderateur %}
+        <span class="fiche-card-badge me-2">
+            <i class="fa fa-check-circle"></i>Vous êtes modérateur
         </span>
-    </div>
+    {% endif %}
+    {% if is_favorited %}
+        <span class="fiche-card-badge me-2" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #ef4444;">
+            <i class="fa fa-heart"></i>Favori
+        </span>
+    {% endif %}
+    <span class="fiche-card-date">
+        <i class="fa fa-calendar-alt"></i>
+        {{ fiche.createdAt|date('d/m/Y') }}
+    </span>
 {% endblock %}
 
 {% block fiche_header_actions %}
-    <div class="fiche-header-actions">
-        <a href="{{ path('fiche_index') }}" class="fiche-btn fiche-btn-secondary rounded-pill">
-            <i class="fa fa-arrow-left"></i>Retour
+    <a href="{{ path('fiche_index') }}" class="fiche-btn fiche-btn-secondary rounded-pill">
+        <i class="fa fa-arrow-left"></i>Retour
+    </a>
+    {% if app.user %}
+        <form action="{{ path('fiche_toggle_favorite', {'id': fiche.id}) }}" method="post" class="d-inline">
+            <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite_' ~ fiche.id) }}">
+            <button type="submit" class="fiche-btn {{ is_favorited ? 'fiche-btn-favorite-active' : 'fiche-btn-favorite' }} rounded-pill">
+                <i class="fa {{ is_favorited ? 'fa-heart' : 'fa-heart-o' }}"></i>
+                {{ is_favorited ? 'Retirer' : 'Favoris' }}
+            </button>
+        </form>
+    {% endif %}
+    {% if app.user and (fiche.isPublic or is_moderateur) %}
+        <a href="{{ path('fiche_edit', {id: fiche.id}) }}" class="fiche-btn fiche-btn-primary rounded-pill">
+            <i class="fa fa-edit"></i>Modifier
         </a>
-        {% if app.user %}
-            <form action="{{ path('fiche_toggle_favorite', {'id': fiche.id}) }}" method="post" class="d-inline">
-                <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite_' ~ fiche.id) }}">
-                <button type="submit" class="fiche-btn {{ is_favorited ? 'fiche-btn-danger' : 'fiche-btn-primary' }} rounded-pill">
-                    <i class="fa {{ is_favorited ? 'fa-heart' : 'fa-heart-o' }}"></i>
-                    {{ is_favorited ? 'Retirer' : 'Favoris' }}
-                </button>
-            </form>
-        {% endif %}
-        {% if is_moderateur %}
-            <a href="{{ path('fiche_edit', {id: fiche.id}) }}" class="fiche-btn fiche-btn-primary rounded-pill">
-                <i class="fa fa-edit"></i>Modifier
-            </a>
-            <button type="button" class="fiche-btn fiche-btn-danger rounded-pill" data-toggle="modal" data-target="#deleteModal">
+    {% endif %}
+    {% if is_owner %}
+        <form action="{{ path('fiche_delete', {'id': fiche.id}) }}" method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette fiche ? Cette action est irréversible.');">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete_fiche_' ~ fiche.id) }}">
+            <button type="submit" class="fiche-btn fiche-btn-danger rounded-pill">
                 <i class="fa fa-trash"></i>
             </button>
-        {% endif %}
-    </div>
+        </form>
+    {% endif %}
 {% endblock %}
 
 {% block fiche_content %}
@@ -67,7 +73,7 @@
         </div>
         <div class="banner-avatars">
             {% for moderateur in moderateurs_list|slice(0, 5) %}
-                <div class="avatar" data-toggle="tooltip" title="
+                <div class="avatar" title="
                     {% if moderateur.utilisateur and moderateur.utilisateur.profil %}
                         {{ moderateur.utilisateur.profil.nom }} {{ moderateur.utilisateur.profil.prenom }}
                     {% elseif moderateur.utilisateur %}
@@ -91,7 +97,7 @@
             {% endif %}
         </div>
         <div class="banner-actions">
-            <button class="fiche-btn fiche-btn-primary rounded-pill btn-sm" data-toggle="collapse" data-target="#moderatorsList">
+            <button class="fiche-btn fiche-btn-primary rounded-pill btn-sm" data-bs-toggle="collapse" data-bs-target="#moderatorsList">
                 <i class="fa fa-eye"></i>Voir tout
             </button>
         </div>
@@ -154,19 +160,8 @@
             <h3 class="fiche-card-title mt-3">Contenu de la fiche</h3>
         </div>
         <div class="fiche-card-body">
-            <div class="fiche-content">
-                {{
-                    fiche.content
-                    |nl2br
-                    |replace({
-                        '!!': '<div class="fiche-block fiche-warning"><strong>⚠️ </strong>',
-                        '>>': '<div class="fiche-block fiche-example"><strong>💡 Exemple :</strong> '
-                    })
-                    |replace({
-                        '</div><br />': '</div>'
-                    })
-                    |raw
-                }}
+            <div class="fiche-content" id="ficheContent">
+                {{ fiche.content|raw }}
             </div>
         </div>
     </div>
@@ -216,7 +211,7 @@
                         {% if join_requests_list is empty %}
                             <div class="fiche-empty-mini">
                                 <i class="fa fa-check-circle"></i>
-                                <p>Aucune demande en attente</p>
+                                <p>Aucunes demandes en attente</p>
                             </div>
                         {% else %}
                             {% for request in join_requests_list %}
@@ -325,46 +320,6 @@
     </div>
 </div>
 
-<!-- Delete Modal -->
-{% if is_moderateur %}
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content border-0 shadow-lg" style="background: var(--dark); border-radius: var(--radius-lg);">
-                <div class="modal-header" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
-                    <h5 class="modal-title" id="deleteModalLabel">
-                        <i class="fa fa-exclamation-triangle mr-2"></i>
-                        Confirmer la suppression
-                    </h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: none; border: none; font-size: 1.5rem;">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" style="padding: 2rem;">
-                    <div class="text-center mb-3">
-                        <i class="fa fa-trash fa-4x text-danger" style="opacity: 0.5;"></i>
-                    </div>
-                    <p class="text-center" style="color: var(--text-secondary);">Êtes-vous sûr de vouloir supprimer cette fiche ?</p>
-                    <h6 class="text-center" style="color: var(--primary);">{{ fiche.title }}</h6>
-                    <p class="text-danger text-center mt-3 mb-0">
-                        <small><i class="fa fa-exclamation-circle mr-1"></i>Cette action est irréversible</small>
-                    </p>
-                </div>
-                <div class="modal-footer border-0" style="padding: 1rem 2rem 2rem;">
-                    <button type="button" class="fiche-btn fiche-btn-secondary rounded-pill" data-dismiss="modal">
-                        <i class="fa fa-times"></i>Annuler
-                    </button>
-                    <form action="{{ path('fiche_delete', {'id': fiche.id}) }}" method="post" class="d-inline">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete_fiche_' ~ fiche.id) }}">
-                        <button type="submit" class="fiche-btn fiche-btn-danger rounded-pill">
-                            <i class="fa fa-trash"></i>Supprimer
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endif %}
-
 {% endblock %}
 
 {% block stylesheets %}
@@ -373,14 +328,6 @@
     /* =========================================================
        SHOW PAGE SPECIFIC STYLES
        ========================================================= */
-    
-    /* Header Actions */
-    .fiche-header-actions {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-    }
     
     /* Moderators Banner */
     .fiche-moderators-banner {
@@ -743,11 +690,6 @@
     
     /* Responsive */
     @media (max-width: 991px) {
-        .fiche-header-actions {
-            justify-content: center;
-            margin-top: 1rem;
-        }
-        
         .fiche-hero-title {
             font-size: 2rem;
             flex-direction: column;
@@ -794,4 +736,196 @@
         }
     }
 </style>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const contentDiv = document.getElementById('ficheContent');
+            if (contentDiv) {
+                const rawContent = contentDiv.textContent;
+                contentDiv.innerHTML = parseFicheContent(rawContent);
+            }
+            
+            function parseFicheContent(content) {
+                // Escape HTML to prevent XSS
+                const escapeHtml = (text) => {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                };
+                
+                const lines = content.split('\n');
+                let html = '';
+                let inBlock = false;
+                let blockType = '';
+                let blockContent = '';
+                
+                for (let line of lines) {
+                    line = line.trim();
+                    
+                    // Section headers
+                    if (line.startsWith('== ')) {
+                        if (inBlock) {
+                            html += closeBlock(blockType, blockContent);
+                            inBlock = false;
+                        }
+                        html += `<div class="fiche-section-header"><span class="section-icon">🧩</span>${escapeHtml(line.substring(3))}</div>`;
+                        continue;
+                    }
+                    
+                    // Important/Definition blocks
+                    if (line.startsWith('!! ')) {
+                        if (inBlock && blockType !== 'definition') {
+                            html += closeBlock(blockType, blockContent);
+                            blockContent = '';
+                        }
+                        if (!inBlock || blockType !== 'definition') {
+                            inBlock = true;
+                            blockType = 'definition';
+                        }
+                        blockContent += escapeHtml(line.substring(3)) + '<br>';
+                        continue;
+                    }
+                    
+                    // Example blocks
+                    if (line.startsWith('>> ')) {
+                        if (inBlock && blockType !== 'example') {
+                            html += closeBlock(blockType, blockContent);
+                            blockContent = '';
+                        }
+                        if (!inBlock || blockType !== 'example') {
+                            inBlock = true;
+                            blockType = 'example';
+                        }
+                        blockContent += escapeHtml(line.substring(3)) + '<br>';
+                        continue;
+                    }
+                    
+                    // Tip blocks
+                    if (line.startsWith('!!+ ')) {
+                        if (inBlock && blockType !== 'tip') {
+                            html += closeBlock(blockType, blockContent);
+                            blockContent = '';
+                        }
+                        if (!inBlock || blockType !== 'tip') {
+                            inBlock = true;
+                            blockType = 'tip';
+                        }
+                        blockContent += escapeHtml(line.substring(4)) + '<br>';
+                        continue;
+                    }
+                    
+                    // Trap blocks
+                    if (line.startsWith('!!- ')) {
+                        if (inBlock && blockType !== 'trap') {
+                            html += closeBlock(blockType, blockContent);
+                            blockContent = '';
+                        }
+                        if (!inBlock || blockType !== 'trap') {
+                            inBlock = true;
+                            blockType = 'trap';
+                        }
+                        blockContent += escapeHtml(line.substring(4)) + '<br>';
+                        continue;
+                    }
+                    
+                    // Question blocks
+                    if (line.startsWith('?? ')) {
+                        if (inBlock && blockType !== 'question') {
+                            html += closeBlock(blockType, blockContent);
+                            blockContent = '';
+                        }
+                        if (!inBlock || blockType !== 'question') {
+                            inBlock = true;
+                            blockType = 'question';
+                        }
+                        blockContent += escapeHtml(line.substring(3)) + '<br>';
+                        continue;
+                    }
+                    
+                    // List items
+                    if (line.startsWith('- ')) {
+                        if (inBlock) {
+                            html += closeBlock(blockType, blockContent);
+                            inBlock = false;
+                        }
+                        html += `<div class="fiche-list-item"><span class="list-arrow">→</span>${processInline(escapeHtml(line.substring(2)))}</div>`;
+                        continue;
+                    }
+                    
+                    // Empty line - close block
+                    if (line === '') {
+                        if (inBlock) {
+                            html += closeBlock(blockType, blockContent);
+                            inBlock = false;
+                            blockContent = '';
+                        }
+                        html += '<br>';
+                        continue;
+                    }
+                    
+                    // Regular paragraph
+                    if (inBlock) {
+                        blockContent += escapeHtml(line) + '<br>';
+                    } else {
+                        html += `<p class="fiche-paragraph">${processInline(escapeHtml(line))}</p>`;
+                    }
+                }
+                
+                // Close any remaining block
+                if (inBlock) {
+                    html += closeBlock(blockType, blockContent);
+                }
+                
+                return html;
+            }
+            
+            function closeBlock(type, content) {
+                const icons = {
+                    'definition': '⚠️',
+                    'example': '📘',
+                    'tip': '💡',
+                    'trap': '🚫',
+                    'question': '❓'
+                };
+                
+                const titles = {
+                    'definition': 'Important',
+                    'example': 'Exemple',
+                    'tip': 'Astuce',
+                    'trap': 'Piège',
+                    'question': 'Question'
+                };
+                
+                return `<div class="fiche-block fiche-${type}">
+                    <div class="block-header">
+                        <span class="block-icon">${icons[type]}</span>
+                        <span class="block-title">${titles[type]}</span>
+                    </div>
+                    <div class="block-content">${processInline(content)}</div>
+                </div>`;
+            }
+            
+            function processInline(text) {
+                // Bold: **text**
+                text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+                
+                // Italic: _text_
+                text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
+                
+                // Code: `text`
+                text = text.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+                
+                // Keywords: [[text]]
+                text = text.replace(/\[\[([^\]]+)\]\]/g, '<mark class="keyword">$1</mark>');
+                
+                // Arrow: ->
+                text = text.replace(/->/g, '<span class="arrow">→</span>');
+                
+                return text;
+            }
+        });
+    </script>
 {% endblock %}

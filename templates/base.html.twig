@@ -10,22 +10,24 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('front/img/favicon.ico') }}">
 
     {% block css %}
-        <link rel="stylesheet" href="{{ asset('front/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/owl.carousel.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/slicknav.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/flaticon.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/progressbar_barfiller.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/gijgo.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/animate.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/animated-headline.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/magnific-popup.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/fontawesome-all.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/themify-icons.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/slick.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/nice-select.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/slicknav.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/flaticon.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/progressbar_barfiller.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/gijgo.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/animate.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/animated-headline.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/magnific-popup.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/fontawesome-all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/themify-icons.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/slick.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/nice-select.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
+    {% endblock %}
+
+    {% block inline_css %}
         <style>
-            /* Notification Bell - Site Matching Style */
             .notification-bell {
                 position: relative;
                 display: flex;
@@ -241,8 +243,6 @@
     <main>
         {% block body %}{% endblock %}
     </main>
-
-    {% include 'components/chatbot.html.twig' %}
 
     <footer>
         <div class="footer-wrappper footer-bg">

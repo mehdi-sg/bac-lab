@@ -55,6 +55,11 @@ class FicheController extends AbstractController
         // Get user ID if logged in
         $userId = $user instanceof Utilisateur ? $user->getId() : null;
         
+        // If user is not connected, only show public fiches
+        if (!$userId) {
+            $filters['public_only'] = true;
+        }
+        
         // Get filtered fiches with pagination
         [$fiches, $totalCount] = $ficheRepository->findByFiltersWithPagination($filters, $userId, $page, $limit);
         
@@ -148,6 +153,12 @@ class FicheController extends AbstractController
         /** @var Utilisateur|null $user */
         $user = $this->getUser();
         
+        // If user is not connected and fiche is not public, deny access
+        if (!$user && !$fiche->isPublic()) {
+            $this->addFlash('warning', 'Cette fiche est privée. Veuillez vous connecter.');
+            return $this->redirectToRoute('app_login');
+        }
+        
         $isModerateur = false;
         $isOwner = false;
         $isFavorited = false;
@@ -205,7 +216,7 @@ class FicheController extends AbstractController
     }
 
     // =============================
-    // EDIT — Co-edition + versioning (moderateurs only)
+    // EDIT — Co-edition + versioning (moderateurs only for private, all users for public)
     // =============================
     #[Route('/{id}/edit', name: 'fiche_edit', methods: ['GET', 'POST'])]
     public function edit(
@@ -217,15 +228,19 @@ class FicheController extends AbstractController
         /** @var Utilisateur|null $user */
         $user = $this->getUser();
         
-        // Check if user is moderateur of this fiche
+        // Check if user is logged in
         if (!$user instanceof Utilisateur) {
             return $this->redirectToRoute('app_login');
         }
         
-        $moderateur = $ficheModerateurRepository->findByFicheAndUtilisateur($fiche->getId(), $user->getId());
-        if (!$moderateur) {
-            $this->addFlash('danger', 'Vous n\'êtes pas autorisé à modifier cette fiche.');
-            return $this->redirectToRoute('fiche_show', ['id' => $fiche->getId()]);
+        // For public fiches, all logged-in users can edit
+        // For private fiches, only moderators can edit
+        if (!$fiche->isPublic()) {
+            $moderateur = $ficheModerateurRepository->findByFicheAndUtilisateur($fiche->getId(), $user->getId());
+            if (!$moderateur) {
+                $this->addFlash('danger', 'Vous n\'êtes pas autorisé à modifier cette fiche privée.');
+                return $this->redirectToRoute('fiche_show', ['id' => $fiche->getId()]);
+            }
         }
         
         // Save old content BEFORE edit
@@ -240,11 +255,21 @@ class FicheController extends AbstractController
             $version = new FicheVersion();
             $version->setContent($oldContent);
             $version->setEditedAt(new \DateTimeImmutable());
-            $version->setEditorName('Utilisateur'); // later: real user
+            
+            // Get editor name
+            $editorName = 'Utilisateur';
+            if ($user->getProfil() !== null) {
+                $editorName = $user->getProfil()->getNom() . ' ' . $user->getProfil()->getPrenom();
+            } else {
+                $editorName = $user->getEmail();
+            }
+            $version->setEditorName($editorName);
             $version->setFiche($fiche);
 
             $em->persist($version);
             $em->flush();
+
+            $this->addFlash('success', 'La fiche a été modifiée avec succès.');
 
             return $this->redirectToRoute('fiche_show', [
                 'id' => $fiche->getId()
@@ -290,7 +315,7 @@ class FicheController extends AbstractController
     }
 
     // =============================
-    // DELETE — Delete a fiche (moderateurs only)
+    // DELETE — Delete a fiche (owner only)
     // =============================
     #[Route('/{id}/delete', name: 'fiche_delete', methods: ['POST'])]
     public function delete(Request $request, Fiche $fiche, FicheModerateurRepository $ficheModerateurRepository, EntityManagerInterface $em): Response
@@ -302,11 +327,11 @@ class FicheController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
         
-        // Check if user is moderateur of this fiche
+        // Check if user is owner of this fiche
         $moderateur = $ficheModerateurRepository->findByFicheAndUtilisateur($fiche->getId(), $user->getId());
-        if (!$moderateur) {
-            $this->addFlash('danger', 'Vous n\'êtes pas autorisé à supprimer cette fiche.');
-            return $this->redirectToRoute('fiche_index');
+        if (!$moderateur || !$moderateur->isOwner()) {
+            $this->addFlash('danger', 'Vous devez être le propriétaire pour supprimer cette fiche.');
+            return $this->redirectToRoute('fiche_show', ['id' => $fiche->getId()]);
         }
         
         if ($this->isCsrfTokenValid('delete_fiche_'.$fiche->getId(), $request->request->get('_token'))) {
@@ -604,7 +629,7 @@ class FicheController extends AbstractController
         // CSRF check
         if (!$this->isCsrfTokenValid('toggle_favorite_' . $fiche->getId(), $request->request->get('_token'))) {
             $this->addFlash('danger', 'Token CSRF invalide.');
-            return $this->redirectToRoute('fiche_show', ['id' => $fiche->getId()]);
+            return $this->redirectToRoute('fiche_index');
         }
 
         /** @var Utilisateur|null $user */
@@ -614,31 +639,37 @@ class FicheController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // Check if already favorited
-        $existingFavori = $ficheFavoriRepository->findOneByFicheAndUtilisateur($fiche->getId(), $user->getId());
+        try {
+            // Check if already favorited
+            $existingFavori = $ficheFavoriRepository->findOneByFicheAndUtilisateur($fiche->getId(), $user->getId());
 
-        if ($existingFavori) {
-            // Remove from favorites
-            $em->remove($existingFavori);
-            $em->flush();
-            $this->addFlash('success', 'La fiche a été retirée de vos favoris.');
-        } else {
-            // Add to favorites
-            $favori = new FicheFavori();
-            $favori->setFiche($fiche);
-            $favori->setUtilisateur($user);
-            $em->persist($favori);
-            $em->flush();
-            $this->addFlash('success', 'La fiche a été ajoutée à vos favoris.');
+            if ($existingFavori) {
+                // Remove from favorites
+                $em->remove($existingFavori);
+                $em->flush();
+                $this->addFlash('success', 'La fiche a été retirée de vos favoris.');
+            } else {
+                // Add to favorites
+                $favori = new FicheFavori();
+                $favori->setFiche($fiche);
+                $favori->setUtilisateur($user);
+                $em->persist($favori);
+                $em->flush();
+                $this->addFlash('success', 'La fiche a été ajoutée à vos favoris.');
+            }
+        } catch (\Exception $e) {
+            $this->addFlash('danger', 'Une erreur est survenue. Veuillez réessayer.');
+            // Log the error for debugging
+            error_log('Toggle favorite error: ' . $e->getMessage());
         }
 
-        // Redirect back to the referring page or show page
+        // Redirect back to the referring page or index page
         $referer = $request->headers->get('referer');
-        if ($referer) {
+        if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
             return $this->redirect($referer);
         }
 
-        return $this->redirectToRoute('fiche_show', ['id' => $fiche->getId()]);
+        return $this->redirectToRoute('fiche_index');
     }
 
     // =============================

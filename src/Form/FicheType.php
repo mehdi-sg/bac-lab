@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 class FicheType extends AbstractType
 {
@@ -24,6 +24,17 @@ class FicheType extends AbstractType
                     'placeholder' => 'Entrez le titre de la fiche',
                     'class' => 'form-control',
                     'maxlength' => 255
+                ],
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Le titre est obligatoire.'
+                    ]),
+                    new Assert\Length([
+                        'min' => 3,
+                        'max' => 255,
+                        'minMessage' => 'Le titre doit contenir au moins {{ limit }} caractères.',
+                        'maxMessage' => 'Le titre ne peut pas dépasser {{ limit }} caractères.'
+                    ])
                 ]
             ])
             ->add('content', TextareaType::class, [
@@ -33,6 +44,17 @@ class FicheType extends AbstractType
                     'class' => 'form-control',
                     'rows' => 10,
                     'maxlength' => 10000
+                ],
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Le contenu est obligatoire.'
+                    ]),
+                    new Assert\Length([
+                        'min' => 20,
+                        'max' => 10000,
+                        'minMessage' => 'Le contenu doit contenir au moins {{ limit }} caractères pour être utile.',
+                        'maxMessage' => 'Le contenu ne peut pas dépasser {{ limit }} caractères.'
+                    ])
                 ]
             ])
             ->add('isPublic', CheckboxType::class, [
@@ -55,7 +77,6 @@ class FicheType extends AbstractType
                 ]
             ])
         ;
-
     }
 
     public function configureOptions(OptionsResolver $resolver): void
