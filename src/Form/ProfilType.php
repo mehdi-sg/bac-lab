@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ProfilType extends AbstractType
 {
@@ -20,9 +21,31 @@ class ProfilType extends AbstractType
         $builder
             ->add('nom', TextType::class, [
                 'label' => 'Nom',
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Le nom est requis',
+                    ]),
+                    new Assert\Length([
+                        'min' => 2,
+                        'max' => 100,
+                        'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères',
+                        'maxMessage' => 'Le nom ne peut pas dépasser {{ limit }} caractères',
+                    ]),
+                ],
             ])
             ->add('prenom', TextType::class, [
                 'label' => 'Prénom',
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Le prénom est requis',
+                    ]),
+                    new Assert\Length([
+                        'min' => 2,
+                        'max' => 100,
+                        'minMessage' => 'Le prénom doit contenir au moins {{ limit }} caractères',
+                        'maxMessage' => 'Le prénom ne peut pas dépasser {{ limit }} caractères',
+                    ]),
+                ],
             ])
             ->add('dateNaissance', DateType::class, [
                 'label' => 'Date de naissance',
@@ -39,6 +62,11 @@ class ProfilType extends AbstractType
                     '5ème année' => '5ème année',
                     'M1' => 'M1',
                     'M2' => 'M2',
+                ],
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Le niveau est requis',
+                    ]),
                 ],
             ])
             ->add('filiere', EntityType::class, [
@@ -86,6 +114,11 @@ class ProfilType extends AbstractType
                     'Zaghouan' => 'Zaghouan',
                 ],
                 'placeholder' => false,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Le gouvernorat est requis',
+                    ]),
+                ],
             ]);
     }
 
