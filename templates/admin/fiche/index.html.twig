@@ -101,17 +101,21 @@
                     </td>
                     <td>
                         <div class="text-muted">
-                            <i class="fa-regular fa-calendar"></i>
-                            {{ fiche.createdAt|date('d/m/Y') }}
+                            <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+                            <span>{{ fiche.createdAt|date('d/m/Y') }}</span>
                         </div>
-                        <small class="text-muted">{{ fiche.createdAt|date('H:i') }}</small>
+                        <small class="text-muted" title="Heure de création">{{ fiche.createdAt|date('H:i') }}</small>
                     </td>
                     <td>
-                        <div class="text-muted">
-                            <i class="fa-regular fa-clock"></i>
-                            {{ fiche.updatedAt|date('d/m/Y') }}
-                        </div>
-                        <small class="text-muted">{{ fiche.updatedAt|date('H:i') }}</small>
+                        {% if fiche.updatedAt %}
+                            <div class="text-muted">
+                                <i class="fa-regular fa-clock" aria-hidden="true"></i>
+                                <span>{{ fiche.updatedAt|date('d/m/Y') }}</span>
+                            </div>
+                            <small class="text-muted" title="Heure de modification">{{ fiche.updatedAt|date('H:i') }}</small>
+                        {% else %}
+                            <span class="text-muted fst-italic">Jamais modifiée</span>
+                        {% endif %}
                     </td>
                     <td class="text-end">
                         <div class="btn-group">
