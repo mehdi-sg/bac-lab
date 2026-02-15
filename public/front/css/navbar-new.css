@@ -1,0 +1,889 @@
+/* ==========================================
+   ULTIMATE NAVBAR - STUNNING DESIGN & CENTERED
+   Enhanced colors matching home page theme
+   ========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary: #667eea;
+    --primary-dark: #764ba2;
+    --accent: #f093fb;
+    --neon-blue: #00d4ff;
+    --neon-purple: #b794f6;
+    --neon-pink: #ff6b9d;
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(0, 212, 255, 0.2);
+    --text-white: #ffffff;
+    --shadow-light: rgba(0, 212, 255, 0.1);
+    --shadow-medium: rgba(0, 212, 255, 0.2);
+    --shadow-heavy: rgba(0, 212, 255, 0.3);
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(183, 148, 246, 0.1) 100%);
+}
+
+/* Reset and Base */
+body {
+    padding-top: 80px !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* Header Container - FIXED & OPTIMIZED */
+.header-area.header-transparent {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 1000 !important;
+    background: linear-gradient(135deg, 
+        rgba(10, 10, 15, 0.98) 0%, 
+        rgba(26, 26, 46, 0.98) 30%,
+        rgba(22, 33, 62, 0.98) 70%, 
+        rgba(83, 52, 131, 0.98) 100%) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.2) !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+    min-height: 70px !important;
+}
+
+.header-area.header-transparent.sticky {
+    background: linear-gradient(135deg, 
+        rgba(10, 10, 15, 0.99) 0%, 
+        rgba(26, 26, 46, 0.99) 30%,
+        rgba(22, 33, 62, 0.99) 70%, 
+        rgba(83, 52, 131, 0.99) 100%) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2) !important;
+    border-bottom-color: rgba(0, 212, 255, 0.4) !important;
+}
+
+.header-area .header-bottom.header-sticky {
+    padding: 15px 0 !important;
+    transition: all 0.3s ease !important;
+    background: transparent !important;
+}
+
+.header-area.sticky .header-bottom.header-sticky {
+    padding: 12px 0 !important;
+}
+
+/* CONTAINER - FIXED WIDTH AND CENTERING */
+.header-area .container-fluid {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 20px !important;
+    width: 100% !important;
+}
+
+.header-area .row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+/* Logo - SIMPLIFIED */
+.header-area .logo {
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+}
+
+.header-area .logo img {
+    max-width: 80px !important;
+    height: auto !important;
+    transition: all 0.3s ease !important;
+    filter: drop-shadow(0 2px 10px rgba(0, 212, 255, 0.3)) !important;
+}
+
+.header-area .logo:hover img {
+    transform: scale(1.05) !important;
+    filter: drop-shadow(0 4px 15px rgba(0, 212, 255, 0.5)) !important;
+}
+
+/* Navigation Menu - SIMPLIFIED & CENTERED */
+.header-area .main-menu {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 1 !important;
+    margin: 0 20px !important;
+}
+
+.header-area .main-menu nav ul#navigation {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+    gap: 8px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 25px !important;
+    padding: 8px 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.header-area .main-menu nav ul#navigation li {
+    position: relative !important;
+    margin: 0 !important;
+}
+
+.header-area .main-menu nav ul#navigation li > a {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    color: white !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    padding: 10px 16px !important;
+    border-radius: 20px !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    white-space: nowrap !important;
+    background: transparent !important;
+    position: relative !important;
+}
+
+.header-area .main-menu nav ul#navigation li > a:hover {
+    background: rgba(0, 212, 255, 0.2) !important;
+    backdrop-filter: blur(10px) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3) !important;
+    color: white !important;
+    border: 1px solid rgba(0, 212, 255, 0.4) !important;
+}
+
+/* Force white text on all menu items */
+.header-area .main-menu nav ul#navigation li > a,
+.header-area .main-menu nav ul#navigation li > a:visited,
+.header-area .main-menu nav ul#navigation li > a:link,
+.header-area .main-menu nav ul#navigation li > a:active {
+    color: white !important;
+}
+
+.header-area .main-menu nav ul#navigation li > a:hover,
+.header-area .main-menu nav ul#navigation li > a:focus {
+    color: white !important;
+}
+
+/* Dropdown Menu - SIMPLIFIED */
+.header-area .main-menu nav ul#navigation li .submenu {
+    position: absolute !important;
+    top: 100% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: rgba(10, 10, 15, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(0, 212, 255, 0.3) !important;
+    border-radius: 12px !important;
+    padding: 12px !important;
+    margin-top: 8px !important;
+    min-width: 200px !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateX(-50%) translateY(-10px) !important;
+    transition: all 0.3s ease !important;
+    list-style: none !important;
+    z-index: 1001 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+.header-area .main-menu nav ul#navigation li .submenu::before {
+    content: '' !important;
+    position: absolute !important;
+    top: -6px !important;
+    left: 50% !important;
+    width: 12px !important;
+    height: 12px !important;
+    background: rgba(10, 10, 15, 0.95) !important;
+    border: 1px solid rgba(0, 212, 255, 0.3) !important;
+    border-bottom: none !important;
+    border-right: none !important;
+    transform: translateX(-50%) rotate(45deg) !important;
+    backdrop-filter: blur(20px) !important;
+}
+
+.header-area .main-menu nav ul#navigation li:hover .submenu {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(-50%) translateY(0) !important;
+}
+
+.header-area .main-menu nav ul#navigation li .submenu li {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.header-area .main-menu nav ul#navigation li .submenu li a {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    color: white !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 400 !important;
+    font-size: 13px !important;
+    padding: 10px 12px !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    white-space: nowrap !important;
+    background: transparent !important;
+}
+
+.header-area .main-menu nav ul#navigation li .submenu li a:hover {
+    background: rgba(0, 212, 255, 0.2) !important;
+    color: white !important;
+    transform: translateX(4px) !important;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2) !important;
+}
+
+.header-area .main-menu nav ul#navigation li .submenu li a i {
+    font-size: 14px !important;
+    opacity: 0.8 !important;
+    min-width: 16px !important;
+    text-align: center !important;
+    color: rgba(0, 212, 255, 0.8) !important;
+}
+
+.header-area .main-menu nav ul#navigation li .submenu li a:hover i {
+    color: white !important;
+    opacity: 1 !important;
+}
+
+/* Force white text on all dropdown items */
+.header-area .main-menu nav ul#navigation li .submenu li a,
+.header-area .main-menu nav ul#navigation li .submenu li a:visited,
+.header-area .main-menu nav ul#navigation li .submenu li a:link,
+.header-area .main-menu nav ul#navigation li .submenu li a:active {
+    color: white !important;
+}
+
+.header-area .main-menu nav ul#navigation li .submenu li a:hover,
+.header-area .main-menu nav ul#navigation li .submenu li a:focus {
+    color: white !important;
+}
+
+/* Right Side Elements - SIMPLIFIED */
+.header-area .menu-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+}
+
+/* Notification Bell - SIMPLIFIED */
+.header-area .notification-bell {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    color: white !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    position: relative !important;
+}
+
+.header-area .notification-bell:hover {
+    background: rgba(0, 212, 255, 0.2) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3) !important;
+    color: white !important;
+    border-color: rgba(0, 212, 255, 0.4) !important;
+}
+
+.header-area .notification-bell i {
+    font-size: 16px !important;
+}
+
+.header-area .notification-bell .badge-pulse {
+    position: absolute !important;
+    top: -4px !important;
+    right: -4px !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    padding: 0 6px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    line-height: 18px !important;
+    text-align: center !important;
+    color: white !important;
+    background: linear-gradient(135deg, #ff6b9d, #f5576c) !important;
+    border-radius: 9px !important;
+    box-shadow: 0 2px 8px rgba(255, 107, 157, 0.4) !important;
+    display: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.header-area .notification-bell .badge-pulse:not(:empty) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+/* CTA Buttons - SIMPLIFIED */
+.header-area .main-menu nav ul#navigation li a.btn {
+    background: linear-gradient(135deg, #667eea, #764ba2) !important;
+    color: white !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    padding: 10px 20px !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+    margin-left: 8px !important;
+    text-decoration: none !important;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn:hover {
+    background: linear-gradient(135deg, #764ba2, #f093fb) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+    color: white !important;
+    border-color: rgba(0, 212, 255, 0.4) !important;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn3 {
+    background: rgba(255, 255, 255, 0.9) !important;
+    color: #667eea !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    padding: 10px 20px !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2) !important;
+    text-decoration: none !important;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn3:hover {
+    background: white !important;
+    color: #764ba2 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3) !important;
+    border-color: rgba(0, 212, 255, 0.4) !important;
+}
+
+/* Force proper colors on CTA buttons */
+.header-area .main-menu nav ul#navigation li a.btn,
+.header-area .main-menu nav ul#navigation li a.btn:visited,
+.header-area .main-menu nav ul#navigation li a.btn:link,
+.header-area .main-menu nav ul#navigation li a.btn:active {
+    color: white !important;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn:hover,
+.header-area .main-menu nav ul#navigation li a.btn:focus {
+    color: white !important;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn3,
+.header-area .main-menu nav ul#navigation li a.btn3:visited,
+.header-area .main-menu nav ul#navigation li a.btn3:link,
+.header-area .main-menu nav ul#navigation li a.btn3:active {
+    color: #667eea !important;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn3:hover,
+.header-area .main-menu nav ul#navigation li a.btn3:focus {
+    color: #764ba2 !important;
+}
+
+/* Mobile Menu */
+.mobile_menu {
+    background: rgba(10, 10, 15, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    margin: 10px;
+    box-shadow: 0 8px 32px var(--shadow-heavy);
+    border: 1px solid var(--glass-border);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .main-menu nav ul {
+        gap: 4px;
+    }
+    
+    .main-menu nav ul li > a {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+    
+    .main-menu nav ul li .submenu {
+        min-width: 260px;
+    }
+}
+
+@media (max-width: 991px) {
+    .main-menu {
+        display: none;
+    }
+    
+    body {
+        padding-top: 70px !important;
+    }
+    
+    .header-bottom {
+        padding: 12px 0;
+    }
+    
+    .logo img {
+        max-width: 70px;
+    }
+    
+    .notification-bell {
+        width: 40px;
+        height: 40px;
+        margin-right: 8px;
+    }
+    
+    .notification-bell i {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 60px !important;
+    }
+    
+    .header-bottom {
+        padding: 10px 0;
+    }
+}
+
+/* Smooth Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.main-menu nav ul li {
+    animation: fadeInUp 0.3s ease forwards;
+}
+
+.main-menu nav ul li:nth-child(1) { animation-delay: 0.1s; }
+.main-menu nav ul li:nth-child(2) { animation-delay: 0.2s; }
+.main-menu nav ul li:nth-child(3) { animation-delay: 0.3s; }
+.main-menu nav ul li:nth-child(4) { animation-delay: 0.4s; }
+.main-menu nav ul li:nth-child(5) { animation-delay: 0.5s; }
+.main-menu nav ul li:nth-child(6) { animation-delay: 0.6s; }
+.main-menu nav ul li:nth-child(7) { animation-delay: 0.7s; }
+
+/* Accessibility */
+.main-menu nav ul li a:focus,
+.notification-bell:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Performance Optimizations */
+.header-area,
+.main-menu nav ul li a,
+.notification-bell {
+    will-change: transform;
+}
+
+/* Print Styles */
+@media print {
+    .header-area {
+        position: static !important;
+        background: white !important;
+        color: black !important;
+    }
+}
+/* CTA Buttons - ULTIMATE DESIGN */
+.header-area .main-menu nav ul#navigation li a.btn {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-weight: 700 !important;
+    padding: 14px 28px !important;
+    border-radius: 30px !important;
+    border: 2px solid var(--glass-border) !important;
+    box-shadow: 
+        0 8px 25px rgba(102, 126, 234, 0.4),
+        0 0 30px rgba(0, 212, 255, 0.2) !important;
+    margin-left: 12px !important;
+    text-decoration: none !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.3), 
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn:hover::before {
+    left: 100%;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn:hover {
+    background: linear-gradient(135deg, var(--neon-purple), var(--accent)) !important;
+    transform: translateY(-4px) scale(1.05) !important;
+    box-shadow: 
+        0 12px 40px rgba(102, 126, 234, 0.5),
+        0 0 50px rgba(0, 212, 255, 0.4) !important;
+    color: white !important;
+    border-color: var(--neon-blue) !important;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn3 {
+    background: linear-gradient(135deg, white, rgba(255, 255, 255, 0.95)) !important;
+    color: var(--primary) !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-weight: 700 !important;
+    padding: 14px 28px !important;
+    border-radius: 30px !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 
+        0 8px 25px rgba(255, 255, 255, 0.3),
+        0 0 30px rgba(255, 255, 255, 0.2) !important;
+    text-decoration: none !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn3::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-primary);
+    opacity: 0.1;
+    transition: left 0.6s ease;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn3:hover::before {
+    left: 100%;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn3:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), white) !important;
+    color: var(--primary-dark) !important;
+    transform: translateY(-4px) scale(1.05) !important;
+    box-shadow: 
+        0 12px 40px rgba(255, 255, 255, 0.4),
+        0 0 50px rgba(102, 126, 234, 0.3) !important;
+    border-color: var(--neon-blue) !important;
+}
+
+/* Mobile Menu - HIGH SPECIFICITY */
+.header-area .mobile_menu {
+    background: rgba(10, 10, 15, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border-radius: 12px !important;
+    margin: 10px !important;
+    box-shadow: 0 8px 32px var(--shadow-heavy) !important;
+    border: 1px solid var(--glass-border) !important;
+}
+
+/* Responsive Design - ENHANCED & CENTERED */
+@media (max-width: 1400px) {
+    .header-area .container-fluid {
+        max-width: 1200px !important;
+        padding: 0 25px !important;
+    }
+    
+    .header-area .main-menu nav ul#navigation {
+        gap: 10px !important;
+        padding: 6px 12px !important;
+    }
+    
+    .header-area .main-menu nav ul#navigation li > a {
+        padding: 12px 18px !important;
+        font-size: 14px !important;
+    }
+    
+    .header-area .main-menu nav ul#navigation li .submenu {
+        min-width: 300px !important;
+        max-width: 420px !important;
+    }
+}
+
+@media (max-width: 1200px) {
+    .header-area .container-fluid {
+        max-width: 100% !important;
+        padding: 0 20px !important;
+    }
+    
+    .header-area .main-menu nav ul#navigation {
+        gap: 8px !important;
+        padding: 4px 8px !important;
+    }
+    
+    .header-area .main-menu nav ul#navigation li > a {
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+    }
+    
+    .header-area .main-menu nav ul#navigation li .submenu {
+        min-width: 280px !important;
+        max-width: 380px !important;
+    }
+}
+
+@media (max-width: 991px) {
+    .header-area .main-menu {
+        display: none !important;
+    }
+    
+    body {
+        padding-top: 80px !important;
+    }
+    
+    .header-area .header-bottom.header-sticky {
+        padding: 16px 0 !important;
+    }
+    
+    .header-area .logo img {
+        max-width: 80px !important;
+    }
+    
+    .header-area .notification-bell {
+        width: 45px !important;
+        height: 45px !important;
+        margin-right: 12px !important;
+    }
+    
+    .header-area .notification-bell i {
+        font-size: 18px !important;
+    }
+    
+    .header-area .notification-bell .badge-pulse {
+        min-width: 20px !important;
+        height: 20px !important;
+        font-size: 10px !important;
+        line-height: 20px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 70px !important;
+    }
+    
+    .header-area .header-bottom.header-sticky {
+        padding: 12px 0 !important;
+    }
+    
+    .header-area .container-fluid {
+        padding: 0 15px !important;
+    }
+    
+    .header-area .logo img {
+        max-width: 70px !important;
+    }
+    
+    .header-area .notification-bell {
+        width: 40px !important;
+        height: 40px !important;
+        margin-right: 8px !important;
+    }
+    
+    .header-area .notification-bell i {
+        font-size: 16px !important;
+    }
+}
+
+/* Mobile Menu - SIMPLIFIED */
+.header-area .mobile_menu {
+    background: rgba(10, 10, 15, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border-radius: 12px !important;
+    margin: 10px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(0, 212, 255, 0.3) !important;
+}
+
+/* Responsive Design - SIMPLIFIED */
+@media (max-width: 1200px) {
+    .header-area .container-fluid {
+        max-width: 100% !important;
+        padding: 0 15px !important;
+    }
+    
+    .header-area .main-menu nav ul#navigation {
+        gap: 6px !important;
+        padding: 6px 10px !important;
+    }
+    
+    .header-area .main-menu nav ul#navigation li > a {
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+    }
+    
+    .header-area .main-menu nav ul#navigation li .submenu {
+        min-width: 180px !important;
+    }
+}
+
+@media (max-width: 991px) {
+    .header-area .main-menu {
+        display: none !important;
+    }
+    
+    body {
+        padding-top: 70px !important;
+    }
+    
+    .header-area .header-bottom.header-sticky {
+        padding: 12px 0 !important;
+    }
+    
+    .header-area .logo img {
+        max-width: 70px !important;
+    }
+    
+    .header-area .notification-bell {
+        width: 36px !important;
+        height: 36px !important;
+    }
+    
+    .header-area .notification-bell i {
+        font-size: 14px !important;
+    }
+    
+    .header-area .notification-bell .badge-pulse {
+        min-width: 16px !important;
+        height: 16px !important;
+        font-size: 9px !important;
+        line-height: 16px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 60px !important;
+    }
+    
+    .header-area .header-bottom.header-sticky {
+        padding: 10px 0 !important;
+    }
+    
+    .header-area .container-fluid {
+        padding: 0 10px !important;
+    }
+    
+    .header-area .logo img {
+        max-width: 60px !important;
+    }
+    
+    .header-area .notification-bell {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    
+    .header-area .notification-bell i {
+        font-size: 12px !important;
+    }
+}
+
+/* Scroll Progress Indicator - SIMPLIFIED */
+.navbar-scroll-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #00d4ff, #b794f6, #ff6b9d);
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.1s ease;
+    z-index: 1002;
+}
+
+/* Active Menu Item Indicator */
+.header-area .main-menu nav ul#navigation li.active > a,
+.header-area .main-menu nav ul#navigation li > a.active {
+    background: rgba(0, 212, 255, 0.2) !important;
+    border: 1px solid rgba(0, 212, 255, 0.4) !important;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3) !important;
+}
+
+/* Accessibility */
+.header-area .main-menu nav ul#navigation li a:focus,
+.header-area .notification-bell:focus {
+    outline: 2px solid #00d4ff !important;
+    outline-offset: 2px !important;
+}
+
+/* Performance Optimizations */
+.header-area,
+.header-area .main-menu nav ul#navigation li a,
+.header-area .notification-bell {
+    will-change: transform !important;
+}
+
+/* Print Styles */
+@media print {
+    .header-area {
+        position: static !important;
+        background: white !important;
+        color: black !important;
+    }
+}
+
+/* GLOBAL TEXT COLOR OVERRIDE - FORCE WHITE TEXT */
+.header-area,
+.header-area *,
+.header-area a,
+.header-area a:visited,
+.header-area a:link,
+.header-area a:active,
+.header-area span,
+.header-area div,
+.header-area li,
+.header-area ul {
+    color: white !important;
+}
+
+/* Exception for CTA button with white background */
+.header-area .main-menu nav ul#navigation li a.btn3,
+.header-area .main-menu nav ul#navigation li a.btn3 * {
+    color: #667eea !important;
+}
+
+.header-area .main-menu nav ul#navigation li a.btn3:hover,
+.header-area .main-menu nav ul#navigation li a.btn3:hover * {
+    color: #764ba2 !important;
+}
+
+/* Ensure icons maintain their colors */
+.header-area .main-menu nav ul#navigation li .submenu li a i {
+    color: rgba(0, 212, 255, 0.8) !important;
+}
+
+.header-area .main-menu nav ul#navigation li .submenu li a:hover i {
+    color: white !important;
+}

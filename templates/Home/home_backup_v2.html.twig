@@ -1,0 +1,445 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BacLab - Votre Succès au BAC Commence Ici{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('front/css/home-ultimate.css') }}">
+{% endblock %}
+
+{% block body %}
+<!-- Hero Section - Ultimate -->
+<section class="hero-ultimate">
+    <!-- Animated Background -->
+    <div class="gradient-mesh"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    
+    <div class="hero-content">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <span class="ultra-badge">
+                        <i class="fas fa-graduation-cap"></i>
+                        Plateforme #1 pour le BAC
+                    </span>
+                    
+                    <h1 class="hero-title-ultimate">
+                        Réussissez Votre <span class="gradient-text">Baccalauréat</span> avec Confiance
+                    </h1>
+                    
+                    <p class="hero-description-ultimate">
+                        Rejoignez des milliers d'étudiants qui préparent leur BAC avec nos ressources complètes, 
+                        quiz interactifs et fiches collaboratives.
+                    </p>
+                    
+                    <div class="stats-ultimate">
+                        <div class="stat-item-ultimate">
+                            <div class="stat-number-ultimate">10K+</div>
+                            <div class="stat-label-ultimate">Étudiants</div>
+                        </div>
+                        <div class="stat-item-ultimate">
+                            <div class="stat-number-ultimate">500+</div>
+                            <div class="stat-label-ultimate">Ressources</div>
+                        </div>
+                        <div class="stat-item-ultimate">
+                            <div class="stat-number-ultimate">95%</div>
+                            <div class="stat-label-ultimate">Réussite</div>
+                        </div>
+                    </div>
+                    
+                    <div class="cta-group">
+                        {% if not app.user %}
+                            <a href="{{ path('app_register') }}" class="btn-ultimate btn-primary-ultimate">
+                                <span>Commencer Gratuitement</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('app_dashboard') }}" class="btn-ultimate btn-primary-ultimate">
+                                <span>Mon Tableau de Bord</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        {% endif %}
+                        <a href="#features" class="btn-ultimate btn-secondary-ultimate">
+                            <i class="fas fa-play-circle"></i>
+                            <span>Découvrir</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="video-container-right">
+                        <div class="video-wrapper-ultimate">
+                            <div class="video-badge-ultimate">
+                                <i class="fas fa-play-circle"></i>
+                                <span>Découvrez BacLab</span>
+                            </div>
+                            <div class="video-frame-ultimate">
+                                <video controls controlsList="nodownload" preload="metadata" poster="">
+                                    <source src="{{ asset('front/vid/0214.mp4') }}" type="video/mp4">
+                                    Votre navigateur ne supporte pas la lecture de vidéos.
+                                </video>
+                            </div>
+                        </div>
+                        
+                        <!-- Floating Mini Cards Around Video -->
+                        <div class="mini-card mini-1">
+                            <i class="fas fa-star"></i>
+                            <span>4.9/5</span>
+                        </div>
+                        <div class="mini-card mini-2">
+                            <i class="fas fa-fire"></i>
+                            <span>Populaire</span>
+                        </div>
+                        <div class="mini-card mini-3">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Vérifié</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="wave-divider-ultimate">
+        <svg viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg">
+            <path class="wave-fill" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Features Section - Ultimate -->
+<section class="features-ultimate" id="features">
+    <div class="container">
+        <div class="section-header-ultimate">
+            <span class="section-badge-ultimate">Nos Fonctionnalités</span>
+            <h2 class="section-title-ultimate">
+                Tout ce dont vous avez besoin pour <span class="gradient-text-dark">réussir</span>
+            </h2>
+            <p class="section-subtitle-ultimate">
+                Des outils puissants conçus pour maximiser votre apprentissage et garantir votre succès
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card-ultimate">
+                    <div class="feature-icon-ultimate gradient-1">
+                        <i class="fas fa-book-reader"></i>
+                    </div>
+                    <h3 class="feature-title-ultimate">Bibliothèque Complète</h3>
+                    <p class="feature-description-ultimate">
+                        Accédez à des milliers de cours, exercices et corrigés pour toutes les matières du BAC
+                    </p>
+                    <a href="{{ path('app_bibliotheque_index') }}" class="feature-link-ultimate">
+                        Explorer <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card-ultimate">
+                    <div class="feature-icon-ultimate gradient-2">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h3 class="feature-title-ultimate">Quiz Interactifs</h3>
+                    <p class="feature-description-ultimate">
+                        Testez vos connaissances avec des quiz adaptés à votre niveau et suivez votre progression
+                    </p>
+                    <a href="{{ path('app_quiz') }}" class="feature-link-ultimate">
+                        Commencer <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card-ultimate">
+                    <div class="feature-icon-ultimate gradient-3">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3 class="feature-title-ultimate">Fiches Collaboratives</h3>
+                    <p class="feature-description-ultimate">
+                        Créez et partagez des fiches de révision avec d'autres étudiants
+                    </p>
+                    <a href="{{ path('fiche_index') }}" class="feature-link-ultimate">
+                        Découvrir <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card-ultimate">
+                    <div class="feature-icon-ultimate gradient-4">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="feature-title-ultimate">Groupes d'Étude</h3>
+                    <p class="feature-description-ultimate">
+                        Rejoignez des groupes de révision et étudiez ensemble pour mieux réussir
+                    </p>
+                    <a href="{{ path('groupe_index') }}" class="feature-link-ultimate">
+                        Rejoindre <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card-ultimate">
+                    <div class="feature-icon-ultimate gradient-5">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="feature-title-ultimate">Chat en Direct</h3>
+                    <p class="feature-description-ultimate">
+                        Posez vos questions et obtenez de l'aide instantanée de la communauté
+                    </p>
+                    <a href="{{ path('chat_index') }}" class="feature-link-ultimate">
+                        Discuter <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card-ultimate">
+                    <div class="feature-icon-ultimate gradient-6">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3 class="feature-title-ultimate">Calcul de Score</h3>
+                    <p class="feature-description-ultimate">
+                        Calculez votre score et découvrez vos options d'orientation universitaire
+                    </p>
+                    <a href="#" class="feature-link-ultimate">
+                        Calculer <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works-ultimate">
+    <div class="container">
+        <div class="section-header-ultimate">
+            <span class="section-badge-ultimate">Comment ça marche</span>
+            <h2 class="section-title-ultimate">
+                Commencez en <span class="gradient-text-dark">3 étapes simples</span>
+            </h2>
+        </div>
+        
+        <div class="timeline-container">
+            <div class="timeline-item" data-step="1">
+                <div class="timeline-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="timeline-content">
+                    <h3>Créez votre compte</h3>
+                    <p>Inscription gratuite en 30 secondes. Choisissez votre filière et commencez immédiatement.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item" data-step="2">
+                <div class="timeline-icon">
+                    <i class="fas fa-book-reader"></i>
+                </div>
+                <div class="timeline-content">
+                    <h3>Explorez & Apprenez</h3>
+                    <p>Accédez à des milliers de ressources, quiz et fiches adaptés à votre niveau.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item" data-step="3">
+                <div class="timeline-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="timeline-content">
+                    <h3>Réussissez votre BAC</h3>
+                    <p>Suivez votre progression et atteignez vos objectifs avec confiance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-ultimate">
+    <div class="container">
+        <div class="section-header-ultimate">
+            <span class="section-badge-ultimate">Témoignages</span>
+            <h2 class="section-title-ultimate">
+                Ce que disent <span class="gradient-text-dark">nos étudiants</span>
+            </h2>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"BacLab m'a aidé à obtenir 18/20 au BAC! Les quiz interactifs sont géniaux."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">A</div>
+                        <div>
+                            <div class="author-name">Ahmed Ben Ali</div>
+                            <div class="author-info">BAC Sciences 2024</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"La communauté est incroyable! J'ai trouvé un groupe d'étude qui m'a beaucoup aidé."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">S</div>
+                        <div>
+                            <div class="author-name">Sarah Mansour</div>
+                            <div class="author-info">BAC Math 2024</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Les fiches collaboratives sont parfaites pour réviser rapidement avant les examens."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">M</div>
+                        <div>
+                            <div class="author-name">Mohamed Trabelsi</div>
+                            <div class="author-info">BAC Économie 2024</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Final CTA Section -->
+<section class="final-cta-ultimate">
+    <div class="container">
+        <div class="cta-card-ultimate">
+            <div class="cta-content">
+                <h2 class="cta-title">Prêt à réussir votre BAC?</h2>
+                <p class="cta-description">Rejoignez des milliers d'étudiants qui ont déjà commencé leur préparation</p>
+                <div class="cta-buttons">
+                    {% if not app.user %}
+                        <a href="{{ path('app_register') }}" class="btn-ultimate btn-primary-ultimate">
+                            <span>Commencer Gratuitement</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_dashboard') }}" class="btn-ultimate btn-primary-ultimate">
+                            <span>Mon Tableau de Bord</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    {% endif %}
+                    <a href="{{ path('app_bibliotheque_index') }}" class="btn-ultimate btn-secondary-ultimate">
+                        <i class="fas fa-book"></i>
+                        <span>Explorer les Ressources</span>
+                    </a>
+                </div>
+            </div>
+            <div class="cta-decoration">
+                <div class="decoration-orb orb-cta-1"></div>
+                <div class="decoration-orb orb-cta-2"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+        // Counter Animation for Stats
+        document.addEventListener('DOMContentLoaded', function() {
+            const stats = document.querySelectorAll('.stat-number-ultimate');
+            
+            const animateCounter = (element) => {
+                const target = element.textContent;
+                const isPercentage = target.includes('%');
+                const isPlus = target.includes('+');
+                const number = parseInt(target.replace(/[^0-9]/g, ''));
+                const duration = 2000;
+                const increment = number / (duration / 16);
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= number) {
+                        current = number;
+                        clearInterval(timer);
+                    }
+                    element.textContent = Math.floor(current) + (isPercentage ? '%' : '') + (isPlus ? '+' : '');
+                }, 16);
+            };
+            
+            // Intersection Observer for scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        if (entry.target.classList.contains('stat-number-ultimate')) {
+                            animateCounter(entry.target);
+                        }
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            // Observe stats
+            stats.forEach(stat => {
+                stat.style.opacity = '0';
+                stat.style.transform = 'translateY(30px)';
+                stat.style.transition = 'all 0.8s ease';
+                observer.observe(stat);
+            });
+            
+            // Observe feature cards
+            document.querySelectorAll('.feature-card-ultimate').forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(50px)';
+                card.style.transition = `all 0.6s ease ${index * 0.1}s`;
+                observer.observe(card);
+            });
+            
+            // Observe timeline items
+            document.querySelectorAll('.timeline-item').forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-50px)';
+                item.style.transition = `all 0.6s ease ${index * 0.2}s`;
+                observer.observe(item);
+            });
+            
+            // Observe testimonials
+            document.querySelectorAll('.testimonial-card').forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(50px)';
+                card.style.transition = `all 0.6s ease ${index * 0.15}s`;
+                observer.observe(card);
+            });
+        });
+    </script>
+{% endblock %}

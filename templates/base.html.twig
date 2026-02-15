@@ -10,61 +10,24 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('front/img/favicon.ico') }}">
 
     {% block css %}
+        {# Essential CSS only - Bootstrap for grid system and FontAwesome for icons #}
         <link rel="stylesheet" href="{{ asset('front/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/owl.carousel.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/slicknav.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/flaticon.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/progressbar_barfiller.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/gijgo.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/animate.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/animated-headline.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/magnific-popup.css') }}">
         <link rel="stylesheet" href="{{ asset('front/css/fontawesome-all.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/themify-icons.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/slick.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/nice-select.css') }}">
-        <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
+        
+        {# Modern Design System - Load in correct order #}
+        <link rel="stylesheet" href="{{ asset('front/css/navbar-new.css') }}">
+        <link rel="stylesheet" href="{{ asset('front/css/pages-design.css') }}">
+        <link rel="stylesheet" href="{{ asset('front/css/footer-modern.css') }}">
+        
+        {# Fiche-specific CSS (scoped to .fiche-page) #}
+        <link rel="stylesheet" href="{{ asset('front/css/fiche-complete.css') }}">
+        <link rel="stylesheet" href="{{ asset('front/css/fiche-editor.css') }}">
+        <link rel="stylesheet" href="{{ asset('front/css/fiche-show.css') }}">
     {% endblock %}
 
     {% block inline_css %}
         <style>
-            /* Notification bell */
-            .notification-bell {
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                color: white;
-                transition: all 0.3s ease;
-                margin-right: 5px;
-            }
-            .notification-bell:hover { background: rgba(255, 255, 255, 0.15); }
-            .notification-bell svg { width: 18px; height: 18px; }
-
-            .badge-pulse {
-                position: absolute;
-                top: 0;
-                right: 0;
-                min-width: 16px;
-                height: 16px;
-                padding: 0 4px;
-                font-size: 0.65rem;
-                font-weight: 700;
-                line-height: 16px;
-                text-align: center;
-                color: white;
-                background: #667eea;
-                border-radius: 8px;
-                display: none;
-            }
-
-            /* ✅ FIX: missing bracket in your original code */
-            .badge-pulse:not(:empty) {
-                display: inline-flex;
-            }
+            /* Clean inline styles */
         </style>
     {% endblock %}
 </head>
@@ -83,6 +46,9 @@
 
 <header>
     <div class="header-area header-transparent">
+        <!-- Scroll Progress Indicator -->
+        <div class="navbar-scroll-progress" id="navbarScrollProgress"></div>
+        
         <div class="main-header">
             <div class="header-bottom header-sticky">
                 <div class="container-fluid">
@@ -91,7 +57,7 @@
                         <div class="col-xl-2 col-lg-2">
                             <div class="logo">
                                 <a href="{{ path('app_home') }}">
-                                    <img src="{{ asset('front/img/logo/logo.png') }}" style="width:100px;height:100px;" alt="BacLab Logo">
+                                    <img src="{{ asset('front/img/logo/logo.png') }}" alt="BacLab Logo">
                                 </a>
                             </div>
                         </div>
@@ -107,44 +73,41 @@
                                             <li>
                                                 <a href="#">Revision</a>
                                                 <ul class="submenu">
-                                                    <li><a href="{{ path('app_revision_filieres') }}">Cours & PDF</a></li>
-                                                    <li><a href="{{ path('app_quiz') }}"><i class="fas fa-question-circle mr-2"></i>Quiz & Tests</a></li>
-                                                    <li><a href="{{ path('fiche_index') }}">Fiches & co-édition</a></li>
-                                                    <li><a href="{{ path('app_bibliotheque_index') }}"><i class="fas fa-book mr-2"></i>Bibliothèque</a></li>
+                                                    <li><a href="{{ path('app_revision_filieres') }}"><i class="fas fa-file-pdf"></i>Cours & PDF</a></li>
+                                                    <li><a href="{{ path('app_quiz') }}"><i class="fas fa-question-circle"></i>Quiz & Tests</a></li>
+                                                    <li><a href="{{ path('fiche_index') }}"><i class="fas fa-file-alt"></i>Fiches & co-édition</a></li>
+                                                    <li><a href="{{ path('app_bibliotheque_index') }}"><i class="fas fa-book"></i>Bibliothèque</a></li>
                                                 </ul>
                                             </li>
 
                                             <li>
                                                 <a href="#">Orientation</a>
                                                 <ul class="submenu">
-                                                    <li><a href="#">Calcul du Score</a></li>
-                                                    <li><a href="#">Guide des Filieres</a></li>
+                                                    <li><a href="#"><i class="fas fa-calculator"></i>Calcul du Score</a></li>
+                                                    <li><a href="#"><i class="fas fa-graduation-cap"></i>Guide des Filieres</a></li>
                                                 </ul>
                                             </li>
 
                                             <li>
                                                 <a href="#">Communaute</a>
                                                 <ul class="submenu">
-                                                    <li><a href="{{ path('groupe_index') }}"><i class="fas fa-users mr-2"></i>Groupes de revision</a></li>
-                                                    <li><a href="{{ path('chat_index') }}"><i class="fas fa-comments mr-2"></i>Chat en direct</a></li>
+                                                    <li><a href="{{ path('groupe_index') }}"><i class="fas fa-users"></i>Groupes de revision</a></li>
+                                                    <li><a href="{{ path('chat_index') }}"><i class="fas fa-comments"></i>Chat en direct</a></li>
                                                 </ul>
                                             </li>
 
                                             {% if is_granted('ROLE_USER') %}
                                                 <li>
                                                     <a href="{{ path('notifications_index') }}" class="notification-bell" title="Notifications">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                                                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                                                        </svg>
+                                                        <i class="fas fa-bell"></i>
                                                         <span id="notification-badge" class="badge-pulse">0</span>
                                                     </a>
                                                 </li>
-                                                <li><a href="{{ path('app_profile') }}" class="btn">Mon Profil</a></li>
-                                                <li><a href="{{ path('app_logout') }}" class="btn btn3">Deconnexion</a></li>
+                                                <li><a href="{{ path('app_profile') }}" class="btn"><i class="fas fa-user"></i>Mon Profil</a></li>
+                                                <li><a href="{{ path('app_logout') }}" class="btn btn3"><i class="fas fa-sign-out-alt"></i>Deconnexion</a></li>
                                             {% else %}
-                                                <li class="margin-left"><a href="{{ path('app_register') }}" class="btn">S'inscrire</a></li>
-                                                <li><a href="{{ path('app_login') }}" class="btn btn3">Connexion</a></li>
+                                                <li><a href="{{ path('app_register') }}" class="btn"><i class="fas fa-user-plus"></i>S'inscrire</a></li>
+                                                <li><a href="{{ path('app_login') }}" class="btn btn3"><i class="fas fa-sign-in-alt"></i>Connexion</a></li>
                                             {% endif %}
                                         </ul>
                                     </nav>
@@ -168,63 +131,151 @@
     {% block body %}{% endblock %}
 </main>
 
-<footer>
-    <div class="footer-wrappper footer-bg">
-        <div class="footer-area footer-padding">
-            <div class="container">
-                <div class="row justify-content-between">
-                    <div class="col-xl-4 col-lg-5 col-md-4 col-sm-6">
-                        <div class="single-footer-caption mb-50">
-                            <div class="footer-logo mb-25">
-                                <a href="#"><img src="{{ asset('front/img/logo/logo2_footer.png') }}" alt="BacLab Footer"></a>
-                            </div>
-                            <div class="footer-tittle">
-                                <div class="footer-pera">
-                                    <p>Votre succes au Bac commence par une revision structuree et une orientation eclairee.</p>
-                                </div>
-                            </div>
-                            <div class="footer-social">
-                                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a href="#"><i class="fab fa-instagram"></i></a>
-                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
+<footer class="footer-modern">
+    <!-- Animated Background -->
+    <div class="footer-bg-animated">
+        <div class="footer-orb footer-orb-1"></div>
+        <div class="footer-orb footer-orb-2"></div>
+        <div class="footer-orb footer-orb-3"></div>
+        <div class="footer-grid-overlay"></div>
+    </div>
+    
+    <!-- Newsletter Section -->
+    <div class="footer-newsletter">
+        <div class="container">
+            <div class="newsletter-card">
+                <div class="newsletter-content">
+                    <div class="newsletter-icon">
+                        <i class="fas fa-paper-plane"></i>
                     </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5">
-                        <div class="single-footer-caption mb-50">
-                            <div class="footer-tittle">
-                                <h4>Revision</h4>
-                                <ul>
-                                    <li><a href="#">Mathematiques</a></li>
-                                    <li><a href="#">Sciences</a></li>
-                                    <li><a href="#">Informatique</a></li>
-                                    <li><a href="#">Economie</a></li>
-                                </ul>
-                            </div>
-                        </div>
+                    <div class="newsletter-text">
+                        <h3 class="newsletter-title">Restez informé des nouveautés</h3>
+                        <p class="newsletter-subtitle">Recevez les dernières ressources et conseils pour réussir votre BAC</p>
                     </div>
-                    <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
-                        <div class="single-footer-caption mb-50">
-                            <div class="footer-tittle">
-                                <h4>Orientation</h4>
-                                <ul>
-                                    <li><a href="#">Calculer mon Score</a></li>
-                                    <li><a href="#">Filieres Universitaires</a></li>
-                                    <li><a href="#">Guide de l'Orientation</a></li>
-                                </ul>
-                            </div>
+                </div>
+                <div class="newsletter-form">
+                    <form class="newsletter-form-inner" id="newsletterForm">
+                        <div class="newsletter-input-group">
+                            <input type="email" placeholder="Votre adresse email" class="newsletter-input" required>
+                            <button type="submit" class="newsletter-btn">
+                                <span>S'abonner</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
                         </div>
-                    </div>
+                        <div class="newsletter-privacy">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Vos données sont protégées. Pas de spam.</span>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-        <div class="footer-bottom-area">
-            <div class="container">
-                <div class="footer-border">
-                    <div class="row d-flex align-items-center">
-                        <div class="col-xl-12">
-                            <div class="footer-copy-right text-center">
-                                <p>Copyright &copy; {{ "now"|date("Y") }} BacLab - Tous droits reserves</p>
+    </div>
+    
+    <!-- Main Footer Content -->
+    <div class="footer-main">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Section -->
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <img src="{{ asset('front/img/logo/logo2_footer.png') }}" alt="BacLab">
+                        <div class="logo-glow"></div>
+                    </div>
+                    <p class="footer-description">
+                        La plateforme #1 en Tunisie pour réussir votre BAC. 
+                        Rejoignez 10,000+ étudiants qui nous font confiance.
+                    </p>
+                    <div class="footer-stats">
+                        <div class="footer-stat">
+                            <div class="stat-number">10K+</div>
+                            <div class="stat-label">Étudiants</div>
+                        </div>
+                        <div class="footer-stat">
+                            <div class="stat-number">95%</div>
+                            <div class="stat-label">Réussite</div>
+                        </div>
+                        <div class="footer-stat">
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Ressources</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div class="footer-links">
+                    <h4 class="footer-title">
+                        <i class="fas fa-book-reader"></i>
+                        Révision
+                    </h4>
+                    <ul class="footer-menu">
+                        <li><a href="{{ path('app_bibliotheque_index') }}"><i class="fas fa-chevron-right"></i>Bibliothèque</a></li>
+                        <li><a href="{{ path('app_quiz') }}"><i class="fas fa-chevron-right"></i>Quiz & Tests</a></li>
+                        <li><a href="{{ path('fiche_index') }}"><i class="fas fa-chevron-right"></i>Fiches Collaboratives</a></li>
+                        <li><a href="{{ path('app_revision_filieres') }}"><i class="fas fa-chevron-right"></i>Cours & PDF</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Community Links -->
+                <div class="footer-links">
+                    <h4 class="footer-title">
+                        <i class="fas fa-users"></i>
+                        Communauté
+                    </h4>
+                    <ul class="footer-menu">
+                        <li><a href="{{ path('groupe_index') }}"><i class="fas fa-chevron-right"></i>Groupes d'Étude</a></li>
+                        <li><a href="{{ path('chat_index') }}"><i class="fas fa-chevron-right"></i>Chat en Direct</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i>Forum</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i>Événements</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Support Links -->
+                <div class="footer-links">
+                    <h4 class="footer-title">
+                        <i class="fas fa-headset"></i>
+                        Support
+                    </h4>
+                    <ul class="footer-menu">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i>Centre d'Aide</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i>Contact</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i>Signaler un Bug</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i>Suggestions</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Info -->
+                <div class="footer-contact">
+                    <h4 class="footer-title">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Contact
+                    </h4>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-details">
+                                <span class="contact-label">Email</span>
+                                <a href="mailto:contact@baclab.tn">contact@baclab.tn</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="contact-details">
+                                <span class="contact-label">Téléphone</span>
+                                <a href="tel:+21612345678">+216 12 345 678</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="contact-details">
+                                <span class="contact-label">Support</span>
+                                <span>24/7 Disponible</span>
                             </div>
                         </div>
                     </div>
@@ -232,38 +283,78 @@
             </div>
         </div>
     </div>
+    
+    <!-- Social & Bottom Section -->
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="footer-bottom-content">
+                <div class="footer-social-section">
+                    <h5 class="social-title">Suivez-nous</h5>
+                    <div class="footer-social">
+                        <a href="#" class="social-link facebook" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                            <span class="social-tooltip">Facebook</span>
+                        </a>
+                        <a href="#" class="social-link instagram" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                            <span class="social-tooltip">Instagram</span>
+                        </a>
+                        <a href="#" class="social-link linkedin" title="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                            <span class="social-tooltip">LinkedIn</span>
+                        </a>
+                        <a href="#" class="social-link youtube" title="YouTube">
+                            <i class="fab fa-youtube"></i>
+                            <span class="social-tooltip">YouTube</span>
+                        </a>
+                        <a href="#" class="social-link tiktok" title="TikTok">
+                            <i class="fab fa-tiktok"></i>
+                            <span class="social-tooltip">TikTok</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-legal">
+                    <div class="legal-links">
+                        <a href="#">Conditions d'Utilisation</a>
+                        <a href="#">Politique de Confidentialité</a>
+                        <a href="#">Cookies</a>
+                        <a href="#">Mentions Légales</a>
+                    </div>
+                    <div class="copyright">
+                        <p>&copy; {{ "now"|date("Y") }} BacLab. Tous droits réservés. Fait avec <i class="fas fa-heart"></i> en Tunisie</p>
+                    </div>
+                </div>
+                
+                <div class="footer-back-to-top">
+                    <button class="back-to-top-btn" id="backToTop" title="Retour en haut">
+                        <i class="fas fa-arrow-up"></i>
+                        <span class="btn-text">Haut</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Message for Newsletter -->
+    <div class="newsletter-success" id="newsletterSuccess">
+        <div class="success-content">
+            <i class="fas fa-check-circle"></i>
+            <span>Merci ! Vous êtes maintenant abonné à notre newsletter.</span>
+        </div>
+    </div>
 </footer>
 
 {% block js %}
-    <script src="{{ asset('front/js/vendor/modernizr-3.5.0.min.js') }}"></script>
+    {# Essential JavaScript only #}
     <script src="{{ asset('front/js/vendor/jquery-1.12.4.min.js') }}"></script>
-    <script src="{{ asset('front/js/popper.min.js') }}"></script>
     <script src="{{ asset('front/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('front/js/jquery.slicknav.min.js') }}"></script>
-    <script src="{{ asset('front/js/owl.carousel.min.js') }}"></script>
-    <script src="{{ asset('front/js/slick.min.js') }}"></script>
-    <script src="{{ asset('front/js/wow.min.js') }}"></script>
-    <script src="{{ asset('front/js/animated.headline.js') }}"></script>
-    <script src="{{ asset('front/js/jquery.magnific-popup.js') }}"></script>
-    <script src="{{ asset('front/js/gijgo.min.js') }}"></script>
-    <script src="{{ asset('front/js/jquery.nice-select.min.js') }}"></script>
-    <script src="{{ asset('front/js/jquery.sticky.js') }}"></script>
-    <script src="{{ asset('front/js/jquery.barfiller.js') }}"></script>
-    <script src="{{ asset('front/js/jquery.counterup.min.js') }}"></script>
-    <script src="{{ asset('front/js/waypoints.min.js') }}"></script>
-    <script src="{{ asset('front/js/jquery.countdown.min.js') }}"></script>
-    <script src="{{ asset('front/js/hover-direction-snake.min.js') }}"></script>
-    <script src="{{ asset('front/js/contact.js') }}"></script>
-    <script src="{{ asset('front/js/jquery.form.js') }}"></script>
-    <script src="{{ asset('front/js/jquery.validate.min.js') }}"></script>
-    <script src="{{ asset('front/js/mail-script.js') }}"></script>
-    <script src="{{ asset('front/js/jquery.ajaxchimp.min.js') }}"></script>
-    <script src="{{ asset('front/js/plugins.js') }}"></script>
-    <script src="{{ asset('front/js/main.js') }}"></script>
 
     <script>
-        // Notifications badge count
+        // SIMPLIFIED NAVBAR CONTROLLER
         document.addEventListener('DOMContentLoaded', function () {
+            // Notifications badge count
+            {% if app.user %}
             fetch('{{ path('notifications_count') }}')
                 .then(r => r.json())
                 .then(data => {
@@ -273,6 +364,201 @@
                     }
                 })
                 .catch(() => {});
+            {% endif %}
+            
+            // Basic navbar controller
+            const header = document.querySelector('.header-area');
+            const scrollProgress = document.getElementById('navbarScrollProgress');
+            const menuItems = document.querySelectorAll('.main-menu nav ul li a');
+            
+            // Simple scroll handler
+            function updateNavbar() {
+                const scrollY = window.scrollY;
+                const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const scrollPercent = Math.min((scrollY / documentHeight) * 100, 100);
+                
+                // Update scroll progress
+                if (scrollProgress) {
+                    scrollProgress.style.transform = `scaleX(${scrollPercent / 100})`;
+                }
+                
+                // Sticky behavior
+                if (scrollY > 50) {
+                    header.classList.add('sticky');
+                } else {
+                    header.classList.remove('sticky');
+                }
+            }
+            
+            // Throttled scroll handler
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    requestAnimationFrame(updateNavbar);
+                    ticking = true;
+                }
+            });
+            
+            // Active menu item detection
+            const currentPath = window.location.pathname;
+            menuItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href === currentPath || (href !== '#' && currentPath.includes(href))) {
+                    item.parentElement.classList.add('active');
+                }
+            });
+            
+            // Simple dropdown behavior
+            const dropdownItems = document.querySelectorAll('.main-menu nav ul li');
+            dropdownItems.forEach(item => {
+                const submenu = item.querySelector('.submenu');
+                if (submenu) {
+                    let hoverTimeout;
+                    
+                    item.addEventListener('mouseenter', () => {
+                        clearTimeout(hoverTimeout);
+                    });
+                    
+                    item.addEventListener('mouseleave', () => {
+                        hoverTimeout = setTimeout(() => {
+                            // Cleanup if needed
+                        }, 100);
+                    });
+                }
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    document.body.classList.add('keyboard-navigation');
+                }
+            });
+            
+            document.addEventListener('mousedown', function() {
+                document.body.classList.remove('keyboard-navigation');
+            });
+            
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href !== '#' && document.querySelector(href)) {
+                        e.preventDefault();
+                        document.querySelector(href).scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // Simple CSS for keyboard navigation
+            const style = document.createElement('style');
+            style.textContent = `
+                .keyboard-navigation *:focus {
+                    outline: 2px solid #00d4ff !important;
+                    outline-offset: 2px !important;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // FOOTER FUNCTIONALITY
+            
+            // Newsletter Form
+            const newsletterForm = document.getElementById('newsletterForm');
+            const newsletterSuccess = document.getElementById('newsletterSuccess');
+            
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const email = this.querySelector('input[type="email"]').value;
+                    
+                    // Simulate newsletter subscription
+                    if (email) {
+                        // Show success message
+                        newsletterSuccess.classList.add('show');
+                        
+                        // Reset form
+                        this.reset();
+                        
+                        // Hide success message after 5 seconds
+                        setTimeout(() => {
+                            newsletterSuccess.classList.remove('show');
+                        }, 5000);
+                    }
+                });
+            }
+            
+            // Back to Top Button
+            const backToTopBtn = document.getElementById('backToTop');
+            
+            if (backToTopBtn) {
+                // Show/hide button based on scroll position
+                window.addEventListener('scroll', function() {
+                    if (window.pageYOffset > 300) {
+                        backToTopBtn.style.opacity = '1';
+                        backToTopBtn.style.visibility = 'visible';
+                    } else {
+                        backToTopBtn.style.opacity = '0';
+                        backToTopBtn.style.visibility = 'hidden';
+                    }
+                });
+                
+                // Smooth scroll to top
+                backToTopBtn.addEventListener('click', function() {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+            
+            // Enhanced Social Link Interactions
+            const socialLinks = document.querySelectorAll('.social-link');
+            socialLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.1)';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Footer Animation on Scroll
+            const footerElements = document.querySelectorAll('.footer-brand, .footer-links, .footer-contact');
+            
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const footerObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            footerElements.forEach(element => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(30px)';
+                element.style.transition = 'all 0.6s ease';
+                footerObserver.observe(element);
+            });
+            
+            // Newsletter Card Parallax Effect
+            const newsletterCard = document.querySelector('.newsletter-card');
+            if (newsletterCard) {
+                window.addEventListener('scroll', function() {
+                    const scrolled = window.pageYOffset;
+                    const rate = scrolled * -0.1;
+                    newsletterCard.style.transform = `translateY(${rate}px)`;
+                });
+            }
         });
     </script>
 {% endblock %}

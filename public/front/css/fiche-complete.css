@@ -4,6 +4,27 @@
    ========================================== */
 
 /* ==========================================
+   OVERRIDE UNIFIED DESIGN SYSTEM
+   Ensure fiche styles take precedence
+   ========================================== */
+.fiche-page {
+    /* Override any conflicting styles from pages-design.css */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+.fiche-page * {
+    /* Ensure all fiche elements use our design system */
+    box-sizing: border-box;
+}
+
+/* Override page container from unified system */
+.fiche-page .page-container {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* ==========================================
    CSS VARIABLES - Design Tokens
    SCOPED TO .fiche-page ONLY
    ========================================== */
@@ -107,6 +128,103 @@
 .fiche-page .container {
     position: relative;
     z-index: 1;
+}
+
+/* ==========================================
+   FICHE HEADER
+   ========================================== */
+.fiche-page .fiche-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.fiche-page .fiche-header-left {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.fiche-page .fiche-title-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: white;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    flex-shrink: 0;
+}
+
+.fiche-page .fiche-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.fiche-page .fiche-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.fiche-page .fiche-header-right {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.fiche-page .fiche-card-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.fiche-page .fiche-card-date i {
+    color: var(--primary);
+}
+
+@media (max-width: 768px) {
+    .fiche-page .fiche-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .fiche-page .fiche-header-left {
+        min-width: auto;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+    
+    .fiche-page .fiche-title {
+        font-size: 2rem;
+    }
+    
+    .fiche-page .fiche-header-right {
+        justify-content: flex-start;
+    }
 }
 
 /* Animated Background Shapes */

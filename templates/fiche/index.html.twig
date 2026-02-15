@@ -2,262 +2,251 @@
 
 {% block title %}Fiches de révision - BAC Lab{% endblock %}
 
-{% block body_class %}fiche-index-page{% endblock %}
-
-{% block fiche_title %}{% endblock %}
-
-{% block fiche_subtitle %}{% endblock %}
-
-{% block fiche_header_actions %}{% endblock %}
-
 {% block fiche_content %}
-<!-- Floating Background Shapes -->
-<div class="fiche-shapes">
-    <div class="fiche-shape fiche-shape-1"></div>
-    <div class="fiche-shape fiche-shape-2"></div>
-    <div class="fiche-shape fiche-shape-3"></div>
-    <div class="fiche-shape fiche-shape-4"></div>
-</div>
-
-
-<!-- Hero Section -->
-<div class="fiche-hero">
-    <h1 class="fiche-hero-title">
-        <i class="fa fa-graduation-cap mr-3"></i>
-        Fiches de révision
-    </h1>
-    <p class="fiche-hero-subtitle">
-        Explorez, créez et partagez vos fiches de révision pour réussir votre BAC !
-    </p>
-</div>
-
-<!-- Filter Section -->
-<div class="fiche-filter-section">
-    <div class="fiche-filter-tabs">
-        <a href="{{ path('fiche_index', {'filter': 'all', 'filiere': current_filiere}) }}" 
-           class="fiche-filter-tab {{ current_filter == 'all' ? 'active' : '' }}">
-            <i class="fa fa-th-large"></i>
-            Toutes
-        </a>
-        <a href="{{ path('fiche_index', {'filter': 'own', 'filiere': current_filiere}) }}" 
-           class="fiche-filter-tab {{ current_filter == 'own' ? 'active' : '' }}">
-            <i class="fa fa-user"></i>
-            Mes fiches
-        </a>
-        <a href="{{ path('fiche_index', {'filter': 'favorite', 'filiere': current_filiere}) }}" 
-           class="fiche-filter-tab {{ current_filter == 'favorite' ? 'active' : '' }}">
-            <i class="fa fa-heart"></i>
-            Favorites
-        </a>
+<section class="container py-5" style="margin-top: 80px;">
+    <!-- Floating Background Shapes -->
+    <div class="fiche-shapes">
+        <div class="fiche-shape fiche-shape-1"></div>
+        <div class="fiche-shape fiche-shape-2"></div>
+        <div class="fiche-shape fiche-shape-3"></div>
+        <div class="fiche-shape fiche-shape-4"></div>
     </div>
-    
-    <div class="fiche-filter-filiere">
-        <form method="get" action="{{ path('fiche_index') }}" class="fiche-filter-form" id="filterForm">
-            <input type="hidden" name="filter" value="{{ current_filter }}">
-            <input type="hidden" name="filiere" id="filiereInput" value="{{ current_filiere }}">
-            
-            <div class="fiche-filter-select-wrapper">
-                <i class="fa fa-graduation-cap"></i>
-                <div class="fiche-filter-custom" id="filiereFilterCustom">
-                    <div class="fiche-filter-trigger">
-                        <span class="fiche-filter-value">
-                            {% if current_filiere %}
-                                {% for filiere in filieres %}
-                                    {% if filiere.id == current_filiere %}
-                                        {{ filiere.nom }} ({{ filiere.niveau }})
-                                    {% endif %}
-                                {% endfor %}
-                            {% else %}
-                                Toutes les filières
-                            {% endif %}
-                        </span>
-                        <i class="fa fa-chevron-down fiche-filter-arrow"></i>
-                    </div>
-                    <div class="fiche-filter-dropdown">
-                        <div class="fiche-filter-option {{ current_filiere == '' ? 'selected' : '' }}" data-value="">
-                            Toutes les filières
-                        </div>
-                        {% for filiere in filieres %}
-                            <div class="fiche-filter-option {{ current_filiere == filiere.id ? 'selected' : '' }}" data-value="{{ filiere.id }}">
-                                {{ filiere.nom }} ({{ filiere.niveau }})
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
 
-<!-- Create Button -->
-<div class="fiche-create-btn-wrapper">
-    <a href="{{ path('fiche_new') }}" class="fiche-btn-neon">
-        <i class="fa fa-plus-circle"></i>
-        Créer une nouvelle fiche
-    </a>
-</div>
-
-
-{% if fiches is empty %}
-    <!-- Empty State -->
-    <div class="fiche-empty">
-        <div class="fiche-empty-icon">
-            <i class="fa fa-book"></i>
-        </div>
-        <h2 class="fiche-empty-title">Aucune fiche disponible</h2>
-        <p class="fiche-empty-text">
-            Commencez votre parcours de révision en créant votre première fiche !
+    <!-- Hero Section -->
+    <div class="fiche-hero">
+        <h1 class="fiche-hero-title">
+            <i class="fas fa-file-alt mr-3"></i>
+            Fiches de révision
+        </h1>
+        <p class="fiche-hero-subtitle">
+            Explorez, créez et partagez vos fiches de révision pour réussir votre BAC !
         </p>
-        <a href="{{ path('fiche_new') }}" class="fiche-btn-neon">
-            <i class="fa fa-plus"></i>
-            Créer ma première fiche
-        </a>
-
     </div>
-{% else %}
-    <!-- Cards Grid -->
-    <div class="fiche-grid">
-        {% for fiche in fiches %}
-            {% set isModerateur = fiche.id in user_moderateur_fiches %}
-            <div class="fiche-ultimate-card">
-                <!-- Card Header -->
-                <div class="fiche-card-header">
-                    <div class="fiche-card-icon">
-                        <i class="fa fa-file-text-o"></i>
-                    </div>
-                    <h3 class="fiche-card-title">{{ fiche.title }}</h3>
-                    {% if isModerateur %}
-                        <span class="fiche-card-badge">
-                            <i class="fa fa-check-circle mr-1"></i>
-                            Modérateur
-                        </span>
-                    {% endif %}
-                    {% if fiche.id in user_favorite_fiches %}
-                        <span class="fiche-card-badge fiche-card-badge-favorite">
-                            <i class="fa fa-heart mr-1"></i>
-                            Favori
-                        </span>
-                    {% endif %}
-                    <span class="fiche-card-badge fiche-card-badge-{{ fiche.isPublic ? 'public' : 'private' }}">
-                        <i class="fa fa-{{ fiche.isPublic ? 'globe' : 'lock' }} mr-1"></i>
-                        {{ fiche.isPublic ? 'Public' : 'Privé' }}
-                    </span>
 
-                </div>
+    <!-- Filter Section -->
+    <div class="fiche-filter-section">
+        <div class="fiche-filter-tabs">
+            <a href="{{ path('fiche_index', {'filter': 'all', 'filiere': current_filiere}) }}" 
+               class="fiche-filter-tab {{ current_filter == 'all' ? 'active' : '' }}">
+                <i class="fas fa-th-large"></i>
+                Toutes
+            </a>
+            <a href="{{ path('fiche_index', {'filter': 'own', 'filiere': current_filiere}) }}" 
+               class="fiche-filter-tab {{ current_filter == 'own' ? 'active' : '' }}">
+                <i class="fas fa-user"></i>
+                Mes fiches
+            </a>
+            <a href="{{ path('fiche_index', {'filter': 'favorite', 'filiere': current_filiere}) }}" 
+               class="fiche-filter-tab {{ current_filter == 'favorite' ? 'active' : '' }}">
+                <i class="fas fa-heart"></i>
+                Favoris
+            </a>
+        </div>
+        
+        <div class="fiche-filter-filiere">
+            <form method="get" action="{{ path('fiche_index') }}" class="fiche-filter-form" id="filterForm">
+                <input type="hidden" name="filter" value="{{ current_filter }}">
+                <input type="hidden" name="filiere" id="filiereInput" value="{{ current_filiere }}">
                 
-                <!-- Card Body -->
-                <div class="fiche-card-body">
-                    <p class="fiche-card-excerpt">
-                        {{ fiche.content|slice(0, 180) }}{% if fiche.content|length > 180 %}...{% endif %}
-                    </p>
-                    
-                    <!-- Meta -->
-                    <div class="fiche-card-meta">
-                        <div class="fiche-card-date">
-                            <i class="fa fa-calendar-alt"></i>
-                            {{ fiche.createdAt|date('d/m/Y') }}
+                <div class="fiche-filter-select-wrapper">
+                    <i class="fas fa-graduation-cap"></i>
+                    <div class="fiche-filter-custom" id="filiereFilterCustom">
+                        <div class="fiche-filter-trigger">
+                            <span class="fiche-filter-value">
+                                {% if current_filiere %}
+                                    {% for filiere in filieres %}
+                                        {% if filiere.id == current_filiere %}
+                                            {{ filiere.nom }} ({{ filiere.niveau }})
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    Toutes les filières
+                                {% endif %}
+                            </span>
+                            <i class="fas fa-chevron-down fiche-filter-arrow"></i>
                         </div>
-                        <div class="fiche-card-stats">
-                            {% if fiche.filiere %}
-                                <span class="fiche-card-stat fiche-card-filiere">
-                                    <i class="fa fa-graduation-cap"></i>
-                                    {{ fiche.filiere.nom }} ({{ fiche.filiere.niveau }})
+                        <div class="fiche-filter-dropdown">
+                            <div class="fiche-filter-option {{ current_filiere == '' ? 'selected' : '' }}" data-value="">
+                                Toutes les filières
+                            </div>
+                            {% for filiere in filieres %}
+                                <div class="fiche-filter-option {{ current_filiere == filiere.id ? 'selected' : '' }}" data-value="{{ filiere.id }}">
+                                    {{ filiere.nom }} ({{ filiere.niveau }})
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Button -->
+    <div class="fiche-create-btn-wrapper">
+        <a href="{{ path('fiche_new') }}" class="fiche-btn-neon">
+            <i class="fas fa-plus-circle"></i>
+            Créer une nouvelle fiche
+        </a>
+    </div>
+
+    {% if fiches is empty %}
+        <!-- Empty State -->
+        <div class="fiche-empty">
+            <div class="fiche-empty-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <h2 class="fiche-empty-title">Aucune fiche disponible</h2>
+            <p class="fiche-empty-text">
+                Commencez votre parcours de révision en créant votre première fiche !
+            </p>
+            <a href="{{ path('fiche_new') }}" class="fiche-btn-neon">
+                <i class="fas fa-plus"></i>
+                Créer ma première fiche
+            </a>
+        </div>
+    {% else %}
+        <!-- Cards Grid -->
+        <div class="fiche-grid">
+            {% for fiche in fiches %}
+                {% set isModerateur = fiche.id in user_moderateur_fiches %}
+                <div class="fiche-ultimate-card">
+                    <!-- Card Header -->
+                    <div class="fiche-card-header">
+                        <div class="fiche-card-icon">
+                            <i class="fas fa-file-text"></i>
+                        </div>
+                        <h3 class="fiche-card-title">{{ fiche.title }}</h3>
+                        <div class="fiche-card-badges">
+                            {% if isModerateur %}
+                                <span class="fiche-card-badge fiche-card-badge-moderator">
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    Modérateur
                                 </span>
                             {% endif %}
-                            <span class="fiche-card-stat">
-                                <i class="fa fa-align-left"></i>
-                                {{ fiche.content|length }} car.
+                            {% if fiche.id in user_favorite_fiches %}
+                                <span class="fiche-card-badge fiche-card-badge-favorite">
+                                    <i class="fas fa-heart mr-1"></i>
+                                    Favori
+                                </span>
+                            {% endif %}
+                            <span class="fiche-card-badge fiche-card-badge-{{ fiche.isPublic ? 'public' : 'private' }}">
+                                <i class="fas fa-{{ fiche.isPublic ? 'globe' : 'lock' }} mr-1"></i>
+                                {{ fiche.isPublic ? 'Public' : 'Privé' }}
                             </span>
                         </div>
                     </div>
-
-                </div>
-                
-                <!-- Card Actions -->
-                <div class="fiche-card-actions">
-                    <a href="{{ path('fiche_show', {'id': fiche.id}) }}" class="fiche-btn fiche-btn-primary">
-                        <i class="fa fa-eye"></i>
-                        Voir
-                    </a>
                     
-                    {% if app.user %}
-                        {% set isFav = fiche.id in user_favorite_fiches %}
-                        <form action="{{ path('fiche_toggle_favorite', {'id': fiche.id}) }}" method="post" style="display: inline-block; margin: 0;">
-                            <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite_' ~ fiche.id) }}">
-                            <button type="submit" class="fiche-btn-icon {{ isFav ? 'is-favorite' : '' }}" title="{{ isFav ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
-                                <i class="fa{{ isFav ? 's' : 'r' }} fa-heart"></i>
-                            </button>
-                        </form>
-                    {% endif %}
+                    <!-- Card Body -->
+                    <div class="fiche-card-body">
+                        <p class="fiche-card-excerpt">
+                            {{ fiche.content|slice(0, 180) }}{% if fiche.content|length > 180 %}...{% endif %}
+                        </p>
+                        
+                        <!-- Meta -->
+                        <div class="fiche-card-meta">
+                            <div class="fiche-card-date">
+                                <i class="fas fa-calendar-alt"></i>
+                                {{ fiche.createdAt|date('d/m/Y') }}
+                            </div>
+                            <div class="fiche-card-stats">
+                                {% if fiche.filiere %}
+                                    <span class="fiche-card-stat fiche-card-filiere">
+                                        <i class="fas fa-graduation-cap"></i>
+                                        {{ fiche.filiere.nom }} ({{ fiche.filiere.niveau }})
+                                    </span>
+                                {% endif %}
+                                <span class="fiche-card-stat">
+                                    <i class="fas fa-align-left"></i>
+                                    {{ fiche.content|length }} car.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                     
-                    {% if app.user and (fiche.isPublic or isModerateur) %}
-                        <a href="{{ path('fiche_edit', {'id': fiche.id}) }}" class="fiche-btn fiche-btn-secondary">
-                            <i class="fa fa-edit"></i>
+                    <!-- Card Actions -->
+                    <div class="fiche-card-actions">
+                        <a href="{{ path('fiche_show', {'id': fiche.id}) }}" class="fiche-btn fiche-btn-primary">
+                            <i class="fas fa-eye"></i>
+                            Voir
                         </a>
-                    {% endif %}
-                    {% if isModerateur %}
-                        <form action="{{ path('fiche_delete', {'id': fiche.id}) }}" method="post" style="display: inline-block; margin: 0;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette fiche ? Cette action est irréversible.');">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_fiche_' ~ fiche.id) }}">
-                            <button type="submit" class="fiche-btn fiche-btn-danger">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </form>
-                    {% endif %}
+                        
+                        {% if app.user %}
+                            {% set isFav = fiche.id in user_favorite_fiches %}
+                            <form action="{{ path('fiche_toggle_favorite', {'id': fiche.id}) }}" method="post" style="display: inline-block; margin: 0;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite_' ~ fiche.id) }}">
+                                <button type="submit" class="fiche-btn-icon {{ isFav ? 'is-favorite' : '' }}" title="{{ isFav ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </form>
+                        {% endif %}
+                        
+                        {% if app.user and (fiche.isPublic or isModerateur) %}
+                            <a href="{{ path('fiche_edit', {'id': fiche.id}) }}" class="fiche-btn fiche-btn-secondary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        {% endif %}
+                        {% if isModerateur %}
+                            <form action="{{ path('fiche_delete', {'id': fiche.id}) }}" method="post" style="display: inline-block; margin: 0;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette fiche ? Cette action est irréversible.');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_fiche_' ~ fiche.id) }}">
+                                <button type="submit" class="fiche-btn fiche-btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
                 </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
-            </div>
-        {% endfor %}
-    </div>
-{% endif %}
-
-{# Pagination #}
-{% if total_pages > 1 %}
-<nav aria-label="Pagination des fiches" class="fiche-pagination mt-5">
-    <ul class="fiche-pagination-list justify-content-center">
-        {# Previous page #}
-        {% if current_page > 1 %}
-            <li class="fiche-pagination-item">
-                <a href="{{ path('fiche_index', {'filter': current_filter, 'filiere': current_filiere, 'page': current_page - 1}) }}" class="fiche-pagination-link">
-                    <i class="fa fa-chevron-left"></i>
-                </a>
-            </li>
-        {% else %}
-            <li class="fiche-pagination-item disabled">
-                <span class="fiche-pagination-link"><i class="fa fa-chevron-left"></i></span>
-            </li>
-        {% endif %}
-
-        {# Page numbers #}
-        {% for i in 1..total_pages %}
-            {% if i == 1 or i == total_pages or (i >= current_page - 2 and i <= current_page + 2) %}
-                <li class="fiche-pagination-item {{ i == current_page ? 'active' : '' }}">
-                    <a href="{{ path('fiche_index', {'filter': current_filter, 'filiere': current_filiere, 'page': i}) }}" class="fiche-pagination-link">
-                        {{ i }}
+    {# Pagination #}
+    {% if total_pages > 1 %}
+    <nav aria-label="Pagination des fiches" class="fiche-pagination mt-5">
+        <ul class="fiche-pagination-list justify-content-center">
+            {# Previous page #}
+            {% if current_page > 1 %}
+                <li class="fiche-pagination-item">
+                    <a href="{{ path('fiche_index', {'filter': current_filter, 'filiere': current_filiere, 'page': current_page - 1}) }}" class="fiche-pagination-link">
+                        <i class="fas fa-chevron-left"></i>
                     </a>
                 </li>
-            {% elseif i == current_page - 3 or i == current_page + 3 %}
+            {% else %}
                 <li class="fiche-pagination-item disabled">
-                    <span class="fiche-pagination-link">...</span>
+                    <span class="fiche-pagination-link"><i class="fas fa-chevron-left"></i></span>
                 </li>
             {% endif %}
-        {% endfor %}
 
-        {# Next page #}
-        {% if current_page < total_pages %}
-            <li class="fiche-pagination-item">
-                <a href="{{ path('fiche_index', {'filter': current_filter, 'filiere': current_filiere, 'page': current_page + 1}) }}" class="fiche-pagination-link">
-                    <i class="fa fa-chevron-right"></i>
-                </a>
-            </li>
-        {% else %}
-            <li class="fiche-pagination-item disabled">
-                <span class="fiche-pagination-link"><i class="fa fa-chevron-right"></i></span>
-            </li>
-        {% endif %}
-    </ul>
-</nav>
-{% endif %}
+            {# Page numbers #}
+            {% for i in 1..total_pages %}
+                {% if i == 1 or i == total_pages or (i >= current_page - 2 and i <= current_page + 2) %}
+                    <li class="fiche-pagination-item {{ i == current_page ? 'active' : '' }}">
+                        <a href="{{ path('fiche_index', {'filter': current_filter, 'filiere': current_filiere, 'page': i}) }}" class="fiche-pagination-link">
+                            {{ i }}
+                        </a>
+                    </li>
+                {% elseif i == current_page - 3 or i == current_page + 3 %}
+                    <li class="fiche-pagination-item disabled">
+                        <span class="fiche-pagination-link">...</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
 
+            {# Next page #}
+            {% if current_page < total_pages %}
+                <li class="fiche-pagination-item">
+                    <a href="{{ path('fiche_index', {'filter': current_filter, 'filiere': current_filiere, 'page': current_page + 1}) }}" class="fiche-pagination-link">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li class="fiche-pagination-item disabled">
+                    <span class="fiche-pagination-link"><i class="fas fa-chevron-right"></i></span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</section>
 {% endblock %}
 
 {% block js %}
