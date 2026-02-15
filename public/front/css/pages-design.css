@@ -34,8 +34,9 @@
     --shadow-heavy: rgba(0, 212, 255, 0.3);
 }
 
-/* Base Page Styling - Only apply to non-home pages */
-body:not(.home-page) {
+/* Base Page Styling - Only apply to non-home pages - STRONGER EXCLUSION */
+body:not(.home-page):not(.home-page-html),
+html body:not(.home-page):not(.home-page-html) {
     background: linear-gradient(135deg, 
         var(--bg-dark) 0%, 
         var(--bg-dark-secondary) 25%, 
@@ -45,6 +46,19 @@ body:not(.home-page) {
     min-height: 100vh;
     font-family: 'Inter', sans-serif !important;
     color: var(--text-white) !important;
+}
+
+/* Ensure home page is completely excluded from unified design */
+body.home-page,
+html body.home-page,
+body.home-page-html,
+html body.home-page-html {
+    background: #0a0a0f !important;
+    background-color: #0a0a0f !important;
+    background-image: none !important;
+    /* Reset any inherited styles */
+    min-height: auto !important;
+    color: inherit !important;
 }
 
 /* Page Container */
