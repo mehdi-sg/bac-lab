@@ -42,6 +42,35 @@ html body.home-page {
     background-image: none !important;
 }
 
+/* FontAwesome Icon Fix - Ensure icons display properly */
+.fas, .far, .fab, .fal {
+    font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands", "Font Awesome 5 Pro" !important;
+    font-weight: 900 !important;
+    display: inline-block !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    text-rendering: auto !important;
+    line-height: 1 !important;
+}
+
+.far {
+    font-weight: 400 !important;
+}
+
+.fab {
+    font-family: "Font Awesome 5 Brands" !important;
+    font-weight: 400 !important;
+}
+
+/* Ensure icons are visible */
+i[class^="fa"], i[class*=" fa"] {
+    display: inline-block !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    text-rendering: auto !important;
+    line-height: 1 !important;
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 /* Cursor Trail Effect */

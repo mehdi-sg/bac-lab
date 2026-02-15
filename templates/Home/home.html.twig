@@ -15,6 +15,40 @@
     // Force dark background immediately
     document.body.style.backgroundColor = '#0a0a0f';
     document.body.style.backgroundImage = 'none';
+    
+    // FontAwesome Icon Detection and Fix
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if FontAwesome is loaded
+        const testIcon = document.createElement('i');
+        testIcon.className = 'fas fa-home';
+        testIcon.style.position = 'absolute';
+        testIcon.style.left = '-9999px';
+        document.body.appendChild(testIcon);
+        
+        const computedStyle = window.getComputedStyle(testIcon, ':before');
+        const content = computedStyle.getPropertyValue('content');
+        
+        // If FontAwesome isn't loaded properly, add fallback
+        if (!content || content === 'none' || content === '""') {
+            console.warn('FontAwesome icons not loading properly, applying fallback...');
+            
+            // Add fallback CSS for icons
+            const fallbackStyle = document.createElement('style');
+            fallbackStyle.textContent = `
+                .fas, .far, .fab, .fal {
+                    font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands" !important;
+                    font-weight: 900 !important;
+                    display: inline-block !important;
+                }
+                .far { font-weight: 400 !important; }
+                .fab { font-family: "Font Awesome 5 Brands" !important; font-weight: 400 !important; }
+            `;
+            document.head.appendChild(fallbackStyle);
+        }
+        
+        // Remove test element
+        document.body.removeChild(testIcon);
+    });
 </script>
 
 <style>
@@ -23,6 +57,16 @@ body.home-page {
     background: #0a0a0f !important;
     background-image: none !important;
 }
+
+/* FontAwesome icon fix */
+.fas, .far, .fab, .fal {
+    font-family: "Font Awesome 5 Free" !important;
+    font-weight: 900 !important;
+    display: inline-block !important;
+    font-style: normal !important;
+}
+.far { font-weight: 400 !important; }
+.fab { font-family: "Font Awesome 5 Brands" !important; font-weight: 400 !important; }
 </style>
 <!-- Cursor Trail -->
 <div class="cursor-trail" id="cursorTrail"></div>
@@ -187,7 +231,7 @@ body.home-page {
                 <span>Toutes Filières</span>
             </div>
             <div class="trust-stat">
-                <i class="fas fa-book-open"></i>
+                <i class="fas fa-book"></i>
                 <span>Toutes Matières</span>
             </div>
             <div class="trust-stat">
@@ -219,7 +263,7 @@ body.home-page {
         <div class="features-grid">
             <div class="feature-card-modern" data-aos="fade-up" data-aos-delay="0">
                 <div class="feature-icon-modern gradient-purple">
-                    <i class="fas fa-book-reader"></i>
+                    <i class="fas fa-book"></i>
                 </div>
                 <h3 class="feature-title-modern">Bibliothèque Complète</h3>
                 <p class="feature-desc-modern">
@@ -232,7 +276,7 @@ body.home-page {
             
             <div class="feature-card-modern" data-aos="fade-up" data-aos-delay="100">
                 <div class="feature-icon-modern gradient-pink">
-                    <i class="fas fa-clipboard-check"></i>
+                    <i class="fas fa-check-circle"></i>
                 </div>
                 <h3 class="feature-title-modern">Quiz Interactifs</h3>
                 <p class="feature-desc-modern">
@@ -245,7 +289,7 @@ body.home-page {
             
             <div class="feature-card-modern" data-aos="fade-up" data-aos-delay="200">
                 <div class="feature-icon-modern gradient-blue">
-                    <i class="fas fa-file-alt"></i>
+                    <i class="fas fa-file"></i>
                 </div>
                 <h3 class="feature-title-modern">Fiches Collaboratives</h3>
                 <p class="feature-desc-modern">
@@ -356,7 +400,7 @@ body.home-page {
                 <div class="step-number">01</div>
                 <div class="step-content">
                     <div class="step-icon gradient-blue">
-                        <i class="fas fa-user-plus"></i>
+                        <i class="fas fa-user"></i>
                     </div>
                     <h3 class="step-title">Créez votre compte</h3>
                     <p class="step-description">
@@ -370,7 +414,7 @@ body.home-page {
                 <div class="step-number">02</div>
                 <div class="step-content">
                     <div class="step-icon gradient-purple">
-                        <i class="fas fa-book-reader"></i>
+                        <i class="fas fa-book"></i>
                     </div>
                     <h3 class="step-title">Étudiez et pratiquez</h3>
                     <p class="step-description">
@@ -418,55 +462,55 @@ body.home-page {
                 <h3 class="subject-title">Mathématiques</h3>
                 <p class="subject-description">Algèbre, géométrie, analyse et probabilités</p>
                 <div class="subject-stats">
-                    <span><i class="fas fa-file-alt"></i> 120+ cours</span>
+                    <span><i class="fas fa-file"></i> 120+ cours</span>
                     <span><i class="fas fa-question-circle"></i> 500+ exercices</span>
                 </div>
             </div>
             
             <div class="subject-card" data-aos="fade-up" data-aos-delay="100">
                 <div class="subject-icon">
-                    <i class="fas fa-atom"></i>
+                    <i class="fas fa-flask"></i>
                 </div>
                 <h3 class="subject-title">Sciences</h3>
                 <p class="subject-description">Physique, chimie et sciences naturelles</p>
                 <div class="subject-stats">
-                    <span><i class="fas fa-file-alt"></i> 95+ cours</span>
+                    <span><i class="fas fa-file"></i> 95+ cours</span>
                     <span><i class="fas fa-question-circle"></i> 400+ exercices</span>
                 </div>
             </div>
             
             <div class="subject-card" data-aos="fade-up" data-aos-delay="200">
                 <div class="subject-icon">
-                    <i class="fas fa-language"></i>
+                    <i class="fas fa-comments"></i>
                 </div>
                 <h3 class="subject-title">Langues</h3>
                 <p class="subject-description">Français, anglais et arabe</p>
                 <div class="subject-stats">
-                    <span><i class="fas fa-file-alt"></i> 80+ cours</span>
+                    <span><i class="fas fa-file"></i> 80+ cours</span>
                     <span><i class="fas fa-question-circle"></i> 300+ exercices</span>
                 </div>
             </div>
             
             <div class="subject-card" data-aos="fade-up" data-aos-delay="300">
                 <div class="subject-icon">
-                    <i class="fas fa-chart-line"></i>
+                    <i class="fas fa-chart-bar"></i>
                 </div>
                 <h3 class="subject-title">Économie</h3>
                 <p class="subject-description">Économie générale et gestion</p>
                 <div class="subject-stats">
-                    <span><i class="fas fa-file-alt"></i> 70+ cours</span>
+                    <span><i class="fas fa-file"></i> 70+ cours</span>
                     <span><i class="fas fa-question-circle"></i> 250+ exercices</span>
                 </div>
             </div>
             
             <div class="subject-card" data-aos="fade-up" data-aos-delay="400">
                 <div class="subject-icon">
-                    <i class="fas fa-laptop-code"></i>
+                    <i class="fas fa-laptop"></i>
                 </div>
                 <h3 class="subject-title">Informatique</h3>
                 <p class="subject-description">Programmation et algorithmique</p>
                 <div class="subject-stats">
-                    <span><i class="fas fa-file-alt"></i> 60+ cours</span>
+                    <span><i class="fas fa-file"></i> 60+ cours</span>
                     <span><i class="fas fa-question-circle"></i> 200+ exercices</span>
                 </div>
             </div>
@@ -478,7 +522,7 @@ body.home-page {
                 <h3 class="subject-title">Autres</h3>
                 <p class="subject-description">Histoire, géographie et philosophie</p>
                 <div class="subject-stats">
-                    <span><i class="fas fa-file-alt"></i> 90+ cours</span>
+                    <span><i class="fas fa-file"></i> 90+ cours</span>
                     <span><i class="fas fa-question-circle"></i> 350+ exercices</span>
                 </div>
             </div>
