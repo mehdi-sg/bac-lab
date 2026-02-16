@@ -97,6 +97,8 @@ class FicheController extends AbstractController
             'current_page' => $page,
             'total_pages' => $totalPages,
             'total_count' => $totalCount,
+            // DEBUG: Add filières count for debugging
+            'debug_filieres_count' => count($filieres),
         ]);
 
     }

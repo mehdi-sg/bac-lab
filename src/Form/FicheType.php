@@ -4,9 +4,11 @@ namespace App\Form;
 
 use App\Entity\Fiche;
 use App\Entity\Filiere;
+use App\Service\FicheIconService;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,6 +17,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class FicheType extends AbstractType
 {
+    public function __construct(private FicheIconService $ficheIconService)
+    {
+    }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -74,6 +79,16 @@ class FicheType extends AbstractType
                 'required' => false,
                 'attr' => [
                     'class' => 'form-control'
+                ]
+            ])
+            ->add('icon', ChoiceType::class, [
+                'label' => 'Icône de la fiche',
+                'choices' => $this->ficheIconService->getIconChoices(),
+                'placeholder' => 'Choisir une icône',
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-control fiche-icon-select',
+                    'data-icon-path' => $this->ficheIconService->getIconPath()
                 ]
             ])
         ;

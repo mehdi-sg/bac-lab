@@ -37,6 +37,9 @@ class Fiche
     #[ORM\Column]
     private ?bool $isPublic = null;
 
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $icon = null;
+
     #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
     #[ORM\JoinColumn(nullable: true)]
     private ?Utilisateur $utilisateur = null;
@@ -311,6 +314,17 @@ class Fiche
     public function setFiliere(?Filiere $filiere): static
     {
         $this->filiere = $filiere;
+        return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?string $icon): static
+    {
+        $this->icon = $icon;
         return $this;
     }
 }

@@ -13,7 +13,11 @@
     <div class="fiche-header mb-5">
         <div class="fiche-header-left">
             <div class="fiche-title-icon">
-                <i class="fa fa-graduation-cap"></i>
+                {% if fiche.icon %}
+                    <img src="{{ asset(fiche_icon_url(fiche.icon)) }}" alt="Icône {{ fiche.title }}" class="fiche-show-icon-img">
+                {% else %}
+                    <i class="fa fa-file-alt"></i>
+                {% endif %}
             </div>
             <div>
                 <h1 class="fiche-title mb-2">{{ fiche.title }}</h1>

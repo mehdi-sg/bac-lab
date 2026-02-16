@@ -6,6 +6,11 @@
 <div class="fiche-container">
     <!-- Hero Section with Enhanced Beautiful Title -->
     <div class="fiche-hero">
+        <!-- DEBUG: Show filières count -->
+        <div style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; z-index: 9999; font-size: 12px;">
+            DEBUG: {{ debug_filieres_count|default(0) }} filières found
+        </div>
+        
         <h1 class="fiche-hero-title">
             <i class="fas fa-sparkles"></i>
             Fiches de révision
@@ -119,12 +124,20 @@
                                 <i class="fas fa-chevron-down fiche-filter-arrow"></i>
                             </div>
                             <div class="fiche-filter-dropdown">
+                                <!-- DEBUG: Show filières count -->
+                                <!-- Total filières: {{ filieres|length }} -->
+                                
                                 <div class="fiche-filter-option {{ current_filiere == '' ? 'selected' : '' }}" data-value="">
                                     Toutes les filières
                                 </div>
                                 {% for filiere in filieres %}
                                     <div class="fiche-filter-option {{ current_filiere == filiere.id ? 'selected' : '' }}" data-value="{{ filiere.id }}">
                                         {{ filiere.nom }} ({{ filiere.niveau }})
+                                    </div>
+                                {% else %}
+                                    <!-- DEBUG: No filières found -->
+                                    <div class="fiche-filter-option" data-value="">
+                                        Aucune filière trouvée
                                     </div>
                                 {% endfor %}
                             </div>
@@ -190,6 +203,21 @@
                     
                     <!-- Card Content Wrapper -->
                     <div class="fiche-card-content-wrapper">
+                        <!-- Card Icon - Centered at Top -->
+                        <div class="fiche-card-icon-header">
+                            {% if fiche.icon %}
+                                <div class="fiche-card-icon-large">
+                                    <img src="{{ asset(fiche_icon_url(fiche.icon)) }}" alt="Icône {{ fiche.title }}" class="fiche-icon-img-large">
+                                    <div class="fiche-icon-glow"></div>
+                                </div>
+                            {% else %}
+                                <div class="fiche-card-icon-large fiche-card-icon-default-large">
+                                    <i class="fas fa-file-alt"></i>
+                                    <div class="fiche-icon-glow"></div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
                         <!-- Card Header -->
                         <div class="fiche-card-header">
                             <h3 class="fiche-card-title">{{ fiche.title }}</h3>
@@ -552,19 +580,19 @@
             // ==========================================
             // SORT FUNCTIONALITY
             // ==========================================
-            if (sortDropdown) {
-                const sortTrigger = sortDropdown.querySelector('.fiche-sort-trigger');
-                const sortOptions = sortDropdown.querySelectorAll('.fiche-sort-option');
+            if (elements.sortDropdown) {
+                const sortTrigger = elements.sortDropdown.querySelector('.fiche-sort-trigger');
+                const sortOptions = elements.sortDropdown.querySelectorAll('.fiche-sort-option');
                 
                 sortTrigger.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    sortDropdown.classList.toggle('active');
+                    elements.sortDropdown.classList.toggle('active');
                 });
                 
                 sortOptions.forEach(option => {
                     option.addEventListener('click', function() {
                         const sortType = this.dataset.sort;
-                        currentSort = sortType;
+                        FicheState.currentSort = sortType;
                         
                         // Update active state
                         sortOptions.forEach(opt => opt.classList.remove('active'));
@@ -574,7 +602,7 @@
                         sortTrigger.querySelector('span').textContent = this.textContent.trim();
                         
                         // Close dropdown
-                        sortDropdown.classList.remove('active');
+                        elements.sortDropdown.classList.remove('active');
                         
                         // Apply sort
                         sortCards(sortType);
@@ -583,8 +611,8 @@
                 
                 // Close dropdown when clicking outside
                 document.addEventListener('click', function(e) {
-                    if (!sortDropdown.contains(e.target)) {
-                        sortDropdown.classList.remove('active');
+                    if (!elements.sortDropdown.contains(e.target)) {
+                        elements.sortDropdown.classList.remove('active');
                     }
                 });
             }
@@ -612,7 +640,7 @@
                 // Re-append sorted cards
                 cards.forEach((card, index) => {
                     card.style.animationDelay = (index * 0.05) + 's';
-                    ficheGrid.appendChild(card);
+                    elements.ficheGrid.appendChild(card);
                 });
             }
             
@@ -624,7 +652,7 @@
             viewButtons.forEach(btn => {
                 btn.addEventListener('click', function() {
                     const view = this.dataset.view;
-                    currentView = view;
+                    FicheState.currentView = view;
                     
                     // Update active state
                     viewButtons.forEach(b => b.classList.remove('active'));
@@ -632,10 +660,13 @@
                     
                     // Apply view
                     if (view === 'list') {
-                        ficheGrid.classList.add('list-view');
+                        elements.ficheGrid.classList.add('list-view');
                     } else {
-                        ficheGrid.classList.remove('list-view');
+                        elements.ficheGrid.classList.remove('list-view');
                     }
+                    
+                    // Save state
+                    FicheState.save();
                 });
             });
             
@@ -643,13 +674,13 @@
             // SELECTION & BULK ACTIONS
             // ==========================================
             function updateBulkActions() {
-                const count = selectedFiches.size;
+                const count = FicheState.selectedFiches.size;
                 
                 if (count > 0) {
-                    bulkActions.classList.add('visible');
-                    bulkActions.querySelector('.fiche-bulk-count').textContent = count;
+                    elements.bulkActions.classList.add('visible');
+                    elements.bulkActions.querySelector('.fiche-bulk-count').textContent = count;
                 } else {
-                    bulkActions.classList.remove('visible');
+                    elements.bulkActions.classList.remove('visible');
                 }
             }
             
@@ -660,12 +691,12 @@
                     const ficheId = checkbox.dataset.ficheId;
                     const card = checkbox.closest('.fiche-card');
                     
-                    if (selectedFiches.has(ficheId)) {
-                        selectedFiches.delete(ficheId);
+                    if (FicheState.selectedFiches.has(ficheId)) {
+                        FicheState.selectedFiches.delete(ficheId);
                         checkbox.classList.remove('checked');
                         card.classList.remove('selected');
                     } else {
-                        selectedFiches.add(ficheId);
+                        FicheState.selectedFiches.add(ficheId);
                         checkbox.classList.add('checked');
                         card.classList.add('selected');
                     }
@@ -675,11 +706,11 @@
             });
             
             // Bulk action buttons
-            if (bulkActions) {
+            if (elements.bulkActions) {
                 const bulkCancel = document.getElementById('bulkCancel');
                 
                 bulkCancel.addEventListener('click', function() {
-                    selectedFiches.clear();
+                    FicheState.selectedFiches.clear();
                     document.querySelectorAll('.fiche-card-checkbox.checked').forEach(cb => {
                         cb.classList.remove('checked');
                         cb.closest('.fiche-card').classList.remove('selected');
@@ -700,11 +731,11 @@
                 switch (e.key) {
                     case '?':
                         e.preventDefault();
-                        shortcutsOverlay.classList.add('visible');
+                        elements.shortcutsOverlay.classList.add('visible');
                         break;
                     case 'Escape':
-                        shortcutsOverlay.classList.remove('visible');
-                        selectedFiches.clear();
+                        elements.shortcutsOverlay.classList.remove('visible');
+                        FicheState.selectedFiches.clear();
                         document.querySelectorAll('.fiche-card.selected').forEach(card => {
                             card.classList.remove('selected');
                             card.querySelector('.fiche-card-checkbox').classList.remove('checked');
@@ -715,7 +746,7 @@
                     case 'V':
                         e.preventDefault();
                         const activeViewBtn = document.querySelector('.fiche-view-btn.active');
-                        const nextView = currentView === 'grid' ? 'list' : 'grid';
+                        const nextView = FicheState.currentView === 'grid' ? 'list' : 'grid';
                         const nextBtn = document.querySelector(`[data-view="${nextView}"]`);
                         if (nextBtn) nextBtn.click();
                         break;
@@ -727,7 +758,7 @@
                         case 'k':
                         case 'K':
                             e.preventDefault();
-                            searchInput.focus();
+                            elements.searchInput.focus();
                             break;
                         case 'n':
                         case 'N':
@@ -740,7 +771,7 @@
                             // Select all visible cards
                             document.querySelectorAll('.fiche-card:not([style*="display: none"])').forEach(card => {
                                 const ficheId = card.dataset.ficheId;
-                                selectedFiches.add(ficheId);
+                                FicheState.selectedFiches.add(ficheId);
                                 card.classList.add('selected');
                                 card.querySelector('.fiche-card-checkbox').classList.add('checked');
                             });
@@ -751,8 +782,8 @@
             });
             
             // Close shortcuts overlay on click outside
-            if (shortcutsOverlay) {
-                shortcutsOverlay.addEventListener('click', function(e) {
+            if (elements.shortcutsOverlay) {
+                elements.shortcutsOverlay.addEventListener('click', function(e) {
                     if (e.target === this) {
                         this.classList.remove('visible');
                     }
@@ -760,35 +791,63 @@
             }
             
             // ==========================================
-            // ENHANCED FILTER DROPDOWN
+            // ENHANCED FILTER DROPDOWN - WITH DEBUGGING
             // ==========================================
             if (elements.customSelect && elements.form) {
+                console.log('🔧 Dropdown elements found:', {
+                    customSelect: elements.customSelect,
+                    form: elements.form,
+                    hiddenInput: elements.hiddenInput
+                });
+                
                 const trigger = elements.customSelect.querySelector('.fiche-filter-trigger');
                 const valueDisplay = elements.customSelect.querySelector('.fiche-filter-value');
                 const dropdown = elements.customSelect.querySelector('.fiche-filter-dropdown');
-                const options = dropdown.querySelectorAll('.fiche-filter-option');
+                const options = dropdown ? dropdown.querySelectorAll('.fiche-filter-option') : [];
+                
+                console.log('🔧 Dropdown sub-elements:', {
+                    trigger: trigger,
+                    valueDisplay: valueDisplay,
+                    dropdown: dropdown,
+                    optionsCount: options.length
+                });
+                
+                // Log all options for debugging
+                if (options.length > 0) {
+                    console.log('🔧 Dropdown options:', Array.from(options).map(opt => ({
+                        text: opt.textContent.trim(),
+                        value: opt.dataset.value
+                    })));
+                }
                 
                 // Toggle dropdown
                 if (trigger) {
                     trigger.addEventListener('click', function(e) {
                         e.stopPropagation();
+                        console.log('🔧 Dropdown trigger clicked');
                         elements.customSelect.classList.toggle('active');
+                        console.log('🔧 Dropdown active state:', elements.customSelect.classList.contains('active'));
                     });
+                } else {
+                    console.error('❌ Dropdown trigger not found');
                 }
                 
                 // Handle option selection
-                options.forEach(option => {
+                options.forEach((option, index) => {
                     option.addEventListener('click', function() {
                         const value = this.dataset.value;
+                        console.log('🔧 Option clicked:', { value, text: this.textContent });
                         
                         // Update hidden input
                         if (elements.hiddenInput) {
                             elements.hiddenInput.value = value;
+                            console.log('🔧 Hidden input updated:', elements.hiddenInput.value);
                         }
                         
                         // Update display
                         if (valueDisplay) {
                             valueDisplay.textContent = this.textContent;
+                            console.log('🔧 Display updated:', valueDisplay.textContent);
                         }
                         
                         // Update selected state
@@ -799,6 +858,7 @@
                         elements.customSelect.classList.remove('active');
                         
                         // Submit form
+                        console.log('🔧 Submitting form...');
                         elements.form.submit();
                     });
                 });
@@ -819,6 +879,12 @@
                         }
                     });
                 }
+            } else {
+                console.error('❌ Dropdown elements not found:', {
+                    customSelect: elements.customSelect,
+                    form: elements.form,
+                    hiddenInput: elements.hiddenInput
+                });
             }
             
             // ==========================================
@@ -871,12 +937,60 @@
             // Show welcome message for first-time users
             if (localStorage.getItem('fiche-welcome-shown') !== 'true') {
                 setTimeout(() => {
-                    const welcomeTooltip = createTooltip(searchInput, 'Appuyez sur Ctrl+K pour rechercher rapidement !');
+                    const welcomeTooltip = createTooltip(elements.searchInput, 'Appuyez sur Ctrl+K pour rechercher rapidement !');
                     setTimeout(() => {
                         welcomeTooltip.remove();
                         localStorage.setItem('fiche-welcome-shown', 'true');
                     }, 3000);
                 }, 1000);
+            }
+            
+            // ==========================================
+            // ICON SELECTOR ENHANCEMENT
+            // ==========================================
+            const iconSelect = document.querySelector('.fiche-icon-select');
+            if (iconSelect) {
+                const iconPath = iconSelect.dataset.iconPath || 'front/assets/img/fiche-icon/';
+                let iconPreview = null;
+                
+                function updateIconPreview() {
+                    const selectedValue = iconSelect.value;
+                    
+                    // Remove existing preview
+                    if (iconPreview) {
+                        iconPreview.remove();
+                        iconPreview = null;
+                    }
+                    
+                    // Add new preview if icon is selected
+                    if (selectedValue) {
+                        iconPreview = document.createElement('div');
+                        iconPreview.className = 'fiche-icon-preview';
+                        iconPreview.innerHTML = `
+                            <img src="/${iconPath}${selectedValue}" alt="Aperçu de l'icône" onerror="this.style.display='none'">
+                            <span>Icône sélectionnée: ${iconSelect.options[iconSelect.selectedIndex].text}</span>
+                        `;
+                        iconSelect.parentNode.appendChild(iconPreview);
+                    }
+                }
+                
+                // Update preview on change
+                iconSelect.addEventListener('change', updateIconPreview);
+                
+                // Initial preview if value exists
+                updateIconPreview();
+                
+                // Add hover effect to show all available icons
+                const iconOptions = iconSelect.querySelectorAll('option[value]');
+                iconOptions.forEach(option => {
+                    if (option.value) {
+                        option.style.backgroundImage = `url(/${iconPath}${option.value})`;
+                        option.style.backgroundSize = '20px 20px';
+                        option.style.backgroundRepeat = 'no-repeat';
+                        option.style.backgroundPosition = '8px center';
+                        option.style.paddingLeft = '35px';
+                    }
+                });
             }
         });
     </script>
