@@ -219,6 +219,54 @@
             color: white;
         }
 
+        /* Checkbox styles for multiple choice */
+        .choice-item input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .choice-checkbox {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: white;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            margin-right: 15px;
+            font-weight: 600;
+            color: #4a5568;
+            transition: all 0.3s;
+        }
+
+        .choice-checkbox i {
+            display: none;
+            color: white;
+            font-size: 16px;
+        }
+
+        .choice-item input[type="checkbox"]:checked + .checkbox-label {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+            border-color: #667eea;
+            font-weight: 600;
+        }
+
+        .choice-item input[type="checkbox"]:checked + .checkbox-label .choice-checkbox {
+            background: #667eea;
+            border-color: #667eea;
+        }
+
+        .choice-item input[type="checkbox"]:checked + .checkbox-label .choice-checkbox i {
+            display: block;
+        }
+
+        .choice-item input[type="checkbox"]:checked + .checkbox-label .choice-letter {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
         .navigation-buttons {
             display: flex;
             justify-content: space-between;
@@ -373,7 +421,7 @@
             
             <div class="timer" id="timer">
                 <i class="fas fa-clock"></i>
-                <span id="time-display">20:00</span>
+                <span id="time-display"></span>
             </div>
         </div>
         
@@ -386,6 +434,10 @@
 
     <!-- Formulaire du quiz -->
     <form method="POST" action="{{ path('app_quiz_submit') }}" id="quiz-form">
+        <input type="hidden" name="matiere" value="{{ matiere }}">
+        <input type="hidden" name="chapitre" value="{{ chapitre }}">
+        <input type="hidden" name="niveau" value="{{ niveau }}">
+        <input type="hidden" name="quiz_id" value="{{ quizId }}">
         
         {% for question in questions %}
         <div class="question-card {% if loop.first %}active{% endif %}" data-question="{{ loop.index }}">
@@ -396,6 +448,28 @@
             <div class="choices-container">
                 {% for choix in question.choix %}
                 <div class="choice-item">
+                    {% if question.multiple_correct %}
+                    {# Multiple correct answers: Allow multiple selections with checkboxes #}
+                    <input 
+                        type="checkbox" 
+                        name="question_{{ question.id }}[]" 
+                        value="{{ choix.id }}" 
+                        id="choice_{{ choix.id }}"
+                        data-question="{{ loop.parent.loop.index }}"
+                        class="question-checkbox"
+                    >
+                    <label for="choice_{{ choix.id }}" class="choice-label checkbox-label">
+                        <span class="choice-checkbox">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span class="choice-letter">
+                            {% set letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'] %}
+                            {{ letters[loop.index0] }}
+                        </span>
+                        <span>{{ choix.libelle }}</span>
+                    </label>
+                    {% else %}
+                    {# Single correct answer: Allow single selection with radio buttons #}
                     <input 
                         type="radio" 
                         name="question_{{ question.id }}" 
@@ -405,11 +479,12 @@
                     >
                     <label for="choice_{{ choix.id }}" class="choice-label">
                         <span class="choice-letter">
-    {% set letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'] %}
-    {{ letters[loop.index0] }}
-</span>
+                            {% set letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'] %}
+                            {{ letters[loop.index0] }}
+                        </span>
                         <span>{{ choix.libelle }}</span>
                     </label>
+                    {% endif %}
                 </div>
                 {% endfor %}
             </div>
@@ -470,10 +545,15 @@
         const totalQuestions = {{ totalQuestions }};
         let answeredQuestions = new Set();
 
-        // Timer (20 minutes = 1200 secondes)
-        let timeRemaining = 1200;
+        // Timer (duration from database or default 20 minutes = 1200 secondes)
+        let timeRemaining = {{ duree ?? 1200 }};
         const timerDisplay = document.getElementById('time-display');
         const timerElement = document.getElementById('timer');
+
+        // Display the initial time immediately
+        const initialMinutes = Math.floor(timeRemaining / 60);
+        const initialSeconds = timeRemaining % 60;
+        timerDisplay.textContent = `${initialMinutes}:${initialSeconds.toString().padStart(2, '0')}`;
 
         const timerInterval = setInterval(() => {
             timeRemaining--;
@@ -499,6 +579,34 @@
                 const questionNum = parseInt(this.dataset.question);
                 answeredQuestions.add(questionNum);
 
+                const nextBtn = document.getElementById(`btn-next-${questionNum}`);
+                if (nextBtn) {
+                    nextBtn.disabled = false;
+                }
+
+                updateIndicators();
+                updateProgress();
+            });
+        });
+
+        // Handle checkbox changes for multiple choice questions
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const questionNum = parseInt(this.dataset.question);
+                
+                // Check if any checkbox for this question is checked
+                const anyChecked = document.querySelectorAll(`input[data-question="${questionNum}"]:checked`).length > 0;
+                
+                // For multiple correct answers, we allow proceeding even without selection
+                // (student might not know which ones are correct)
+                if (anyChecked) {
+                    answeredQuestions.add(questionNum);
+                } else {
+                    answeredQuestions.delete(questionNum);
+                }
+
+                // For checkboxes (multiple correct answers), always enable the next button
+                // since user can select 0 or more answers
                 const nextBtn = document.getElementById(`btn-next-${questionNum}`);
                 if (nextBtn) {
                     nextBtn.disabled = false;

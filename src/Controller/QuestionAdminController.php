@@ -72,7 +72,7 @@ class QuestionAdminController extends AbstractController
             
             // Action: ajouter un choix
             if ($action === 'add_choice') {
-                $type = $old['typeQuestion'] ?? '';
+                $type = $old['typeQuestion'] ?? $old['question']['typeQuestion'] ?? '';
                 if ($type === 'QCM' && $choiceCount < 5) {
                     $choiceCount++;
                 }
@@ -88,7 +88,7 @@ class QuestionAdminController extends AbstractController
             
             // Action: supprimer un choix
             if ($action === 'remove_choice') {
-                $type = $old['typeQuestion'] ?? '';
+                $type = $old['typeQuestion'] ?? $old['question']['typeQuestion'] ?? '';
                 if ($type === 'QCM' && $choiceCount > 2) {
                     $choiceCount--;
                 }
@@ -106,6 +106,54 @@ class QuestionAdminController extends AbstractController
         // Si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
             $typeQuestion = $form->get('typeQuestion')->getData();
+            
+            // Validation: Vérifier qu'au moins une réponse correcte est sélectionnée
+            $hasCorrectAnswer = false;
+            $hasAtLeastOneChoice = false;
+            
+            if ($typeQuestion === 'VRAI_FAUX') {
+                // Vérifier si un choix a été sélectionné (la valeur ne doit pas être vide)
+                $vfCorrect = $old['choix_correct_vf'] ?? null;
+                if ($vfCorrect !== null && $vfCorrect !== '') {
+                    $hasCorrectAnswer = true;
+                }
+            } else {
+                // QCM: Vérifier si au moins un choix est marqué comme correct
+                // et si au moins un choix a du texte
+                for ($i = 0; $i < $choiceCount; $i++) {
+                    $libelle = $old["choix_libelle_$i"] ?? '';
+                    if (trim($libelle) !== '') {
+                        $hasAtLeastOneChoice = true;
+                    }
+                    if (isset($old["choix_correct_$i"]) && $old["choix_correct_$i"] === '1') {
+                        $hasCorrectAnswer = true;
+                    }
+                }
+            }
+            
+            if ($typeQuestion === 'VRAI_FAUX' && !$hasCorrectAnswer) {
+                $this->addFlash('error', 'Veuillez sélectionner la réponse correcte (Vrai ou Faux).');
+                return $this->render('Quiz/question_form.html.twig', [
+                    'quiz' => $quiz,
+                    'edit' => false,
+                    'form' => $form,
+                    'old' => $old,
+                    'errors' => $errors,
+                    'choiceCount' => $choiceCount,
+                ]);
+            }
+            
+            if ($typeQuestion === 'QCM' && (!$hasCorrectAnswer || !$hasAtLeastOneChoice)) {
+                $this->addFlash('error', 'Veuillez saisir au moins une réponse et sélectionner la/les réponse(s) correcte(s).');
+                return $this->render('Quiz/question_form.html.twig', [
+                    'quiz' => $quiz,
+                    'edit' => false,
+                    'form' => $form,
+                    'old' => $old,
+                    'errors' => $errors,
+                    'choiceCount' => $choiceCount,
+                ]);
+            }
             
             // Sauvegarder la question
             $question->setQuiz($quiz);
@@ -240,6 +288,56 @@ class QuestionAdminController extends AbstractController
         // Si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
             $typeQuestion = $form->get('typeQuestion')->getData();
+            
+            // Validation: Vérifier qu'au moins une réponse correcte est sélectionnée
+            $hasCorrectAnswer = false;
+            $hasAtLeastOneChoice = false;
+            
+            if ($typeQuestion === 'VRAI_FAUX') {
+                // Vérifier si un choix a été sélectionné (la valeur ne doit pas être vide)
+                $vfCorrect = $old['choix_correct_vf'] ?? null;
+                if ($vfCorrect !== null && $vfCorrect !== '') {
+                    $hasCorrectAnswer = true;
+                }
+            } else {
+                // QCM: Vérifier si au moins un choix est marqué comme correct
+                // et si au moins un choix a du texte
+                for ($i = 0; $i < $choiceCount; $i++) {
+                    $libelle = $old["choix_libelle_$i"] ?? '';
+                    if (trim($libelle) !== '') {
+                        $hasAtLeastOneChoice = true;
+                    }
+                    if (isset($old["choix_correct_$i"]) && $old["choix_correct_$i"] === '1') {
+                        $hasCorrectAnswer = true;
+                    }
+                }
+            }
+            
+            if ($typeQuestion === 'VRAI_FAUX' && !$hasCorrectAnswer) {
+                $this->addFlash('error', 'Veuillez sélectionner la réponse correcte (Vrai ou Faux).');
+                return $this->render('Quiz/modifier_question.html.twig', [
+                    'quiz' => $quiz,
+                    'question' => $question,
+                    'edit' => true,
+                    'form' => $form,
+                    'old' => $old,
+                    'errors' => $errors,
+                    'choiceCount' => $choiceCount,
+                ]);
+            }
+            
+            if ($typeQuestion === 'QCM' && (!$hasCorrectAnswer || !$hasAtLeastOneChoice)) {
+                $this->addFlash('error', 'Veuillez saisir au moins une réponse et sélectionner la/les réponse(s) correcte(s).');
+                return $this->render('Quiz/modifier_question.html.twig', [
+                    'quiz' => $quiz,
+                    'question' => $question,
+                    'edit' => true,
+                    'form' => $form,
+                    'old' => $old,
+                    'errors' => $errors,
+                    'choiceCount' => $choiceCount,
+                ]);
+            }
             
             // Supprimer les anciens choix
             foreach ($question->getChoix() as $oldChoix) {

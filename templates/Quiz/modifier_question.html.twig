@@ -766,9 +766,9 @@
                             <label for="correct_{{ i }}">Correcte</label>
                         </div>
                         {% if count > 2 %}
-                            <button type="submit" name="action" value="remove_choice" class="btn-remove-choice" onclick="document.getElementById('remove_index').value={{ i }}">
+                            <input type="hidden" id="remove_index_{{ i }}" name="remove_index" value="{{ i }}">
+                            <button type="submit" name="action" value="remove_choice" class="btn-remove-choice" formnovalidate onclick="document.getElementById('remove_index_{{ i }}').value={{ i }}">
                                 <i class="fa-solid fa-xmark"></i>
-                                <input type="hidden" id="remove_index" name="remove_index" value="{{ i }}">
                             </button>
                         {% endif %}
                     </div>
@@ -778,7 +778,7 @@
                 <input type="hidden" name="choix_count" value="{{ count }}">
 
                 {% if count < max_choices %}
-                    <button type="submit" name="action" value="add_choice" class="btn-add-choice">
+                    <button type="submit" name="action" value="add_choice" class="btn-add-choice" formnovalidate>
                         <i class="fa-solid fa-plus"></i> Ajouter le choix {{ letters[count] }}
                     </button>
                 {% endif %}
@@ -853,6 +853,47 @@ document.addEventListener('DOMContentLoaded', function () {
             option.classList.add(radio.value === '0' ? 'selected-vrai' : 'selected-faux');
         }
     });
+
+    // Validation du formulaire avant soumission
+    const saveButton = document.querySelector('button[name="action"][value="save"]');
+    if (saveButton && form) {
+        saveButton.addEventListener('click', function(e) {
+            const typeQuestion = typeQuestionSelect ? typeQuestionSelect.value : '';
+            
+            if (typeQuestion === 'VRAI_FAUX') {
+                const vfSelected = document.querySelector('input[name="choix_correct_vf"]:checked');
+                if (!vfSelected) {
+                    e.preventDefault();
+                    alert('Veuillez sélectionner la réponse correcte (Vrai ou Faux).');
+                    return false;
+                }
+            } else if (typeQuestion === 'QCM') {
+                const choiceInputs = document.querySelectorAll('.choice-row input[type="text"]');
+                const correctCheckboxes = document.querySelectorAll('.choice-row input[type="checkbox"]:checked');
+                
+                let hasText = false;
+                choiceInputs.forEach(function(input) {
+                    if (input.value.trim() !== '') {
+                        hasText = true;
+                    }
+                });
+                
+                if (!hasText) {
+                    e.preventDefault();
+                    alert('Veuillez saisir au moins une réponse.');
+                    return false;
+                }
+                
+                if (correctCheckboxes.length === 0) {
+                    e.preventDefault();
+                    alert('Veuillez sélectionner au moins une réponse correcte.');
+                    return false;
+                }
+            }
+            
+            return true;
+        });
+    }
 });
 </script>
 {% endblock %}
