@@ -1,0 +1,735 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recommandations d'Orientation - BacLab{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('public/front/css/bootstrap.min.css') }}" rel="stylesheet">
+    <style>
+        :root {
+            --primary-purple: #C86FFF;
+            --primary-blue: #4255A4;
+            --gradient-primary: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-blue) 100%);
+            --gradient-secondary: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-light: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --shadow-heavy: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+        
+        .orientation-container {
+            background: var(--gradient-secondary);
+            min-height: 100vh;
+            padding: 2rem 0;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .orientation-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(200, 111, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(66, 85, 164, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .card-modern {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--shadow-light);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .card-modern:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-heavy);
+        }
+        
+        .card-modern:hover::before {
+            opacity: 1;
+        }
+        
+        .program-card {
+            border-left: 5px solid var(--primary-purple);
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .program-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(200, 111, 255, 0.05) 100%);
+            pointer-events: none;
+        }
+        
+        .chance-badge {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        
+        .score-display {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-light);
+        }
+        
+        .engagement-stats {
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .engagement-stats::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .progress-custom {
+            height: 10px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+        
+        .progress-bar-custom {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 1));
+            border-radius: 15px;
+            transition: width 0.6s ease;
+        }
+        
+        .what-if-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-light);
+        }
+        
+        .btn-primary-custom {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 30px;
+            padding: 0.8rem 2.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(200, 111, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(200, 111, 255, 0.4);
+        }
+        
+        .btn-primary-custom:hover::before {
+            left: 100%;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 15px;
+            border: 2px solid rgba(200, 111, 255, 0.2);
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 0.2rem rgba(200, 111, 255, 0.25);
+            background: white;
+        }
+        
+        .header-stats {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .stat-item {
+            text-align: center;
+            position: relative;
+        }
+        
+        .stat-item::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+        
+        .program-title {
+            color: var(--primary-blue);
+            font-weight: 700;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .program-title:hover {
+            color: var(--primary-purple);
+            text-decoration: none;
+        }
+        
+        .university-info {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .reason-badge {
+            background: linear-gradient(45deg, rgba(200, 111, 255, 0.1), rgba(66, 85, 164, 0.1));
+            border: 1px solid rgba(200, 111, 255, 0.3);
+            color: var(--primary-blue);
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            margin: 0.2rem;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .reason-badge:hover {
+            background: var(--gradient-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .score-comparison {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            backdrop-filter: blur(10px);
+        }
+        
+        .final-score-bar {
+            height: 12px;
+            border-radius: 10px;
+            background: var(--gradient-primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .final-score-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .no-engagement-notice {
+            background: linear-gradient(45deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .simulate-btn {
+            background: linear-gradient(45deg, #ffc107, #ff8f00);
+            border: none;
+            border-radius: 25px;
+            padding: 0.6rem 1.5rem;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
+        
+        .simulate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .orientation-container {
+                padding: 1rem 0;
+            }
+            
+            .card-modern {
+                margin-bottom: 1rem;
+            }
+            
+            .filter-section, .engagement-stats, .what-if-section {
+                padding: 1.5rem;
+            }
+            
+            .score-display {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="orientation-container">
+    <div class="container">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card-modern">
+                    <div class="card-body text-center">
+                        <h1 class="display-4 mb-3" style="color: var(--primary-blue);">
+                            <i class="fas fa-compass me-3"></i>Recommandations d'Orientation
+                        </h1>
+                        <p class="lead">
+                            Basées sur votre score BAC, votre filière <strong>{{ filiereLabel }}</strong> 
+                            {% if engagementStats.totalViews > 0 %}
+                                et votre engagement sur BacLab
+                            {% else %}
+                                et les données officielles d'admission
+                            {% endif %}
+                        </p>
+                        
+                        <div class="header-stats">
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <div class="stat-item">
+                                        <div class="score-display">
+                                            <i class="fas fa-calculator text-primary me-2"></i>
+                                            {{ userScores.FG }}
+                                        </div>
+                                        <small class="text-muted">Formule Globale</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-item">
+                                        <div class="score-display">
+                                            <i class="fas fa-graduation-cap text-success me-2"></i>
+                                            {{ recommendations|length }}
+                                        </div>
+                                        <small class="text-muted">Programmes recommandés</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-item">
+                                        <div class="score-display">
+                                            <i class="fas fa-chart-line text-info me-2"></i>
+                                            {% if engagementStats.totalViews > 0 %}
+                                                {{ (engagementStats.avgInterest * 100)|round }}%
+                                            {% else %}
+                                                Score
+                                            {% endif %}
+                                        </div>
+                                        <small class="text-muted">
+                                            {% if engagementStats.totalViews > 0 %}
+                                                Engagement moyen
+                                            {% else %}
+                                                Basé sur académique
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if engagementStats.totalViews == 0 %}
+        <!-- No Engagement Notice -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="no-engagement-notice">
+                    <h5><i class="fas fa-info-circle me-2"></i>Recommandations basées sur votre score académique</h5>
+                    <p class="mb-3">
+                        Nous n'avons pas encore de données sur votre engagement avec les matières. 
+                        Les recommandations sont basées uniquement sur votre score BAC et les seuils d'admission officiels.
+                    </p>
+                    <button class="simulate-btn" onclick="simulateEngagement()">
+                        <i class="fas fa-magic me-2"></i>Simuler des données d'engagement
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <!-- Filters and Controls -->
+            <div class="col-lg-4">
+                {% if engagementStats.totalViews > 0 %}
+                <!-- Engagement Stats -->
+                <div class="engagement-stats mb-4">
+                    <h5><i class="fas fa-chart-bar me-2"></i>Votre Engagement</h5>
+                    <div class="row">
+                        <div class="col-6">
+                            <small>Ressources vues</small>
+                            <div class="h6">{{ engagementStats.totalViews }}</div>
+                        </div>
+                        <div class="col-6">
+                            <small>Quiz tentés</small>
+                            <div class="h6">{{ engagementStats.totalQuizAttempts }}</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small>Engagement global</small>
+                        <div class="progress progress-custom mt-1">
+                            <div class="progress-bar progress-bar-custom" 
+                                 style="width: {{ (engagementStats.avgInterest * 100)|round }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Filters -->
+                <div class="filter-section">
+                    <h5><i class="fas fa-filter me-2"></i>Filtres</h5>
+                    <form method="GET" id="filterForm">
+                        <div class="mb-3">
+                            <label class="form-label">Université</label>
+                            <select name="university" class="form-select">
+                                <option value="">Toutes les universités</option>
+                                {% for university in universities %}
+                                    <option value="{{ university }}" 
+                                            {% if filters.university == university %}selected{% endif %}>
+                                        {{ university }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Domaine</label>
+                            <select name="domain" class="form-select">
+                                <option value="">Tous les domaines</option>
+                                {% for domain in domains %}
+                                    <option value="{{ domain }}" 
+                                            {% if filters.domain == domain %}selected{% endif %}>
+                                        {{ domain }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="form-label">Score min</label>
+                                <input type="number" name="minCutoff" class="form-control" 
+                                       value="{{ filters.minCutoff }}" step="0.1" placeholder="Ex: 80">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Score max</label>
+                                <input type="number" name="maxCutoff" class="form-control" 
+                                       value="{{ filters.maxCutoff }}" step="0.1" placeholder="Ex: 150">
+                            </div>
+                        </div>
+                        
+                        <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" name="geographic_bonus" 
+                                   {% if geographicBonus %}checked{% endif %}>
+                            <label class="form-check-label">
+                                <i class="fas fa-map-marker-alt me-1"></i>
+                                Bonus géographique (7%)
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary-custom w-100 mt-3">
+                            <i class="fas fa-search me-2"></i>Appliquer les filtres
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Top Subjects -->
+                {% if topSubjects and engagementStats.totalViews > 0 %}
+                <div class="card-modern">
+                    <div class="card-body">
+                        <h6><i class="fas fa-star me-2"></i>Vos matières fortes</h6>
+                        {% for subject in topSubjects %}
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>{{ subject.subjectCode }}</span>
+                                <div class="progress" style="width: 60px; height: 6px;">
+                                    <div class="progress-bar bg-success" 
+                                         style="width: {{ (subject.interestScore * 100)|round }}%"></div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Recommendations -->
+            <div class="col-lg-8">
+                {% if recommendations is empty %}
+                    <div class="card-modern">
+                        <div class="empty-state">
+                            <i class="fas fa-search"></i>
+                            <h5>Aucune recommandation trouvée</h5>
+                            <p>Essayez de modifier vos filtres ou vérifiez que votre score BAC a été calculé.</p>
+                            <a href="{{ path('score_calcul') }}" class="btn btn-primary-custom">
+                                <i class="fas fa-calculator me-2"></i>Recalculer mon score
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    {% for recommendation in recommendations %}
+                        <div class="card-modern program-card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h5 class="card-title">
+                                            <a href="{{ path('orientation_program_detail', {id: recommendation.program.id}) }}" 
+                                               class="program-title">
+                                                {{ recommendation.program.displayName }}
+                                            </a>
+                                        </h5>
+                                        <p class="university-info">
+                                            <i class="fas fa-university me-2"></i>
+                                            {{ recommendation.program.fullInstitutionName }}
+                                        </p>
+                                        
+                                        <!-- Reasons -->
+                                        {% if recommendation.reasons %}
+                                            <div class="mb-3">
+                                                {% for reason in recommendation.reasons %}
+                                                    <span class="reason-badge">
+                                                        <i class="fas fa-check-circle me-1"></i>
+                                                        {{ reason }}
+                                                    </span>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-4 text-end">
+                                        <!-- Chance Badge -->
+                                        <span class="badge bg-{{ recommendation.chanceLevel.color }} chance-badge mb-3">
+                                            <i class="fas fa-chart-line me-1"></i>
+                                            {{ recommendation.chanceLevel.level }}
+                                        </span>
+                                        
+                                        <!-- Scores -->
+                                        <div class="score-comparison">
+                                            <div class="small mb-2">
+                                                <div class="d-flex justify-content-between">
+                                                    <span>Votre T:</span>
+                                                    <strong>{{ recommendation.tUser }}</strong>
+                                                </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <span>Seuil 2024:</span>
+                                                    <strong>{{ recommendation.cutoff2024 }}</strong>
+                                                </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <span>Marge:</span>
+                                                    <strong class="{% if recommendation.margin > 0 %}text-success{% else %}text-danger{% endif %}">
+                                                        {{ recommendation.margin > 0 ? '+' : '' }}{{ recommendation.margin }}
+                                                    </strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Final Score -->
+                                        <div class="mt-3">
+                                            <div class="final-score-bar" style="width: {{ (recommendation.finalScore * 100)|round }}%"></div>
+                                            <small class="text-muted mt-1 d-block">
+                                                Compatibilité: {{ (recommendation.finalScore * 100)|round }}%
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- What If Simulator -->
+                <div class="what-if-section">
+                    <h5><i class="fas fa-magic me-2"></i>Simulateur "Et si..."</h5>
+                    <p class="text-muted">Voyez comment l'amélioration de vos notes pourrait changer vos recommandations.</p>
+                    
+                    <form id="whatIfForm">
+                        <div class="row">
+                            {% for subject, score in userScores %}
+                                {% if subject != 'FG' %}
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ subject }}</label>
+                                        <input type="number" name="{{ subject }}" class="form-control" 
+                                               value="{{ score }}" min="0" max="20" step="0.1">
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary-custom">
+                            <i class="fas fa-calculator me-2"></i>Simuler
+                        </button>
+                    </form>
+                    
+                    <div id="simulationResults" class="mt-3" style="display: none;">
+                        <h6>Améliorations possibles:</h6>
+                        <div id="improvementsList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // What If Simulator
+        document.getElementById('whatIfForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('{{ path('orientation_what_if') }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displaySimulationResults(data.improvements);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+        
+        function displaySimulationResults(improvements) {
+            const resultsDiv = document.getElementById('simulationResults');
+            const listDiv = document.getElementById('improvementsList');
+            
+            if (improvements.length === 0) {
+                listDiv.innerHTML = '<p class="text-muted">Aucune amélioration détectée avec ces modifications.</p>';
+            } else {
+                let html = '';
+                improvements.forEach(improvement => {
+                    html += `
+                        <div class="alert alert-success">
+                            <strong>${improvement.program.programNameAr}</strong><br>
+                            ${improvement.positionImprovement === 'NEW' ? 
+                                'Nouveau dans le top 10!' : 
+                                `Amélioration de ${improvement.positionImprovement} positions (${improvement.oldPosition} → ${improvement.newPosition})`
+                            }
+                        </div>
+                    `;
+                });
+                listDiv.innerHTML = html;
+            }
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        // Simulate engagement data
+        function simulateEngagement() {
+            fetch('{{ path('orientation_simulate_engagement') }}', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+{% endblock %}

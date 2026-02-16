@@ -1,0 +1,296 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ program.displayName }} - BacLab{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('public/front/css/bootstrap.min.css') }}" rel="stylesheet">
+    <style>
+        .program-detail-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+        
+        .card-modern {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .program-header {
+            background: linear-gradient(45deg, #C86FFF, #4255A4);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 2rem;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .info-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .info-card i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #C86FFF;
+        }
+        
+        .evaluation-section {
+            background: linear-gradient(45deg, #4255A4, #C86FFF);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .score-comparison {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .btn-back {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 25px;
+            padding: 0.7rem 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="program-detail-container">
+    <div class="container">
+        <!-- Back Button -->
+        <div class="mb-4">
+            <a href="{{ path('orientation_recommendations') }}" class="btn btn-back">
+                <i class="fas fa-arrow-left me-2"></i>Retour aux recommandations
+            </a>
+        </div>
+
+        <!-- Program Header -->
+        <div class="card-modern">
+            <div class="program-header">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="display-5 mb-3">{{ program.displayName }}</h1>
+                        <p class="lead mb-0">
+                            <i class="fas fa-university me-2"></i>
+                            {{ program.fullInstitutionName }}
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        {% if evaluation %}
+                            <div class="text-center">
+                                <div class="h2 mb-1">{{ (evaluation.finalScore * 100)|round }}%</div>
+                                <small>Score de compatibilité</small>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Program Information -->
+            <div class="card-body">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h6>Type de BAC</h6>
+                        <p class="mb-0">{{ program.bacTypeAr ?? 'Non spécifié' }}</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <i class="fas fa-calculator"></i>
+                        <h6>Formule T</h6>
+                        <p class="mb-0"><code>{{ program.formulaT }}</code></p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h6>Seuil 2024</h6>
+                        <p class="mb-0 h5 text-primary">{{ program.cutoff2024 }}</p>
+                    </div>
+                    
+                    {% if program.programCode %}
+                    <div class="info-card">
+                        <i class="fas fa-code"></i>
+                        <h6>Code Programme</h6>
+                        <p class="mb-0">{{ program.programCode }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if program.domainAr %}
+                <div class="mt-4">
+                    <h6><i class="fas fa-tags me-2"></i>Domaine</h6>
+                    <span class="badge bg-primary fs-6">{{ program.domainAr }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- User Evaluation -->
+        {% if evaluation %}
+        <div class="card-modern">
+            <div class="evaluation-section">
+                <h3><i class="fas fa-user-check me-3"></i>Votre Évaluation</h3>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="score-comparison">
+                            <h6>Comparaison des Scores</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Votre score T:</span>
+                                <strong>{{ evaluation.tUser }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Seuil 2024:</span>
+                                <strong>{{ evaluation.cutoff2024 }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Marge:</span>
+                                <strong class="{% if evaluation.margin > 0 %}text-success{% else %}text-warning{% endif %}">
+                                    {{ evaluation.margin > 0 ? '+' : '' }}{{ evaluation.margin }}
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="score-comparison">
+                            <h6>Niveau de Chance</h6>
+                            <div class="text-center">
+                                <span class="badge bg-{{ evaluation.chanceLevel.color }} fs-5 mb-2">
+                                    {{ evaluation.chanceLevel.level }}
+                                </span>
+                                <p class="mb-0 small">{{ evaluation.chanceLevel.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Scores -->
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="h4">{{ (evaluation.chanceScore * 100)|round }}%</div>
+                            <small>Score Académique</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="h4">{{ (evaluation.interestFit * 100)|round }}%</div>
+                            <small>Affinité Matières</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="h4">{{ (evaluation.globalEngagement * 100)|round }}%</div>
+                            <small>Engagement Global</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reasons -->
+                {% if evaluation.reasons %}
+                <div class="mt-4">
+                    <h6>Pourquoi ce programme vous est recommandé:</h6>
+                    <ul class="list-unstyled">
+                        {% for reason in evaluation.reasons %}
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                {{ reason }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Formula Subjects -->
+                {% if evaluation.formulaSubjects %}
+                <div class="mt-4">
+                    <h6>Matières impliquées dans la formule:</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for subject in evaluation.formulaSubjects %}
+                            {% if subject not in ['FG', 'MG', 'ALL'] %}
+                                <span class="badge bg-light text-dark">{{ subject }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+            <div class="card-modern">
+                <div class="card-body text-center">
+                    <i class="fas fa-info-circle fa-3x text-muted mb-3"></i>
+                    <h5>Évaluation personnalisée non disponible</h5>
+                    <p class="text-muted">
+                        Pour obtenir une évaluation personnalisée de ce programme, 
+                        veuillez d'abord calculer votre score BAC.
+                    </p>
+                    <a href="{{ path('score_calcul') }}" class="btn btn-primary">
+                        <i class="fas fa-calculator me-2"></i>Calculer mon score
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Additional Information -->
+        <div class="card-modern">
+            <div class="card-body">
+                <h5><i class="fas fa-info-circle me-2"></i>Informations Complémentaires</h5>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>À propos de ce programme</h6>
+                        <p class="text-muted">
+                            Ce programme fait partie du système d'orientation universitaire tunisien. 
+                            Les données sont basées sur les statistiques d'admission de 2024.
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Comment améliorer vos chances</h6>
+                        <ul class="text-muted">
+                            <li>Améliorez vos notes dans les matières de la formule</li>
+                            <li>Considérez le bonus géographique si applicable</li>
+                            <li>Explorez des programmes similaires</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

@@ -74,6 +74,9 @@ class ScoreController extends AbstractController
                     'filiereLabel' => $this->scoreCalculator->getFiliereLabel($filiereNormalized)
                 ];
                 
+                // Save scores in session for orientation recommendations
+                $request->getSession()->set('user_scores', array_merge(['FG' => $fg], $data));
+                
                 $this->addFlash('success', 'Score calculé avec succès ! Votre Formule Globale (FG) est de ' . $fg . '/20.');
                 
             } catch (\Exception $e) {
