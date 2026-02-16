@@ -12,6 +12,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/profile')]
@@ -34,7 +36,8 @@ class ProfilController extends AbstractController
     public function edit(
         Request $request,
         EntityManagerInterface $em,
-        TokenGeneratorInterface $tokenGen
+        TokenGeneratorInterface $tokenGen,
+        SluggerInterface $slugger
     ): Response {
         $user = $this->getUser();
         $profil = $user->getProfil();
@@ -47,11 +50,38 @@ class ProfilController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Handle profile picture upload
+            $profilePictureFile = $form->get('profilePictureFile')->getData();
+            
+            if ($profilePictureFile) {
+                $originalFilename = pathinfo($profilePictureFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$profilePictureFile->guessExtension();
+
+                try {
+                    $profilePictureFile->move(
+                        $this->getParameter('kernel.project_dir').'/assets/front/assets/img/profile_pictures',
+                        $newFilename
+                    );
+                    
+                    // Delete old profile picture if exists
+                    if ($profil->getProfilePicture()) {
+                        $oldPicturePath = $this->getParameter('kernel.project_dir').'/assets/front/assets/img/profile_pictures/'.$profil->getProfilePicture();
+                        if (file_exists($oldPicturePath)) {
+                            unlink($oldPicturePath);
+                        }
+                    }
+                    
+                    $profil->setProfilePicture($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Erreur lors du téléchargement de l\'image');
+                }
+            }
+            
             $em->flush();
             $this->addFlash('success', 'Votre profil a été mis à jour avec succès !');
             return $this->redirectToRoute('app_profile');
         }
-
 
         $disableToken = $tokenGen->generateToken();
         $deleteToken  = $tokenGen->generateToken();

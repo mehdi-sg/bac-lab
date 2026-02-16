@@ -1,90 +1,144 @@
 {% extends 'fiche/_layout.html.twig' %}
 
-{% block title %}Fiches de révision - BAC Lab{% endblock %}
+{% block title %}✨ Fiches de révision - BAC Lab{% endblock %}
 
 {% block fiche_content %}
-<section class="container py-5" style="margin-top: 80px;">
-    <!-- Floating Background Shapes -->
-    <div class="fiche-shapes">
-        <div class="fiche-shape fiche-shape-1"></div>
-        <div class="fiche-shape fiche-shape-2"></div>
-        <div class="fiche-shape fiche-shape-3"></div>
-        <div class="fiche-shape fiche-shape-4"></div>
-    </div>
-
-    <!-- Hero Section -->
+<div class="fiche-container">
+    <!-- Hero Section with Enhanced Beautiful Title -->
     <div class="fiche-hero">
         <h1 class="fiche-hero-title">
-            <i class="fas fa-file-alt mr-3"></i>
+            <i class="fas fa-sparkles"></i>
             Fiches de révision
         </h1>
         <p class="fiche-hero-subtitle">
-            Explorez, créez et partagez vos fiches de révision pour réussir votre BAC !
+            ✨ Explorez, créez et partagez vos fiches de révision pour réussir votre BAC ! 🚀
         </p>
+        
+        <!-- Enhanced Search Bar -->
+        <div class="fiche-search-container">
+            <div class="fiche-search-wrapper">
+                <i class="fas fa-search fiche-search-icon"></i>
+                <input type="text" 
+                       class="fiche-search-input" 
+                       placeholder="Rechercher dans vos fiches..." 
+                       id="ficheSearchInput">
+                <button class="fiche-search-clear" id="ficheSearchClear">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Search Results Counter -->
+        <div class="fiche-search-results" id="ficheSearchResults">
+            <span class="fiche-search-results-count">0</span> résultat(s) trouvé(s)
+        </div>
     </div>
 
-    <!-- Filter Section -->
+    <!-- Enhanced Filter Section -->
     <div class="fiche-filter-section">
         <div class="fiche-filter-tabs">
             <a href="{{ path('fiche_index', {'filter': 'all', 'filiere': current_filiere}) }}" 
                class="fiche-filter-tab {{ current_filter == 'all' ? 'active' : '' }}">
                 <i class="fas fa-th-large"></i>
                 Toutes
+                <span class="fiche-filter-tab-counter">{{ fiches|length }}</span>
             </a>
             <a href="{{ path('fiche_index', {'filter': 'own', 'filiere': current_filiere}) }}" 
                class="fiche-filter-tab {{ current_filter == 'own' ? 'active' : '' }}">
                 <i class="fas fa-user"></i>
                 Mes fiches
+                <span class="fiche-filter-tab-counter">0</span>
             </a>
             <a href="{{ path('fiche_index', {'filter': 'favorite', 'filiere': current_filiere}) }}" 
                class="fiche-filter-tab {{ current_filter == 'favorite' ? 'active' : '' }}">
                 <i class="fas fa-heart"></i>
                 Favoris
+                <span class="fiche-filter-tab-counter">{{ user_favorite_fiches|length }}</span>
             </a>
         </div>
         
-        <div class="fiche-filter-filiere">
-            <form method="get" action="{{ path('fiche_index') }}" class="fiche-filter-form" id="filterForm">
-                <input type="hidden" name="filter" value="{{ current_filter }}">
-                <input type="hidden" name="filiere" id="filiereInput" value="{{ current_filiere }}">
-                
-                <div class="fiche-filter-select-wrapper">
-                    <i class="fas fa-graduation-cap"></i>
-                    <div class="fiche-filter-custom" id="filiereFilterCustom">
-                        <div class="fiche-filter-trigger">
-                            <span class="fiche-filter-value">
-                                {% if current_filiere %}
-                                    {% for filiere in filieres %}
-                                        {% if filiere.id == current_filiere %}
-                                            {{ filiere.nom }} ({{ filiere.niveau }})
-                                        {% endif %}
-                                    {% endfor %}
-                                {% else %}
-                                    Toutes les filières
-                                {% endif %}
-                            </span>
-                            <i class="fas fa-chevron-down fiche-filter-arrow"></i>
-                        </div>
-                        <div class="fiche-filter-dropdown">
-                            <div class="fiche-filter-option {{ current_filiere == '' ? 'selected' : '' }}" data-value="">
-                                Toutes les filières
-                            </div>
-                            {% for filiere in filieres %}
-                                <div class="fiche-filter-option {{ current_filiere == filiere.id ? 'selected' : '' }}" data-value="{{ filiere.id }}">
-                                    {{ filiere.nom }} ({{ filiere.niveau }})
-                                </div>
-                            {% endfor %}
-                        </div>
+        <div class="fiche-filter-actions">
+            <!-- Sort Dropdown -->
+            <div class="fiche-sort-dropdown" id="ficheSortDropdown">
+                <div class="fiche-sort-trigger">
+                    <i class="fas fa-sort"></i>
+                    <span>Trier par</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="fiche-sort-menu">
+                    <div class="fiche-sort-option active" data-sort="date-desc">
+                        <i class="fas fa-calendar-alt"></i>
+                        Plus récent
+                    </div>
+                    <div class="fiche-sort-option" data-sort="date-asc">
+                        <i class="fas fa-calendar-alt"></i>
+                        Plus ancien
+                    </div>
+                    <div class="fiche-sort-option" data-sort="title-asc">
+                        <i class="fas fa-sort-alpha-down"></i>
+                        Titre A-Z
+                    </div>
+                    <div class="fiche-sort-option" data-sort="title-desc">
+                        <i class="fas fa-sort-alpha-up"></i>
+                        Titre Z-A
                     </div>
                 </div>
-            </form>
+            </div>
+            
+            <!-- View Toggle -->
+            <div class="fiche-view-toggle">
+                <button class="fiche-view-btn active" data-view="grid" title="Vue grille">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="fiche-view-btn" data-view="list" title="Vue liste">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+            
+            <!-- Filiere Filter -->
+            <div class="fiche-filter-filiere">
+                <form method="get" action="{{ path('fiche_index') }}" class="fiche-filter-form" id="filterForm">
+                    <input type="hidden" name="filter" value="{{ current_filter }}">
+                    <input type="hidden" name="filiere" id="filiereInput" value="{{ current_filiere }}">
+                    
+                    <div class="fiche-filter-select-wrapper">
+                        <i class="fas fa-graduation-cap"></i>
+                        <div class="fiche-filter-custom" id="filiereFilterCustom">
+                            <div class="fiche-filter-trigger">
+                                <span class="fiche-filter-value">
+                                    {% if current_filiere %}
+                                        {% for filiere in filieres %}
+                                            {% if filiere.id == current_filiere %}
+                                                {{ filiere.nom }} ({{ filiere.niveau }})
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        Toutes les filières
+                                    {% endif %}
+                                </span>
+                                <i class="fas fa-chevron-down fiche-filter-arrow"></i>
+                            </div>
+                            <div class="fiche-filter-dropdown">
+                                <div class="fiche-filter-option {{ current_filiere == '' ? 'selected' : '' }}" data-value="">
+                                    Toutes les filières
+                                </div>
+                                {% for filiere in filieres %}
+                                    <div class="fiche-filter-option {{ current_filiere == filiere.id ? 'selected' : '' }}" data-value="{{ filiere.id }}">
+                                        {{ filiere.nom }} ({{ filiere.niveau }})
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     <!-- Create Button -->
     <div class="fiche-create-btn-wrapper">
-        <a href="{{ path('fiche_new') }}" class="fiche-btn-neon">
-            <i class="fas fa-plus-circle"></i>
+        <a href="{{ path('fiche_new') }}" class="fiche-btn-create">
+            <i class="fas fa-plus"></i>
             Créer une nouvelle fiche
         </a>
     </div>
@@ -99,67 +153,104 @@
             <p class="fiche-empty-text">
                 Commencez votre parcours de révision en créant votre première fiche !
             </p>
-            <a href="{{ path('fiche_new') }}" class="fiche-btn-neon">
+            <a href="{{ path('fiche_new') }}" class="fiche-btn-create">
                 <i class="fas fa-plus"></i>
                 Créer ma première fiche
             </a>
         </div>
     {% else %}
-        <!-- Cards Grid -->
-        <div class="fiche-grid">
+        <!-- Enhanced Cards Grid -->
+        <div class="fiche-grid" id="ficheGrid">
             {% for fiche in fiches %}
                 {% set isModerateur = fiche.id in user_moderateur_fiches %}
-                <div class="fiche-ultimate-card">
-                    <!-- Card Header -->
-                    <div class="fiche-card-header">
-                        <div class="fiche-card-icon">
-                            <i class="fas fa-file-text"></i>
-                        </div>
-                        <h3 class="fiche-card-title">{{ fiche.title }}</h3>
-                        <div class="fiche-card-badges">
-                            {% if isModerateur %}
-                                <span class="fiche-card-badge fiche-card-badge-moderator">
-                                    <i class="fas fa-check-circle mr-1"></i>
-                                    Modérateur
-                                </span>
-                            {% endif %}
-                            {% if fiche.id in user_favorite_fiches %}
-                                <span class="fiche-card-badge fiche-card-badge-favorite">
-                                    <i class="fas fa-heart mr-1"></i>
-                                    Favori
-                                </span>
-                            {% endif %}
-                            <span class="fiche-card-badge fiche-card-badge-{{ fiche.isPublic ? 'public' : 'private' }}">
-                                <i class="fas fa-{{ fiche.isPublic ? 'globe' : 'lock' }} mr-1"></i>
-                                {{ fiche.isPublic ? 'Public' : 'Privé' }}
-                            </span>
-                        </div>
+                <div class="fiche-card" data-fiche-id="{{ fiche.id }}" data-title="{{ fiche.title|lower }}" data-content="{{ fiche.content|lower }}">
+                    <!-- Selection Checkbox -->
+                    <div class="fiche-card-checkbox" data-fiche-id="{{ fiche.id }}">
+                        <i class="fas fa-check"></i>
                     </div>
                     
-                    <!-- Card Body -->
-                    <div class="fiche-card-body">
-                        <p class="fiche-card-excerpt">
-                            {{ fiche.content|slice(0, 180) }}{% if fiche.content|length > 180 %}...{% endif %}
-                        </p>
+                    <!-- Quick Actions -->
+                    <div class="fiche-card-quick-actions">
+                        {% if app.user %}
+                            {% set isFav = fiche.id in user_favorite_fiches %}
+                            <form action="{{ path('fiche_toggle_favorite', {'id': fiche.id}) }}" method="post" style="display: inline-block; margin: 0;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite_' ~ fiche.id) }}">
+                                <button type="submit" class="fiche-quick-action {{ isFav ? 'is-favorite' : '' }}" title="{{ isFav ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </form>
+                        {% endif %}
                         
-                        <!-- Meta -->
-                        <div class="fiche-card-meta">
-                            <div class="fiche-card-date">
-                                <i class="fas fa-calendar-alt"></i>
-                                {{ fiche.createdAt|date('d/m/Y') }}
-                            </div>
-                            <div class="fiche-card-stats">
-                                {% if fiche.filiere %}
-                                    <span class="fiche-card-stat fiche-card-filiere">
-                                        <i class="fas fa-graduation-cap"></i>
-                                        {{ fiche.filiere.nom }} ({{ fiche.filiere.niveau }})
+                        {% if app.user and (fiche.isPublic or isModerateur) %}
+                            <a href="{{ path('fiche_edit', {'id': fiche.id}) }}" class="fiche-quick-action" title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Card Content Wrapper -->
+                    <div class="fiche-card-content-wrapper">
+                        <!-- Card Header -->
+                        <div class="fiche-card-header">
+                            <h3 class="fiche-card-title">{{ fiche.title }}</h3>
+                            <div class="fiche-card-badges">
+                                {% if isModerateur %}
+                                    <span class="fiche-card-badge fiche-card-badge-moderator">
+                                        <i class="fas fa-check-circle"></i>
+                                        Modérateur
                                     </span>
                                 {% endif %}
-                                <span class="fiche-card-stat">
-                                    <i class="fas fa-align-left"></i>
-                                    {{ fiche.content|length }} car.
+                                {% if fiche.id in user_favorite_fiches %}
+                                    <span class="fiche-card-badge fiche-card-badge-favorite">
+                                        <i class="fas fa-heart"></i>
+                                        Favori
+                                    </span>
+                                {% endif %}
+                                <span class="fiche-card-badge fiche-card-badge-{{ fiche.isPublic ? 'public' : 'private' }}">
+                                    <i class="fas fa-{{ fiche.isPublic ? 'globe' : 'lock' }}"></i>
+                                    {{ fiche.isPublic ? 'Public' : 'Privé' }}
                                 </span>
                             </div>
+                        </div>
+                        
+                        <!-- Card Body -->
+                        <div class="fiche-card-body">
+                            <p class="fiche-card-excerpt">
+                                {{ fiche.content|slice(0, 180) }}{% if fiche.content|length > 180 %}...{% endif %}
+                            </p>
+                            
+                            <!-- Card Tags -->
+                            <div class="fiche-card-tags">
+                                {% if fiche.filiere %}
+                                    <span class="fiche-card-tag">{{ fiche.filiere.nom }}</span>
+                                {% endif %}
+                                <span class="fiche-card-tag">{{ fiche.content|length }} caractères</span>
+                            </div>
+                            
+                            <!-- Meta -->
+                            <div class="fiche-card-meta">
+                                <div class="fiche-card-date">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    {{ fiche.createdAt|date('d/m/Y') }}
+                                </div>
+                                <div class="fiche-card-stats">
+                                    {% if fiche.filiere %}
+                                        <span class="fiche-card-stat fiche-card-filiere">
+                                            <i class="fas fa-graduation-cap"></i>
+                                            {{ fiche.filiere.nom }}
+                                        </span>
+                                    {% endif %}
+                                    <span class="fiche-card-stat">
+                                        <i class="fas fa-align-left"></i>
+                                        {{ fiche.content|length }} car.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Progress Indicator -->
+                        <div class="fiche-card-progress">
+                            <div class="fiche-card-progress-bar"></div>
                         </div>
                     </div>
                     
@@ -170,21 +261,12 @@
                             Voir
                         </a>
                         
-                        {% if app.user %}
-                            {% set isFav = fiche.id in user_favorite_fiches %}
-                            <form action="{{ path('fiche_toggle_favorite', {'id': fiche.id}) }}" method="post" style="display: inline-block; margin: 0;">
-                                <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite_' ~ fiche.id) }}">
-                                <button type="submit" class="fiche-btn-icon {{ isFav ? 'is-favorite' : '' }}" title="{{ isFav ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
-                                    <i class="fas fa-heart"></i>
-                                </button>
-                            </form>
-                        {% endif %}
-                        
                         {% if app.user and (fiche.isPublic or isModerateur) %}
                             <a href="{{ path('fiche_edit', {'id': fiche.id}) }}" class="fiche-btn fiche-btn-secondary">
                                 <i class="fas fa-edit"></i>
                             </a>
                         {% endif %}
+                        
                         {% if isModerateur %}
                             <form action="{{ path('fiche_delete', {'id': fiche.id}) }}" method="post" style="display: inline-block; margin: 0;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette fiche ? Cette action est irréversible.');">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete_fiche_' ~ fiche.id) }}">
@@ -201,8 +283,8 @@
 
     {# Pagination #}
     {% if total_pages > 1 %}
-    <nav aria-label="Pagination des fiches" class="fiche-pagination mt-5">
-        <ul class="fiche-pagination-list justify-content-center">
+    <nav aria-label="Pagination des fiches" class="fiche-pagination">
+        <ul class="fiche-pagination-list">
             {# Previous page #}
             {% if current_page > 1 %}
                 <li class="fiche-pagination-item">
@@ -246,29 +328,453 @@
         </ul>
     </nav>
     {% endif %}
-</section>
+
+    <!-- Bulk Actions Panel -->
+    <div class="fiche-bulk-actions" id="ficheBulkActions">
+        <div class="fiche-bulk-info">
+            <i class="fas fa-check-square"></i>
+            <span class="fiche-bulk-count">0</span> fiche(s) sélectionnée(s)
+        </div>
+        <div class="fiche-bulk-buttons">
+            <button class="fiche-bulk-btn" id="bulkFavorite">
+                <i class="fas fa-heart"></i>
+                Favoris
+            </button>
+            <button class="fiche-bulk-btn" id="bulkEdit">
+                <i class="fas fa-edit"></i>
+                Modifier
+            </button>
+            <button class="fiche-bulk-btn danger" id="bulkDelete">
+                <i class="fas fa-trash"></i>
+                Supprimer
+            </button>
+            <button class="fiche-bulk-btn" id="bulkCancel">
+                <i class="fas fa-times"></i>
+                Annuler
+            </button>
+        </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Overlay -->
+    <div class="fiche-shortcuts-overlay" id="ficheShortcutsOverlay">
+        <div class="fiche-shortcuts-panel">
+            <h3 class="fiche-shortcuts-title">Raccourcis clavier</h3>
+            <div class="fiche-shortcuts-grid">
+                <div class="fiche-shortcut-item">
+                    <span class="fiche-shortcut-desc">Rechercher</span>
+                    <div class="fiche-shortcut-keys">
+                        <span class="fiche-shortcut-key">Ctrl</span>
+                        <span class="fiche-shortcut-key">K</span>
+                    </div>
+                </div>
+                <div class="fiche-shortcut-item">
+                    <span class="fiche-shortcut-desc">Nouvelle fiche</span>
+                    <div class="fiche-shortcut-keys">
+                        <span class="fiche-shortcut-key">Ctrl</span>
+                        <span class="fiche-shortcut-key">N</span>
+                    </div>
+                </div>
+                <div class="fiche-shortcut-item">
+                    <span class="fiche-shortcut-desc">Sélectionner tout</span>
+                    <div class="fiche-shortcut-keys">
+                        <span class="fiche-shortcut-key">Ctrl</span>
+                        <span class="fiche-shortcut-key">A</span>
+                    </div>
+                </div>
+                <div class="fiche-shortcut-item">
+                    <span class="fiche-shortcut-desc">Vue grille/liste</span>
+                    <div class="fiche-shortcut-keys">
+                        <span class="fiche-shortcut-key">V</span>
+                    </div>
+                </div>
+                <div class="fiche-shortcut-item">
+                    <span class="fiche-shortcut-desc">Aide</span>
+                    <div class="fiche-shortcut-keys">
+                        <span class="fiche-shortcut-key">?</span>
+                    </div>
+                </div>
+                <div class="fiche-shortcut-item">
+                    <span class="fiche-shortcut-desc">Échapper</span>
+                    <div class="fiche-shortcut-keys">
+                        <span class="fiche-shortcut-key">Esc</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block js %}
     {{ parent() }}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Custom Filter Dropdown
-            const customSelect = document.getElementById('filiereFilterCustom');
-            const form = document.getElementById('filterForm');
-            const hiddenInput = document.getElementById('filiereInput');
+            // ==========================================
+            // PHASE 4: POLISH & PERFORMANCE
+            // Production-Ready Implementation
+            // ==========================================
             
-            if (customSelect && form) {
-                const trigger = customSelect.querySelector('.fiche-filter-trigger');
-                const valueDisplay = customSelect.querySelector('.fiche-filter-value');
-                const dropdown = customSelect.querySelector('.fiche-filter-dropdown');
+            // Performance monitoring
+            const perfStart = performance.now();
+            
+            // State management with persistence
+            const FicheState = {
+                selectedFiches: new Set(),
+                currentView: localStorage.getItem('fiche-view') || 'grid',
+                currentSort: localStorage.getItem('fiche-sort') || 'date-desc',
+                searchQuery: '',
+                
+                save() {
+                    try {
+                        localStorage.setItem('fiche-view', this.currentView);
+                        localStorage.setItem('fiche-sort', this.currentSort);
+                    } catch (e) {
+                        console.warn('Could not save state:', e);
+                    }
+                }
+            };
+            
+            // DOM Elements with error checking
+            const elements = {
+                ficheGrid: document.getElementById('ficheGrid'),
+                searchInput: document.getElementById('ficheSearchInput'),
+                searchClear: document.getElementById('ficheSearchClear'),
+                searchResults: document.getElementById('ficheSearchResults'),
+                bulkActions: document.getElementById('ficheBulkActions'),
+                shortcutsOverlay: document.getElementById('ficheShortcutsOverlay'),
+                sortDropdown: document.getElementById('ficheSortDropdown'),
+                customSelect: document.getElementById('filiereFilterCustom'),
+                form: document.getElementById('filterForm'),
+                hiddenInput: document.getElementById('filiereInput')
+            };
+            
+            // ==========================================
+            // ENHANCED SEARCH WITH PERFORMANCE CACHE
+            // ==========================================
+            let searchTimeout;
+            let searchCache = new Map();
+            
+            function performSearch(query) {
+                try {
+                    const cacheKey = query.toLowerCase();
+                    
+                    if (searchCache.has(cacheKey)) {
+                        const cached = searchCache.get(cacheKey);
+                        applySearchResults(cached.results, cached.count);
+                        return;
+                    }
+                    
+                    const cards = document.querySelectorAll('.fiche-card');
+                    let visibleCount = 0;
+                    const results = [];
+                    
+                    cards.forEach(card => {
+                        const title = card.dataset.title || '';
+                        const content = card.dataset.content || '';
+                        const searchText = (title + ' ' + content).toLowerCase();
+                        
+                        const isVisible = query === '' || searchText.includes(query.toLowerCase());
+                        results.push({ card, isVisible });
+                        
+                        if (isVisible) visibleCount++;
+                    });
+                    
+                    // Cache results (limit cache size)
+                    searchCache.set(cacheKey, { results, count: visibleCount });
+                    if (searchCache.size > 50) {
+                        const firstKey = searchCache.keys().next().value;
+                        searchCache.delete(firstKey);
+                    }
+                    
+                    applySearchResults(results, visibleCount);
+                } catch (e) {
+                    console.error('Search error:', e);
+                }
+            }
+            
+            function applySearchResults(results, visibleCount) {
+                let animationDelay = 0;
+                
+                results.forEach(({ card, isVisible }) => {
+                    if (isVisible) {
+                        card.style.display = '';
+                        card.style.animationDelay = (animationDelay * 0.05) + 's';
+                        animationDelay++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Update UI
+                if (elements.searchResults) {
+                    if (FicheState.searchQuery !== '') {
+                        elements.searchResults.querySelector('.fiche-search-results-count').textContent = visibleCount;
+                        elements.searchResults.classList.add('visible');
+                        if (elements.searchClear) elements.searchClear.classList.add('visible');
+                    } else {
+                        elements.searchResults.classList.remove('visible');
+                        if (elements.searchClear) elements.searchClear.classList.remove('visible');
+                    }
+                }
+            }
+            
+            if (elements.searchInput) {
+                elements.searchInput.addEventListener('input', function(e) {
+                    clearTimeout(searchTimeout);
+                    FicheState.searchQuery = e.target.value;
+                    
+                    searchTimeout = setTimeout(() => {
+                        performSearch(FicheState.searchQuery);
+                    }, 300);
+                });
+                
+                elements.searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        this.value = '';
+                        FicheState.searchQuery = '';
+                        performSearch('');
+                        this.blur();
+                    }
+                });
+            }
+            
+            if (elements.searchClear) {
+                elements.searchClear.addEventListener('click', function() {
+                    if (elements.searchInput) {
+                        elements.searchInput.value = '';
+                        FicheState.searchQuery = '';
+                        performSearch('');
+                        elements.searchInput.focus();
+                    }
+                });
+            }
+            
+            // ==========================================
+            // SORT FUNCTIONALITY
+            // ==========================================
+            if (sortDropdown) {
+                const sortTrigger = sortDropdown.querySelector('.fiche-sort-trigger');
+                const sortOptions = sortDropdown.querySelectorAll('.fiche-sort-option');
+                
+                sortTrigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    sortDropdown.classList.toggle('active');
+                });
+                
+                sortOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const sortType = this.dataset.sort;
+                        currentSort = sortType;
+                        
+                        // Update active state
+                        sortOptions.forEach(opt => opt.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Update trigger text
+                        sortTrigger.querySelector('span').textContent = this.textContent.trim();
+                        
+                        // Close dropdown
+                        sortDropdown.classList.remove('active');
+                        
+                        // Apply sort
+                        sortCards(sortType);
+                    });
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!sortDropdown.contains(e.target)) {
+                        sortDropdown.classList.remove('active');
+                    }
+                });
+            }
+            
+            function sortCards(sortType) {
+                const cards = Array.from(document.querySelectorAll('.fiche-card'));
+                
+                cards.sort((a, b) => {
+                    switch (sortType) {
+                        case 'date-desc':
+                            return new Date(b.querySelector('.fiche-card-date').textContent.trim()) - 
+                                   new Date(a.querySelector('.fiche-card-date').textContent.trim());
+                        case 'date-asc':
+                            return new Date(a.querySelector('.fiche-card-date').textContent.trim()) - 
+                                   new Date(b.querySelector('.fiche-card-date').textContent.trim());
+                        case 'title-asc':
+                            return a.dataset.title.localeCompare(b.dataset.title);
+                        case 'title-desc':
+                            return b.dataset.title.localeCompare(a.dataset.title);
+                        default:
+                            return 0;
+                    }
+                });
+                
+                // Re-append sorted cards
+                cards.forEach((card, index) => {
+                    card.style.animationDelay = (index * 0.05) + 's';
+                    ficheGrid.appendChild(card);
+                });
+            }
+            
+            // ==========================================
+            // VIEW TOGGLE FUNCTIONALITY
+            // ==========================================
+            const viewButtons = document.querySelectorAll('.fiche-view-btn');
+            
+            viewButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const view = this.dataset.view;
+                    currentView = view;
+                    
+                    // Update active state
+                    viewButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Apply view
+                    if (view === 'list') {
+                        ficheGrid.classList.add('list-view');
+                    } else {
+                        ficheGrid.classList.remove('list-view');
+                    }
+                });
+            });
+            
+            // ==========================================
+            // SELECTION & BULK ACTIONS
+            // ==========================================
+            function updateBulkActions() {
+                const count = selectedFiches.size;
+                
+                if (count > 0) {
+                    bulkActions.classList.add('visible');
+                    bulkActions.querySelector('.fiche-bulk-count').textContent = count;
+                } else {
+                    bulkActions.classList.remove('visible');
+                }
+            }
+            
+            // Card selection
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.fiche-card-checkbox')) {
+                    const checkbox = e.target.closest('.fiche-card-checkbox');
+                    const ficheId = checkbox.dataset.ficheId;
+                    const card = checkbox.closest('.fiche-card');
+                    
+                    if (selectedFiches.has(ficheId)) {
+                        selectedFiches.delete(ficheId);
+                        checkbox.classList.remove('checked');
+                        card.classList.remove('selected');
+                    } else {
+                        selectedFiches.add(ficheId);
+                        checkbox.classList.add('checked');
+                        card.classList.add('selected');
+                    }
+                    
+                    updateBulkActions();
+                }
+            });
+            
+            // Bulk action buttons
+            if (bulkActions) {
+                const bulkCancel = document.getElementById('bulkCancel');
+                
+                bulkCancel.addEventListener('click', function() {
+                    selectedFiches.clear();
+                    document.querySelectorAll('.fiche-card-checkbox.checked').forEach(cb => {
+                        cb.classList.remove('checked');
+                        cb.closest('.fiche-card').classList.remove('selected');
+                    });
+                    updateBulkActions();
+                });
+            }
+            
+            // ==========================================
+            // KEYBOARD SHORTCUTS
+            // ==========================================
+            document.addEventListener('keydown', function(e) {
+                // Ignore if typing in input
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    return;
+                }
+                
+                switch (e.key) {
+                    case '?':
+                        e.preventDefault();
+                        shortcutsOverlay.classList.add('visible');
+                        break;
+                    case 'Escape':
+                        shortcutsOverlay.classList.remove('visible');
+                        selectedFiches.clear();
+                        document.querySelectorAll('.fiche-card.selected').forEach(card => {
+                            card.classList.remove('selected');
+                            card.querySelector('.fiche-card-checkbox').classList.remove('checked');
+                        });
+                        updateBulkActions();
+                        break;
+                    case 'v':
+                    case 'V':
+                        e.preventDefault();
+                        const activeViewBtn = document.querySelector('.fiche-view-btn.active');
+                        const nextView = currentView === 'grid' ? 'list' : 'grid';
+                        const nextBtn = document.querySelector(`[data-view="${nextView}"]`);
+                        if (nextBtn) nextBtn.click();
+                        break;
+                }
+                
+                // Ctrl combinations
+                if (e.ctrlKey || e.metaKey) {
+                    switch (e.key) {
+                        case 'k':
+                        case 'K':
+                            e.preventDefault();
+                            searchInput.focus();
+                            break;
+                        case 'n':
+                        case 'N':
+                            e.preventDefault();
+                            window.location.href = "{{ path('fiche_new') }}";
+                            break;
+                        case 'a':
+                        case 'A':
+                            e.preventDefault();
+                            // Select all visible cards
+                            document.querySelectorAll('.fiche-card:not([style*="display: none"])').forEach(card => {
+                                const ficheId = card.dataset.ficheId;
+                                selectedFiches.add(ficheId);
+                                card.classList.add('selected');
+                                card.querySelector('.fiche-card-checkbox').classList.add('checked');
+                            });
+                            updateBulkActions();
+                            break;
+                    }
+                }
+            });
+            
+            // Close shortcuts overlay on click outside
+            if (shortcutsOverlay) {
+                shortcutsOverlay.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('visible');
+                    }
+                });
+            }
+            
+            // ==========================================
+            // ENHANCED FILTER DROPDOWN
+            // ==========================================
+            if (elements.customSelect && elements.form) {
+                const trigger = elements.customSelect.querySelector('.fiche-filter-trigger');
+                const valueDisplay = elements.customSelect.querySelector('.fiche-filter-value');
+                const dropdown = elements.customSelect.querySelector('.fiche-filter-dropdown');
                 const options = dropdown.querySelectorAll('.fiche-filter-option');
                 
                 // Toggle dropdown
-                trigger.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    customSelect.classList.toggle('active');
-                });
+                if (trigger) {
+                    trigger.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        elements.customSelect.classList.toggle('active');
+                    });
+                }
                 
                 // Handle option selection
                 options.forEach(option => {
@@ -276,29 +782,101 @@
                         const value = this.dataset.value;
                         
                         // Update hidden input
-                        hiddenInput.value = value;
+                        if (elements.hiddenInput) {
+                            elements.hiddenInput.value = value;
+                        }
                         
                         // Update display
-                        valueDisplay.textContent = this.textContent;
+                        if (valueDisplay) {
+                            valueDisplay.textContent = this.textContent;
+                        }
                         
                         // Update selected state
                         options.forEach(opt => opt.classList.remove('selected'));
                         this.classList.add('selected');
                         
                         // Close dropdown
-                        customSelect.classList.remove('active');
+                        elements.customSelect.classList.remove('active');
                         
                         // Submit form
-                        form.submit();
+                        elements.form.submit();
                     });
                 });
                 
                 // Close dropdown when clicking outside
                 document.addEventListener('click', function(e) {
-                    if (!customSelect.contains(e.target)) {
-                        customSelect.classList.remove('active');
+                    if (!elements.customSelect.contains(e.target)) {
+                        elements.customSelect.classList.remove('active');
                     }
                 });
+                
+                // Keyboard navigation
+                if (trigger) {
+                    trigger.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            elements.customSelect.classList.toggle('active');
+                        }
+                    });
+                }
+            }
+            
+            // ==========================================
+            // TOOLTIPS
+            // ==========================================
+            function createTooltip(element, text) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'fiche-tooltip';
+                tooltip.textContent = text;
+                document.body.appendChild(tooltip);
+                
+                const rect = element.getBoundingClientRect();
+                tooltip.style.left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2) + 'px';
+                tooltip.style.top = rect.bottom + 8 + 'px';
+                
+                setTimeout(() => tooltip.classList.add('visible'), 10);
+                
+                return tooltip;
+            }
+            
+            // Add tooltips to buttons
+            document.querySelectorAll('[title]').forEach(element => {
+                let tooltip = null;
+                
+                element.addEventListener('mouseenter', function() {
+                    if (this.title) {
+                        tooltip = createTooltip(this, this.title);
+                        this.setAttribute('data-original-title', this.title);
+                        this.removeAttribute('title');
+                    }
+                });
+                
+                element.addEventListener('mouseleave', function() {
+                    if (tooltip) {
+                        tooltip.remove();
+                        tooltip = null;
+                        if (this.dataset.originalTitle) {
+                            this.title = this.dataset.originalTitle;
+                            this.removeAttribute('data-original-title');
+                        }
+                    }
+                });
+            });
+            
+            // ==========================================
+            // INITIALIZATION
+            // ==========================================
+            console.log('🚀 Fiche Phase 3 Enhanced UX initialized');
+            
+            // Show welcome message for first-time users
+            if (localStorage.getItem('fiche-welcome-shown') !== 'true') {
+                setTimeout(() => {
+                    const welcomeTooltip = createTooltip(searchInput, 'Appuyez sur Ctrl+K pour rechercher rapidement !');
+                    setTimeout(() => {
+                        welcomeTooltip.remove();
+                        localStorage.setItem('fiche-welcome-shown', 'true');
+                    }, 3000);
+                }, 1000);
             }
         });
     </script>

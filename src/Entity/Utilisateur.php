@@ -9,9 +9,12 @@
     use Doctrine\ORM\Mapping as ORM;
     use Symfony\Component\Security\Core\User\UserInterface;
     use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+    use Symfony\Component\Validator\Constraints as Assert;
+    use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
     #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
     #[ORM\UniqueConstraint(name: 'UNIQ_USER_EMAIL', fields: ['email'])]
+    #[UniqueEntity(fields: ['email'], message: 'Cette adresse email est déjà utilisée.')]
     class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // Constantes pour les rôles
@@ -25,6 +28,8 @@
         private ?int $id = null;
 
         #[ORM\Column(length: 180)]
+        #[Assert\NotBlank(message: 'L\'email est obligatoire.')]
+        #[Assert\Email(message: 'L\'email "{{ value }}" n\'est pas valide.')]
         private string $email;
 
         #[ORM\Column]
@@ -43,6 +48,8 @@
         private \DateTimeImmutable $createdAt;
 
         #[ORM\OneToOne(mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
+        #[Assert\Valid]
+        #[Assert\NotBlank(message: 'Le profil est obligatoire.')]
         private ?Profil $profil = null;
 
         /**

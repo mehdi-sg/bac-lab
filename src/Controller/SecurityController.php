@@ -44,6 +44,12 @@ class SecurityController extends AbstractController
         UserPasswordHasherInterface $hasher
     ) {
         $user = new Utilisateur();
+        
+        // Create and link the Profil
+        $profil = new Profil();
+        $user->setProfil($profil);
+        $profil->setUtilisateur($user);
+        
         $form = $this->createForm(RegistrationType::class, $user);
         $form->handleRequest($request);
 
@@ -55,14 +61,8 @@ class SecurityController extends AbstractController
                 $hasher->hashPassword($user, $plainPassword)
             );
 
-            // Le profil est déjà lié via le formulaire imbriqué
-            $profil = $user->getProfil();
-            if ($profil) {
-                $profil->setUtilisateur($user);
-                $em->persist($profil);
-            }
-
             $em->persist($user);
+            $em->persist($profil);
             $em->flush();
 
             return $this->redirectToRoute('app_login');
@@ -70,6 +70,32 @@ class SecurityController extends AbstractController
 
         return $this->render('security/register.html.twig', [
             'registrationForm' => $form,
+        ]);
+    }
+
+    #[Route('/api/check-email', name: 'api_check_email', methods: ['POST'])]
+    public function checkEmail(Request $request, EntityManagerInterface $em): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $email = $data['email'] ?? '';
+
+        if (empty($email)) {
+            return $this->json(['exists' => false, 'message' => 'Email vide']);
+        }
+
+        // Check if email exists in database
+        $existingUser = $em->getRepository(Utilisateur::class)->findOneBy(['email' => $email]);
+        
+        if ($existingUser) {
+            return $this->json([
+                'exists' => true, 
+                'message' => 'Cette adresse email est déjà utilisée'
+            ]);
+        }
+
+        return $this->json([
+            'exists' => false, 
+            'message' => 'Email disponible'
         ]);
     }
 }

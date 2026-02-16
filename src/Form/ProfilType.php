@@ -8,11 +8,13 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\File;
 
 class ProfilType extends AbstractType
 {
@@ -50,7 +52,20 @@ class ProfilType extends AbstractType
             ->add('dateNaissance', DateType::class, [
                 'label' => 'Date de naissance',
                 'widget' => 'single_text',
-                'required' => false,
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'La date de naissance est requise',
+                    ]),
+                    new Assert\LessThan([
+                        'value' => 'today',
+                        'message' => 'La date de naissance doit être antérieure à aujourd\'hui',
+                    ]),
+                    new Assert\GreaterThan([
+                        'value' => '-100 years',
+                        'message' => 'La date de naissance ne peut pas être antérieure à 100 ans',
+                    ]),
+                ],
             ])
             ->add('niveau', ChoiceType::class, [
                 'label' => 'Niveau',
@@ -82,7 +97,12 @@ class ProfilType extends AbstractType
                     return $filiere->getNom() . ' - ' . $filiere->getNiveau();
                 },
                 'placeholder' => 'Sélectionnez une filière',
-                'required' => false,
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'La filière est requise',
+                    ]),
+                ],
             ])
             ->add('gouvernorat', ChoiceType::class, [
                 'label' => 'Gouvernorat',
@@ -118,6 +138,27 @@ class ProfilType extends AbstractType
                     new Assert\NotBlank([
                         'message' => 'Le gouvernorat est requis',
                     ]),
+                ],
+            ])
+            ->add('profilePictureFile', FileType::class, [
+                'label' => 'Photo de profil',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '5M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG, PNG, GIF, WebP)',
+                        'maxSizeMessage' => 'Le fichier ne peut pas dépasser {{ limit }}',
+                    ])
+                ],
+                'attr' => [
+                    'accept' => 'image/*',
                 ],
             ]);
     }

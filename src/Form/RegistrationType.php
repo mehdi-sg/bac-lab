@@ -40,6 +40,10 @@ class RegistrationType extends AbstractType
             'min' => 8,
             'minMessage' => 'Le mot de passe doit contenir au moins {{ limit }} caractères',
         ]),
+        new Assert\Regex([
+            'pattern' => '/^(?=.*[0-9])(?=.*[\W_]).*$/',
+            'message' => 'Le mot de passe doit contenir au moins un chiffre et un caractère spécial',
+        ]),
     ],
 ])
 

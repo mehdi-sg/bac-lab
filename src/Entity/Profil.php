@@ -33,16 +33,23 @@ class Profil
     #[Assert\Length(max: 50, maxMessage: "Le gouvernorat ne peut pas dépasser {{ limit }} caractères.")]
     private string $gouvernorat;
 
-    #[ORM\Column(type: 'date', nullable: true)]
+    #[ORM\Column(type: 'date', nullable: false)]
+    #[Assert\NotBlank(message: "La date de naissance est obligatoire.")]
+    #[Assert\LessThan(value: 'today', message: "La date de naissance doit être antérieure à aujourd'hui.")]
+    #[Assert\GreaterThan(value: '-100 years', message: "La date de naissance ne peut pas être antérieure à 100 ans.")]
     private ?\DateTimeInterface $dateNaissance = null;
 
     #[ORM\ManyToOne(targetEntity: Filiere::class)]
-    #[ORM\JoinColumn(name: 'filiere_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'filiere_id', referencedColumnName: 'id', nullable: false)]
+    #[Assert\NotBlank(message: "La filière est obligatoire.")]
     private ?Filiere $filiere = null;
 
     #[ORM\OneToOne(inversedBy: 'profil')]
     #[ORM\JoinColumn(nullable: false)]
     private Utilisateur $utilisateur;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $profilePicture = null;
 
     public function getId(): ?int { return $this->id; }
 
@@ -73,5 +80,16 @@ class Profil
     public function getUtilisateur(): Utilisateur
     {
         return $this->utilisateur;
+    }
+
+    public function getProfilePicture(): ?string
+    {
+        return $this->profilePicture;
+    }
+
+    public function setProfilePicture(?string $profilePicture): self
+    {
+        $this->profilePicture = $profilePicture;
+        return $this;
     }
 }

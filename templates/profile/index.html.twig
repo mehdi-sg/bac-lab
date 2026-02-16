@@ -1,135 +1,1043 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon Profil - BacLab{% endblock %}
+{% block title %}🎓 Mon Profil - BacLab{% endblock %}
 
 {% block body %}
-<div class="container" style="padding: 80px 20px;">
+<div class="profile-page">
+    <!-- Force browser refresh -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- COSMIC BACKGROUND -->
+    <div class="profile-cosmic-bg"></div>
+    <div class="profile-stars" id="profileStars"></div>
+    
+    <!-- SUCCESS MESSAGES -->
     {% for message in app.flashes('success') %}
-        <div class="alert alert-success" style="padding: 18px 22px; border-radius: 12px; margin-bottom: 25px; font-size: 17px; font-weight: 600; background: #f0fff4; color: #2f855a; border: 2px solid #9ae6b4;">
-            <i class="fas fa-check-circle" style="margin-right: 10px;"></i>
-            {{ message }}
+        <div class="success-notification">
+            <i class="fas fa-check-circle"></i>
+            <span>{{ message }}</span>
         </div>
     {% endfor %}
 
-    <div class="row">
-        <div class="col-12">
-            <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 40px; border-radius: 20px; color: white; margin-bottom: 40px; box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);">
-                <h1 style="font-size: 42px; font-weight: 800; margin-bottom: 15px;">
-                    <i class="fas fa-user-circle" style="margin-right: 15px;"></i>
-                    Mon Profil
-                </h1>
-                <p style="font-size: 18px; opacity: 0.95; margin: 0;">
-                    Gérez vos informations personnelles et vos préférences
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
-                <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 50px; color: white; font-weight: 800;">
-                    {% if profil %}
-                        {{ profil.prenom|first|upper }}{{ profil.nom|first|upper }}
-                    {% else %}
-                        ??
-                    {% endif %}
-                </div>
-                <h2 style="font-size: 28px; font-weight: 700; color: #1a202c; margin-bottom: 5px;">
-                    {% if profil %}
-                        {{ profil.prenom }} {{ profil.nom }}
-                    {% else %}
-                        Profil incomplet
-                    {% endif %}
-                </h2>
-                <p style="color: #718096; font-size: 16px; margin-bottom: 20px;">
-                    <i class="fas fa-envelope" style="margin-right: 8px;"></i>
-                    {{ user.email }}
-                </p>
-                <a href="{{ path('app_profile_edit') }}" class="btn" style="display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 10px; font-weight: 600;">
-                    <i class="fas fa-edit" style="margin-right: 8px;"></i>
-                    Modifier mon profil
-                </a>
-            </div>
-        </div>
-
-        <div class="col-md-8">
-            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin-bottom: 20px;">
-                <h3 style="font-size: 24px; font-weight: 700; color: #1a202c; margin-bottom: 25px; border-bottom: 3px solid #667eea; padding-bottom: 15px;">
-                    <i class="fas fa-info-circle" style="color: #667eea; margin-right: 10px;"></i>
-                    Informations Personnelles
-                </h3>
-                
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
-                            <p style="font-size: 14px; color: #718096; margin-bottom: 5px; font-weight: 600;">Nom</p>
-                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">
-                                {% if profil %}{{ profil.nom }}{% else %}<span style="color: #a0aec0;">Non renseigné</span>{% endif %}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
-                            <p style="font-size: 14px; color: #718096; margin-bottom: 5px; font-weight: 600;">Prénom</p>
-                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">
-                                {% if profil %}{{ profil.prenom }}{% else %}<span style="color: #a0aec0;">Non renseigné</span>{% endif %}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
-                            <p style="font-size: 14px; color: #718096; margin-bottom: 5px; font-weight: 600;">Date de Naissance</p>
-                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">
-                                {% if profil and profil.dateNaissance %}
-                                    {{ profil.dateNaissance|date('d/m/Y') }}
-                                {% else %}
-                                    <span style="color: #a0aec0;">Non renseignée</span>
-                                {% endif %}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
-                            <p style="font-size: 14px; color: #718096; margin-bottom: 5px; font-weight: 600;">Gouvernorat</p>
-                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">
-                                {% if profil %}{{ profil.gouvernorat }}{% else %}<span style="color: #a0aec0;">Non renseigné</span>{% endif %}
-                            </p>
-                        </div>
+    <!-- MAIN PROFILE CONTAINER -->
+    <div class="profile-container">
+        <!-- PROFILE HEADER -->
+        <div class="profile-header">
+            <div class="profile-header-bg"></div>
+            <div class="profile-header-content">
+                <div class="profile-avatar">
+                    <div class="avatar-content">
+                        {% if profil and profil.profilePicture %}
+                            <img src="{{ asset('front/assets/img/profile_pictures/' ~ profil.profilePicture) }}" alt="Photo de profil" class="profile-picture">
+                        {% elseif profil %}
+                            {{ profil.prenom|first|upper }}{{ profil.nom|first|upper }}
+                        {% else %}
+                            <i class="fas fa-user"></i>
+                        {% endif %}
                     </div>
                 </div>
+                
+                <div class="profile-info">
+                    <h1 class="profile-name">
+                        {% if profil %}
+                            {{ profil.prenom }} {{ profil.nom }}
+                        {% else %}
+                            Profil Incomplet
+                        {% endif %}
+                    </h1>
+                    <p class="profile-email">
+                        <i class="fas fa-envelope"></i>
+                        {{ user.email }}
+                    </p>
+                    <div class="profile-badges">
+                        <span class="badge badge-student">
+                            <i class="fas fa-graduation-cap"></i>
+                            Étudiant
+                        </span>
+                        {% if profil and profil.filiere %}
+                            <span class="badge badge-filiere">
+                                <i class="fas fa-flask"></i>
+                                {{ profil.filiere }}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="profile-actions">
+                    <a href="{{ path('app_profile_edit') }}" class="btn-edit-profile">
+                        <i class="fas fa-edit"></i>
+                        <span>Modifier</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- PROFILE CONTENT -->
+        <div class="profile-content">
+            <!-- STATS CARDS -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-number">
+                            {% if user.createdAt %}
+                                {{ (date().diff(user.createdAt).days) }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </div>
+                        <div class="stat-label">Jours avec nous</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Fiches créées</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Favoris</div>
+                    </div>
+                </div>
             </div>
 
-            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
-                <h3 style="font-size: 24px; font-weight: 700; color: #1a202c; margin-bottom: 25px; border-bottom: 3px solid #f093fb; padding-bottom: 15px;">
-                    <i class="fas fa-graduation-cap" style="color: #f093fb; margin-right: 10px;"></i>
-                    Parcours Scolaire
-                </h3>
-                
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
-                            <p style="font-size: 14px; color: #718096; margin-bottom: 5px; font-weight: 600;">Niveau</p>
-                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">
-                                {% if profil %}{{ profil.niveau }}{% else %}<span style="color: #a0aec0;">Non renseigné</span>{% endif %}
-                            </p>
+            <!-- INFORMATION CARDS -->
+            <div class="info-grid">
+                <!-- PERSONAL INFO CARD -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="card-title">Informations Personnelles</h3>
+                    </div>
+                    
+                    <div class="card-content">
+                        <div class="info-row">
+                            <div class="info-item">
+                                <div class="info-label">
+                                    <i class="fas fa-signature"></i>
+                                    Nom
+                                </div>
+                                <div class="info-value">
+                                    {% if profil %}{{ profil.nom }}{% else %}<span class="empty-value">Non renseigné</span>{% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">
+                                    <i class="fas fa-user-tag"></i>
+                                    Prénom
+                                </div>
+                                <div class="info-value">
+                                    {% if profil %}{{ profil.prenom }}{% else %}<span class="empty-value">Non renseigné</span>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-item">
+                                <div class="info-label">
+                                    <i class="fas fa-birthday-cake"></i>
+                                    Date de Naissance
+                                </div>
+                                <div class="info-value">
+                                    {% if profil and profil.dateNaissance %}
+                                        {{ profil.dateNaissance|date('d/m/Y') }}
+                                    {% else %}
+                                        <span class="empty-value">Non renseignée</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Gouvernorat
+                                </div>
+                                <div class="info-value">
+                                    {% if profil %}{{ profil.gouvernorat }}{% else %}<span class="empty-value">Non renseigné</span>{% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
-                            <p style="font-size: 14px; color: #718096; margin-bottom: 5px; font-weight: 600;">Filière</p>
-                            <p style="font-size: 18px; color: #1a202c; margin: 0; font-weight: 700;">
-                                {% if profil and profil.filiere %}
-                                    {{ profil.filiere }}
-                                {% else %}
-                                    <span style="color: #a0aec0;">Non renseignée</span>
-                                {% endif %}
-                            </p>
+                </div>
+
+                <!-- ACADEMIC INFO CARD -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <div class="card-icon academic">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3 class="card-title">Parcours Académique</h3>
+                    </div>
+                    
+                    <div class="card-content">
+                        <div class="info-row">
+                            <div class="info-item">
+                                <div class="info-label">
+                                    <i class="fas fa-layer-group"></i>
+                                    Niveau
+                                </div>
+                                <div class="info-value">
+                                    {% if profil %}{{ profil.niveau }}{% else %}<span class="empty-value">Non renseigné</span>{% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">
+                                    <i class="fas fa-flask"></i>
+                                    Filière
+                                </div>
+                                <div class="info-value">
+                                    {% if profil and profil.filiere %}
+                                        {{ profil.filiere }}
+                                    {% else %}
+                                        <span class="empty-value">Non renseignée</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="academic-progress">
+                            <div class="progress-item">
+                                <div class="progress-label">Progression BAC</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 65%"></div>
+                                </div>
+                                <div class="progress-percent">65%</div>
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- QUICK ACTIONS -->
+            <div class="quick-actions">
+                <h3 class="actions-title">Actions Rapides</h3>
+                <div class="actions-grid">
+                    <a href="{{ path('app_profile_edit') }}" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">Modifier Profil</div>
+                            <div class="action-desc">Mettre à jour vos informations</div>
+                        </div>
+                    </a>
+                    
+                    <a href="{{ path('fiche_index') }}" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">Mes Fiches</div>
+                            <div class="action-desc">Gérer vos fiches de révision</div>
+                        </div>
+                    </a>
+                    
+                    <a href="{{ path('app_dashboard') }}" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">Tableau de Bord</div>
+                            <div class="action-desc">Voir vos statistiques</div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .profile-page {
+        min-height: 100vh;
+        background: #0a0a0f;
+        position: relative;
+        overflow-x: hidden;
+        padding: 100px 0 50px;
+    }
+
+    /* COSMIC BACKGROUND */
+    .profile-cosmic-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #533483 75%, #0a0a0f 100%);
+        z-index: -3;
+    }
+
+    .profile-stars {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+    }
+
+    .star {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: white;
+        border-radius: 50%;
+        animation: twinkle 3s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.5); }
+    }
+
+    /* SUCCESS NOTIFICATION */
+    .success-notification {
+        position: fixed;
+        top: 120px;
+        right: 30px;
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        border-radius: 12px;
+        padding: 15px 20px;
+        color: #10b981;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: slideInRight 0.5s ease-out;
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(100px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* MAIN CONTAINER */
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* PROFILE HEADER */
+    .profile-header {
+        position: relative;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 24px;
+        padding: 40px;
+        margin-bottom: 40px;
+        overflow: hidden;
+        animation: slideUp 0.8s ease-out;
+    }
+
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #00d4ff, #b794f6, #ff6b9d);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
+    }
+
+    @keyframes shimmer {
+        0% { background-position: 0% 0; }
+        100% { background-position: 200% 0; }
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .profile-header-content {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* PROFILE AVATAR */
+    .profile-avatar {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .avatar-ring {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #00d4ff, #b794f6, #ff6b9d);
+        padding: 4px;
+        animation: rotate 10s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .avatar-content {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #00d4ff, #b794f6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        font-weight: 900;
+        color: white;
+        position: relative;
+        box-shadow: 0 20px 60px rgba(0, 212, 255, 0.4);
+        border: 4px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+    }
+
+    .profile-picture {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        border-radius: 50%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    /* PROFILE INFO */
+    .profile-info {
+        flex: 1;
+    }
+
+    .profile-name {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: white;
+        margin-bottom: 10px;
+        text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+    }
+
+    .profile-email {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .profile-email i {
+        color: #00d4ff;
+    }
+
+    .profile-badges {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+    }
+
+    .badge-student {
+        background: rgba(0, 212, 255, 0.2);
+        color: #00d4ff;
+        border: 1px solid rgba(0, 212, 255, 0.3);
+    }
+
+    .badge-filiere {
+        background: rgba(183, 148, 246, 0.2);
+        color: #b794f6;
+        border: 1px solid rgba(183, 148, 246, 0.3);
+    }
+
+    /* PROFILE ACTIONS */
+    .profile-actions {
+        flex-shrink: 0;
+    }
+
+    .btn-edit-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 24px;
+        background: linear-gradient(135deg, #00d4ff, #b794f6);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 700;
+        transition: all 0.3s;
+        box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+    }
+
+    .btn-edit-profile:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 212, 255, 0.6);
+        color: white;
+        text-decoration: none;
+    }
+    /* STATS GRID */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 20px;
+        padding: 25px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: all 0.3s;
+        animation: slideUp 0.8s ease-out;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        border-color: rgba(0, 212, 255, 0.4);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #00d4ff, #b794f6);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .stat-info {
+        flex: 1;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #00d4ff;
+        line-height: 1;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 500;
+    }
+
+    /* INFO GRID */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .info-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 20px;
+        overflow: hidden;
+        animation: slideUp 0.8s ease-out;
+        animation-delay: 0.2s;
+        animation-fill-mode: both;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 25px 30px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #00d4ff, #b794f6);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    .card-icon.academic {
+        background: linear-gradient(135deg, #ff6b9d, #ffa726);
+    }
+
+    .card-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+    }
+
+    .card-content {
+        padding: 25px 30px 30px;
+    }
+
+    .info-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        margin-bottom: 20px;
+    }
+
+    .info-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .info-item {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 20px;
+        transition: all 0.3s;
+    }
+
+    .info-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+    }
+
+    .info-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .info-label i {
+        color: #00d4ff;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        color: white;
+        font-weight: 600;
+    }
+
+    .empty-value {
+        color: rgba(255, 255, 255, 0.5);
+        font-style: italic;
+    }
+
+    /* ACADEMIC PROGRESS */
+    .academic-progress {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .progress-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .progress-label {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 600;
+        min-width: 120px;
+    }
+
+    .progress-bar {
+        flex: 1;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #00d4ff, #b794f6);
+        border-radius: 4px;
+        transition: width 1s ease-out;
+        animation: progressFill 2s ease-out;
+    }
+
+    @keyframes progressFill {
+        from { width: 0%; }
+    }
+
+    .progress-percent {
+        font-size: 0.9rem;
+        color: #00d4ff;
+        font-weight: 700;
+        min-width: 40px;
+        text-align: right;
+    }
+
+    /* QUICK ACTIONS */
+    .quick-actions {
+        animation: slideUp 0.8s ease-out;
+        animation-delay: 0.4s;
+        animation-fill-mode: both;
+    }
+
+    .actions-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .action-card {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 16px;
+        padding: 25px;
+        text-decoration: none;
+        transition: all 0.3s;
+        color: white;
+    }
+
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        border-color: rgba(0, 212, 255, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    .action-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #00d4ff, #b794f6);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .action-content {
+        flex: 1;
+    }
+
+    .action-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .action-desc {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 1024px) {
+        .profile-header-content {
+            flex-direction: column;
+            text-align: center;
+            gap: 20px;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .info-row {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .profile-page {
+            padding: 80px 0 30px;
+        }
+        
+        .profile-container {
+            padding: 0 15px;
+        }
+        
+        .profile-header {
+            padding: 30px 20px;
+        }
+        
+        .avatar-content {
+            width: 100px;
+            height: 100px;
+            font-size: 2rem;
+        }
+        
+        .profile-name {
+            font-size: 2rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .actions-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .success-notification {
+            right: 15px;
+            left: 15px;
+            top: 100px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .profile-header {
+            padding: 25px 15px;
+        }
+        
+        .card-header {
+            padding: 20px 20px 15px;
+        }
+        
+        .card-content {
+            padding: 20px;
+        }
+        
+        .info-item {
+            padding: 15px;
+        }
+        
+        .action-card {
+            padding: 20px;
+        }
+    }
+</style>
+<script>
+    // PROFILE PAGE EXPERIENCE
+    class ProfileExperience {
+        constructor() {
+            this.init();
+        }
+        
+        init() {
+            this.createStars();
+            this.animateStats();
+            this.setupInteractions();
+            this.animateProgress();
+        }
+        
+        // CREATE FLOATING STARS
+        createStars() {
+            const container = document.getElementById('profileStars');
+            const starCount = 60;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                container.appendChild(star);
+            }
+        }
+        
+        // ANIMATE STATS NUMBERS
+        animateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target;
+                        const finalValue = parseInt(target.textContent);
+                        this.animateNumber(target, 0, finalValue, 2000);
+                        observer.unobserve(target);
+                    }
+                });
+            });
+            
+            statNumbers.forEach(stat => observer.observe(stat));
+        }
+        
+        // ANIMATE NUMBER COUNTING
+        animateNumber(element, start, end, duration) {
+            const startTime = performance.now();
+            
+            const updateNumber = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const current = Math.floor(start + (end - start) * easeOutQuart);
+                
+                element.textContent = current;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            };
+            
+            requestAnimationFrame(updateNumber);
+        }
+        
+        // SETUP INTERACTIONS
+        setupInteractions() {
+            // Card hover effects
+            const cards = document.querySelectorAll('.stat-card, .info-card, .action-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Avatar click effect
+            const avatar = document.querySelector('.profile-avatar');
+            if (avatar) {
+                avatar.addEventListener('click', () => {
+                    avatar.style.animation = 'none';
+                    setTimeout(() => {
+                        avatar.style.animation = 'pulse 2s ease-in-out infinite';
+                    }, 100);
+                });
+            }
+        }
+        
+        // ANIMATE PROGRESS BARS
+        animateProgress() {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const progressBar = entry.target;
+                        const width = progressBar.style.width;
+                        progressBar.style.width = '0%';
+                        
+                        setTimeout(() => {
+                            progressBar.style.width = width;
+                        }, 500);
+                        
+                        observer.unobserve(progressBar);
+                    }
+                });
+            });
+            
+            progressBars.forEach(bar => observer.observe(bar));
+        }
+    }
+    
+    // AUTO-HIDE SUCCESS NOTIFICATION
+    function hideSuccessNotification() {
+        const notification = document.querySelector('.success-notification');
+        if (notification) {
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.5s ease-out forwards';
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 4000);
+        }
+    }
+    
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+            window.profileExp = new ProfileExperience();
+            hideSuccessNotification();
+        }, 100);
+    });
+    
+    // Add slideOutRight animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
 {% endblock %}

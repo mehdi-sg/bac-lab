@@ -2,10 +2,8 @@
 
 {% block css %}
     {{ parent() }}
-    {# Load fiche-specific CSS files with higher priority #}
-    <link rel="stylesheet" href="{{ asset('front/css/fiche-complete.css') }}">
-    <link rel="stylesheet" href="{{ asset('front/css/fiche-editor.css') }}">
-    <link rel="stylesheet" href="{{ asset('front/css/fiche-show.css') }}">
+    {# Load premium fiche CSS - Phase 1 Foundation #}
+    <link rel="stylesheet" href="{{ asset('front/css/fiche-premium.css') }}">
 {% endblock %}
 
 {% block body_class %}fiche-page{% endblock %}

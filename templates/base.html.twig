@@ -26,11 +26,11 @@
         <link rel="stylesheet" href="{{ asset('front/css/fiche-editor.css') }}">
         <link rel="stylesheet" href="{{ asset('front/css/fiche-show.css') }}">
         
-        {# Pages design CSS - but exclude home page #}
-        <style>
-            /* Load pages-design.css but exclude home page */
-            @import url("{{ asset('front/css/pages-design.css') }}") screen and (max-width: 0px);
-        </style>
+        {# Pages design CSS - conditionally loaded for non-special pages #}
+        {% set specialPages = ['app_home', 'app_login', 'app_register', 'app_profile', 'app_profile_edit'] %}
+        {% if app.request.attributes.get('_route') not in specialPages %}
+            <link rel="stylesheet" href="{{ asset('front/css/pages-design.css') }}">
+        {% endif %}
     {% endblock %}
 
     {% block inline_css %}
@@ -64,8 +64,9 @@
 
                         <div class="col-xl-2 col-lg-2">
                             <div class="logo">
-                                <a href="{{ path('app_home') }}">
-                                    <img src="{{ asset('front/img/logo/logo.png') }}" alt="BacLab Logo">
+                                <a href="{{ path('app_home') }}" class="logo-link">
+                                    <img src="{{ asset('front/img/logo/logo.png') }}" alt="BacLab Logo" class="logo-img">
+                                    <div class="logo-glow"></div>
                                 </a>
                             </div>
                         </div>
@@ -111,7 +112,17 @@
                                                         <span id="notification-badge" class="badge-pulse">0</span>
                                                     </a>
                                                 </li>
-                                                <li><a href="{{ path('app_profile') }}" class="btn"><i class="fas fa-user"></i>Mon Profil</a></li>
+                                                <li>
+                                                    <a href="{{ path('app_profile') }}" class="notification-bell" title="Mon Profil" style="position: relative !important; overflow: hidden !important;">
+                                                        {% if app.user.profil and app.user.profil.profilePicture %}
+                                                            <img src="{{ asset('front/assets/img/profile_pictures/' ~ app.user.profil.profilePicture) }}" alt="Photo de profil" style="width: 20px !important; height: 20px !important; border-radius: 50% !important; object-fit: cover !important; object-position: center !important; position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; max-width: 20px !important; max-height: 20px !important; min-width: 20px !important; min-height: 20px !important; border: 1px solid rgba(255, 255, 255, 0.3) !important; box-sizing: border-box !important;">
+                                                        {% elseif app.user.profil %}
+                                                            <div style="width: 20px !important; height: 20px !important; border-radius: 50% !important; background: linear-gradient(135deg, #00d4ff, #b794f6) !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 8px !important; font-weight: 700 !important; color: white !important; position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; max-width: 20px !important; max-height: 20px !important; min-width: 20px !important; min-height: 20px !important;">{{ app.user.profil.prenom|first|upper }}{{ app.user.profil.nom|first|upper }}</div>
+                                                        {% else %}
+                                                            <i class="fas fa-user"></i>
+                                                        {% endif %}
+                                                    </a>
+                                                </li>
                                                 <li><a href="{{ path('app_logout') }}" class="btn btn3"><i class="fas fa-sign-out-alt"></i>Deconnexion</a></li>
                                             {% else %}
                                                 <li><a href="{{ path('app_register') }}" class="btn"><i class="fas fa-user-plus"></i>S'inscrire</a></li>
