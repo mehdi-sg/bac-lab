@@ -31,6 +31,9 @@
             /* Load pages-design.css but exclude home page */
             @import url("{{ asset('front/css/pages-design.css') }}") screen and (max-width: 0px);
         </style>
+        
+        {# Floating Chat CSS #}
+        <link rel="stylesheet" href="{{ asset('front/css/chat-floating.css') }}">
     {% endblock %}
 
     {% block inline_css %}
@@ -490,6 +493,12 @@
             }
         });
     </script>
+    
+    {# Floating Chat Component #}
+    {{ include('components/floating_chat.html.twig') }}
+    
+    {# Floating Chat JavaScript #}
+    <script src="{{ asset('front/js/chat-floating.js') }}"></script>
 {% endblock %}
 </body>
 </html>

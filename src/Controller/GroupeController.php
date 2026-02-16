@@ -45,9 +45,8 @@ class GroupeController extends AbstractController
         if ($user instanceof Utilisateur && !$isAdmin) {
             $userFiliere = $user->getProfil()?->getFiliere();
             if ($userFiliere) {
-                $queryBuilder->leftJoin('g.filiere', 'f')
-                            ->andWhere('f.nom = :filiereName')
-                            ->setParameter('filiereName', $userFiliere);
+                $queryBuilder->andWhere('g.filiere = :filiere')
+                            ->setParameter('filiere', $userFiliere);
             } else {
                 // If user has no filiere, show empty results
                 $queryBuilder->andWhere('1 = 0');
@@ -92,9 +91,8 @@ class GroupeController extends AbstractController
         if ($user instanceof Utilisateur && !$isAdmin) {
             $userFiliere = $user->getProfil()?->getFiliere();
             if ($userFiliere) {
-                $featuredQueryBuilder->leftJoin('g.filiere', 'f')
-                                    ->andWhere('f.nom = :filiereName')
-                                    ->setParameter('filiereName', $userFiliere);
+                $featuredQueryBuilder->andWhere('g.filiere = :filiere')
+                                    ->setParameter('filiere', $userFiliere);
             } else {
                 $featuredQueryBuilder->andWhere('1 = 0');
             }
@@ -1104,5 +1102,205 @@ class GroupeController extends AbstractController
             'category' => $category,
             'emojis' => $result,
         ]);
+    }
+
+    // ========================
+    // API Routes for Floating Chat
+    // ========================
+
+    #[Route('/api/chat/conversations', name: 'api_chat_conversations')]
+    public function apiConversations(
+        GroupeRepository $groupeRepository,
+        MessageRepository $messageRepository
+    ): Response {
+        $user = $this->getUser();
+        
+        if (!$user instanceof UserInterface) {
+            return $this->json(['success' => false, 'error' => 'Non connecté'], 401);
+        }
+        
+        // Get user's groups
+        $groupes = $groupeRepository->findJoinedGroupsByUser($user);
+        $ownedGroups = $groupeRepository->findBy(['createur' => $user]);
+        
+        // Merge owned groups
+        $seenIds = [];
+        foreach ($groupes as $g) {
+            $seenIds[] = $g->getId();
+        }
+        foreach ($ownedGroups as $ownedGroup) {
+            if (!in_array($ownedGroup->getId(), $seenIds)) {
+                $groupes[] = $ownedGroup;
+            }
+        }
+        
+        $conversations = [];
+        foreach ($groupes as $groupe) {
+            $lastMessage = $messageRepository->findOneBy(
+                ['groupe' => $groupe],
+                ['createdAt' => 'DESC']
+            );
+            
+            $conversations[] = [
+                'id' => $groupe->getId(),
+                'nom' => $groupe->getNom(),
+                'description' => $groupe->getDescription(),
+                'isPublic' => $groupe->isPublic(),
+                'membreCount' => $groupe->getMembres()->count(),
+                'dernierMessage' => $lastMessage ? $lastMessage->getContenu() : null,
+                'lastMessageTime' => $lastMessage ? $lastMessage->getCreatedAt()->format('Y-m-d H:i:s') : null,
+                'timeAgo' => $lastMessage ? $this->getTimeAgo($lastMessage->getCreatedAt()) : '',
+                'unreadCount' => 0, // Can be implemented with a read status
+            ];
+        }
+        
+        // Sort by last message time
+        usort($conversations, function($a, $b) {
+            if (!$a['lastMessageTime']) return 1;
+            if (!$b['lastMessageTime']) return -1;
+            return strtotime($b['lastMessageTime']) - strtotime($a['lastMessageTime']);
+        });
+        
+        return $this->json(['success' => true, 'conversations' => $conversations]);
+    }
+
+    #[Route('/api/chat/messages/{groupId}', name: 'api_chat_messages')]
+    public function apiMessages(
+        int $groupId,
+        MessageRepository $messageRepository,
+        GroupeRepository $groupeRepository,
+        MembreGroupeRepository $membreGroupeRepository
+    ): Response {
+        $user = $this->getUser();
+        
+        if (!$user instanceof UserInterface) {
+            return $this->json(['success' => false, 'error' => 'Non connecté'], 401);
+        }
+        
+        $groupe = $groupeRepository->find($groupId);
+        
+        if (!$groupe) {
+            return $this->json(['success' => false, 'error' => 'Groupe non trouvé'], 404);
+        }
+        
+        // Check if user is member
+        $isMember = false;
+        if ($groupe->getCreateur() === $user) {
+            $isMember = true;
+        } else {
+            $membership = $membreGroupeRepository->findOneBy([
+                'utilisateur' => $user,
+                'groupe' => $groupe,
+            ]);
+            if ($membership && $membership->isAccepted()) {
+                $isMember = true;
+            }
+        }
+        
+        if (!$isMember) {
+            return $this->json(['success' => false, 'error' => 'Vous n\'êtes pas membre de ce groupe'], 403);
+        }
+        
+        $messages = $messageRepository->findMessagesForGroupe($groupe, 'recent', 50);
+        
+        $messagesData = [];
+        foreach ($messages as $msg) {
+            $messagesData[] = [
+                'id' => $msg->getId(),
+                'contenu' => $msg->getContenu(),
+                'typeMessage' => $msg->getTypeMessage(),
+                'expediteurId' => $msg->getExpediteur()->getId(),
+                'expediteurNom' => $msg->getExpediteur()->getProfil() ? 
+                    $msg->getExpediteur()->getProfil()->getNom() : 
+                    substr($msg->getExpediteur()->getEmail(), 0, strpos($msg->getExpediteur()->getEmail(), '@')),
+                'createdAt' => $msg->getCreatedAt()->format('Y-m-d H:i:s'),
+            ];
+        }
+        
+        return $this->json(['success' => true, 'messages' => $messagesData]);
+    }
+
+    #[Route('/api/chat/send/{groupId}', name: 'api_chat_send')]
+    public function apiSendMessage(
+        Request $request,
+        int $groupId,
+        MessageRepository $messageRepository,
+        GroupeRepository $groupeRepository,
+        MembreGroupeRepository $membreGroupeRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+        
+        if (!$user instanceof Utilisateur) {
+            return $this->json(['success' => false, 'error' => 'Non connecté'], 401);
+        }
+        
+        $groupe = $groupeRepository->find($groupId);
+        
+        if (!$groupe) {
+            return $this->json(['success' => false, 'error' => 'Groupe non trouvé'], 404);
+        }
+        
+        // Check if user is member
+        $isMember = false;
+        if ($groupe->getCreateur() === $user) {
+            $isMember = true;
+        } else {
+            $membership = $membreGroupeRepository->findOneBy([
+                'utilisateur' => $user,
+                'groupe' => $groupe,
+            ]);
+            if ($membership && $membership->isAccepted()) {
+                $isMember = true;
+            }
+        }
+        
+        if (!$isMember) {
+            return $this->json(['success' => false, 'error' => 'Vous n\'êtes pas membre de ce groupe'], 403);
+        }
+        
+        $contenu = $request->request->get('contenu', '');
+        
+        if (empty(trim($contenu))) {
+            return $this->json(['success' => false, 'error' => 'Le message ne peut pas être vide']);
+        }
+        
+        $message = new Message();
+        $message->setContenu($contenu);
+        $message->setTypeMessage('TEXTE');
+        $message->setExpediteur($user);
+        $message->setGroupe($groupe);
+        
+        $entityManager->persist($message);
+        $entityManager->flush();
+        
+        $userName = $user->getProfil() ? 
+            $user->getProfil()->getNom() : 
+            substr($user->getEmail(), 0, strpos($user->getEmail(), '@'));
+        
+        return $this->json([
+            'success' => true,
+            'message' => [
+                'id' => $message->getId(),
+                'contenu' => $message->getContenu(),
+                'typeMessage' => $message->getTypeMessage(),
+                'expediteurId' => $user->getId(),
+                'expediteurNom' => $userName,
+                'createdAt' => $message->getCreatedAt()->format('Y-m-d H:i:s'),
+            ]
+        ]);
+    }
+
+    // Helper function to get time ago string
+    private function getTimeAgo(\DateTimeImmutable $dateTime): string {
+        $now = new \DateTimeImmutable();
+        $diff = $now->getTimestamp() - $dateTime->getTimestamp();
+        
+        if ($diff < 60) return 'À l\'instant';
+        if ($diff < 3600) return floor($diff / 60) . ' min';
+        if ($diff < 86400) return floor($diff / 3600) . 'h';
+        if ($diff < 604800) return floor($diff / 86400) . 'j';
+        
+        return $dateTime->format('d/m');
     }
 }

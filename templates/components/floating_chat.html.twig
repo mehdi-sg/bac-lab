@@ -1,0 +1,70 @@
+{# templates/components/floating_chat.html.twig #}
+{% if is_granted('ROLE_USER') %}
+<!-- Floating Chat Toggle Button -->
+<button class="floating-chat-toggle" id="floatingChatToggle" title="Ouvrir le chat">
+    <i class="fas fa-comments" aria-hidden="true">💬</i>
+    {% if unreadMessagesCount is defined and unreadMessagesCount > 0 %}
+        <span class="chat-unread-badge">{{ unreadMessagesCount }}</span>
+    {% endif %}
+</button>
+
+<!-- Floating Chat Panel -->
+<div class="floating-chat-panel" id="floatingChatPanel">
+    <!-- Header -->
+    <div class="floating-chat-header">
+        <h4><i class="fas fa-comments" aria-hidden="true">💬</i> Messages</h4>
+        <button class="chat-close-btn" id="floatingChatClose" title="Fermer">
+            <i class="fas fa-times" aria-hidden="true">✕</i>
+        </button>
+    </div>
+    
+    <!-- Tabs -->
+    <div class="floating-chat-tabs">
+        <button class="chat-tab-btn active" data-tab="conversations" title="Groupes">
+            <i class="fas fa-users" aria-hidden="true">👥</i> Groupes
+        </button>
+        <button class="chat-tab-btn" data-tab="recent" title="Messages récents">
+            <i class="fas fa-clock" aria-hidden="true">🕐</i> Récents
+        </button>
+    </div>
+    
+    <!-- Content -->
+    <div class="floating-chat-content" id="floatingChatContent">
+        <!-- Conversations List -->
+        <div class="chat-conversations-view" id="conversationsView">
+            <ul class="chat-conversations-list" id="chatConversationsList">
+                <li class="chat-loading">
+                    <div class="chat-spinner"></div>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Messages View (hidden by default) -->
+        <div class="chat-messages-container" id="messagesView" style="display: none;">
+            <div class="chat-messages-header">
+                <button class="chat-back-btn" id="chatBackBtn" title="Retour">
+                    <i class="fas fa-arrow-left" aria-hidden="true">←</i>
+                </button>
+                <div class="chat-group-info">
+                    <h5 id="chatGroupName">Groupe</h5>
+                    <span id="chatGroupMembers">0 membres</span>
+                </div>
+            </div>
+            <div class="chat-messages-list" id="chatMessagesList">
+                <!-- Messages will be loaded here -->
+            </div>
+            <div class="chat-message-input-container">
+                <input type="text" class="chat-message-input" id="chatMessageInput" placeholder="Écrire un message...">
+                <button class="chat-send-btn" id="chatSendBtn" title="Envoyer">
+                    <i class="fas fa-paper-plane" aria-hidden="true">➤</i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Pass user ID to global scope for the chat script
+    window.currentUserId = {{ app.user ? app.user.id : 0 }};
+</script>
+{% endif %}

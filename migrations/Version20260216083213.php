@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260212095332 extends AbstractMigration
+final class Version20260216083213 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -34,7 +34,7 @@ final class Version20260212095332 extends AbstractMigration
         $this->addSql('CREATE TABLE membre_groupe (id INT AUTO_INCREMENT NOT NULL, role_membre VARCHAR(20) NOT NULL, statut VARCHAR(20) NOT NULL, date_joint DATETIME NOT NULL, utilisateur_id INT NOT NULL, groupe_id INT NOT NULL, INDEX IDX_9EB01998FB88E14F (utilisateur_id), INDEX IDX_9EB019987A45358C (groupe_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE message (id INT AUTO_INCREMENT NOT NULL, contenu LONGTEXT NOT NULL, type_message VARCHAR(10) NOT NULL, created_at DATETIME NOT NULL, deleted_at DATETIME DEFAULT NULL, file_path VARCHAR(500) DEFAULT NULL, file_name VARCHAR(100) DEFAULT NULL, parent_message_id INT DEFAULT NULL, fiche_id INT DEFAULT NULL, expediteur_id INT NOT NULL, groupe_id INT NOT NULL, INDEX IDX_B6BD307F14399779 (parent_message_id), INDEX IDX_B6BD307FDF522508 (fiche_id), INDEX IDX_B6BD307F10335F61 (expediteur_id), INDEX IDX_B6BD307F7A45358C (groupe_id), INDEX idx_message_groupe_created (groupe_id, created_at), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE notifications (id INT AUTO_INCREMENT NOT NULL, type VARCHAR(255) NOT NULL, title VARCHAR(255) NOT NULL, message LONGTEXT NOT NULL, link VARCHAR(255) DEFAULT NULL, is_read TINYINT NOT NULL, created_at DATETIME NOT NULL, is_seen TINYINT NOT NULL, utilisateur_id INT NOT NULL, membre_id INT DEFAULT NULL, fiche_join_request_id INT DEFAULT NULL, INDEX IDX_6000B0D3FB88E14F (utilisateur_id), INDEX IDX_6000B0D36A99F74A (membre_id), INDEX IDX_6000B0D37DF4E23 (fiche_join_request_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
-        $this->addSql('CREATE TABLE profil (id INT AUTO_INCREMENT NOT NULL, nom VARCHAR(50) NOT NULL, prenom VARCHAR(50) NOT NULL, niveau VARCHAR(30) NOT NULL, gouvernorat VARCHAR(50) NOT NULL, date_naissance DATE DEFAULT NULL, filiere VARCHAR(100) DEFAULT NULL, utilisateur_id INT NOT NULL, UNIQUE INDEX UNIQ_E6D6B297FB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
+        $this->addSql('CREATE TABLE profil (id INT AUTO_INCREMENT NOT NULL, nom VARCHAR(50) NOT NULL, prenom VARCHAR(50) NOT NULL, niveau VARCHAR(30) NOT NULL, gouvernorat VARCHAR(50) NOT NULL, date_naissance DATE DEFAULT NULL, filiere_id INT DEFAULT NULL, utilisateur_id INT NOT NULL, INDEX IDX_E6D6B297180AA129 (filiere_id), UNIQUE INDEX UNIQ_E6D6B297FB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE question (id_question INT AUTO_INCREMENT NOT NULL, enonce LONGTEXT NOT NULL, type_question VARCHAR(20) NOT NULL, score INT NOT NULL, id_quiz INT NOT NULL, INDEX IDX_B6F7494E2F32E690 (id_quiz), PRIMARY KEY (id_question)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE quiz (id_quiz INT AUTO_INCREMENT NOT NULL, titre VARCHAR(150) NOT NULL, description LONGTEXT NOT NULL, niveau VARCHAR(50) NOT NULL, duree INT NOT NULL, nb_questions INT NOT NULL, date_creation DATETIME NOT NULL, etat TINYINT NOT NULL, id_chapitre INT NOT NULL, id_matiere INT NOT NULL, INDEX IDX_A412FA92DCB95CB0 (id_chapitre), INDEX IDX_A412FA924E89FE3A (id_matiere), PRIMARY KEY (id_quiz)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE ressource (id INT AUTO_INCREMENT NOT NULL, titre VARCHAR(255) NOT NULL, description LONGTEXT DEFAULT NULL, auteur VARCHAR(200) DEFAULT NULL, url_fichier VARCHAR(255) DEFAULT NULL, type_fichier VARCHAR(50) NOT NULL, image_couverture VARCHAR(255) DEFAULT NULL, tags VARCHAR(255) DEFAULT NULL, categorie VARCHAR(100) DEFAULT NULL, taille_fichier INT DEFAULT NULL, nombre_vues INT DEFAULT 0 NOT NULL, nombre_telechargements INT DEFAULT 0 NOT NULL, note_moyenne NUMERIC(3, 2) DEFAULT \'0.00\' NOT NULL, statut VARCHAR(50) DEFAULT \'EN_ATTENTE\' NOT NULL, date_ajout DATETIME NOT NULL, est_active TINYINT DEFAULT 1 NOT NULL, PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
@@ -66,6 +66,7 @@ final class Version20260212095332 extends AbstractMigration
         $this->addSql('ALTER TABLE notifications ADD CONSTRAINT FK_6000B0D3FB88E14F FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE notifications ADD CONSTRAINT FK_6000B0D36A99F74A FOREIGN KEY (membre_id) REFERENCES membre_groupe (id) ON DELETE SET NULL');
         $this->addSql('ALTER TABLE notifications ADD CONSTRAINT FK_6000B0D37DF4E23 FOREIGN KEY (fiche_join_request_id) REFERENCES fiche_join_requests (id) ON DELETE SET NULL');
+        $this->addSql('ALTER TABLE profil ADD CONSTRAINT FK_E6D6B297180AA129 FOREIGN KEY (filiere_id) REFERENCES filiere (id)');
         $this->addSql('ALTER TABLE profil ADD CONSTRAINT FK_E6D6B297FB88E14F FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id)');
         $this->addSql('ALTER TABLE question ADD CONSTRAINT FK_B6F7494E2F32E690 FOREIGN KEY (id_quiz) REFERENCES quiz (id_quiz) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE quiz ADD CONSTRAINT FK_A412FA92DCB95CB0 FOREIGN KEY (id_chapitre) REFERENCES chapitre (id)');
@@ -101,6 +102,7 @@ final class Version20260212095332 extends AbstractMigration
         $this->addSql('ALTER TABLE notifications DROP FOREIGN KEY FK_6000B0D3FB88E14F');
         $this->addSql('ALTER TABLE notifications DROP FOREIGN KEY FK_6000B0D36A99F74A');
         $this->addSql('ALTER TABLE notifications DROP FOREIGN KEY FK_6000B0D37DF4E23');
+        $this->addSql('ALTER TABLE profil DROP FOREIGN KEY FK_E6D6B297180AA129');
         $this->addSql('ALTER TABLE profil DROP FOREIGN KEY FK_E6D6B297FB88E14F');
         $this->addSql('ALTER TABLE question DROP FOREIGN KEY FK_B6F7494E2F32E690');
         $this->addSql('ALTER TABLE quiz DROP FOREIGN KEY FK_A412FA92DCB95CB0');

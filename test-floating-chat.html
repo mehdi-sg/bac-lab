@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Floating Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="public/front/css/chat-floating.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Test Page for Floating Chat</h1>
+        <p>This is a test page to verify the floating chat widget works correctly.</p>
+        <p>The floating chat button should appear in the bottom-right corner.</p>
+        <p>Click it to open the chat panel.</p>
+    </div>
+
+    <!-- Floating Chat Toggle Button -->
+    <button class="floating-chat-toggle" id="floatingChatToggle" title="Ouvrir le chat">
+        <i class="fas fa-comments" aria-hidden="true">💬</i>
+        <span class="chat-unread-badge">3</span>
+    </button>
+
+    <!-- Floating Chat Panel -->
+    <div class="floating-chat-panel" id="floatingChatPanel">
+        <!-- Header -->
+        <div class="floating-chat-header">
+            <h4><i class="fas fa-comments" aria-hidden="true">💬</i> Messages</h4>
+            <button class="chat-close-btn" id="floatingChatClose" title="Fermer">
+                <i class="fas fa-times" aria-hidden="true">✕</i>
+            </button>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="floating-chat-tabs">
+            <button class="chat-tab-btn active" data-tab="conversations" title="Groupes">
+                <i class="fas fa-users" aria-hidden="true">👥</i> Groupes
+            </button>
+            <button class="chat-tab-btn" data-tab="recent" title="Messages récents">
+                <i class="fas fa-clock" aria-hidden="true">🕐</i> Récents
+            </button>
+        </div>
+        
+        <!-- Content -->
+        <div class="floating-chat-content" id="floatingChatContent">
+            <!-- Conversations List -->
+            <div class="chat-conversations-view" id="conversationsView">
+                <ul class="chat-conversations-list" id="chatConversationsList">
+                    <li class="chat-conversation-item">
+                        <div class="chat-conversation-avatar">MG</div>
+                        <div class="chat-conversation-info">
+                            <div class="chat-conversation-name">
+                                <span>Mathématiques Groupe</span>
+                                <span class="chat-conversation-time">2min</span>
+                            </div>
+                            <div class="chat-conversation-preview">Nouveau message...</div>
+                        </div>
+                        <span class="chat-conversation-unread">2</span>
+                    </li>
+                    <li class="chat-conversation-item">
+                        <div class="chat-conversation-avatar">PH</div>
+                        <div class="chat-conversation-info">
+                            <div class="chat-conversation-name">
+                                <span>Physique Groupe</span>
+                                <span class="chat-conversation-time">1h</span>
+                            </div>
+                            <div class="chat-conversation-preview">Salut tout le monde!</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple test script
+        const chatToggle = document.getElementById('floatingChatToggle');
+        const chatPanel = document.getElementById('floatingChatPanel');
+        const chatClose = document.getElementById('floatingChatClose');
+
+        chatToggle.addEventListener('click', function() {
+            chatPanel.classList.toggle('active');
+            chatToggle.classList.toggle('active');
+        });
+
+        chatClose.addEventListener('click', function() {
+            chatPanel.classList.remove('active');
+            chatToggle.classList.remove('active');
+        });
+
+        // Tab switching
+        document.querySelectorAll('.chat-tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.chat-tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
