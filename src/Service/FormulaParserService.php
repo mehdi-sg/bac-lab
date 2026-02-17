@@ -28,7 +28,16 @@ class FormulaParserService
         'SB' => 'SB',
         'SP_Sport' => 'SP_Sport',
         'EP' => 'EP',
-        'ALL' => 'ALL' // Special case for some formulas
+        'ALL' => 'ALL', // Special case for some formulas
+        // Additional language subjects found in CSV
+        'ESP' => 'ESP', // Spanish (Espagnol)
+        'IT' => 'IT',   // Italian (Italien)
+        'Info' => 'Info', // Informatique
+        // Additional subjects that might appear
+        'All' => 'All',
+        'Esp' => 'Esp',
+        // Case variations
+        'ANG' => 'ANG' // Uppercase variant of Ang
     ];
 
     /**
@@ -41,13 +50,23 @@ class FormulaParserService
             $formula = trim($formula);
             
             // Handle empty or invalid formulas
-            if (empty($formula) || $formula === 'الاطلاععلىالصيغةالاجمالية(FG)والترتيب') {
+            if (empty($formula) || 
+                $formula === 'الاطلاععلىالصيغةالاجمالية(FG)والترتيب' ||
+                strpos($formula, 'الاطلاععلىالصيغةالاجمالية') !== false) {
                 return null;
             }
 
             // Handle special cases
-            if ($formula === 'FG+ALL') {
+            if ($formula === 'FG+ALL' || $formula === 'FG') {
                 return $this->handleSpecialFormula($formula, $variables);
+            }
+
+            // Handle case variations (ANG -> Ang)
+            $formula = str_replace('ANG', 'Ang', $formula);
+
+            // Handle Max functions - for now, skip formulas with Max as they're complex
+            if (strpos($formula, 'Max') !== false) {
+                return null; // Skip Max formulas for now
             }
 
             // Replace variables with their values
@@ -58,7 +77,15 @@ class FormulaParserService
             }
 
             // Parse and calculate the result
-            return $this->evaluateExpression($processedFormula);
+            $result = $this->evaluateExpression($processedFormula);
+            
+            // Validate result is reasonable (between 0 and 300)
+            if ($result < 0 || $result > 300) {
+                error_log("Unrealistic formula result: $result for formula: $formula");
+                return null;
+            }
+            
+            return $result;
             
         } catch (\Exception $e) {
             // Log error in production
@@ -75,14 +102,15 @@ class FormulaParserService
         $processedFormula = $formula;
         $requiredVars = [];
 
-        // Find all variable references
+        // Find all variable references (including coefficients like 2A, 3M, etc.)
         foreach (self::SUBJECT_CODES as $code => $name) {
-            if (preg_match('/\b' . preg_quote($code, '/') . '\b/', $processedFormula)) {
+            // Match both plain variables and coefficients (e.g., A, 2A, 3A)
+            if (preg_match('/\b(\d*)' . preg_quote($code, '/') . '\b/', $processedFormula)) {
                 $requiredVars[] = $code;
             }
         }
 
-        // Replace variables with values
+        // Replace variables with values (handle coefficients)
         foreach ($requiredVars as $var) {
             if (!isset($variables[$var])) {
                 // Missing required variable
@@ -91,8 +119,15 @@ class FormulaParserService
             
             $value = (float) $variables[$var];
             
-            // Use word boundaries to avoid partial replacements
-            $processedFormula = preg_replace('/\b' . preg_quote($var, '/') . '\b/', (string) $value, $processedFormula);
+            // Handle coefficients like 2A, 3M, etc.
+            $processedFormula = preg_replace_callback(
+                '/\b(\d*)' . preg_quote($var, '/') . '\b/',
+                function($matches) use ($value) {
+                    $coefficient = $matches[1] === '' ? 1 : (int)$matches[1];
+                    return (string)($coefficient * $value);
+                },
+                $processedFormula
+            );
         }
 
         return $processedFormula;
@@ -243,8 +278,13 @@ class FormulaParserService
     private function handleSpecialFormula(string $formula, array $variables): ?float
     {
         if ($formula === 'FG+ALL') {
-            // This seems to be a special case - return FG if available
+            // Special case: return FG if available
             return isset($variables['FG']) ? (float) $variables['FG'] : null;
+        }
+        
+        // Handle invalid Arabic formulas
+        if (strpos($formula, 'الاطلاععلىالصيغةالاجمالية') !== false) {
+            return null; // Invalid formula
         }
 
         return null;

@@ -153,6 +153,7 @@ class Program
      */
     public function isValid(): bool
     {
+        // Relaxed validation - only check essential fields
         return !empty($this->programNameAr) 
             && !empty($this->formulaT) 
             && $this->cutoff2024 !== null

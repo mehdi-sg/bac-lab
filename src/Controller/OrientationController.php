@@ -156,7 +156,7 @@ class OrientationController extends AbstractController
     }
 
     #[Route('/program/{id}', name: 'orientation_program_detail', methods: ['GET'])]
-    public function programDetail(int $id): Response
+    public function programDetail(int $id, Request $request): Response
     {
         $program = $this->programRepository->find($id);
         
@@ -165,7 +165,7 @@ class OrientationController extends AbstractController
         }
 
         $user = $this->getUser();
-        $userScores = $this->getUser() ? $request->getSession()->get('user_scores') : null;
+        $userScores = $user ? $request->getSession()->get('user_scores') : null;
         
         $evaluation = null;
         if ($user && $userScores) {
