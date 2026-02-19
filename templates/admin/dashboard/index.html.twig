@@ -1,0 +1,580 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}Dashboard Admin | BacLab{% endblock %}
+{% block page_title %}Tableau de Bord{% endblock %}
+{% block page_subtitle %}Vue d'ensemble de la plateforme{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+        
+        .stat-card {
+            padding: 22px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(14px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            opacity: 0.08;
+        }
+        
+        .stat-card.users::before { background: var(--grad1); }
+        .stat-card.resources::before { background: var(--grad2); }
+        .stat-card.evaluations::before { background: var(--grad3); }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            border: 1px solid var(--border);
+        }
+        
+        .stat-card.users .stat-icon { background: var(--grad1); }
+        .stat-card.resources .stat-icon { background: var(--grad2); }
+        .stat-card.evaluations .stat-icon { background: var(--grad3); }
+        .stat-card.pending .stat-icon { background: rgba(255,184,108,0.2); color: #FFB86C; }
+        .stat-card.comments .stat-icon { background: rgba(46,211,255,0.2); color: #2ED3FF; }
+        .stat-card.favorites .stat-icon { background: rgba(255,77,141,0.2); color: #FF4D8D; }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            color: var(--muted);
+            font-weight: 700;
+            font-size: 13px;
+        }
+        
+        .section-card {
+            padding: 24px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(14px);
+            margin-bottom: 22px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--border);
+        }
+        
+        .view-all-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.05);
+            transition: 0.2s;
+        }
+        
+        .view-all-link:hover {
+            background: rgba(255,255,255,0.10);
+        }
+        
+        .items-list {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .item-row {
+            padding: 16px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+        
+        .item-row:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.15);
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-title {
+            font-weight: 800;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        
+        .item-meta {
+            display: flex;
+            gap: 14px;
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+        
+        .item-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .status-badge.en-attente {
+            background: rgba(255,184,108,0.2);
+            color: #FFB86C;
+            border: 1px solid rgba(255,184,108,0.3);
+        }
+        
+        .status-badge.validee {
+            background: rgba(53,255,182,0.2);
+            color: #35FFB6;
+            border: 1px solid rgba(53,255,182,0.3);
+        }
+        
+        .status-badge.rejetee {
+            background: rgba(255,77,141,0.2);
+            color: #FF4D8D;
+            border: 1px solid rgba(255,77,141,0.3);
+        }
+        
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-icon-small {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        
+        .btn-icon-small:hover {
+            background: rgba(255,255,255,0.12);
+            color: var(--text);
+        }
+        
+        .rating-stars {
+            color: #FFB86C;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            opacity: 0.3;
+            margin-bottom: 12px;
+        }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+        
+        .chart-item {
+            padding: 16px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .chart-label {
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chart-value {
+            font-weight: 900;
+            font-size: 18px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--grad1);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Statistics Grid -->
+    <div class="stats-grid">
+        <div class="stat-card users">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ stats.total_users }}</div>
+            <div class="stat-label">Utilisateurs</div>
+        </div>
+        
+        <div class="stat-card resources">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ stats.total_ressources }}</div>
+            <div class="stat-label">Ressources</div>
+        </div>
+        
+        <div class="stat-card pending">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ stats.ressources_en_attente }}</div>
+            <div class="stat-label">En Attente</div>
+        </div>
+        
+        <div class="stat-card evaluations">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ stats.total_evaluations }}</div>
+            <div class="stat-label">Évaluations</div>
+        </div>
+        
+        <div class="stat-card comments">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ stats.total_comments }}</div>
+            <div class="stat-label">Commentaires</div>
+        </div>
+        
+        <div class="stat-card favorites">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ stats.total_favorites }}</div>
+            <div class="stat-label">Favoris</div>
+        </div>
+    </div>
+
+    <!-- Distribution Charts -->
+    <div class="section-card">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="fas fa-chart-pie"></i>
+                Distribution des Ressources
+            </div>
+        </div>
+        
+        <div class="chart-grid">
+            <div>
+                <h4 style="font-size: 14px; font-weight: 800; margin-bottom: 14px;">Par Type</h4>
+                {% for type, count in type_distribution %}
+                    <div class="chart-item">
+                        <div class="chart-label">
+                            <span>{{ type }}</span>
+                            <span class="chart-value">{{ count }}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ stats.total_ressources > 0 ? (count / stats.total_ressources * 100) : 0 }}%"></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div>
+                <h4 style="font-size: 14px; font-weight: 800; margin-bottom: 14px;">Par Catégorie</h4>
+                {% for category, count in category_distribution|slice(0, 5) %}
+                    <div class="chart-item">
+                        <div class="chart-label">
+                            <span>{{ category }}</span>
+                            <span class="chart-value">{{ count }}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ stats.total_ressources > 0 ? (count / stats.total_ressources * 100) : 0 }}%"></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Resources -->
+    <div class="section-card">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="fas fa-clock"></i>
+                Ressources en Attente de Validation
+            </div>
+            <a href="{{ path('app_admin_ressource_index') }}" class="view-all-link">
+                Voir tout <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+        
+        {% if pending_ressources|length > 0 %}
+            <div class="items-list">
+                {% for ressource in pending_ressources %}
+                    <div class="item-row">
+                        <div class="item-info">
+                            <div class="item-title">{{ ressource.titre }}</div>
+                            <div class="item-meta">
+                                <span>
+                                    <i class="fas fa-tag"></i>
+                                    {{ ressource.categorie ?? 'Non catégorisé' }}
+                                </span>
+                                <span>
+                                    <i class="fas fa-calendar"></i>
+                                    {{ ressource.dateAjout|date('d/m/Y') }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <span class="status-badge en-attente">En Attente</span>
+                            <a href="{{ path('app_admin_ressource_show', {id: ressource.id}) }}" class="btn-icon-small">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-check-circle"></i>
+                <p>Aucune ressource en attente</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Recent Resources -->
+    <div class="section-card">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="fas fa-folder-open"></i>
+                Ressources Récentes
+            </div>
+            <a href="{{ path('app_admin_ressource_index') }}" class="view-all-link">
+                Voir tout <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+        
+        {% if recent_ressources|length > 0 %}
+            <div class="items-list">
+                {% for ressource in recent_ressources %}
+                    <div class="item-row">
+                        <div class="item-info">
+                            <div class="item-title">{{ ressource.titre }}</div>
+                            <div class="item-meta">
+                                <span>
+                                    <i class="fas fa-file"></i>
+                                    {{ ressource.typeFichier }}
+                                </span>
+                                <span>
+                                    <i class="fas fa-calendar"></i>
+                                    {{ ressource.dateAjout|date('d/m/Y') }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <span class="status-badge {{ ressource.statut|lower|replace({'_': '-'}) }}">
+                                {{ ressource.statut }}
+                            </span>
+                            <a href="{{ path('app_admin_ressource_show', {id: ressource.id}) }}" class="btn-icon-small">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <p>Aucune ressource</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Recent Evaluations -->
+    <div class="section-card">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="fas fa-star"></i>
+                Évaluations Récentes
+            </div>
+            <a href="{{ path('app_admin_evaluation_index') }}" class="view-all-link">
+                Voir tout <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+        
+        {% if recent_evaluations|length > 0 %}
+            <div class="items-list">
+                {% for evaluation in recent_evaluations %}
+                    <div class="item-row">
+                        <div class="item-info">
+                            <div class="item-title">{{ evaluation.ressource.titre }}</div>
+                            <div class="item-meta">
+                                <span>
+                                    <i class="fas fa-user"></i>
+                                    {{ evaluation.utilisateur.email|split('@')[0] }}
+                                </span>
+                                {% if evaluation.note %}
+                                    <span class="rating-stars">
+                                        {% for i in 1..5 %}
+                                            <i class="fas fa-star{{ i <= evaluation.note ? '' : '-o' }}"></i>
+                                        {% endfor %}
+                                    </span>
+                                {% endif %}
+                                <span>
+                                    <i class="fas fa-calendar"></i>
+                                    {{ evaluation.dateEvaluation|date('d/m/Y') }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <a href="{{ path('app_admin_evaluation_show', {id: evaluation.id}) }}" class="btn-icon-small">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-star"></i>
+                <p>Aucune évaluation</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Reported Evaluations -->
+    {% if reported_evaluations|length > 0 %}
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-flag"></i>
+                    Évaluations Signalées
+                </div>
+                <a href="{{ path('app_admin_evaluation_index', {filter: 'reported'}) }}" class="view-all-link">
+                    Voir tout <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+            
+            <div class="items-list">
+                {% for evaluation in reported_evaluations %}
+                    <div class="item-row">
+                        <div class="item-info">
+                            <div class="item-title">{{ evaluation.ressource.titre }}</div>
+                            <div class="item-meta">
+                                <span>
+                                    <i class="fas fa-user"></i>
+                                    {{ evaluation.utilisateur.email|split('@')[0] }}
+                                </span>
+                                <span style="color: #FF4D8D;">
+                                    <i class="fas fa-flag"></i>
+                                    Signalée
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <a href="{{ path('app_admin_evaluation_show', {id: evaluation.id}) }}" class="btn-icon-small">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

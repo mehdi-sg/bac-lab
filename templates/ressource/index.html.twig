@@ -1,0 +1,299 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Ressources | BacLab{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .user-resources-container {
+            padding: 40px 20px;
+            background: #f8f9fa;
+            min-height: 100vh;
+            margin-top: 80px;
+        }
+        
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        .page-header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3436;
+        }
+        
+        .page-header p {
+            margin: 8px 0 0;
+            color: #636e72;
+        }
+        
+        .btn-create-resource {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-create-resource:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        
+        .resource-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        
+        .resource-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+        
+        .resource-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+        }
+        
+        .resource-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .resource-status.en-attente {
+            background: #ffeaa7;
+            color: #d63031;
+        }
+        
+        .resource-status.validee {
+            background: #d4f4dd;
+            color: #00b894;
+        }
+        
+        .resource-status.rejetee {
+            background: #ffdddd;
+            color: #d63031;
+        }
+        
+        .resource-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 8px;
+        }
+        
+        .resource-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+            color: #636e72;
+        }
+        
+        .resource-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .resource-actions {
+            display: flex;
+            gap: 8px;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .btn-edit {
+            background: #e8eaff;
+            color: #667eea;
+        }
+        
+        .btn-edit:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-delete {
+            background: #ffdddd;
+            color: #d63031;
+        }
+        
+        .btn-delete:hover {
+            background: #d63031;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #dfe6e9;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            color: #2d3436;
+            margin-bottom: 12px;
+        }
+        
+        .empty-state p {
+            color: #636e72;
+            margin-bottom: 24px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="user-resources-container">
+    <div class="container">
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1><i class="fas fa-folder-open me-2"></i>Mes Ressources</h1>
+                    <p>Gérez vos ressources partagées</p>
+                </div>
+                <a href="{{ path('app_ressource_new') }}" class="btn-create-resource">
+                    <i class="fas fa-plus"></i>
+                    Créer une ressource
+                </a>
+            </div>
+        </div>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {% if ressources is not empty %}
+            <div class="resources-grid">
+                {% for ressource in ressources %}
+                    <div class="resource-card">
+                        <div class="resource-card-header">
+                            <div class="resource-icon">
+                                {% if ressource.typeFichier == 'PDF' %}
+                                    📄
+                                {% elseif ressource.typeFichier == 'VIDEO' %}
+                                    🎬
+                                {% elseif ressource.typeFichier == 'LIEN' %}
+                                    🔗
+                                {% endif %}
+                            </div>
+                            <span class="resource-status {{ ressource.statut|lower|replace({'_': '-'}) }}">
+                                {{ ressource.statut }}
+                            </span>
+                        </div>
+                        
+                        <h3 class="resource-title">{{ ressource.titre }}</h3>
+                        
+                        <div class="resource-meta">
+                            <span>
+                                <i class="fas fa-tag"></i>
+                                {{ ressource.categorie ?? 'Non catégorisé' }}
+                            </span>
+                            <span>
+                                <i class="fas fa-calendar"></i>
+                                {{ ressource.dateAjout|date('d/m/Y') }}
+                            </span>
+                        </div>
+                        
+                        <div class="resource-meta">
+                            <span>
+                                <i class="fas fa-eye"></i>
+                                {{ ressource.nombreVues }} vues
+                            </span>
+                            <span>
+                                <i class="fas fa-download"></i>
+                                {{ ressource.nombreTelechargements }}
+                            </span>
+                        </div>
+                        
+                        <div class="resource-actions">
+                            <a href="{{ path('app_ressource_edit', {'id': ressource.id}) }}" class="btn-action btn-edit">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            
+                            <form method="post" action="{{ path('app_ressource_delete', {'id': ressource.id}) }}" style="flex: 1;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ressource.id) }}">
+                                <button type="submit" class="btn-action btn-delete" style="width: 100%;" onclick="return confirm('Supprimer cette ressource ?')">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>Aucune ressource</h3>
+                <p>Vous n'avez pas encore créé de ressource. Commencez dès maintenant !</p>
+                <a href="{{ path('app_ressource_new') }}" class="btn-create-resource">
+                    <i class="fas fa-plus"></i>
+                    Créer ma première ressource
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

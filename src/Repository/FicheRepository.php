@@ -105,7 +105,7 @@ class FicheRepository extends ServiceEntityRepository
     /**
      * Find fiches with combined filters and pagination
      * 
-     * @param array $filters Available filters: 'type' => 'all'|'own'|'favorite', 'filiere' => int|null
+     * @param array $filters Available filters: 'type' => 'all'|'own'|'favorite', 'filiere' => int|null, 'public_only' => bool
      * @param int|null $userId Required for 'own' and 'favorite' filters
      * @param int $page Page number (1-based)
      * @param int $limit Number of items per page
@@ -114,6 +114,12 @@ class FicheRepository extends ServiceEntityRepository
     public function findByFiltersWithPagination(array $filters = [], ?int $userId = null, int $page = 1, int $limit = 12): array
     {
         $qb = $this->createQueryBuilder('f');
+        
+        // If public_only filter is set, only show public fiches
+        if (!empty($filters['public_only'])) {
+            $qb->andWhere('f.isPublic = :isPublic')
+               ->setParameter('isPublic', true);
+        }
         
         // Apply type filter
         $type = $filters['type'] ?? 'all';

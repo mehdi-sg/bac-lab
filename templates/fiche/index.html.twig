@@ -2,11 +2,6 @@
 
 {% block title %}Fiches de révision - BAC Lab{% endblock %}
 
-{% block css %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('front/css/fiche.css') }}">
-{% endblock %}
-
 {% block body_class %}fiche-index-page{% endblock %}
 
 {% block fiche_title %}{% endblock %}
@@ -57,18 +52,38 @@
     </div>
     
     <div class="fiche-filter-filiere">
-        <form method="get" action="{{ path('fiche_index') }}" class="fiche-filter-form">
+        <form method="get" action="{{ path('fiche_index') }}" class="fiche-filter-form" id="filterForm">
             <input type="hidden" name="filter" value="{{ current_filter }}">
+            <input type="hidden" name="filiere" id="filiereInput" value="{{ current_filiere }}">
+            
             <div class="fiche-filter-select-wrapper">
                 <i class="fa fa-graduation-cap"></i>
-                <select name="filiere" class="fiche-filter-select" onchange="this.form.submit()">
-                    <option value="">Toutes les filières</option>
-                    {% for filiere in filieres %}
-                        <option value="{{ filiere.id }}" {{ current_filiere == filiere.id ? 'selected' : '' }}>
-                            {{ filiere.nom }} ({{ filiere.niveau }})
-                        </option>
-                    {% endfor %}
-                </select>
+                <div class="fiche-filter-custom" id="filiereFilterCustom">
+                    <div class="fiche-filter-trigger">
+                        <span class="fiche-filter-value">
+                            {% if current_filiere %}
+                                {% for filiere in filieres %}
+                                    {% if filiere.id == current_filiere %}
+                                        {{ filiere.nom }} ({{ filiere.niveau }})
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                Toutes les filières
+                            {% endif %}
+                        </span>
+                        <i class="fa fa-chevron-down fiche-filter-arrow"></i>
+                    </div>
+                    <div class="fiche-filter-dropdown">
+                        <div class="fiche-filter-option {{ current_filiere == '' ? 'selected' : '' }}" data-value="">
+                            Toutes les filières
+                        </div>
+                        {% for filiere in filieres %}
+                            <div class="fiche-filter-option {{ current_filiere == filiere.id ? 'selected' : '' }}" data-value="{{ filiere.id }}">
+                                {{ filiere.nom }} ({{ filiere.niveau }})
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </form>
     </div>
@@ -81,7 +96,6 @@
         Créer une nouvelle fiche
     </a>
 </div>
-
 
 
 {% if fiches is empty %}
@@ -124,6 +138,10 @@
                             Favori
                         </span>
                     {% endif %}
+                    <span class="fiche-card-badge fiche-card-badge-{{ fiche.isPublic ? 'public' : 'private' }}">
+                        <i class="fa fa-{{ fiche.isPublic ? 'globe' : 'lock' }} mr-1"></i>
+                        {{ fiche.isPublic ? 'Public' : 'Privé' }}
+                    </span>
 
                 </div>
                 
@@ -164,58 +182,30 @@
                     
                     {% if app.user %}
                         {% set isFav = fiche.id in user_favorite_fiches %}
-                        <form action="{{ path('fiche_toggle_favorite', {'id': fiche.id}) }}" method="post" class="d-inline">
+                        <form action="{{ path('fiche_toggle_favorite', {'id': fiche.id}) }}" method="post" style="display: inline-block; margin: 0;">
                             <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite_' ~ fiche.id) }}">
-                            <button type="submit" class="fiche-btn {{ isFav ? 'fiche-btn-favorite-active' : 'fiche-btn-favorite' }}">
-                                <i class="fa {{ isFav ? 'fa-heart' : 'fa-heart-o' }}"></i>
+                            <button type="submit" class="fiche-btn-icon {{ isFav ? 'is-favorite' : '' }}" title="{{ isFav ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
+                                <i class="fa{{ isFav ? 's' : 'r' }} fa-heart"></i>
                             </button>
                         </form>
                     {% endif %}
                     
-                    {% if isModerateur %}
+                    {% if app.user and (fiche.isPublic or isModerateur) %}
                         <a href="{{ path('fiche_edit', {'id': fiche.id}) }}" class="fiche-btn fiche-btn-secondary">
                             <i class="fa fa-edit"></i>
                         </a>
-                        <button type="button" class="fiche-btn fiche-btn-danger" data-toggle="modal" data-target="#deleteModal{{ fiche.id }}">
-                            <i class="fa fa-trash"></i>
-                        </button>
+                    {% endif %}
+                    {% if isModerateur %}
+                        <form action="{{ path('fiche_delete', {'id': fiche.id}) }}" method="post" style="display: inline-block; margin: 0;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette fiche ? Cette action est irréversible.');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_fiche_' ~ fiche.id) }}">
+                            <button type="submit" class="fiche-btn fiche-btn-danger">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </form>
                     {% endif %}
                 </div>
 
             </div>
-
-            <!-- Delete Modal -->
-            {% if isModerateur %}
-                <div class="fiche-modal-overlay" id="deleteModal{{ fiche.id }}" tabindex="-1" role="dialog">
-                    <div class="fiche-modal">
-                        <div class="fiche-modal-header">
-                            <h5 class="mb-0">
-                                <i class="fa fa-exclamation-triangle mr-2"></i>
-                                Confirmer la suppression
-                            </h5>
-                        </div>
-                        <div class="fiche-modal-body">
-                            <i class="fa fa-trash fa-4x text-danger opacity-50 mb-3 d-block"></i>
-                            <p class="mb-1">Êtes-vous sûr de vouloir supprimer cette fiche ?</p>
-                            <h6 class="text-primary">{{ fiche.title }}</h6>
-                            <p class="text-danger mt-3 mb-0">
-                                <small><i class="fa fa-exclamation-circle mr-1"></i>Cette action est irréversible.</small>
-                            </p>
-                        </div>
-                        <div class="fiche-modal-footer">
-                            <button type="button" class="fiche-btn fiche-btn-secondary" data-dismiss="modal">
-                                <i class="fa fa-times mr-1"></i>Annuler
-                            </button>
-                            <form action="{{ path('fiche_delete', {'id': fiche.id}) }}" method="post" class="d-inline">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete_fiche_' ~ fiche.id) }}">
-                                <button type="submit" class="fiche-btn fiche-btn-danger">
-                                    <i class="fa fa-trash mr-1"></i>Supprimer
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
         {% endfor %}
     </div>
 {% endif %}
@@ -268,31 +258,59 @@
 </nav>
 {% endif %}
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Modal handling
-    const modals = document.querySelectorAll('.fiche-modal-overlay');
-    modals.forEach(modal => {
-        const closeBtn = modal.querySelector('[data-dismiss="modal"]');
-        closeBtn.addEventListener('click', () => {
-            modal.classList.remove('active');
-        });
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('active');
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Custom Filter Dropdown
+            const customSelect = document.getElementById('filiereFilterCustom');
+            const form = document.getElementById('filterForm');
+            const hiddenInput = document.getElementById('filiereInput');
+            
+            if (customSelect && form) {
+                const trigger = customSelect.querySelector('.fiche-filter-trigger');
+                const valueDisplay = customSelect.querySelector('.fiche-filter-value');
+                const dropdown = customSelect.querySelector('.fiche-filter-dropdown');
+                const options = dropdown.querySelectorAll('.fiche-filter-option');
+                
+                // Toggle dropdown
+                trigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    customSelect.classList.toggle('active');
+                });
+                
+                // Handle option selection
+                options.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const value = this.dataset.value;
+                        
+                        // Update hidden input
+                        hiddenInput.value = value;
+                        
+                        // Update display
+                        valueDisplay.textContent = this.textContent;
+                        
+                        // Update selected state
+                        options.forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+                        
+                        // Close dropdown
+                        customSelect.classList.remove('active');
+                        
+                        // Submit form
+                        form.submit();
+                    });
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!customSelect.contains(e.target)) {
+                        customSelect.classList.remove('active');
+                    }
+                });
             }
         });
-    });
-    
-    // Open modal on button click
-    const deleteButtons = document.querySelectorAll('[data-target^="#deleteModal"]');
-    deleteButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const target = btn.getAttribute('data-target');
-            document.querySelector(target).classList.add('active');
-        });
-    });
-});
-</script>
-
+    </script>
 {% endblock %}

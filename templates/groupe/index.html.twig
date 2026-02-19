@@ -5,151 +5,445 @@
 {% block css %}
     {{ parent() }}
     <style>
-        .groupe-card {
-            transition: all 0.3s ease;
-            border: none;
-            border-radius: 15px;
+        /* Floating Shapes */
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: white;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+        
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            background: #f093fb;
+            top: 50%;
+            right: -50px;
+            animation-delay: -5s;
+        }
+        
+        .shape-3 {
+            width: 150px;
+            height: 150px;
+            background: #4facfe;
+            bottom: -50px;
+            left: 30%;
+            animation-delay: -10s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, -20px) rotate(5deg); }
+            50% { transform: translate(-10px, 10px) rotate(-5deg); }
+            75% { transform: translate(15px, 15px) rotate(3deg); }
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            position: relative;
             overflow: hidden;
         }
         
-        .groupe-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2) !important;
+        .hero-content {
+            position: relative;
+            z-index: 1;
         }
         
-        .groupe-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.2);
+            animation: fadeInUp 1s ease-out;
         }
         
-        .groupe-avatar {
+        .hero-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Animated Button */
+        .btn-creer {
+            background: white;
+            color: #667eea;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 15px 40px;
+            border-radius: 50px;
+            border: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+        
+        .btn-creer:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            color: #667eea;
+        }
+        
+        /* Section Titles */
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+        
+        /* Featured Cards */
+        .featured-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .featured-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.25);
+        }
+        
+        .featured-icon {
             width: 60px;
             height: 60px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             display: flex;
             align-items: center;
             justify-content: center;
+            color: white;
             font-size: 1.5rem;
-            font-weight: bold;
+            margin-bottom: 15px;
         }
         
-        .membre-badge {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 12px;
+        /* Group Cards */
+        .groupe-card {
+            border: none;
+            border-radius: 24px;
+            overflow: hidden;
+            background: white;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        
+        .groupe-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            transform: scaleX(0);
+            transition: transform 0.5s ease;
+        }
+        
+        .groupe-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .groupe-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 30px 60px rgba(102, 126, 234, 0.2);
+        }
+        
+        .card-header-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header-gradient::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        .card-avatar {
+            width: 80px;
+            height: 80px;
             border-radius: 20px;
-            font-size: 0.85rem;
+            background: rgba(255,255,255,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0 auto 15px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
         
-        .stat-item {
-            text-align: center;
-            padding: 15px;
+        .card-title {
+            color: white;
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
         }
         
-        .stat-item .number {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #667eea;
-        }
-        
-        .stat-item .label {
+        /* Badges */
+        .badge-elegant {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 16px;
+            border-radius: 20px;
             font-size: 0.8rem;
-            color: #6c757d;
-        }
-        
-        .filiere-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.75rem;
             font-weight: 600;
+            backdrop-filter: blur(5px);
         }
         
-        .filiere-badge.math {
-            background: rgba(102, 126, 234, 0.1);
+        .badge-public {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .badge-math {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(102, 126, 234, 0.1));
             color: #667eea;
         }
         
-        .filiere-badge.science {
-            background: rgba(72, 187, 120, 0.1);
+        .badge-science {
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.2), rgba(72, 187, 120, 0.1));
             color: #48bb78;
         }
         
-        .filiere-badge.physique {
-            background: rgba(236, 201, 75, 0.1);
+        .badge-physique {
+            background: linear-gradient(135deg, rgba(236, 201, 75, 0.2), rgba(236, 201, 75, 0.1));
             color: #d69e2e;
         }
         
-        .filiere-badge.chimie {
-            background: rgba(237, 137, 54, 0.1);
+        .badge-chimie {
+            background: linear-gradient(135deg, rgba(237, 137, 54, 0.2), rgba(237, 137, 54, 0.1));
             color: #ed8936;
         }
         
-        .filiere-badge.default {
-            background: rgba(102, 126, 234, 0.1);
+        .badge-technologie {
+            background: linear-gradient(135deg, rgba(159, 122, 234, 0.2), rgba(159, 122, 234, 0.1));
+            color: #9f7aea;
+        }
+        
+        .badge-default {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(102, 126, 234, 0.1));
             color: #667eea;
         }
         
-        .action-btn {
+        /* Member Badge */
+        .membre-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Action Buttons */
+        .btn-primary-custom {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 25px;
-            padding: 10px 25px;
+            padding: 12px 28px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
         }
         
-        .action-btn:hover {
+        .btn-primary-custom:hover {
             color: white;
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.45);
         }
         
-        .action-btn-outline {
+        .btn-outline-custom {
             background: transparent;
             border: 2px solid #667eea;
             color: #667eea;
             border-radius: 25px;
-            padding: 8px 23px;
+            padding: 10px 25px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
-        .action-btn-outline:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .btn-outline-custom:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border-color: transparent;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
         
-        .public-badge {
-            background: rgba(72, 187, 120, 0.2);
-            color: #48bb78;
-            padding: 3px 10px;
-            border-radius: 15px;
-            font-size: 0.75rem;
+
+        /* Filter Buttons */
+        .filter-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            border: 2px solid transparent;
         }
         
-        .private-badge {
-            background: rgba(237, 137, 54, 0.2);
-            color: #ed8936;
-            padding: 3px 10px;
-            border-radius: 15px;
-            font-size: 0.75rem;
+        .filter-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        /* Search Input */
+        .search-wrapper {
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .empty-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+        }
+        
+        .empty-subtitle {
+            color: #6c757d;
+            margin-bottom: 25px;
+        }
+        
+        /* Main Section */
+        .main-section {
+            padding: 60px 0;
+            position: relative;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
         }
     </style>
 {% endblock %}
 
 {% block body %}
 <!-- Hero Section -->
-<section class="hero-section d-flex align-items-center" style="padding-top: 100px; min-height: 60vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="hero-section d-flex align-items-center" style="padding-top: 120px; min-height: 45vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <!-- Floating Shapes -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 mx-auto text-center text-white">
-                <h1 class="display-4 font-weight-bold mb-4">Groupes de Révision</h1>
-                <p class="lead mb-5">Rejoignez des groupes d'étude, discutez avec d'autres étudiants et préparez-vous ensemble au Baccalauréat</p>
-                <a href="{{ path('groupe_new') }}" class="btn btn-light btn-lg rounded-pill px-5">
+            <div class="col-lg-8 mx-auto text-center text-white hero-content">
+                <h1 class="hero-title">Groupes de Révision</h1>
+                <p class="hero-subtitle">Rejoignez des groupes d'étude passionnés, partagez vos connaissances et préparez-vous ensemble au succès du Baccalauréat</p>
+                <a href="{{ path('groupe_new') }}" class="btn-creer">
                     <i class="fas fa-plus-circle mr-2"></i>
                     Créer un groupe
                 </a>
@@ -158,36 +452,89 @@
     </div>
 </section>
 
-<!-- Groupes Section -->
-<section class="py-5" style="background: #f8f9fa;">
+<!-- Main Content -->
+<section class="main-section" style="background: linear-gradient(180deg, #f8f9fa 0%, #e8ecf1 100%);">
     <div class="container">
-        <div class="row mb-4">
-            <div class="col-lg-6">
-                <h2 class="font-weight-bold text-dark">Tous les groupes</h2>
-                <p class="text-muted">Découvrez et rejoignez des groupes de révision</p>
+        <!-- Featured Groups -->
+        {% if featuredGroups is not empty %}
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="section-title">
+                    <i class="fas fa-fire mr-2" style="color: #ed8936;"></i>
+                    Groupes Populaires
+                </h2>
+                <div class="row">
+                    {% for groupe in featuredGroups|slice(0, 3) %}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="featured-card">
+                            <div class="featured-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h5 class="font-weight-bold mb-2">{{ groupe.nom }}</h5>
+                            <p class="text-muted mb-3" style="font-size: 0.9rem;">
+                                {{ groupe.description[:80] }}{% if groupe.description|length > 80 %}...{% endif %}
+                            </p>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span class="membre-badge">
+                                    <i class="fas fa-users mr-1"></i>
+                                    {{ groupe.membres.count }}
+                                </span>
+                                <a href="{{ path('groupe_show', {'id': groupe.id}) }}" class="btn-outline-custom">
+                                    <i class="fas fa-arrow-right mr-1"></i>
+                                    Découvrir
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-            <div class="col-lg-6">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Rechercher un groupe..." style="border-radius: 25px 0 0 25px; padding: 15px 20px;" id="searchGroupe">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary px-4" style="border-radius: 0 25px 25px 0; background: linear-gradient(135deg, #667eea, #764ba2); border: none;">
-                            <i class="fas fa-search"></i>
-                        </button>
+        </div>
+        {% endif %}
+        
+
+        <!-- Filters & Search -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div>
+                        <h3 class="font-weight-bold text-dark mb-1">Tous les groupes</h3>
+                        <p class="text-muted mb-0">Découvrez et rejoignez des communautés d'apprentissage</p>
+                    </div>
+                    <div class="d-flex align-items-center mt-3 mt-md-0">
+                        <div class="search-wrapper mr-3" style="width: 220px;">
+                            <input type="text" class="search-input" placeholder="Rechercher..." id="searchGroupe">
+                            <i class="fas fa-search search-icon"></i>
+                        </div>
+                        <a href="{{ path('groupe_index', {'filter': 'all'}) }}" class="filter-btn {{ currentFilter == 'all' ? 'active' : '' }}" style="background: {{ currentFilter == 'all' ? 'linear-gradient(135deg, #667eea, #764ba2); color: white; border-color: #667eea;' : 'background: white; border-color: #e9ecef; color: #667eea;' }}">
+                            <i class="fas fa-list mr-1"></i> Tous
+                        </a>
+                        <a href="{{ path('groupe_index', {'filter': 'public'}) }}" class="filter-btn {{ currentFilter == 'public' ? 'active' : '' }}" style="background: {{ currentFilter == 'public' ? 'linear-gradient(135deg, #667eea, #764ba2); color: white; border-color: #667eea;' : 'background: white; border-color: #e9ecef; color: #667eea;' }}">
+                            <i class="fas fa-globe mr-1"></i> Publics
+                        </a>
+                        <a href="{{ path('groupe_index', {'filter': 'private'}) }}" class="filter-btn {{ currentFilter == 'private' ? 'active' : '' }}" style="background: {{ currentFilter == 'private' ? 'linear-gradient(135deg, #667eea, #764ba2); color: white; border-color: #667eea;' : 'background: white; border-color: #e9ecef; color: #667eea;' }}">
+                            <i class="fas fa-lock mr-1"></i> Privés
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
         
+        <!-- Groups Grid -->
         <div class="row" id="groupesContainer">
             {% if groupes is empty %}
-                <div class="col-12 text-center py-5">
-                    <i class="fas fa-users fa-4x mb-4" style="color: #dee2e6;"></i>
-                    <h4 class="text-muted mb-3">Aucun groupe disponible</h4>
-                    <p class="text-muted mb-4">Soyez le premier à créer un groupe de révision !</p>
-                    <a href="{{ path('groupe_new') }}" class="btn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
-                        <i class="fas fa-plus mr-2"></i>
-                        Créer un groupe
-                    </a>
+                <div class="col-12">
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4 class="empty-title">Aucun groupe disponible</h4>
+                        <p class="empty-subtitle">Soyez le premier à créer un groupe de révision !</p>
+                        <a href="{{ path('groupe_new') }}" class="btn-primary-custom">
+                            <i class="fas fa-plus mr-2"></i>
+                            Créer un groupe
+                        </a>
+                    </div>
                 </div>
             {% else %}
                 {% for groupe in groupes %}
@@ -202,79 +549,88 @@
                             {% set filiereClass = 'physique' %}
                         {% elseif 'chimie' in filiereLower %}
                             {% set filiereClass = 'chimie' %}
+                        {% elseif 'technologie' in filiereLower %}
+                            {% set filiereClass = 'technologie' %}
                         {% endif %}
                     {% endif %}
                     
                     <div class="col-lg-4 col-md-6 mb-4 groupe-item" data-nom="{{ groupe.nom|lower }}">
                         <div class="card groupe-card shadow-sm h-100">
-                            <div class="groupe-header text-center">
-                                <div class="groupe-avatar mx-auto mb-3">
+                            <div class="card-header-gradient text-center">
+                                <div class="card-avatar">
                                     {{ groupe.nom|first|upper }}
                                 </div>
-                                <h4 class="font-weight-bold mb-2">{{ groupe.nom }}</h4>
+                                <h4 class="card-title">{{ groupe.nom }}</h4>
                                 {% if groupe.filiere %}
-                                    <span class="filiere-badge {{ filiereClass }}">{{ groupe.filiere.nom }}</span>
+                                    <span class="badge-elegant badge-{{ filiereClass }}">{{ groupe.filiere.nom }}</span>
                                 {% else %}
-                                    <span class="public-badge">{% if groupe.isPublic %}Public{% else %}Privé{% endif %}</span>
+                                    <span class="badge-elegant badge-public">
+                                        <i class="fas fa-globe mr-1"></i>
+                                        {% if groupe.isPublic %}Public{% else %}Privé{% endif %}
+                                    </span>
                                 {% endif %}
                             </div>
                             <div class="card-body">
-                                <p class="card-text text-muted mb-3">
+                                <p class="card-text text-muted mb-4" style="line-height: 1.6;">
                                     {% if groupe.description %}
                                         {{ groupe.description[:100] }}{% if groupe.description|length > 100 %}...{% endif %}
                                     {% else %}
-                                        Groupe de révision
+                                        Groupe de révision pour les étudiants du Baccalauréat
                                     {% endif %}
                                 </p>
-                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
                                     <span class="membre-badge">
                                         <i class="fas fa-users mr-1"></i>
                                         {{ groupe.membres.count }} membre{% if groupe.membres.count != 1 %}s{% endif %}
                                     </span>
-                                    <span class="{{ groupe.isPublic ? 'public-badge' : 'private-badge' }}">
-                                        {% if groupe.isPublic %}
-                                            <i class="fas fa-globe mr-1"></i>Public
-                                        {% else %}
-                                            <i class="fas fa-lock mr-1"></i>Privé
-                                        {% endif %}
+                                    {% if not groupe.filiere %}
+                                    <span class="badge-elegant badge-public" style="font-size: 0.75rem;">
+                                        <i class="fas fa-{% if groupe.isPublic %}globe{% else %}lock{% endif %} mr-1"></i>
+                                        {% if groupe.isPublic %}Public{% else %}Privé{% endif %}
                                     </span>
+                                    {% endif %}
                                 </div>
                                 <div class="d-flex justify-content-between">
-                                    {% if app.user and groupe.createur.id == app.user.id %}
-                                        <a href="{{ path('chat_groupe', {'id': groupe.id}) }}" class="action-btn">
+                                    {% if app.user and isAdmin %}
+                                        <a href="{{ path('chat_groupe', {'id': groupe.id}) }}" class="btn-primary-custom" style="background: linear-gradient(135deg, #ed8936, #dd6b20);">
+                                            <i class="fas fa-shield-alt mr-2"></i>
+                                            Admin
+                                        </a>
+                                    {% elseif app.user and groupe.createur.id == app.user.id %}
+                                        <a href="{{ path('chat_groupe', {'id': groupe.id}) }}" class="btn-primary-custom">
                                             <i class="fas fa-crown mr-2"></i>
                                             Chat
                                         </a>
                                     {% elseif userMemberships[groupe.id] is defined %}
                                         {% set membre = userMemberships[groupe.id] %}
                                         {% if membre.isAccepted() or membre.roleMembre == 'ADMIN' or membre.statut is null %}
-                                            <a href="{{ path('chat_groupe', {'id': groupe.id}) }}" class="action-btn">
+                                            <a href="{{ path('chat_groupe', {'id': groupe.id}) }}" class="btn-primary-custom">
                                                 <i class="fas fa-comments mr-2"></i>
                                                 Chat
                                             </a>
                                         {% elseif membre.isPending() %}
-                                            <button class="action-btn" disabled style="opacity: 0.7; cursor: not-allowed;">
+                                            <button class="btn-primary-custom" disabled style="opacity: 0.7; cursor: not-allowed;">
                                                 <i class="fas fa-clock mr-2"></i>
                                                 En attente
                                             </button>
                                         {% elseif membre.statut == 'REJECTED' %}
-                                            <button class="action-btn join-groupe-btn" data-groupe-id="{{ groupe.id }}">
+                                            <button class="btn-primary-custom join-groupe-btn" data-groupe-id="{{ groupe.id }}">
                                                 <i class="fas fa-redo mr-2"></i>
                                                 {% if groupe.isPublic %}Rejoindre{% else %}Demander{% endif %}
                                             </button>
                                         {% else %}
-                                            <button class="action-btn join-groupe-btn" data-groupe-id="{{ groupe.id }}">
+                                            <button class="btn-primary-custom join-groupe-btn" data-groupe-id="{{ groupe.id }}">
                                                 <i class="fas fa-user-plus mr-2"></i>
                                                 {% if groupe.isPublic %}Rejoindre{% else %}Demander{% endif %}
                                             </button>
                                         {% endif %}
                                     {% else %}
-                                        <button class="action-btn join-groupe-btn" data-groupe-id="{{ groupe.id }}">
+                                        <button class="btn-primary-custom join-groupe-btn" data-groupe-id="{{ groupe.id }}">
                                             <i class="fas fa-user-plus mr-2"></i>
                                             {% if groupe.isPublic %}Rejoindre{% else %}Demander{% endif %}
                                         </button>
                                     {% endif %}
-                                    <a href="{{ path('groupe_show', {'id': groupe.id}) }}" class="action-btn-outline">
+                                    <a href="{{ path('groupe_show', {'id': groupe.id}) }}" class="btn-outline-custom">
                                         <i class="fas fa-info-circle mr-1"></i>
                                         Details
                                     </a>
@@ -292,44 +648,43 @@
 {% block js %}
 {{ parent() }}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('searchGroupe');
-        const groupItems = document.querySelectorAll('.groupe-item');
-        
-        if (searchInput) {
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                groupItems.forEach(function(item) {
-                    const nom = item.dataset.nom;
-                    if (nom.includes(searchTerm)) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
+    // Search functionality
+    const searchInput = document.getElementById('searchGroupe');
+    const groupItems = document.querySelectorAll('.groupe-item');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            groupItems.forEach(function(item) {
+                const nom = item.dataset.nom;
+                if (nom.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
             });
-        }
-        
-        // Handle join button clicks
-        document.querySelectorAll('.join-groupe-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const groupeId = this.dataset.groupeId;
-                
-                fetch('/groupes/' + groupeId + '/rejoindre', {
-                    method: 'POST'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert(data.message || 'Une erreur est survenue');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Une erreur est survenue');
-                });
+        });
+    }
+    
+    // Handle join button clicks
+    document.querySelectorAll('.join-groupe-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const groupeId = this.dataset.groupeId;
+            
+            fetch('/groupes/' + groupeId + '/rejoindre', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message || 'Une erreur est survenue');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Une erreur est survenue lors de la connexion au serveur');
             });
         });
     });

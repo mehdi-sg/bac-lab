@@ -1,0 +1,466 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}{{ groupe.nom }} - Administration{% endblock %}
+{% block page_title %}Gestion du Groupe{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .profile-card {
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .member-card {
+            border: none;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .member-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .role-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .role-badge.admin {
+            background: rgba(237, 137, 54, 0.2);
+            color: #ed8936;
+        }
+        
+        .role-badge.animateur {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+        }
+        
+        .role-badge.membre {
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+        }
+        
+        .role-badge.pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .action-btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 25px;
+            padding: 8px 23px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn-outline:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .btn-accept {
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+            border: 1px solid rgba(72, 187, 120, 0.5);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-accept:hover {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .btn-reject {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-reject:hover {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-remove {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-remove:hover {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-promote {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-promote:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .stat-box .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-box .label {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .section-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background: white;
+            padding: 20px 25px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+        
+        .section-header h4 {
+            margin: 0;
+            font-weight: 600;
+            color: #2d3436;
+        }
+        
+        .section-body {
+            padding: 25px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="{{ path('admin_groupes') }}" class="action-btn-outline" style="text-decoration: none;">
+                <i class="fas fa-arrow-left mr-2"></i>Retour à la liste
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Group Info -->
+        <div class="col-lg-4 mb-4">
+            <div class="card profile-card shadow-lg">
+                <div class="profile-header text-center">
+                    <div class="profile-avatar mx-auto mb-3">
+                        {{ groupe.nom|first|upper }}
+                    </div>
+                    <h3 class="font-weight-bold mb-2">{{ groupe.nom }}</h3>
+                    {% if groupe.isPublic %}
+                        <span class="badge badge-light rounded-pill">
+                            <i class="fas fa-globe mr-1"></i>Groupe public
+                        </span>
+                    {% else %}
+                        <span class="badge badge-warning rounded-pill">
+                            <i class="fas fa-lock mr-1"></i>Groupe privé
+                        </span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h5 class="font-weight-bold mb-3">Description</h5>
+                    <p class="text-muted mb-4">
+                        {% if groupe.description %}
+                            {{ groupe.description }}
+                        {% else %}
+                            Aucune description disponible.
+                        {% endif %}
+                    </p>
+                    
+                    {% if groupe.filiere %}
+                    <h5 class="font-weight-bold mb-3">Filière</h5>
+                    <p class="mb-4">
+                        <span class="badge badge-primary rounded-pill" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                            {{ groupe.filiere.nom }}
+                        </span>
+                    </p>
+                    {% endif %}
+                    
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <div class="stat-box">
+                                <div class="number">{{ membres|length }}</div>
+                                <div class="label">Membres</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-box">
+                                <div class="number">{{ groupe.messages.count }}</div>
+                                <div class="label">Messages</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between flex-wrap gap-2">
+                        <a href="{{ path('chat_groupe', {'id': groupe.id}) }}" class="action-btn">
+                            <i class="fas fa-comments mr-2"></i>
+                            Ouvrir le chat
+                        </a>
+                        <form method="post" action="{{ path('admin_groupe_delete', {'id': groupe.id}) }}" style="display: inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ groupe.id) }}">
+                            <button type="submit" class="action-btn" style="background: #ef4444;" onclick="return confirm('Supprimer définitivement ce groupe et tous ses membres ?')">
+                                <i class="fas fa-trash mr-2"></i>
+                                Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pending Requests -->
+        {% if pendingRequests is defined and pendingRequests|length > 0 %}
+        <div class="col-lg-8 mb-4">
+            <div class="card section-card">
+                <div class="section-header">
+                    <h4>
+                        <i class="fas fa-user-clock mr-2" style="color: #ffc107;"></i>
+                        Demandes en attente ({{ pendingRequests|length }})
+                    </h4>
+                </div>
+                <div class="section-body">
+                    {% for membre in pendingRequests %}
+                        {% set user = membre.utilisateur %}
+                        <div class="d-flex align-items-center justify-content-between p-3 mb-2 rounded" style="background: rgba(255, 193, 7, 0.1);">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar rounded-lg d-flex align-items-center justify-content-center text-white font-weight-bold mr-3"
+                                     style="width: 45px; height: 45px; background: linear-gradient(135deg, #667eea, #764ba2);">
+                                    {% if user.profil and user.profil.nom %}
+                                        {{ user.profil.nom|first|upper }}
+                                    {% else %}
+                                        {{ user.email|first|upper }}
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <p class="mb-0 font-weight-bold" style="color: #2d3436;">
+                                        {% if user.profil and user.profil.nom %}
+                                            {{ user.profil.nom }}
+                                        {% else %}
+                                            {{ user.email|split('@')[0] }}
+                                        {% endif %}
+                                    </p>
+                                    <small class="text-muted">{{ user.email }}</small>
+                                    <br>
+                                    <small class="text-muted">{{ membre.dateJoint|date('d/m/Y H:i') }}</small>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <form method="post" action="{{ path('admin_membre_groupe_accepter', {'id': membre.id}) }}" style="display: inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('accepter' ~ membre.id) }}">
+                                    <button type="submit" class="btn-accept">
+                                        <i class="fas fa-check mr-1"></i>Accepter
+                                    </button>
+                                </form>
+                                <form method="post" action="{{ path('admin_membre_groupe_rejeter', {'id': membre.id}) }}" style="display: inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('rejeter' ~ membre.id) }}">
+                                    <button type="submit" class="btn-reject">
+                                        <i class="fas fa-times mr-1"></i>Rejeter
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Members List -->
+        <div class="col-lg-8">
+            <div class="card section-card">
+                <div class="section-header">
+                    <h4>
+                        <i class="fas fa-users mr-2" style="color: #667eea;"></i>
+                        Membres du groupe ({{ membres|length }})
+                    </h4>
+                </div>
+                <div class="section-body">
+                    {% if membres is empty %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-user-slash fa-3x mb-3" style="color: #dee2e6;"></i>
+                            <p class="text-muted">Aucun membre dans ce groupe</p>
+                        </div>
+                    {% else %}
+                        <div class="row">
+                            {% for membre in membres %}
+                                {% set user = membre.utilisateur %}
+                                {% set roleClass = 'membre' %}
+                                {% if membre.roleMembre == 'ADMIN' %}
+                                    {% set roleClass = 'admin' %}
+                                {% elseif membre.roleMembre == 'ANIMATEUR' %}
+                                    {% set roleClass = 'animateur' %}
+                                {% endif %}
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="card member-card shadow-sm">
+                                        <div class="card-body d-flex align-items-center">
+                                            <div class="avatar-wrapper position-relative mr-3">
+                                                <div class="avatar rounded-lg d-flex align-items-center justify-content-center text-white font-weight-bold"
+                                                     style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea, #764ba2);">
+                                                    {% if user.profil and user.profil.nom %}
+                                                        {{ user.profil.nom|first|upper }}
+                                                    {% else %}
+                                                        {{ user.email|first|upper }}
+                                                    {% endif %}
+                                                </div>
+                                                {% if membre.roleMembre == 'ADMIN' %}
+                                                <span class="position-absolute" style="bottom: -5px; right: -5px; width: 20px; height: 20px; background: #ed8936; border: 2px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="fas fa-crown text-white" style="font-size: 0.6rem;"></i>
+                                                </span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1 font-weight-bold" style="color: #2d3436;">
+                                                    {% if user.profil and user.profil.nom %}
+                                                        {{ user.profil.nom }}
+                                                    {% else %}
+                                                        {{ user.email|split('@')[0] }}
+                                                    {% endif %}
+                                                </h6>
+                                                <span class="role-badge {{ roleClass }}">{{ membre.roleMembre }}</span>
+                                                <small class="text-muted d-block mt-1">
+                                                    {{ membre.dateJoint|date('d/m/Y') }}
+                                                </small>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                        Actions
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        {% if membre.roleMembre != 'ADMIN' %}
+                                                        <li>
+                                                            <form method="post" action="{{ path('admin_membre_groupe_promouvoir', {'id': membre.id, 'role': 'ADMIN'}) }}">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('promouvoir' ~ membre.id) }}">
+                                                                <button type="submit" class="dropdown-item">
+                                                                    <i class="fas fa-crown mr-2"></i>Promouvoir Admin
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                        {% endif %}
+                                                        {% if membre.roleMembre != 'ANIMATEUR' %}
+                                                        <li>
+                                                            <form method="post" action="{{ path('admin_membre_groupe_promouvoir', {'id': membre.id, 'role': 'ANIMATEUR'}) }}">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('promouvoir' ~ membre.id) }}">
+                                                                <button type="submit" class="dropdown-item">
+                                                                    <i class="fas fa-star mr-2"></i>Promouvoir Animateur
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                        {% endif %}
+                                                        {% if membre.roleMembre != 'MEMBRE' %}
+                                                        <li>
+                                                            <form method="post" action="{{ path('admin_membre_groupe_promouvoir', {'id': membre.id, 'role': 'MEMBRE'}) }}">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('promouvoir' ~ membre.id) }}">
+                                                                <button type="submit" class="dropdown-item">
+                                                                    <i class="fas fa-user mr-2"></i>Rétrograder Membre
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                        {% endif %}
+                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li>
+                                                            <form method="post" action="{{ path('admin_membre_groupe_supprimer', {'id': membre.id}) }}">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('supprimer' ~ membre.id) }}">
+                                                                <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Supprimer ce membre du groupe ?')">
+                                                                    <i class="fas fa-user-times mr-2"></i>Supprimer
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

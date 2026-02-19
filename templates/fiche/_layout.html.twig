@@ -1,8 +1,23 @@
 {% extends 'base.html.twig' %}
 
 {% block css %}
-    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('front/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/slicknav.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/flaticon.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/progressbar_barfiller.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/gijgo.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/animate.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/animated-headline.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/magnific-popup.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/fontawesome-all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/themify-icons.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/slick.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/nice-select.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
+    {# Fiche-specific CSS files #}
     <link rel="stylesheet" href="{{ asset('front/css/fiche.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/fiche-complete.css') }}">
 {% endblock %}
 
 {% block body_class %}fiche-page{% endblock %}
@@ -10,21 +25,21 @@
 {% block body %}
 <div class="fiche-page">
 
-    <section class="container py-5">
-        <div class="row align-items-center mb-4">
-            <div class="col-12 col-lg-8">
-                <h1 class="mb-1 text-white">
+    <section class="container py-5" style="margin-top: 100px;">
+        <!-- Header with flex layout -->
+        <div class="fiche-header">
+            <!-- Left: Title + Subtitle -->
+            <div class="fiche-header-left">
+                <h1 class="fiche-title mb-2">
                     {% block fiche_title %}{% endblock %}
                 </h1>
-
-                {# Optional subtitle (used by edit/new/show pages if needed) #}
-                <p class="text-white-50 mb-0">
+                <p class="fiche-subtitle mb-0 text-white-50">
                     {% block fiche_subtitle %}{% endblock %}
                 </p>
             </div>
-
-            {# Optional header actions (buttons on the right) #}
-            <div class="col-12 col-lg-4 mt-3 mt-lg-0 text-lg-end">
+            
+            <!-- Right: Actions -->
+            <div class="fiche-header-right">
                 {% block fiche_header_actions %}{% endblock %}
             </div>
         </div>

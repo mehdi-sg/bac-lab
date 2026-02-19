@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Filiere;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,8 +17,13 @@ class FiliereType extends AbstractType
             ->add('nom', TextType::class, [
                 'label' => 'Nom de la filière',
             ])
-            ->add('niveau', TextType::class, [
+            ->add('niveau', ChoiceType::class, [
                 'label' => 'Niveau',
+                'choices' => [
+                    'Baccalauréat' => 'Bac',
+                    'Autre niveau' => 'Autre',
+                ],
+                'placeholder' => 'Sélectionner un niveau',
             ]);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\MessageRepository;
+use App\Entity\Fiche;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -44,6 +45,18 @@ class Message
     // Soft delete
     #[ORM\Column(name: 'deleted_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $deletedAt = null;
+
+    // File attachment
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $filePath = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $fileName = null;
+
+    // Fiche reference
+    #[ORM\ManyToOne(targetEntity: Fiche::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Fiche $fiche = null;
 
     // Expéditeur
     #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
@@ -152,5 +165,38 @@ class Message
     public function isDeleted(): bool
     {
         return $this->deletedAt !== null;
+    }
+
+    public function getFilePath(): ?string
+    {
+        return $this->filePath;
+    }
+
+    public function setFilePath(?string $filePath): self
+    {
+        $this->filePath = $filePath;
+        return $this;
+    }
+
+    public function getFileName(): ?string
+    {
+        return $this->fileName;
+    }
+
+    public function setFileName(?string $fileName): self
+    {
+        $this->fileName = $fileName;
+        return $this;
+    }
+
+    public function getFiche(): ?Fiche
+    {
+        return $this->fiche;
+    }
+
+    public function setFiche(?Fiche $fiche): self
+    {
+        $this->fiche = $fiche;
+        return $this;
     }
 }

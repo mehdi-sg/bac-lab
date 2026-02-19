@@ -1,0 +1,498 @@
+{% extends 'back_base.html.twig' %}
+
+{% block title %}Utilisateurs — BacLab Admin{% endblock %}
+
+{% block body %}
+<style>
+  
+  /* ====== Cards ====== */
+  .hero-glass{
+    border-radius: 22px;
+    overflow:hidden;
+    border: 1px solid var(--brd);
+    background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .hero-glass:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background:
+      radial-gradient(900px 240px at 15% 10%, rgba(46,211,255,.18), transparent 60%),
+      radial-gradient(900px 240px at 90% 20%, rgba(255,77,141,.18), transparent 60%);
+    pointer-events:none;
+  }
+  .hero-inner{ position:relative; padding: 22px 22px 18px; }
+
+  .muted{ color: var(--muted); }
+  .title{
+    margin:0;
+    font-weight: 950;
+    letter-spacing: -0.6px;
+    color: var(--txt);
+    font-size: 32px;
+  }
+  .sub{
+    margin:6px 0 0;
+    font-weight: 800;
+    color: var(--muted);
+  }
+
+  /* quick stats */
+  .stats{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+  }
+  @media(max-width: 992px){ .stats{ grid-template-columns: 1fr; } }
+  .stat{
+    border-radius: 18px;
+    border: 1px solid var(--brd);
+    background: rgba(0,0,0,.12);
+    padding: 12px 14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .stat .k{ font-weight: 900; font-size: 12px; color: var(--muted); }
+  .stat .v{ font-weight: 950; font-size: 20px; color: var(--txt); letter-spacing:-.2px; }
+  .stat .ico{
+    width: 40px; height: 40px;
+    border-radius: 14px;
+    display:flex; align-items:center; justify-content:center;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.06);
+    color: var(--txt);
+  }
+  .ico.cyan{ border-color: rgba(46,211,255,.35); background: rgba(46,211,255,.10); }
+  .ico.pink{ border-color: rgba(255,77,141,.35); background: rgba(255,77,141,.10); }
+  .ico.amber{ border-color: rgba(255,184,108,.35); background: rgba(255,184,108,.10); }
+
+  /* ====== Table glass ====== */
+  .table-glass{
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--brd);
+    background: var(--bg);
+    box-shadow: var(--shadow);
+  }
+  .table-glass table{ margin:0; background: transparent !important; }
+  .table-glass thead th{
+    background: rgba(255,255,255,.06) !important;
+    color: rgba(234,240,255,.92) !important;
+    border-color: rgba(255,255,255,.10) !important;
+    font-weight: 950;
+    padding: 14px 16px;
+  }
+  .table-glass tbody td{
+    background: transparent !important;
+    color: rgba(234,240,255,.88) !important;
+    border-color: rgba(255,255,255,.08) !important;
+    vertical-align: middle;
+    font-weight: 800;
+    padding: 14px 16px;
+  }
+  .table-glass tbody tr{ transition: .18s ease; }
+  .table-glass tbody tr:hover td{ background: rgba(255,255,255,.03) !important; }
+
+  /* ====== Badges / pills ====== */
+  .pill{
+    display:inline-flex; align-items:center; gap:8px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.05);
+    font-weight: 950;
+    font-size: 12px;
+    color: var(--txt);
+    white-space: nowrap;
+  }
+  .pill.success{ border-color: rgba(46,211,255,.30); background: rgba(46,211,255,.12); }
+  .pill.danger{ border-color: rgba(255,77,141,.30); background: rgba(255,77,141,.12); }
+
+  .role-badge{
+    display:inline-block;
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.06);
+    font-size: 12px;
+    font-weight: 950;
+    margin: 2px 8px 2px 0;
+    color: rgba(234,240,255,.90);
+  }
+  .role-admin{ border-color: rgba(255,184,108,.35); background: rgba(255,184,108,.10); }
+  .role-mod{ border-color: rgba(46,211,255,.35); background: rgba(46,211,255,.10); }
+  .role-user{ border-color: rgba(255,255,255,.16); background: rgba(255,255,255,.06); }
+
+  /* ====== Actions ====== */
+  .actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    flex-wrap: wrap;
+  }
+  .icon-btn{
+    width: 38px; height: 38px;
+    display:inline-flex;
+    align-items:center; justify-content:center;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.08);
+    color: rgba(234,240,255,.92);
+    text-decoration:none;
+    font-weight: 900;
+    transition: .18s ease;
+  }
+  .icon-btn:hover{ background: rgba(255,255,255,.12); transform: translateY(-1px); }
+  .icon-btn.warn{ border-color: rgba(255,184,108,.35); background: rgba(255,184,108,.10); }
+  .icon-btn.info{ border-color: rgba(46,211,255,.35); background: rgba(46,211,255,.10); }
+  .icon-btn.danger{ border-color: rgba(255,77,141,.35); background: rgba(255,77,141,.10); }
+
+  /* ====== Filters ====== */
+  .filters-card{
+    border-radius: 18px;
+    border: 1px solid var(--brd);
+    background: rgba(0,0,0,.12);
+    padding: 14px;
+  }
+  .filters-card .form-control,
+  .filters-card .form-select{
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.06);
+    color: var(--txt);
+    font-weight: 900;
+  }
+  .filters-card .form-control::placeholder{ color: rgba(234,240,255,.45); }
+  .filters-card .form-select option{ background: #0f172a; color: #fff; }
+
+  .btn-ghost{
+    border-radius: 999px;
+    padding: 10px 14px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.08);
+    color: var(--txt);
+    font-weight: 950;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    transition:.18s ease;
+    white-space:nowrap;
+  }
+  .btn-ghost:hover{ background: rgba(255,255,255,.12); transform: translateY(-1px); }
+
+  /* ====== Flash ====== */
+  .flash-msg{
+    position: relative;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.10);
+    padding: 14px 16px;
+  }
+  .flash-success{ border-color: rgba(46,211,255,.25); background: rgba(46,211,255,.08); }
+  .flash-danger{ border-color: rgba(255,77,141,.25); background: rgba(255,77,141,.08); }
+  .flash-warning{ border-color: rgba(255,184,108,.28); background: rgba(255,184,108,.08); }
+
+  .flash-close{
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.06);
+    color: rgba(234,240,255,.85);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .flash-close:hover{ background: rgba(255,255,255,.12); }
+
+  .id-line{ font-size: 12px; font-weight: 900; color: rgba(234,240,255,.55); }
+</style>
+
+<div class="container" style="padding: 80px 20px;">
+
+  {# ===== HERO ===== #}
+  <div class="hero-glass mb-3">
+    <div class="hero-inner">
+      <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
+        <div>
+          <h2 class="title">Gestion des utilisateurs</h2>
+        </div>
+
+        <a class="btn-ghost" href="{{ path('admin_user_new') }}">
+          <i class="fa-solid fa-user-plus"></i> Ajouter un utilisateur
+        </a>
+      </div>
+
+      {# ===== STATS ===== #}
+      <div class="stats">
+        <div class="stat">
+          <div>
+            <div class="k">Total utilisateurs</div>
+            <div class="v">{{ users|length }}</div>
+          </div>
+          <div class="ico cyan"><i class="fa-solid fa-users"></i></div>
+        </div>
+
+        <div class="stat">
+          <div>
+            <div class="k">Actifs</div>
+            <div class="v">{{ users|filter(u => u.isActive)|length }}</div>
+          </div>
+          <div class="ico amber"><i class="fa-solid fa-bolt"></i></div>
+        </div>
+
+        <div class="stat">
+          <div>
+            <div class="k">Admins</div>
+            <div class="v">{{ users|filter(u => 'ROLE_ADMIN' in u.roles)|length }}</div>
+          </div>
+          <div class="ico pink"><i class="fa-solid fa-shield-halved"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ===== Flash messages ===== #}
+  {% for label, messages in app.flashes %}
+    {% for message in messages %}
+      {% set cls = '' %}
+      {% if label in ['success','ok'] %}{% set cls = 'flash-success' %}{% endif %}
+      {% if label in ['danger','error'] %}{% set cls = 'flash-danger' %}{% endif %}
+      {% if label in ['warning'] %}{% set cls = 'flash-warning' %}{% endif %}
+
+      <div class="flash-msg {{ cls }} mb-3 flash-auto">
+        <button type="button" class="flash-close" onclick="this.closest('.flash-msg').remove()" aria-label="Fermer">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div style="font-weight:950; color: var(--txt);">
+          {{ label|upper }}
+        </div>
+        <div class="muted" style="font-weight:800;">{{ message }}</div>
+      </div>
+    {% endfor %}
+  {% endfor %}
+
+  {# ===== Filters ===== #}
+  <div class="filters-card mb-3">
+    <form id="searchForm" class="row g-2 align-items-center">
+      <div class="col-lg-5">
+        <input class="form-control"
+               id="searchQ"
+               name="q"
+               value="{{ q }}"
+               placeholder="Rechercher par email...">
+      </div>
+
+      <div class="col-lg-3">
+        <select class="form-select" id="searchStatus" name="status">
+          <option value="">Statut (tous)</option>
+          <option value="active" {{ status == 'active' ? 'selected' : '' }}>Actifs</option>
+          <option value="inactive" {{ status == 'inactive' ? 'selected' : '' }}>Inactifs</option>
+        </select>
+      </div>
+
+      <div class="col-lg-3">
+        <select class="form-select" id="searchRole" name="role">
+          <option value="">Rôle (tous)</option>
+          <option value="ROLE_ADMIN" {{ role == 'ROLE_ADMIN' ? 'selected' : '' }}>Admin</option>
+          <option value="ROLE_MODERATOR" {{ role == 'ROLE_MODERATOR' ? 'selected' : '' }}>Modérateur</option>
+          <option value="ROLE_USER" {{ role == 'ROLE_USER' ? 'selected' : '' }}>Utilisateur</option>
+        </select>
+      </div>
+
+      <div class="col-lg-1 d-grid">
+        <button class="btn-ghost" type="submit" title="Rechercher">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div>
+
+      <div class="col-12 d-flex justify-content-end">
+        <button class="btn-ghost" id="resetBtn" type="button">
+          <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
+      </div>
+    </form>
+  </div>
+
+  {# ===== Table ===== #}
+  <div class="table-glass">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th style="width:35%;">Email</th>
+            <th>Rôles</th>
+            <th style="width:14%;">Statut</th>
+            <th style="width:20%;" class="text-end">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="usersTableBody">
+          {% for user in users %}
+            <tr>
+              <td>
+                <div style="font-weight:950; color: var(--txt);">{{ user.email }}</div>
+              </td>
+
+              <td>
+                {% for r in user.roles %}
+                  {% set rcls = 'role-user' %}
+                  {% if r == 'ROLE_ADMIN' %}{% set rcls = 'role-admin' %}{% endif %}
+                  {% if r == 'ROLE_MODERATOR' %}{% set rcls = 'role-mod' %}{% endif %}
+                  <span class="role-badge {{ rcls }}">{{ r }}</span>
+                {% endfor %}
+              </td>
+
+              <td>
+                {% if user.isActive %}
+                  <span class="pill success"><i class="fa-solid fa-circle-check"></i> Actif</span>
+                {% else %}
+                  <span class="pill danger"><i class="fa-solid fa-circle-xmark"></i> Inactif</span>
+                {% endif %}
+              </td>
+
+              <td class="text-end">
+                <div class="actions">
+                  <a class="icon-btn warn" title="Modifier"
+                     href="{{ path('admin_user_edit', {id: user.id}) }}">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </a>
+
+                  <a class="icon-btn info" title="Activer/Désactiver"
+                     href="{{ path('admin_user_toggle', {id: user.id}) }}">
+                    <i class="fa-solid fa-power-off"></i>
+                  </a>
+
+                  <form method="post"
+                        action="{{ path('admin_user_delete', {id: user.id}) }}"
+                        onsubmit="return confirm('Supprimer définitivement ce compte ?');"
+                        style="display:inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ user.id) }}">
+                    <button class="icon-btn danger" type="submit" title="Supprimer">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="4" class="text-center muted" style="padding: 22px; font-weight: 900;">
+                Aucun utilisateur trouvé.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // auto close flash after 5s
+  setTimeout(() => {
+    document.querySelectorAll('.flash-auto').forEach(el => el.remove());
+  }, 5000);
+
+  // Ajax search
+  const searchForm = document.getElementById('searchForm');
+  const searchQ = document.getElementById('searchQ');
+  const searchStatus = document.getElementById('searchStatus');
+  const searchRole = document.getElementById('searchRole');
+  const tableBody = document.getElementById('usersTableBody');
+
+  function renderUserRow(user) {
+    const statusHtml = user.isActive 
+      ? '<span class="pill success"><i class="fa-solid fa-circle-check"></i> Actif</span>' 
+      : '<span class="pill danger"><i class="fa-solid fa-circle-xmark"></i> Inactif</span>';
+    
+    let rolesHtml = '';
+    user.roles.forEach(r => {
+      let rcls = 'role-user';
+      if (r === 'ROLE_ADMIN') rcls = 'role-admin';
+      if (r === 'ROLE_MODERATOR') rcls = 'role-mod';
+      rolesHtml += `<span class="role-badge ${rcls}">${r}</span>`;
+    });
+
+    return `
+      <tr>
+        <td><div style="font-weight:950; color: var(--txt);">${user.email}</div></td>
+        <td>${rolesHtml}</td>
+        <td>${statusHtml}</td>
+        <td class="text-end">
+          <div class="actions">
+            <a class="icon-btn warn" title="Modifier" href="/admin/users/${user.id}/edit">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </a>
+            <a class="icon-btn info" title="Activer/Désactiver" href="/admin/users/${user.id}/toggle">
+              <i class="fa-solid fa-power-off"></i>
+            </a>
+            <form method="post" action="/admin/users/${user.id}/delete" 
+                  onsubmit="return confirm('Supprimer définitivement ce compte ?');" style="display:inline;">
+              <input type="hidden" name="_token" value="csrf_token_placeholder">
+              <button class="icon-btn danger" type="submit" title="Supprimer">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+    `;
+  }
+
+  function performSearch() {
+    const params = new URLSearchParams({
+      q: searchQ.value,
+      status: searchStatus.value,
+      role: searchRole.value
+    });
+
+    fetch(`/admin/users/search?${params}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.users.length === 0) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="4" class="text-center muted" style="padding: 22px; font-weight: 900;">
+                Aucun utilisateur trouvé.
+              </td>
+            </tr>
+          `;
+        } else {
+          tableBody.innerHTML = data.users.map(renderUserRow).join('');
+        }
+      })
+      .catch(err => console.error('Search error:', err));
+  }
+
+  searchForm.addEventListener('submit', e => {
+    e.preventDefault();
+    performSearch();
+  });
+
+  searchQ.addEventListener('input', () => performSearch());
+  searchStatus.addEventListener('change', () => performSearch());
+  searchRole.addEventListener('change', () => performSearch());
+
+  // Reset button handler
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    searchQ.value = '';
+    searchStatus.value = '';
+    searchRole.value = '';
+    performSearch();
+  });
+</script>
+{% endblock %}

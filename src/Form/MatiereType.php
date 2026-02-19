@@ -38,15 +38,8 @@ class MatiereType extends AbstractType
 
         $filieres = $this->filiereRepository->findActives();
         $uniqueFilieres = [];
-        $niveauxMap = [];
 
         foreach ($filieres as $filiere) {
-            $niveau = $filiere->getNiveau();
-            $normNiveau = $normalize($niveau);
-            if ($normNiveau !== '' && !isset($niveauxMap[$normNiveau])) {
-                $niveauxMap[$normNiveau] = $niveau;
-            }
-
             $nom = $filiere->getNom();
             $key = $normalize($nom);
             if (!isset($uniqueFilieres[$key])) {
@@ -54,19 +47,19 @@ class MatiereType extends AbstractType
             }
         }
 
-        $niveaux = array_values($niveauxMap);
-        sort($niveaux);
-
         $builder
             ->add('nom', TextType::class, [
-                'label' => 'Nom de la matiÃ¨re',
+                'label' => 'Nom de la matière',
             ])
             ->add('niveau', ChoiceType::class, [
                 'label' => 'Niveau',
                 'mapped' => false,
                 'required' => false,
-                'placeholder' => 'Slectionner un niveau',
-                'choices' => array_combine($niveaux, $niveaux),
+                'placeholder' => 'Sélectionner un niveau',
+                'choices' => [
+                    'Baccalauréat' => 'Bac',
+                    'Autre niveau' => 'Autre',
+                ],
             ])
             ->add('filiere', EntityType::class, [
                 'class' => Filiere::class,
@@ -75,7 +68,7 @@ class MatiereType extends AbstractType
                     return (string) $f->getNom();
                 },
                 'label' => 'Filiere',
-                'placeholder' => 'Slectionner une filiere',
+                'placeholder' => 'Sélectionner une filière',
                 'choice_attr' => static function (Filiere $f): array {
                     return ['data-niveau' => $f->getNiveau()];
                 },

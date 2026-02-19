@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Administration{% endblock %} | BacLab</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    {% block stylesheets %}
+        <style>
+            :root{
+                --bg: #0B1020;
+                --panel: rgba(255,255,255,0.06);
+                --border: rgba(255,255,255,0.10);
+                --text: #EAF0FF;
+                --muted: rgba(234,240,255,0.70);
+
+                --grad1: linear-gradient(135deg,#6D5BFF,#2ED3FF);
+                --grad2: linear-gradient(135deg,#FF4D8D,#FFB86C);
+                --grad3: linear-gradient(135deg,#35FFB6,#2E7BFF);
+                --glow: 0 10px 40px rgba(109,91,255,0.25);
+
+                --radius: 18px;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body{
+                font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+                background: radial-gradient(1200px 600px at 15% 10%, rgba(109,91,255,0.25), transparent 60%),
+                            radial-gradient(900px 500px at 85% 20%, rgba(46,211,255,0.18), transparent 55%),
+                            radial-gradient(900px 500px at 60% 95%, rgba(255,77,141,0.12), transparent 55%),
+                            var(--bg);
+                color: var(--text);
+                min-height: 100vh;
+            }
+            
+            .layout{
+                display:flex;
+                min-height:100vh;
+            }
+
+            /* Sidebar */
+            .admin-sidebar {
+                width: 290px;
+                padding: 22px 18px;
+                position: sticky;
+                top: 0;
+                height: 100vh;
+                border-right: 1px solid var(--border);
+                background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+                backdrop-filter: blur(14px);
+            }
+            
+            .admin-sidebar::-webkit-scrollbar {
+                width: 6px;
+            }
+            
+            .admin-sidebar::-webkit-scrollbar-track {
+                background: rgba(255,255,255,0.05);
+            }
+            
+            .admin-sidebar::-webkit-scrollbar-thumb {
+                background: rgba(255,255,255,0.2);
+                border-radius: 3px;
+            }
+            
+            .sidebar-header {
+                padding: 12px 12px;
+                border-radius: var(--radius);
+                background: rgba(255,255,255,0.05);
+                border: 1px solid var(--border);
+                box-shadow: var(--glow);
+                margin-bottom: 20px;
+            }
+            
+            .sidebar-logo {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                text-decoration: none;
+                color: white;
+            }
+            
+            .sidebar-logo i {
+                font-size: 1.5rem;
+                background: var(--grad1);
+                padding: 10px;
+                border-radius: 14px;
+                width: 44px;
+                height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .sidebar-logo-text h2 {
+                font-size: 1.1rem;
+                font-weight: 800;
+                margin: 0;
+                line-height: 1.1;
+            }
+            
+            .sidebar-logo-text p {
+                font-size: 0.75rem;
+                margin: 0;
+                opacity: 0.7;
+                color: var(--muted);
+            }
+            
+            .sidebar-menu {
+                padding: 10px 0;
+            }
+            
+            .menu-section {
+                margin-bottom: 20px;
+            }
+            
+            .menu-section-title {
+                margin: 18px 10px 10px;
+                color: var(--muted);
+                font-weight: 800;
+                font-size: 12px;
+                letter-spacing: .08em;
+                text-transform: uppercase;
+                opacity: 0.7;
+            }
+            
+            .menu-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 12px;
+                border-radius: 14px;
+                text-decoration: none;
+                color: var(--text);
+                border: 1px solid transparent;
+                background: transparent;
+                transition: 0.2s ease;
+            }
+            
+            .menu-item:hover {
+                background: rgba(255,255,255,0.06);
+                border-color: rgba(255,255,255,0.10);
+            }
+            
+            .menu-item.active {
+                background: rgba(255,255,255,0.08);
+                border-color: rgba(255,255,255,0.12);
+                box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+            }
+            
+            .menu-item i {
+                width: 42px;
+                height: 42px;
+                border-radius: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid rgba(255,255,255,0.12);
+                background: rgba(255,255,255,0.05);
+            }
+            
+            .menu-item.active i {
+                background: var(--grad1);
+                border-color: transparent;
+            }
+            
+            .menu-badge {
+                margin-left: auto;
+                background: #e74c3c;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 10px;
+                font-size: 0.7rem;
+                font-weight: 600;
+            }
+            
+            /* Main Content */
+            .admin-main {
+                flex: 1;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            /* Top Bar */
+            .admin-topbar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 14px;
+                padding: 16px 18px;
+                border-radius: var(--radius);
+                border: 1px solid var(--border);
+                background: rgba(255,255,255,0.06);
+                backdrop-filter: blur(14px);
+                box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+                margin: 22px 22px 20px;
+            }
+            
+            .topbar-left h1 {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--text);
+                margin: 0;
+            }
+            
+            .topbar-right {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
+            
+            .topbar-btn {
+                padding: 12px 20px;
+                border-radius: 12px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.9rem;
+            }
+            
+            .topbar-btn-primary {
+                background: var(--grad1);
+                color: white;
+                border: none;
+            }
+            
+            .topbar-btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--glow);
+                color: white;
+            }
+            
+            .topbar-btn-secondary {
+                background: rgba(255,255,255,0.06);
+                color: var(--text);
+                border: 1px solid var(--border);
+            }
+            
+            .topbar-btn-secondary:hover {
+                background: rgba(255,255,255,0.1);
+                color: white;
+            }
+            
+            .user-menu {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 8px 16px;
+                background: rgba(255,255,255,0.06);
+                border-radius: 50px;
+                cursor: pointer;
+                transition: all 0.3s;
+                border: 1px solid var(--border);
+            }
+            
+            .user-menu:hover {
+                background: rgba(255,255,255,0.1);
+            }
+            
+            .user-avatar {
+                width: 42px;
+                height: 42px;
+                border-radius: 14px;
+                background: var(--grad2);
+                border: 1px solid var(--border);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: 900;
+            }
+            
+            .user-info {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .user-name {
+                font-weight: 700;
+                font-size: 0.9rem;
+                color: var(--text);
+            }
+            
+            .user-role {
+                font-size: 0.75rem;
+                color: var(--muted);
+            }
+            
+            /* Content Area */
+            .admin-content {
+                flex: 1;
+                padding: 0 22px 40px;
+            }
+            
+            /* Footer */
+            .admin-footer {
+                padding: 20px 30px;
+                text-align: center;
+                color: var(--muted);
+                font-size: 0.85rem;
+                border-top: 1px solid var(--border);
+                margin: 0 22px 22px;
+                border-radius: var(--radius);
+                background: rgba(255,255,255,0.03);
+            }
+            
+            /* Responsive */
+            @media (max-width: 768px) {
+                .admin-sidebar {
+                    transform: translateX(-100%);
+                    transition: transform 0.3s;
+                }
+                
+                .admin-sidebar.show {
+                    transform: translateX(0);
+                }
+                
+                .admin-main {
+                    margin-left: 0;
+                }
+                
+                .topbar-left h1 {
+                    font-size: 1.2rem;
+                }
+                
+                .user-info {
+                    display: none;
+                }
+            }
+        </style>
+    {% endblock %}
+</head>
+<body>
+    <div class="layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <a href="{{ path('app_admin_ressource_index') }}" class="sidebar-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <div class="sidebar-logo-text">
+                    <h2>BacLab</h2>
+                    <p>Administration</p>
+                </div>
+            </a>
+        </div>
+        
+        <nav class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Principal</div>
+                <a href="{{ path('app_admin_ressource_index') }}" class="menu-item {% if app.request.get('_route') starts with 'app_admin_ressource' %}active{% endif %}">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Ressources</span>
+                </a>
+                <a href="{{ path('app_admin_evaluation_index') }}" class="menu-item {% if app.request.get('_route') starts with 'app_admin_evaluation' %}active{% endif %}">
+                    <i class="fas fa-star"></i>
+                    <span>Évaluations</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-users"></i>
+                    <span>Utilisateurs</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Commentaires</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-section-title">Contenu</div>
+                <a href="{{path('app_admin_ressource_index')}}" class="menu-item">
+                    <i class="fas fa-book"></i>
+                    <span>Bibliothèque</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-compass"></i>
+                    <span>Orientation</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Communauté</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-section-title">Système</div>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Paramètres</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Statistiques</span>
+                </a>
+                <a href="{{ path('app_home') }}" class="menu-item">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>Voir le site</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Top Bar -->
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <h1>{% block page_title %}Administration{% endblock %}</h1>
+            </div>
+            <div class="topbar-right">
+                {% block topbar_actions %}{% endblock %}
+                
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        {% if app.user %}
+                            {{ app.user.email|slice(0, 1)|upper }}
+                        {% else %}
+                            A
+                        {% endif %}
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">
+                            {% if app.user %}
+                                {{ app.user.email }}
+                            {% else %}
+                                Admin
+                            {% endif %}
+                        </span>
+                        <span class="user-role">Administrateur</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content -->
+        <div class="admin-content">
+            {% block body %}{% endblock %}
+        </div>
+        
+        <!-- Footer -->
+        <footer class="admin-footer">
+            <p>&copy; {{ 'now'|date('Y') }} BacLab - Panneau d'administration</p>
+        </footer>
+    </main>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

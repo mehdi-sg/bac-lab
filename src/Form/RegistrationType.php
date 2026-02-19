@@ -8,6 +8,10 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class RegistrationType extends AbstractType
 {
@@ -16,11 +20,30 @@ class RegistrationType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
                 'label' => 'Email',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'L\'email est requis',
+                    ]),
+                    new Email([
+                        'message' => 'L\'email "{{ value }}" n\'est pas valide.',
+                    ]),
+                ],
             ])
-            ->add('plainPassword', PasswordType::class, [
-                'label' => 'Mot de passe',
-                'mapped' => false,
-            ])
+           ->add('plainPassword', PasswordType::class, [
+    'label' => 'Mot de passe',
+    'mapped' => false,
+    'constraints' => [
+        new Assert\NotBlank([
+            'message' => 'Veuillez entrer un mot de passe',
+        ]),
+        new Assert\Length(min: 8, minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caractères'),
+        new Assert\Regex(
+            pattern: '/^(?=.*[0-9])(?=.*[\W_]).+$/',
+            message: 'Le mot de passe doit contenir au moins un chiffre et un caractère spécial',
+        ),
+    ],
+])
+
             ->add('profil', ProfilType::class, [
                 'label' => false,
             ]);

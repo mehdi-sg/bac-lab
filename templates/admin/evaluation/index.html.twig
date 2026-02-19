@@ -1,0 +1,365 @@
+{% extends 'admin/dashboard.html.twig' %}
+
+{% block title %}Gestion des Évaluations{% endblock %}
+{% block page_title %}Gestion des Évaluations{% endblock %}
+
+{% block topbar_actions %}
+    <div class="btn-group">
+        <a href="{{ path('app_admin_evaluation_index', {filter: 'all'}) }}" 
+           class="topbar-btn topbar-btn-secondary {{ current_filter == 'all' ? 'active' : '' }}">
+            Toutes
+        </a>
+        <a href="{{ path('app_admin_evaluation_index', {filter: 'comments'}) }}" 
+           class="topbar-btn topbar-btn-secondary {{ current_filter == 'comments' ? 'active' : '' }}">
+            Commentaires
+        </a>
+        <a href="{{ path('app_admin_evaluation_index', {filter: 'ratings'}) }}" 
+           class="topbar-btn topbar-btn-secondary {{ current_filter == 'ratings' ? 'active' : '' }}">
+            Notes
+        </a>
+        <a href="{{ path('app_admin_evaluation_index', {filter: 'reported'}) }}" 
+           class="topbar-btn topbar-btn-secondary {{ current_filter == 'reported' ? 'active' : '' }}">
+            Signalées
+        </a>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .stat-icon.total { background: linear-gradient(135deg, #667eea20, #764ba220); color: #667eea; }
+        .stat-icon.comments { background: linear-gradient(135deg, #74b9ff20, #0984e320); color: #0984e3; }
+        .stat-icon.ratings { background: linear-gradient(135deg, #ffeaa720, #fdcb6e20); color: #fdcb6e; }
+        .stat-icon.favorites { background: linear-gradient(135deg, #ff7f7f20, #ff525220); color: #ff5252; }
+        .stat-icon.reported { background: linear-gradient(135deg, #d6336320, #ff525220); color: #d63363; }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+        
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+        
+        .table-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3436;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: #f8f9fa;
+        }
+        
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: #636e72;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        
+        td {
+            padding: 16px 20px;
+            border-top: 1px solid #f0f0f0;
+            color: #2d3436;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .rating-stars {
+            color: #fdcb6e;
+            font-size: 1.1rem;
+        }
+        
+        .comment-preview {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+        
+        .badge-favori {
+            background: #ff525220;
+            color: #ff5252;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-signale {
+            background: #d6336320;
+            color: #d63363;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-action {
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-view {
+            background: #e8eaff;
+            color: #667eea;
+        }
+        
+        .btn-view:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-toggle {
+            background: #ffeaa7;
+            color: #d63031;
+        }
+        
+        .btn-toggle:hover {
+            background: #d63031;
+            color: white;
+        }
+        
+        .btn-delete {
+            background: #ffdddd;
+            color: #d63031;
+        }
+        
+        .btn-delete:hover {
+            background: #d63031;
+            color: white;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-group .active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon total">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="stat-value">{{ stats.total }}</div>
+            <div class="stat-label">Total Évaluations</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon comments">
+                <i class="fas fa-comments"></i>
+            </div>
+            <div class="stat-value">{{ stats.comments }}</div>
+            <div class="stat-label">Commentaires</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon ratings">
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+            <div class="stat-value">{{ stats.ratings }}</div>
+            <div class="stat-label">Notes</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon favorites">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div class="stat-value">{{ stats.favorites }}</div>
+            <div class="stat-label">Favoris</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon reported">
+                <i class="fas fa-flag"></i>
+            </div>
+            <div class="stat-value">{{ stats.reported }}</div>
+            <div class="stat-label">Signalées</div>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-header">
+            <h2>Liste des Évaluations</h2>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Utilisateur</th>
+                        <th>Ressource</th>
+                        <th>Note</th>
+                        <th>Commentaire</th>
+                        <th>Statut</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evaluation in evaluations %}
+                        <tr>
+                            <td>#{{ evaluation.id }}</td>
+                            <td>{{ evaluation.utilisateur.email }}</td>
+                            <td>
+                                <a href="{{ path('app_admin_ressource_show', {id: evaluation.ressource.id}) }}" 
+                                   style="color: #667eea; text-decoration: none;">
+                                    {{ evaluation.ressource.titre|slice(0, 40) }}{{ evaluation.ressource.titre|length > 40 ? '...' : '' }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if evaluation.note %}
+                                    <span class="rating-stars">
+                                        {% for i in 1..5 %}
+                                            <i class="fas fa-star{{ i <= evaluation.note ? '' : '-o' }}"></i>
+                                        {% endfor %}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if evaluation.commentaire %}
+                                    <div class="comment-preview" title="{{ evaluation.commentaire }}">
+                                        {{ evaluation.commentaire }}
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if evaluation.estFavori %}
+                                    <span class="badge-favori">
+                                        <i class="fas fa-heart"></i> Favori
+                                    </span>
+                                {% endif %}
+                                {% if evaluation.estSignale %}
+                                    <span class="badge-signale">
+                                        <i class="fas fa-flag"></i> Signalée
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>{{ evaluation.dateEvaluation|date('d/m/Y') }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ path('app_admin_evaluation_show', {id: evaluation.id}) }}" 
+                                       class="btn-action btn-view">
+                                        <i class="fas fa-eye"></i> Voir
+                                    </a>
+                                    
+                                    <form method="post" action="{{ path('app_admin_evaluation_toggle_report', {id: evaluation.id}) }}" style="display: inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('toggle-report' ~ evaluation.id) }}">
+                                        <button type="submit" class="btn-action btn-toggle">
+                                            <i class="fas fa-flag"></i>
+                                            {{ evaluation.estSignale ? 'Désignaler' : 'Signaler' }}
+                                        </button>
+                                    </form>
+                                    
+                                    <form method="post" action="{{ path('app_admin_evaluation_delete', {id: evaluation.id}) }}" style="display: inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ evaluation.id) }}">
+                                        <button type="submit" class="btn-action btn-delete" 
+                                                onclick="return confirm('Supprimer cette évaluation ?')">
+                                            <i class="fas fa-trash"></i> Supprimer
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-5">
+                                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">Aucune évaluation trouvée</p>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

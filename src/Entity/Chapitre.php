@@ -70,7 +70,7 @@ class Chapitre
     public function setActif(bool $actif): self { $this->actif = $actif; return $this; }
 
     public function getOrdre(): ?int { return $this->ordre; }
-    public function setOrdre(int $ordre): self { $this->ordre = $ordre; return $this; }
+    public function setOrdre(?int $ordre): self { $this->ordre = $ordre; return $this; }
 
     public function getCreatedAt(): \DateTimeInterface { return $this->createdAt; }
 
