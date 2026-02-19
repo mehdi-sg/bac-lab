@@ -3,6 +3,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Quiz;
+use App\Entity\Question;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +20,7 @@ class QuizController extends AbstractController
     }
 
     #[Route('/quiz/start', name: 'app_quiz_start')]
-    public function start(Request $request): Response
+    public function start(Request $request, EntityManagerInterface $em): Response
     {
         // Récupérer les paramètres
         $matiere = $request->query->get('matiere');
@@ -30,62 +33,378 @@ class QuizController extends AbstractController
             return $this->redirectToRoute('app_quiz');
         }
 
-        // TODO: Récupérer les vraies questions depuis la base de données
-        // Pour l'instant, on utilise des questions d'exemple
-        $questions = $this->getExampleQuestions($matiere, $chapitre, $niveau);
+        // Rechercher le quiz correspondant dans la base de données
+        $quiz = null;
+        
+        // First, try to find the quiz by exact match (by ID or by name)
+        
+        // If matiere and chapitre are numeric, try as IDs
+        if (is_numeric($matiere) && is_numeric($chapitre)) {
+            $quiz = $em->getRepository(Quiz::class)->findOneBy([
+                'matiere' => $matiere,
+                'chapitre' => $chapitre,
+                'niveau' => $niveau
+            ]);
+        }
+
+        // If not found, try by name
+        if (!$quiz) {
+            // Chercher la matière par nom
+            $matiereEntity = $em->getRepository(\App\Entity\Matiere::class)->findOneBy(['nom' => $matiere]);
+            
+            // Chercher le chapitre par titre ou partiellement
+            $chapitreEntity = $em->getRepository(\App\Entity\Chapitre::class)->findOneBy(['titre' => $chapitre]);
+            
+            // If not found by exact title, try partial match
+            if (!$chapitreEntity) {
+                $chapitres = $em->getRepository(\App\Entity\Chapitre::class)->createQueryBuilder('c')
+                    ->where('c.titre LIKE :titre')
+                    ->setParameter('titre', '%' . $chapitre . '%')
+                    ->getQuery()
+                    ->getResult();
+                if (!empty($chapitres)) {
+                    $chapitreEntity = $chapitres[0];
+                }
+            }
+            
+            if ($matiereEntity && $chapitreEntity) {
+                $quiz = $em->getRepository(Quiz::class)->findOneBy([
+                    'matiere' => $matiereEntity,
+                    'chapitre' => $chapitreEntity,
+                    'niveau' => $niveau
+                ]);
+                
+                // If still not found, try any level for this chapter
+                if (!$quiz) {
+                    $quiz = $em->getRepository(Quiz::class)->findOneBy([
+                        'matiere' => $matiereEntity,
+                        'chapitre' => $chapitreEntity
+                    ]);
+                }
+            }
+        }
+
+        // If still not found, try to find ANY quiz for this chapter (any matiere, any niveau)
+        if (!$quiz) {
+            $chapitreEntity = $em->getRepository(\App\Entity\Chapitre::class)->findOneBy(['titre' => $chapitre]);
+            if (!$chapitreEntity) {
+                $chapitres = $em->getRepository(\App\Entity\Chapitre::class)->createQueryBuilder('c')
+                    ->where('c.titre LIKE :titre')
+                    ->setParameter('titre', '%' . $chapitre . '%')
+                    ->getQuery()
+                    ->getResult();
+                if (!empty($chapitres)) {
+                    $chapitreEntity = $chapitres[0];
+                }
+            }
+            
+            if ($chapitreEntity) {
+                $quiz = $em->getRepository(Quiz::class)->findOneBy([
+                    'chapitre' => $chapitreEntity
+                ]);
+            }
+        }
+
+        // ULTIMATE FALLBACK: If still no quiz, just get the FIRST quiz in the database
+        if (!$quiz) {
+            $allQuizzes = $em->getRepository(Quiz::class)->findAll();
+            if (!empty($allQuizzes)) {
+                $quiz = $allQuizzes[0];
+            }
+        }
+
+        // Check if quiz was found
+        if (!$quiz) {
+            $this->addFlash('error', 'Aucun quiz trouvé pour ces critères: ' . $matiere . ' - ' . $chapitre . ' (' . $niveau . '). Veuillez sélectionner une autre matière, chapitre ou niveau.');
+            return $this->redirectToRoute('app_quiz');
+        }
+
+        // Vérifier que le quiz a des questions
+        $questions = $quiz->getQuestions();
+        if ($questions->isEmpty()) {
+            $this->addFlash('error', 'Ce quiz n\'a pas de questions. Veuillez sélectionner un autre quiz.');
+            return $this->redirectToRoute('app_quiz');
+        }
+        
+        // Convertir les questions en tableau pour le template
+        $questionsData = [];
+        foreach ($questions as $question) {
+            $choixData = [];
+            $correctCount = 0;
+            foreach ($question->getChoix() as $choix) {
+                $choixData[] = [
+                    'id' => $choix->getId(),
+                    'libelle' => $choix->getLibelle(),
+                    'est_correct' => $choix->isEstCorrect()
+                ];
+                if ($choix->isEstCorrect()) {
+                    $correctCount++;
+                }
+            }
+            $questionsData[] = [
+                'id' => $question->getId(),
+                'enonce' => $question->getEnonce(),
+                'type' => $question->getTypeQuestion(),
+                'choix' => $choixData,
+                'multiple_correct' => ($correctCount > 1)
+            ];
+        }
+
+        // Durée en secondes
+        $duree = $quiz->getDuree() * 60;
 
         return $this->render('Quiz/start.html.twig', [
             'matiere' => $matiere,
             'chapitre' => $chapitre,
             'niveau' => $niveau,
-            'questions' => $questions,
-            'totalQuestions' => count($questions),
+            'quiz' => $quiz,
+            'quizId' => $quiz->getId(),
+            'questions' => $questionsData,
+            'totalQuestions' => count($questionsData),
+            'duree' => $duree,
         ]);
     }
 
     #[Route('/quiz/submit', name: 'app_quiz_submit', methods: ['GET', 'POST'])]
-public function submit(Request $request): Response
-{
-    // Récupérer toutes les réponses
-    $userAnswers = $request->request->all();
-    
-    // Récupérer les questions
-    $questions = $this->getExampleQuestions('mathematiques', 'Limites', 'facile');
-    
-    // Calculer le score
-    $score = 0;
-    $total = count($questions);
-    $details = [];
+    public function submit(Request $request, EntityManagerInterface $em): Response
+    {
+        // Récupérer toutes les réponses
+        $userAnswers = $request->request->all();
+        
+        // Récupérer les paramètres pour trouver le quiz
+        $quizId = $request->request->get('quiz_id');
+        $matiere = $request->request->get('matiere');
+        $chapitre = $request->request->get('chapitre');
+        $niveau = $request->request->get('niveau');
+        
+        // Try to find quiz by ID first (most reliable)
+        $quiz = null;
+        
+        if ($quizId) {
+            $quiz = $em->getRepository(Quiz::class)->find($quizId);
+        }
+        
+        // Fallback: try by parameters
+        if (!$quiz) {
+            // First try by ID
+            if (is_numeric($matiere) && is_numeric($chapitre)) {
+                $quiz = $em->getRepository(Quiz::class)->findOneBy([
+                    'matiere' => $matiere,
+                    'chapitre' => $chapitre,
+                    'niveau' => $niveau
+                ]);
+            }
+
+            // Try by name
+            if (!$quiz) {
+                $matiereEntity = $em->getRepository(\App\Entity\Matiere::class)->findOneBy(['nom' => $matiere]);
+                $chapitreEntity = $em->getRepository(\App\Entity\Chapitre::class)->findOneBy(['titre' => $chapitre]);
+                
+                if (!$chapitreEntity) {
+                    $chapitres = $em->getRepository(\App\Entity\Chapitre::class)->createQueryBuilder('c')
+                        ->where('c.titre LIKE :titre')
+                        ->setParameter('titre', '%' . $chapitre . '%')
+                        ->getQuery()
+                        ->getResult();
+                    if (!empty($chapitres)) {
+                        $chapitreEntity = $chapitres[0];
+                    }
+                }
+                
+                if ($matiereEntity && $chapitreEntity) {
+                    $quiz = $em->getRepository(Quiz::class)->findOneBy([
+                        'matiere' => $matiereEntity,
+                        'chapitre' => $chapitreEntity,
+                        'niveau' => $niveau
+                    ]);
+                    
+                    if (!$quiz) {
+                        $quiz = $em->getRepository(Quiz::class)->findOneBy([
+                            'matiere' => $matiereEntity,
+                            'chapitre' => $chapitreEntity
+                        ]);
+                    }
+                }
+            }
+
+            // Try any quiz for this chapter
+            if (!$quiz) {
+                $chapitreEntity = $em->getRepository(\App\Entity\Chapitre::class)->findOneBy(['titre' => $chapitre]);
+                if (!$chapitreEntity) {
+                    $chapitres = $em->getRepository(\App\Entity\Chapitre::class)->createQueryBuilder('c')
+                        ->where('c.titre LIKE :titre')
+                        ->setParameter('titre', '%' . $chapitre . '%')
+                        ->getQuery()
+                        ->getResult();
+                    if (!empty($chapitres)) {
+                        $chapitreEntity = $chapitres[0];
+                    }
+                }
+                
+                if ($chapitreEntity) {
+                    $quiz = $em->getRepository(Quiz::class)->findOneBy([
+                        'chapitre' => $chapitreEntity
+                    ]);
+                }
+            }
+
+            // Ultimate fallback
+            if (!$quiz) {
+                $allQuizzes = $em->getRepository(Quiz::class)->findAll();
+                if (!empty($allQuizzes)) {
+                    $quiz = $allQuizzes[0];
+                }
+            }
+        }
+
+        // Debug: Log what was found
+        error_log("Quiz submit - quiz_id: " . $quizId . ", Matiere: " . $matiere . ", Chapitre: " . $chapitre . ", Niveau: " . $niveau);
+        error_log("Quiz found: " . ($quiz ? $quiz->getId() . ' - ' . $quiz->getTitre() : 'NULL'));
+
+        // Récupérer les questions du quiz
+        if ($quiz) {
+            $questions = $quiz->getQuestions();
+            $questionsData = [];
+            foreach ($questions as $question) {
+                $choixData = [];
+                $correctCount = 0;
+                foreach ($question->getChoix() as $choix) {
+                    $choixData[] = [
+                        'id' => $choix->getId(),
+                        'libelle' => $choix->getLibelle(),
+                        'est_correct' => $choix->isEstCorrect()
+                    ];
+                    if ($choix->isEstCorrect()) {
+                        $correctCount++;
+                    }
+                }
+                $questionsData[] = [
+                    'id' => $question->getId(),
+                    'enonce' => $question->getEnonce(),
+                    'type' => $question->getTypeQuestion(),
+                    'choix' => $choixData,
+                    'multiple_correct' => ($correctCount > 1)
+                ];
+            }
+            $questions = $questionsData;
+        } else {
+            // Only use example questions if absolutely no quiz exists
+            $questions = [];
+        }
+        
+        // Calculer le score
+        $score = 0;
+        $total = count($questions);
+        $details = [];
     
     foreach ($questions as $question) {
         $questionKey = 'question_' . $question['id'];
-        $userAnswerId = $userAnswers[$questionKey] ?? null;
+        $userAnswer = $userAnswers[$questionKey] ?? null;
         
-        // Trouver la bonne réponse
-        $correctAnswerId = null;
-        foreach ($question['choix'] as $choix) {
-            if ($choix['est_correct']) {
-                $correctAnswerId = $choix['id'];
-                break;
+        // Check if this is a multiple choice question (QCM) or single choice (VRAI_FAUX or QCM with single correct)
+        $isMultipleChoice = ($question['type'] == 'QCM') && ($question['multiple_correct'] ?? false);
+        
+        if ($isMultipleChoice) {
+            // Multiple choice: userAnswer is an array of selected choice IDs
+            $userAnswerIds = is_array($userAnswer) ? array_map('intval', $userAnswer) : [];
+            
+            // Get all correct choice IDs
+            $correctAnswerIds = [];
+            $correctAnswerLabels = [];
+            foreach ($question['choix'] as $choix) {
+                if ($choix['est_correct']) {
+                    $correctAnswerIds[] = (int) $choix['id'];
+                    $correctAnswerLabels[] = $choix['libelle'];
+                }
             }
+            
+            // Get user's selected choice labels
+            $userAnswerLabels = [];
+            foreach ($question['choix'] as $choix) {
+                if (in_array((int) $choix['id'], $userAnswerIds)) {
+                    $userAnswerLabels[] = $choix['libelle'];
+                }
+            }
+            
+            // Check if user answered or not
+            $hasAnswered = !empty($userAnswerIds);
+            
+            // Check if user selected exactly the correct answers (only if answered)
+            $isCorrect = false;
+            if ($hasAnswered) {
+                $isCorrect = (count($userAnswerIds) == count($correctAnswerIds)) && 
+                             empty(array_diff($userAnswerIds, $correctAnswerIds));
+            }
+            
+            if ($isCorrect) {
+                $score++;
+            }
+            
+            $details[] = [
+                'question' => $question['enonce'],
+                'type' => $question['type'],
+                'multiple_correct' => $question['multiple_correct'] ?? false,
+                'choix' => $question['choix'],
+                'user_answer' => implode(', ', $userAnswerLabels) ?: 'Sans réponse',
+                'user_answer_id' => $userAnswerIds,
+                'correct_answer' => implode(', ', $correctAnswerLabels),
+                'correct_answer_id' => $correctAnswerIds,
+                'is_correct' => $hasAnswered ? $isCorrect : null,
+            ];
+        } else {
+            // Single choice: userAnswer is a single value
+            $userAnswerId = $userAnswer !== null ? (int) $userAnswer : null;
+            
+            // Check if user answered or not
+            $hasAnswered = $userAnswerId !== null;
+            
+            // Trouver la bonne réponse
+            $correctAnswerId = null;
+            $correctAnswerLabel = null;
+            $userAnswerLabel = null;
+            foreach ($question['choix'] as $choix) {
+                if ($choix['est_correct']) {
+                    $correctAnswerId = (int) $choix['id'];
+                    $correctAnswerLabel = $choix['libelle'];
+                }
+                if ((int) $choix['id'] === $userAnswerId) {
+                    $userAnswerLabel = $choix['libelle'];
+                }
+            }
+            
+            // Vérifier si la réponse est correcte (only if answered)
+            $isCorrect = false;
+            if ($hasAnswered) {
+                $isCorrect = ($userAnswerId == $correctAnswerId);
+            }
+            
+            if ($isCorrect) {
+                $score++;
+            }
+            
+            $details[] = [
+                'question' => $question['enonce'],
+                'type' => $question['type'],
+                'multiple_correct' => $question['multiple_correct'] ?? false,
+                'choix' => $question['choix'],
+                'user_answer' => $userAnswerLabel ?: 'Sans réponse',
+                'user_answer_id' => $userAnswerId,
+                'correct_answer' => $correctAnswerLabel,
+                'correct_answer_id' => $correctAnswerId,
+                'is_correct' => $hasAnswered ? $isCorrect : null,
+            ];
         }
-        
-        // Vérifier si la réponse est correcte
-        $isCorrect = ($userAnswerId == $correctAnswerId);
-        if ($isCorrect) {
-            $score++;
-        }
-        
-        $details[] = [
-            'question' => $question['enonce'],
-            'user_answer' => $userAnswerId,
-            'correct_answer' => $correctAnswerId,
-            'is_correct' => $isCorrect,
-        ];
     }
     
     // Calculer le pourcentage
     $percentage = ($total > 0) ? round(($score / $total) * 100) : 0;
+    
+    // Store details in session for the correction page
+    $request->getSession()->set('quiz_details', $details);
+    $request->getSession()->set('quiz_score', $score);
+    $request->getSession()->set('quiz_total', $total);
+    $request->getSession()->set('quiz_percentage', $percentage);
+    $request->getSession()->set('quiz_id', $quizId);
     
     return $this->render('Quiz/result.html.twig', [
         'score' => $score,
@@ -95,110 +414,25 @@ public function submit(Request $request): Response
     ]);
 }
 
-    private function getExampleQuestions(string $matiere, string $chapitre, string $niveau): array
+    #[Route('/quiz/correction', name: 'app_quiz_correction', methods: ['GET', 'POST'])]
+    public function correction(Request $request, EntityManagerInterface $em): Response
     {
-        // Questions d'exemple - À remplacer par des vraies requêtes en base de données
-        return [
-            [
-                'id' => 1,
-                'enonce' => 'Quelle est la limite de (1/x) quand x tend vers l\'infini ?',
-                'type' => 'QCM',
-                'choix' => [
-                    ['id' => 1, 'libelle' => '0', 'est_correct' => true],
-                    ['id' => 2, 'libelle' => '1', 'est_correct' => false],
-                    ['id' => 3, 'libelle' => '+∞', 'est_correct' => false],
-                    ['id' => 4, 'libelle' => 'La limite n\'existe pas', 'est_correct' => false],
-                ]
-            ],
-            [
-                'id' => 2,
-                'enonce' => 'Une fonction est continue sur un intervalle si elle est dérivable sur cet intervalle.',
-                'type' => 'VRAI_FAUX',
-                'choix' => [
-                    ['id' => 5, 'libelle' => 'Vrai', 'est_correct' => false],
-                    ['id' => 6, 'libelle' => 'Faux', 'est_correct' => true],
-                ]
-            ],
-            [
-                'id' => 3,
-                'enonce' => 'La dérivée de ln(x) est :',
-                'type' => 'QCM',
-                'choix' => [
-                    ['id' => 7, 'libelle' => '1/x', 'est_correct' => true],
-                    ['id' => 8, 'libelle' => 'x', 'est_correct' => false],
-                    ['id' => 9, 'libelle' => 'e^x', 'est_correct' => false],
-                    ['id' => 10, 'libelle' => '1/x²', 'est_correct' => false],
-                ]
-            ],
-            [
-                'id' => 4,
-                'enonce' => 'Le théorème des valeurs intermédiaires s\'applique uniquement aux fonctions continues.',
-                'type' => 'VRAI_FAUX',
-                'choix' => [
-                    ['id' => 11, 'libelle' => 'Vrai', 'est_correct' => true],
-                    ['id' => 12, 'libelle' => 'Faux', 'est_correct' => false],
-                ]
-            ],
-            [
-                'id' => 5,
-                'enonce' => 'Si f\'(a) = 0, alors f admet un extremum local en a.',
-                'type' => 'VRAI_FAUX',
-                'choix' => [
-                    ['id' => 13, 'libelle' => 'Vrai', 'est_correct' => false],
-                    ['id' => 14, 'libelle' => 'Faux', 'est_correct' => true],
-                ]
-            ],
-            [
-                'id' => 6,
-                'enonce' => 'La primitive de cos(x) est :',
-                'type' => 'QCM',
-                'choix' => [
-                    ['id' => 15, 'libelle' => 'sin(x) + C', 'est_correct' => true],
-                    ['id' => 16, 'libelle' => '-sin(x) + C', 'est_correct' => false],
-                    ['id' => 17, 'libelle' => 'tan(x) + C', 'est_correct' => false],
-                    ['id' => 18, 'libelle' => '-cos(x) + C', 'est_correct' => false],
-                ]
-            ],
-            [
-                'id' => 7,
-                'enonce' => 'Une suite croissante et majorée est toujours convergente.',
-                'type' => 'VRAI_FAUX',
-                'choix' => [
-                    ['id' => 19, 'libelle' => 'Vrai', 'est_correct' => true],
-                    ['id' => 20, 'libelle' => 'Faux', 'est_correct' => false],
-                ]
-            ],
-            [
-                'id' => 8,
-                'enonce' => 'La dérivée de e^(2x) est :',
-                'type' => 'QCM',
-                'choix' => [
-                    ['id' => 21, 'libelle' => '2e^(2x)', 'est_correct' => true],
-                    ['id' => 22, 'libelle' => 'e^(2x)', 'est_correct' => false],
-                    ['id' => 23, 'libelle' => '2x·e^(2x)', 'est_correct' => false],
-                    ['id' => 24, 'libelle' => 'e^(2x)/2', 'est_correct' => false],
-                ]
-            ],
-            [
-                'id' => 9,
-                'enonce' => 'L\'intégrale définie ∫[0,1] x dx est égale à :',
-                'type' => 'QCM',
-                'choix' => [
-                    ['id' => 25, 'libelle' => '1/2', 'est_correct' => true],
-                    ['id' => 26, 'libelle' => '1', 'est_correct' => false],
-                    ['id' => 27, 'libelle' => '0', 'est_correct' => false],
-                    ['id' => 28, 'libelle' => '2', 'est_correct' => false],
-                ]
-            ],
-            [
-                'id' => 10,
-                'enonce' => 'Toute fonction dérivable est continue.',
-                'type' => 'VRAI_FAUX',
-                'choix' => [
-                    ['id' => 29, 'libelle' => 'Vrai', 'est_correct' => true],
-                    ['id' => 30, 'libelle' => 'Faux', 'est_correct' => false],
-                ]
-            ],
-        ];
+        // Get details from session
+        $details = $request->getSession()->get('quiz_details', []);
+        $score = $request->getSession()->get('quiz_score', 0);
+        $total = $request->getSession()->get('quiz_total', 0);
+        $percentage = $request->getSession()->get('quiz_percentage', 0);
+        
+        if (empty($details)) {
+            $this->addFlash('error', 'Aucune correction disponible. Veuillez refaire le quiz.');
+            return $this->redirectToRoute('app_quiz');
+        }
+        
+        return $this->render('Quiz/correction.html.twig', [
+            'score' => $score,
+            'total' => $total,
+            'percentage' => $percentage,
+            'details' => $details,
+        ]);
     }
 }

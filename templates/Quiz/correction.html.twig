@@ -1,0 +1,681 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Corrections du Quiz - BacLab{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        /* Background dégradé violet pour le header */
+        .header-area,
+        .header-area.header-transparent,
+        .header-sticky {
+            background: linear-gradient(90deg, #5b6fd8 0%, #8b5cf6 50%, #a855f7 100%) !important;
+        }
+
+        .main-menu nav > ul > li > a {
+            color: white !important;
+        }
+
+        .main-menu nav > ul > li:hover > a {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        .main-menu nav ul li .submenu {
+            background: white !important;
+        }
+
+        .main-menu nav ul li .submenu li a {
+            color: #5b6fd8 !important;
+        }
+
+        .main-menu nav ul li .submenu li:hover a {
+            color: #8b5cf6 !important;
+        }
+
+        body {
+            background: #f7fafc;
+        }
+
+        .slider-area {
+            display: none;
+        }
+
+        .corrections-container {
+            max-width: 900px;
+            margin: 150px auto 50px;
+            padding: 0 15px;
+        }
+
+        /* Header de la page */
+        .corrections-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .corrections-header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .corrections-header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .score-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .score-badge .score-number {
+            font-size: 36px;
+            font-weight: 700;
+            display: block;
+        }
+
+        .score-badge .score-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Statistiques rapides */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-card .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .stat-number.correct {
+            color: #48bb78;
+        }
+
+        .stat-card .stat-number.incorrect {
+            color: #f56565;
+        }
+
+        .stat-card .stat-number.skipped {
+            color: #ed8936;
+        }
+
+        .stat-card .stat-label {
+            font-size: 14px;
+            color: #718096;
+        }
+
+        /* Filtres */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            color: #4a5568;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .filter-btn.correct-filter.active {
+            background: #48bb78;
+            border-color: #48bb78;
+        }
+
+        .filter-btn.incorrect-filter.active {
+            background: #f56565;
+            border-color: #f56565;
+        }
+
+        /* Carte de question */
+        .question-correction-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 5px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .question-correction-card.correct {
+            border-left-color: #48bb78;
+        }
+
+        .question-correction-card.incorrect {
+            border-left-color: #f56565;
+        }
+
+        .question-correction-card.skipped {
+            border-left-color: #ed8936;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .question-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .question-number-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .question-type-badge {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .result-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .result-badge.correct {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .result-badge.incorrect {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .result-badge.skipped {
+            background: #feebc8;
+            color: #7b341e;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* Choix de réponses */
+        .choices-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .choice-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .choice-row.user-correct {
+            background: #c6f6d5;
+            border-color: #48bb78;
+        }
+
+        .choice-row.user-wrong {
+            background: #fed7d7;
+            border-color: #f56565;
+        }
+
+        .choice-row.correct-answer {
+            background: #c6f6d5;
+            border-color: #48bb78;
+        }
+
+        .choice-row.missed-answer {
+            background: #bee3f8;
+            border-color: #4299e1;
+        }
+
+        .choice-letter-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            background: white;
+            border: 2px solid #cbd5e0;
+            flex-shrink: 0;
+        }
+
+        .choice-row.user-correct .choice-letter-badge,
+        .choice-row.correct-answer .choice-letter-badge {
+            background: #48bb78;
+            border-color: #48bb78;
+            color: white;
+        }
+
+        .choice-row.user-wrong .choice-letter-badge {
+            background: #f56565;
+            border-color: #f56565;
+            color: white;
+        }
+
+        .choice-row.missed-answer .choice-letter-badge {
+            background: #4299e1;
+            border-color: #4299e1;
+            color: white;
+        }
+
+        .choice-text {
+            flex: 1;
+            font-size: 15px;
+            color: #2d3748;
+        }
+
+        .choice-indicators {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .indicator-tag {
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .indicator-tag.your-answer {
+            background: #f56565;
+            color: white;
+        }
+
+        .indicator-tag.your-answer.correct {
+            background: #48bb78;
+        }
+
+        .indicator-tag.correct-answer {
+            background: #4299e1;
+            color: white;
+        }
+
+        /* Explication */
+        .explanation-box {
+            margin-top: 20px;
+            padding: 15px 20px;
+            background: #fffbeb;
+            border: 2px solid #f6e05e;
+            border-radius: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .explanation-box.skipped {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+
+        .explanation-box i {
+            color: #d69e2e;
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .explanation-box.skipped i {
+            color: #f59e0b;
+        }
+
+        .explanation-box p {
+            margin: 0;
+            font-size: 14px;
+            color: #744210;
+            line-height: 1.6;
+        }
+
+        /* Boutons d'action */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .btn-action {
+            padding: 15px 35px;
+            border-radius: 30px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .corrections-container {
+                margin-top: 120px;
+            }
+
+            .corrections-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .question-header {
+                flex-direction: column;
+            }
+
+            .choice-row {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="corrections-container">
+
+    <!-- En-tête -->
+    <div class="corrections-header">
+        <div>
+            <h1>📝 Corrections du Quiz</h1>
+            <p>Retrouvez ci-dessous toutes les questions avec les bonnes réponses</p>
+        </div>
+        <div class="score-badge">
+            <span class="score-number">{{ score }}/{{ total }}</span>
+            <span class="score-label">{{ percentage }}% de réussite</span>
+        </div>
+    </div>
+
+    <!-- Statistiques rapides -->
+    {% set correctCount = 0 %}
+    {% set incorrectCount = 0 %}
+    {% set skippedCount = 0 %}
+    {% for detail in details %}
+        {% if detail.user_answer == 'Sans réponse' %}
+            {% set skippedCount = skippedCount + 1 %}
+        {% elseif detail.is_correct == true %}
+            {% set correctCount = correctCount + 1 %}
+        {% else %}
+            {% set incorrectCount = incorrectCount + 1 %}
+        {% endif %}
+    {% endfor %}
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <span class="stat-number correct">{{ correctCount }}</span>
+            <span class="stat-label">✅ Correctes</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number incorrect">{{ incorrectCount }}</span>
+            <span class="stat-label">❌ Incorrectes</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number skipped">{{ skippedCount }}</span>
+            <span class="stat-label">⚠️ Sans réponse</span>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterQuestions('all', this)">
+            Toutes ({{ details|length }})
+        </button>
+        <button class="filter-btn correct-filter" onclick="filterQuestions('correct', this)">
+            ✅ Correctes ({{ correctCount }})
+        </button>
+        <button class="filter-btn incorrect-filter" onclick="filterQuestions('incorrect', this)">
+            ❌ Incorrectes ({{ incorrectCount }})
+        </button>
+        {% if skippedCount > 0 %}
+        <button class="filter-btn" onclick="filterQuestions('skipped', this)">
+            ⚠️ Sans réponse ({{ skippedCount }})
+        </button>
+        {% endif %}
+    </div>
+
+    <!-- Liste des questions -->
+    {% set letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'] %}
+    {% for detail in details %}
+        {% if detail.user_answer == 'Sans réponse' %}
+            {% set status = 'skipped' %}
+        {% elseif detail.is_correct == true %}
+            {% set status = 'correct' %}
+        {% else %}
+            {% set status = 'incorrect' %}
+        {% endif %}
+
+    <div class="question-correction-card {{ status }}" data-status="{{ status }}">
+
+        <!-- En-tête de la question -->
+        <div class="question-header">
+            <div class="question-meta">
+                <span class="question-number-badge">Question {{ loop.index }}</span>
+                <span class="question-type-badge">{{ detail.type ?? 'QCM' }}</span>
+            </div>
+
+            <div class="result-badge {{ status }}">
+                {% if status == 'correct' %}
+                    <i class="fas fa-check-circle"></i> Bonne réponse
+                {% elseif status == 'incorrect' %}
+                    <i class="fas fa-times-circle"></i> Mauvaise réponse
+                {% else %}
+                    <i class="fas fa-exclamation-circle"></i> Sans réponse
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Texte de la question -->
+        <div class="question-text">{{ detail.question }}</div>
+
+        <!-- Choix de réponses -->
+        <div class="choices-list">
+            {% set letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'] %}
+            {% for choix in detail.choix %}
+                {# Vérifier si user_answer_id est un tableau (QCM multiple) ou un entier (single choice) #}
+                {% set userAnswerId = detail.user_answer_id %}
+                {% if userAnswerId is iterable %}
+                    {% set isUserAnswer = choix.id in userAnswerId %}
+                {% else %}
+                    {% set isUserAnswer = (choix.id == userAnswerId) %}
+                {% endif %}
+                {% set isCorrectAnswer = choix.est_correct %}
+
+                {% if isUserAnswer and isCorrectAnswer %}
+                    {% set rowClass = 'user-correct' %}
+                {% elseif isUserAnswer and not isCorrectAnswer %}
+                    {% set rowClass = 'user-wrong' %}
+                {% elseif not isUserAnswer and isCorrectAnswer %}
+                    {% set rowClass = 'missed-answer' %}
+                {% else %}
+                    {% set rowClass = '' %}
+                {% endif %}
+
+            <div class="choice-row {{ rowClass }}">
+                <div class="choice-letter-badge">{{ letters[loop.index0] }}</div>
+                <span class="choice-text">{{ choix.libelle }}</span>
+                <div class="choice-indicators">
+                    {% if isUserAnswer %}
+                        <span class="indicator-tag your-answer {{ isCorrectAnswer ? 'correct' : '' }}">
+                            <i class="fas fa-user"></i> Votre réponse
+                        </span>
+                    {% endif %}
+                    {% if isCorrectAnswer and not isUserAnswer %}
+                        <span class="indicator-tag correct-answer">
+                            <i class="fas fa-check"></i> Bonne réponse
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Explication si mauvaise réponse -->
+        {% if status == 'incorrect' %}
+        <div class="explanation-box">
+            <i class="fas fa-lightbulb"></i>
+            <p>
+                La bonne réponse était : <strong>{{ detail.correct_answer }}</strong>.<br>
+                Vous avez répondu : <strong>{{ detail.user_answer }}</strong>.
+            </p>
+        </div>
+        {% elseif status == 'skipped' %}
+        <div class="explanation-box skipped">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Vous n'avez pas répondu à cette question.</p>
+        </div>
+        {% endif %}
+
+    </div>
+    {% endfor %}
+
+    <!-- Boutons d'action -->
+    <div class="action-buttons">
+        <a href="{{ path('app_quiz') }}" class="btn-action btn-primary">
+            <i class="fas fa-redo"></i> Nouveau Quiz
+        </a>
+        <a href="{{ path('app_home') }}" class="btn-action btn-secondary">
+            <i class="fas fa-home"></i> Accueil
+        </a>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+        // Forcer la suppression du preloader
+        document.addEventListener('DOMContentLoaded', function() {
+            const preloader = document.getElementById('preloader-active');
+            if (preloader) {
+                preloader.style.display = 'none';
+            }
+        });
+
+        function filterQuestions(type, btn) {
+            // Mettre à jour les boutons de filtre
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Filtrer les questions
+            document.querySelectorAll('.question-correction-card').forEach(card => {
+                if (type === 'all' || card.dataset.status === type) {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeIn 0.3s ease';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+{% endblock %}

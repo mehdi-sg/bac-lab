@@ -101,6 +101,17 @@
             color: #333;
         }
         
+        .selection-card .chapitre-contenu {
+            font-size: 12px;
+            color: #666;
+            margin: 10px 0;
+            line-height: 1.5;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: left;
+        }
+        
         .selection-card p {
             font-size: 13px;
             color: #666;
@@ -243,14 +254,18 @@
                 <div class="step-indicator">
                     <div class="step active" data-step="1">
                         <div class="step-number">1</div>
-                        <div class="step-title">Choisir une matière</div>
+                        <div class="step-title">Choisir une filière</div>
                     </div>
                     <div class="step" data-step="2">
                         <div class="step-number">2</div>
-                        <div class="step-title">Choisir un chapitre</div>
+                        <div class="step-title">Choisir une matière</div>
                     </div>
                     <div class="step" data-step="3">
                         <div class="step-number">3</div>
+                        <div class="step-title">Choisir un chapitre</div>
+                    </div>
+                    <div class="step" data-step="4">
+                        <div class="step-number">4</div>
                         <div class="step-title">Choisir le niveau</div>
                     </div>
                 </div>
@@ -258,54 +273,25 @@
                 <!-- Sélecteur de Quiz -->
                 <div class="quiz-selector">
                     
-                    <!-- Étape 1: Sélection de la matière -->
-                    <div id="step-matiere" class="step-content">
-                        <h3 class="text-center mb-4">Sélectionnez une matière</h3>
-                        <div class="selection-grid">
-                            <div class="selection-card" data-matiere="mathematiques">
-                                <div class="icon">📐</div>
-                                <h4>Mathématiques</h4>
-                                <p>Algèbre, Analyse, Géométrie</p>
-                            </div>
-                            <div class="selection-card" data-matiere="physique">
-                                <div class="icon">⚛️</div>
-                                <h4>Physique</h4>
-                                <p>Mécanique, Électricité, Optique</p>
-                            </div>
-                            <div class="selection-card" data-matiere="sciences">
-                                <div class="icon">🧬</div>
-                                <h4>Sciences SVT</h4>
-                                <p>Biologie, Géologie</p>
-                            </div>
-                            <div class="selection-card" data-matiere="informatique">
-                                <div class="icon">💻</div>
-                                <h4>Informatique</h4>
-                                <p>Algorithmes, Programmation</p>
-                            </div>
-                            <div class="selection-card" data-matiere="francais">
-                                <div class="icon">📚</div>
-                                <h4>Français</h4>
-                                <p>Grammaire, Littérature</p>
-                            </div>
-                            <div class="selection-card" data-matiere="arabe">
-                                <div class="icon">📖</div>
-                                <h4>Arabe</h4>
-                                <p>Langue et Littérature</p>
-                            </div>
-                            <div class="selection-card" data-matiere="anglais">
-                                <div class="icon">🌍</div>
-                                <h4>Anglais</h4>
-                                <p>Grammar, Vocabulary</p>
-                            </div>
-                            <div class="selection-card" data-matiere="philosophie">
-                                <div class="icon">🤔</div>
-                                <h4>Philosophie</h4>
-                                <p>Réflexion et Pensée critique</p>
-                            </div>
+                    <!-- Étape 1: Sélection de la filière -->
+                    <div id="step-filiere" class="step-content">
+                        <h3 class="text-center mb-4">Sélectionnez votre filière</h3>
+                        <div id="filieres-grid" class="selection-grid">
+                            <!-- Les filières seront chargées dynamiquement depuis la base de données -->
+                            <p class="text-center">Chargement des filières...</p>
                         </div>
                     </div>
 
-                    <!-- Étape 2: Sélection du chapitre -->
+                    <!-- Étape 2: Sélection de la matière -->
+                    <div id="step-matiere" class="step-content hidden">
+                        <h3 class="text-center mb-4">Sélectionnez une matière</h3>
+                        <div id="matieres-grid" class="selection-grid">
+                            <!-- Les matières seront chargées dynamiquement depuis la base de données -->
+                            <p class="text-center">Sélectionnez d'abord une filière</p>
+                        </div>
+                    </div>
+
+                    <!-- Étape 3: Sélection du chapitre -->
                     <div id="step-chapitre" class="step-content hidden">
                         <h3 class="text-center mb-4">Sélectionnez un chapitre</h3>
                         <div id="chapitres-grid" class="selection-grid">
@@ -313,7 +299,7 @@
                         </div>
                     </div>
 
-                    <!-- Étape 3: Sélection du niveau -->
+                    <!-- Étape 4: Sélection du niveau -->
                     <div id="step-niveau" class="step-content hidden">
                         <h3 class="text-center mb-4">Sélectionnez le niveau de difficulté</h3>
                         <div class="selection-grid">
@@ -345,27 +331,40 @@
                 <!-- Résumé et bouton de démarrage -->
                 <div class="quiz-summary" id="quiz-summary">
                     <h3 class="text-center mb-4">📝 Récapitulatif de votre quiz</h3>
-                    <div class="summary-item">
-                        <span class="summary-label">Matière :</span>
-                        <span class="summary-value" id="summary-matiere">-</span>
+                    
+                    <div id="quiz-info-container">
+                        <div class="summary-item">
+                            <span class="summary-label">Filière :</span>
+                            <span class="summary-value" id="summary-filiere">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Matière :</span>
+                            <span class="summary-value" id="summary-matiere">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Chapitre :</span>
+                            <span class="summary-value" id="summary-chapitre">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Niveau :</span>
+                            <span class="summary-value" id="summary-niveau">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Nombre de questions :</span>
+                            <span class="summary-value" id="summary-nb-questions">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Durée estimée :</span>
+                            <span class="summary-value" id="summary-duree">-</span>
+                        </div>
                     </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Chapitre :</span>
-                        <span class="summary-value" id="summary-chapitre">-</span>
+                    
+                    <div id="quiz-not-found" class="alert alert-warning text-center" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="quiz-not-found-message">Aucun quiz disponible pour ces critères</span>
                     </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Niveau :</span>
-                        <span class="summary-value" id="summary-niveau">-</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Nombre de questions :</span>
-                        <span class="summary-value">10 questions</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Durée estimée :</span>
-                        <span class="summary-value">20 minutes</span>
-                    </div>
-                    <div class="text-center">
+                    
+                    <div class="text-center" id="quiz-start-container">
                         <button class="btn-start-quiz" id="btn-start-quiz">
                             🚀 Commencer le Quiz
                         </button>
@@ -381,68 +380,365 @@
 {% block js %}
     {{ parent() }}
     <script>
-        // Données des chapitres par matière
-        const chapitres = {
-            'mathematiques': [
-                { id: 1, nom: 'Limites et Continuité', icon: '∞' },
-                { id: 2, nom: 'Dérivabilité', icon: 'f\'(x)' },
-                { id: 3, nom: 'Étude de fonctions', icon: '📈' },
-                { id: 4, nom: 'Primitives et Intégrales', icon: '∫' },
-                { id: 5, nom: 'Nombres Complexes', icon: 'ℂ' },
-                { id: 6, nom: 'Géométrie dans l\'espace', icon: '📐' }
-            ],
-            'physique': [
-                { id: 1, nom: 'Mécanique du point', icon: '🎯' },
-                { id: 2, nom: 'Électricité', icon: '⚡' },
-                { id: 3, nom: 'Oscillations mécaniques', icon: '〰️' },
-                { id: 4, nom: 'Optique géométrique', icon: '🔍' },
-                { id: 5, nom: 'Ondes', icon: '🌊' }
-            ],
-            'sciences': [
-                { id: 1, nom: 'La génétique', icon: '🧬' },
-                { id: 2, nom: 'L\'immunologie', icon: '🦠' },
-                { id: 3, nom: 'La géologie', icon: '🌋' },
-                { id: 4, nom: 'L\'écologie', icon: '🌿' }
-            ],
-            'informatique': [
-                { id: 1, nom: 'Algorithmes', icon: '⚙️' },
-                { id: 2, nom: 'Structures de données', icon: '📊' },
-                { id: 3, nom: 'Bases de données', icon: '💾' },
-                { id: 4, nom: 'Réseaux', icon: '🌐' }
-            ],
-            'francais': [
-                { id: 1, nom: 'La Boîte à Merveilles', icon: '📕' },
-                { id: 2, nom: 'Antigone', icon: '🎭' },
-                { id: 3, nom: 'Le Dernier Jour d\'un Condamné', icon: '📘' },
-                { id: 4, nom: 'Grammaire', icon: '✍️' }
-            ],
-            'arabe': [
-                { id: 1, nom: 'النحو والصرف', icon: '📝' },
-                { id: 2, nom: 'البلاغة', icon: '🎨' },
-                { id: 3, nom: 'الأدب', icon: '📚' }
-            ],
-            'anglais': [
-                { id: 1, nom: 'Grammar', icon: '📖' },
-                { id: 2, nom: 'Vocabulary', icon: '📚' },
-                { id: 3, nom: 'Reading Comprehension', icon: '📰' },
-                { id: 4, nom: 'Writing Skills', icon: '✏️' }
-            ],
-            'philosophie': [
-                { id: 1, nom: 'La Conscience', icon: '💭' },
-                { id: 2, nom: 'L\'Inconscient', icon: '🧠' },
-                { id: 3, nom: 'La Liberté', icon: '🕊️' },
-                { id: 4, nom: 'Le Devoir', icon: '⚖️' }
-            ]
+        // Icons for filieres
+        const filiereIcons = {
+            'Sciences Mathématiques': '📊',
+            'Sciences Expérimentales': '🔬',
+            'Sciences Économiques': '💰',
+            'Technologie': '⚙️',
+            'Lettres': '📚'
+        };
+        
+        // Icons for subjects
+        const matiereIcons = {
+            'mathematiques': '📐',
+            'physique': '⚛️',
+            'sciences': '🧬',
+            'informatique': '💻',
+            'francais': '📚',
+            'arabe': '📖',
+            'anglais': '🌍',
+            'philosophie': '🤔'
+        };
+        
+        const chapitreIcons = {
+            'Limites': '∞',
+            'Dérivabilité': 'f\'(x)',
+            'Étude de fonctions': '📈',
+            'Primitives': '∫',
+            'Complexes': 'ℂ',
+            'Géométrie': '📐',
+            'Mécanique': '🎯',
+            'Électricité': '⚡'
         };
 
         let currentStep = 1;
+        let filieresData = [];
+        let matieresData = [];
+        let currentQuiz = null;
         let selections = {
-            matiere: null,
-            chapitre: null,
+            filiereId: null,
+            filiereNom: null,
+            matiereId: null,
+            matiereNom: null,
+            chapitreId: null,
+            chapitreNom: null,
             niveau: null
         };
 
-        // Gestion des étapes
+        // Charger les filières depuis l'API
+        async function loadFilieres() {
+            try {
+                const response = await fetch('{{ path('api_filieres') }}');
+                filieresData = await response.json();
+                renderFilieres();
+            } catch (error) {
+                console.error('Erreur lors du chargement des filières:', error);
+                // Fallback to hardcoded data if API fails
+                renderHardcodedFilieres();
+            }
+        }
+
+        function renderFilieres() {
+            const grid = document.getElementById('filieres-grid');
+            if (!grid) {
+                setTimeout(renderFilieres, 100);
+                return;
+            }
+            
+            grid.innerHTML = '';
+            
+            if (filieresData.length === 0) {
+                grid.innerHTML = '<p class="text-center">Aucune filière disponible</p>';
+                return;
+            }
+            
+            filieresData.forEach(filiere => {
+                const icon = filiereIcons[filiere.nom] || '🎓';
+                const card = document.createElement('div');
+                card.className = 'selection-card';
+                card.dataset.filiereId = filiere.id;
+                card.dataset.filiereNom = filiere.nom;
+                card.innerHTML = `
+                    <div class="icon">${icon}</div>
+                    <h4>${filiere.nom}</h4>
+                    <p>BAC ${filiere.nom}</p>
+                `;
+                
+                card.addEventListener('click', function() {
+                    selectFiliere(this);
+                });
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function renderHardcodedFilieres() {
+            const hardcodedFilieres = [
+                { id: 'sciences_math', nom: 'Sciences Mathématiques', niveau: 'Baccalauréat' },
+                { id: 'sciences_exp', nom: 'Sciences Expérimentales', niveau: 'Baccalauréat' },
+                { id: 'sciences_eco', nom: 'Sciences Économiques', niveau: 'Baccalauréat' },
+                { id: 'technologie', nom: 'Technologie', niveau: 'Baccalauréat' },
+                { id: 'lettres', nom: 'Lettres', niveau: 'Baccalauréat' }
+            ];
+            
+            filieresData = hardcodedFilieres;
+            renderFilieres();
+        }
+
+        function selectFiliere(card) {
+            document.querySelectorAll('#step-filiere .selection-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selections.filiereId = card.dataset.filiereId;
+            selections.filiereNom = card.dataset.filiereNom;
+            updateNextButton();
+            
+            // Charger les matières pour cette filière
+            loadMatieres(selections.filiereId);
+        }
+
+        // Charger les matières depuis l'API (par filière)
+        async function loadMatieres(filiereId) {
+            const grid = document.getElementById('matieres-grid');
+            grid.innerHTML = '<p class="text-center">Chargement des matières...</p>';
+            
+            try {
+                // Check if filiereId is numeric (API) or string (hardcoded fallback)
+                const url = isNaN(filiereId) 
+                    ? getHardcodedMatieresUrl(filiereId)
+                    : `{{ path('api_matieres_by_filiere', {id: '__ID__'}) }}`.replace('__ID__', filiereId);
+                
+                const response = await fetch(url);
+                matieresData = await response.json();
+                renderMatieres();
+            } catch (error) {
+                console.error('Erreur lors du chargement des matières:', error);
+                // Fallback to hardcoded
+                matieresData = getHardcodedMatieres(filiereId);
+                renderMatieres();
+            }
+        }
+
+        function getHardcodedMatieresUrl(filiereId) {
+            // Return Promise for consistency
+            return Promise.resolve(getHardcodedMatieres(filiereId));
+        }
+
+        function getHardcodedMatieres(filiereId) {
+            const matieresMap = {
+                'sciences_math': [
+                    { id: 1, nom: 'Mathématiques' },
+                    { id: 2, nom: 'Physique' },
+                    { id: 3, nom: 'Informatique' }
+                ],
+                'sciences_exp': [
+                    { id: 4, nom: 'Sciences SVT' },
+                    { id: 2, nom: 'Physique' },
+                    { id: 5, nom: 'Chimie' }
+                ],
+                'sciences_eco': [
+                    { id: 6, nom: 'Économie' },
+                    { id: 7, nom: 'Gestion' },
+                    { id: 8, nom: 'Comptabilité' }
+                ],
+                'technologie': [
+                    { id: 9, nom: 'Technologie' },
+                    { id: 10, nom: 'Dessin technique' },
+                    { id: 11, nom: 'Mécanique' }
+                ],
+                'lettres': [
+                    { id: 12, nom: 'Français' },
+                    { id: 13, nom: 'Arabe' },
+                    { id: 14, nom: 'Anglais' },
+                    { id: 15, nom: 'Philosophie' }
+                ]
+            };
+            return matieresMap[filiereId] || [];
+        }
+
+        function renderMatieres() {
+            const grid = document.getElementById('matieres-grid');
+            if (!grid) {
+                setTimeout(renderMatieres, 100);
+                return;
+            }
+            
+            grid.innerHTML = '';
+            
+            if (matieresData.length === 0) {
+                grid.innerHTML = '<p class="text-center">Aucune matière disponible pour cette filière</p>';
+                return;
+            }
+            
+            matieresData.forEach(matiere => {
+                const icon = matiereIcons[matiere.nom.toLowerCase()] || '📖';
+                const card = document.createElement('div');
+                card.className = 'selection-card';
+                card.dataset.matiereId = matiere.id;
+                card.dataset.matiereNom = matiere.nom;
+                card.innerHTML = `
+                    <div class="icon">${icon}</div>
+                    <h4>${matiere.nom}</h4>
+                    <p>Matière</p>
+                `;
+                
+                card.addEventListener('click', function() {
+                    selectMatiere(this);
+                });
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function selectMatiere(card) {
+            document.querySelectorAll('#step-matiere .selection-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selections.matiereId = card.dataset.matiereId;
+            selections.matiereNom = card.dataset.matiereNom;
+            updateNextButton();
+            
+            // Charger les chapitres
+            loadChapitres(selections.matiereId);
+        }
+
+        // Charger les chapitres dynamiquement depuis l'API
+        async function loadChapitres(matiereId) {
+            const grid = document.getElementById('chapitres-grid');
+            grid.innerHTML = '<p class="text-center">Chargement des chapitres...</p>';
+            
+            try {
+                // Check if matiereId is numeric (API) or string (hardcoded fallback)
+                const url = isNaN(matiereId) 
+                    ? getHardcodedChapitresUrl(matiereId)
+                    : `{{ path('api_chapitres_by_matiere', {id: '__ID__'}) }}`.replace('__ID__', matiereId);
+                
+                const response = await fetch(url);
+                const chapitres = await response.json();
+                renderChapitres(chapitres);
+            } catch (error) {
+                console.error('Erreur lors du chargement des chapitres:', error);
+                // Fallback to hardcoded
+                renderChapitres(getHardcodedChapitres(matiereId));
+            }
+        }
+
+        function getHardcodedChapitresUrl(matiereId) {
+            return Promise.resolve(getHardcodedChapitres(matiereId));
+        }
+
+        function getHardcodedChapitres(matiereId) {
+            // Map of matiere names to chapitres
+            const chapitresByMatiere = {
+                'Mathématiques': [
+                    { id: 1, titre: 'Limites et Continuité' },
+                    { id: 2, titre: 'Dérivabilité' },
+                    { id: 3, titre: 'Étude de fonctions' },
+                    { id: 4, titre: 'Primitives et Intégrales' },
+                    { id: 5, titre: 'Nombres Complexes' },
+                    { id: 6, titre: 'Géométrie dans l\'espace' }
+                ],
+                'Physique': [
+                    { id: 1, titre: 'Mécanique du point' },
+                    { id: 2, titre: 'Électricité' },
+                    { id: 3, titre: 'Oscillations mécaniques' },
+                    { id: 4, titre: 'Optique géométrique' },
+                    { id: 5, titre: 'Ondes' }
+                ],
+                'Sciences SVT': [
+                    { id: 1, titre: 'La génétique' },
+                    { id: 2, titre: 'L\'immunologie' },
+                    { id: 3, titre: 'La géologie' },
+                    { id: 4, titre: 'L\'écologie' }
+                ],
+                'Informatique': [
+                    { id: 1, titre: 'Algorithmes' },
+                    { id: 2, titre: 'Structures de données' },
+                    { id: 3, titre: 'Bases de données' },
+                    { id: 4, titre: 'Réseaux' }
+                ],
+                'Français': [
+                    { id: 1, titre: 'La Boîte à Merveilles' },
+                    { id: 2, titre: 'Antigone' },
+                    { id: 3, titre: 'Le Dernier Jour d\'un Condamné' },
+                    { id: 4, titre: 'Grammaire' }
+                ],
+                'Arabe': [
+                    { id: 1, titre: 'النحو والصرف' },
+                    { id: 2, titre: 'البلاغة' },
+                    { id: 3, titre: 'الأدب' }
+                ],
+                'Anglais': [
+                    { id: 1, titre: 'Grammar' },
+                    { id: 2, titre: 'Vocabulary' },
+                    { id: 3, titre: 'Reading Comprehension' },
+                    { id: 4, titre: 'Writing Skills' }
+                ],
+                'Philosophie': [
+                    { id: 1, titre: 'La Conscience' },
+                    { id: 2, titre: 'L\'Inconscient' },
+                    { id: 3, titre: 'La Liberté' },
+                    { id: 4, titre: 'Le Devoir' }
+                ]
+            };
+            
+            // Try to find by matiere name (case insensitive)
+            for (const [key, value] of Object.entries(chapitresByMatiere)) {
+                if (matiereId.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(matiereId.toLowerCase())) {
+                    return value;
+                }
+            }
+            
+            return [];
+        }
+
+        function renderChapitres(chapitres) {
+            const grid = document.getElementById('chapitres-grid');
+            grid.innerHTML = '';
+            
+            if (chapitres.length === 0) {
+                grid.innerHTML = '<p class="text-center">Aucun chapitre disponible pour cette matière</p>';
+                return;
+            }
+            
+            chapitres.forEach(chapitre => {
+                const icon = chapitreIcons[chapitre.titre] || '📑';
+                const card = document.createElement('div');
+                card.className = 'selection-card';
+                card.dataset.chapitreId = chapitre.id;
+                card.dataset.chapitreNom = chapitre.titre;
+                
+                // Display content (truncate if too long)
+                let contenuHtml = '';
+                if (chapitre.contenu && chapitre.contenu.trim() !== '') {
+                    const contenuText = chapitre.contenu.length > 150 
+                        ? chapitre.contenu.substring(0, 150) + '...'
+                        : chapitre.contenu;
+                    contenuHtml = `<p class="chapitre-contenu">${contenuText}</p>`;
+                }
+                
+                card.innerHTML = `
+                    <div class="icon">${icon}</div>
+                    <h4>${chapitre.titre}</h4>
+                    ${contenuHtml}
+                `;
+                
+                card.addEventListener('click', function() {
+                    selectChapitre(this);
+                });
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function selectChapitre(card) {
+            document.querySelectorAll('#step-chapitre .selection-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selections.chapitreId = card.dataset.chapitreId;
+            selections.chapitreNom = card.dataset.chapitreNom;
+            updateNextButton();
+        }
+
+        // Gestion des étapes (now 4 steps)
         function updateStepIndicator() {
             document.querySelectorAll('.step').forEach((step, index) => {
                 const stepNum = index + 1;
@@ -462,12 +758,15 @@
             });
             
             if (stepNum === 1) {
-                document.getElementById('step-matiere').classList.remove('hidden');
+                document.getElementById('step-filiere').classList.remove('hidden');
                 document.getElementById('btn-prev').classList.add('hidden');
             } else if (stepNum === 2) {
-                document.getElementById('step-chapitre').classList.remove('hidden');
+                document.getElementById('step-matiere').classList.remove('hidden');
                 document.getElementById('btn-prev').classList.remove('hidden');
             } else if (stepNum === 3) {
+                document.getElementById('step-chapitre').classList.remove('hidden');
+                document.getElementById('btn-prev').classList.remove('hidden');
+            } else if (stepNum === 4) {
                 document.getElementById('step-niveau').classList.remove('hidden');
                 document.getElementById('btn-prev').classList.remove('hidden');
             }
@@ -479,55 +778,16 @@
         function updateNextButton() {
             const btnNext = document.getElementById('btn-next');
             
-            if (currentStep === 1 && selections.matiere) {
+            if (currentStep === 1 && selections.filiereId) {
                 btnNext.disabled = false;
-            } else if (currentStep === 2 && selections.chapitre) {
+            } else if (currentStep === 2 && selections.matiereId) {
                 btnNext.disabled = false;
-            } else if (currentStep === 3 && selections.niveau) {
+            } else if (currentStep === 3 && selections.chapitreId) {
+                btnNext.disabled = false;
+            } else if (currentStep === 4 && selections.niveau) {
                 btnNext.disabled = false;
             } else {
                 btnNext.disabled = true;
-            }
-        }
-
-        // Sélection de matière
-        document.querySelectorAll('#step-matiere .selection-card').forEach(card => {
-            card.addEventListener('click', function() {
-                document.querySelectorAll('#step-matiere .selection-card').forEach(c => c.classList.remove('selected'));
-                this.classList.add('selected');
-                selections.matiere = this.dataset.matiere;
-                updateNextButton();
-                
-                // Charger les chapitres
-                loadChapitres(selections.matiere);
-            });
-        });
-
-        // Charger les chapitres dynamiquement
-        function loadChapitres(matiere) {
-            const grid = document.getElementById('chapitres-grid');
-            grid.innerHTML = '';
-            
-            if (chapitres[matiere]) {
-                chapitres[matiere].forEach(chapitre => {
-                    const card = document.createElement('div');
-                    card.className = 'selection-card';
-                    card.dataset.chapitre = chapitre.id;
-                    card.innerHTML = `
-                        <div class="icon">${chapitre.icon}</div>
-                        <h4>${chapitre.nom}</h4>
-                        <p>Chapitre ${chapitre.id}</p>
-                    `;
-                    
-                    card.addEventListener('click', function() {
-                        document.querySelectorAll('#step-chapitre .selection-card').forEach(c => c.classList.remove('selected'));
-                        this.classList.add('selected');
-                        selections.chapitre = chapitre.nom;
-                        updateNextButton();
-                    });
-                    
-                    grid.appendChild(card);
-                });
             }
         }
 
@@ -542,9 +802,9 @@
             });
         });
 
-        // Navigation
+        // Navigation (now 4 steps)
         document.getElementById('btn-next').addEventListener('click', function() {
-            if (currentStep < 3) {
+            if (currentStep < 4) {
                 currentStep++;
                 showStep(currentStep);
             }
@@ -558,24 +818,77 @@
             }
         });
 
-        // Afficher le résumé
-        function showSummary() {
-            document.getElementById('summary-matiere').textContent = selections.matiere ? selections.matiere.charAt(0).toUpperCase() + selections.matiere.slice(1) : '-';
-            document.getElementById('summary-chapitre').textContent = selections.chapitre || '-';
+        // Afficher le résumé et rechercher un quiz correspondant
+        async function showSummary() {
+            document.getElementById('summary-filiere').textContent = selections.filiereNom || '-';
+            document.getElementById('summary-matiere').textContent = selections.matiereNom || '-';
+            document.getElementById('summary-chapitre').textContent = selections.chapitreNom || '-';
             document.getElementById('summary-niveau').textContent = selections.niveau ? selections.niveau.charAt(0).toUpperCase() + selections.niveau.slice(1) : '-';
             
-            if (selections.matiere && selections.chapitre && selections.niveau) {
+            // Reset quiz info
+            document.getElementById('summary-nb-questions').textContent = '...';
+            document.getElementById('summary-duree').textContent = '...';
+            document.getElementById('quiz-info-container').style.display = 'block';
+            document.getElementById('quiz-not-found').style.display = 'none';
+            document.getElementById('quiz-start-container').style.display = 'block';
+            
+            if (selections.filiereId && selections.matiereId && selections.chapitreNom && selections.niveau) {
                 document.getElementById('quiz-summary').classList.add('show');
+                
+                // Rechercher un quiz correspondant
+                await searchQuiz();
+            }
+        }
+
+        // Rechercher un quiz dans la base de données
+        async function searchQuiz() {
+            const matiereId = isNaN(selections.matiereId) ? selections.matiereId : selections.matiereId;
+            const chapitreId = isNaN(selections.chapitreId) ? selections.chapitreId : selections.chapitreId;
+            
+            try {
+                const url = `{{ path('api_quiz_search') }}?matiere=${matiereId}&chapitre=${chapitreId}&niveau=${selections.niveau}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.found && data.quiz) {
+                    // Quiz trouvé - afficher les informations
+                    currentQuiz = data.quiz;
+                    document.getElementById('summary-nb-questions').textContent = data.quiz.nbQuestions + ' questions';
+                    document.getElementById('summary-duree').textContent = data.quiz.duree + ' minutes';
+                } else {
+                    // Quiz non trouvé - afficher le message
+                    currentQuiz = null;
+                    document.getElementById('summary-nb-questions').textContent = '-';
+                    document.getElementById('summary-duree').textContent = '-';
+                    document.getElementById('quiz-not-found-message').textContent = data.message || 'Aucun quiz disponible pour ces critères';
+                    document.getElementById('quiz-not-found').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Erreur lors de la recherche du quiz:', error);
+                // En cas d'erreur, utiliser les valeurs par défaut
+                document.getElementById('summary-nb-questions').textContent = '10 questions';
+                document.getElementById('summary-duree').textContent = '20 minutes';
             }
         }
 
         // Démarrer le quiz
         document.getElementById('btn-start-quiz').addEventListener('click', function() {
-    // Rediriger vers la page du quiz avec les paramètres
-    window.location.href = `/quiz/start?matiere=${selections.matiere}&chapitre=${encodeURIComponent(selections.chapitre)}&niveau=${selections.niveau}`;
-});
+            // Vérifier si un quiz a été trouvé
+            if (!currentQuiz) {
+                alert('Aucun quiz disponible pour ces critères. Veuillez choisir d\'autres options.');
+                return;
+            }
+            
+            const matiereParam = isNaN(selections.matiereId) ? selections.matiereId : selections.matiereId;
+            
+            // Rediriger vers la page du quiz avec les paramètres
+            window.location.href = `/quiz/start?matiere=${matiereParam}&chapitre=${encodeURIComponent(selections.chapitreNom)}&niveau=${selections.niveau}`;
+        });
 
         // Initialisation
-        showStep(1);
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFilieres();
+            showStep(1);
+        });
     </script>
 {% endblock %}
