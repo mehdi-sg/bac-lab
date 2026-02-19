@@ -301,19 +301,19 @@ class QuizController extends AbstractController
         $questionKey = 'question_' . $question['id'];
         $userAnswer = $userAnswers[$questionKey] ?? null;
         
-        // Check if this is a multiple choice question (QCM) or single choice (VRAI_FAUX)
-        $isMultipleChoice = ($question['type'] == 'QCM');
+        // Check if this is a multiple choice question (QCM) or single choice (VRAI_FAUX or QCM with single correct)
+        $isMultipleChoice = ($question['type'] == 'QCM') && ($question['multiple_correct'] ?? false);
         
         if ($isMultipleChoice) {
             // Multiple choice: userAnswer is an array of selected choice IDs
-            $userAnswerIds = is_array($userAnswer) ? $userAnswer : [];
+            $userAnswerIds = is_array($userAnswer) ? array_map('intval', $userAnswer) : [];
             
             // Get all correct choice IDs
             $correctAnswerIds = [];
             $correctAnswerLabels = [];
             foreach ($question['choix'] as $choix) {
                 if ($choix['est_correct']) {
-                    $correctAnswerIds[] = $choix['id'];
+                    $correctAnswerIds[] = (int) $choix['id'];
                     $correctAnswerLabels[] = $choix['libelle'];
                 }
             }
@@ -321,7 +321,7 @@ class QuizController extends AbstractController
             // Get user's selected choice labels
             $userAnswerLabels = [];
             foreach ($question['choix'] as $choix) {
-                if (in_array($choix['id'], $userAnswerIds)) {
+                if (in_array((int) $choix['id'], $userAnswerIds)) {
                     $userAnswerLabels[] = $choix['libelle'];
                 }
             }
@@ -353,10 +353,10 @@ class QuizController extends AbstractController
             ];
         } else {
             // Single choice: userAnswer is a single value
-            $userAnswerId = $userAnswer;
+            $userAnswerId = $userAnswer !== null ? (int) $userAnswer : null;
             
             // Check if user answered or not
-            $hasAnswered = $userAnswerId !== null && $userAnswerId !== '';
+            $hasAnswered = $userAnswerId !== null;
             
             // Trouver la bonne réponse
             $correctAnswerId = null;
@@ -364,10 +364,10 @@ class QuizController extends AbstractController
             $userAnswerLabel = null;
             foreach ($question['choix'] as $choix) {
                 if ($choix['est_correct']) {
-                    $correctAnswerId = $choix['id'];
+                    $correctAnswerId = (int) $choix['id'];
                     $correctAnswerLabel = $choix['libelle'];
                 }
-                if ($choix['id'] == $userAnswerId) {
+                if ((int) $choix['id'] === $userAnswerId) {
                     $userAnswerLabel = $choix['libelle'];
                 }
             }

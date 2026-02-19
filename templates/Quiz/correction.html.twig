@@ -569,8 +569,15 @@
 
         <!-- Choix de réponses -->
         <div class="choices-list">
+            {% set letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'] %}
             {% for choix in detail.choix %}
-                {% set isUserAnswer = choix.id == detail.user_answer_id %}
+                {# Vérifier si user_answer_id est un tableau (QCM multiple) ou un entier (single choice) #}
+                {% set userAnswerId = detail.user_answer_id %}
+                {% if userAnswerId is iterable %}
+                    {% set isUserAnswer = choix.id in userAnswerId %}
+                {% else %}
+                    {% set isUserAnswer = (choix.id == userAnswerId) %}
+                {% endif %}
                 {% set isCorrectAnswer = choix.est_correct %}
 
                 {% if isUserAnswer and isCorrectAnswer %}
