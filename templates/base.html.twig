@@ -92,7 +92,22 @@
                                             <li>
                                                 <a href="#">Orientation</a>
                                                 <ul class="submenu">
-                                                    <li><a href="#"><i class="fas fa-calculator"></i>Calcul du Score</a></li>
+                                                    <li>
+                                                        <a href="{{ path('score_calcul') }}" {% if not is_granted('ROLE_USER') %}title="Connexion requise"{% endif %}>
+                                                            <i class="fas fa-calculator"></i>Calcul du Score BAC
+                                                            {% if not is_granted('ROLE_USER') %}
+                                                                <i class="fas fa-lock ml-1" style="font-size: 0.7em; opacity: 0.7;"></i>
+                                                            {% endif %}
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="{{ path('orientation_recommendations') }}" {% if not is_granted('ROLE_USER') %}title="Connexion requise"{% endif %}>
+                                                            <i class="fas fa-compass"></i>Recommandations
+                                                            {% if not is_granted('ROLE_USER') %}
+                                                                <i class="fas fa-lock ml-1" style="font-size: 0.7em; opacity: 0.7;"></i>
+                                                            {% endif %}
+                                                        </a>
+                                                    </li>
                                                     <li><a href="#"><i class="fas fa-graduation-cap"></i>Guide des Filieres</a></li>
                                                 </ul>
                                             </li>
@@ -501,6 +516,12 @@
             }
         });
     </script>
+    
+    {# Floating Chat Component #}
+    {{ include('components/floating_chat.html.twig') }}
+    
+    {# Floating Chat JavaScript #}
+    <script src="{{ asset('front/js/chat-floating.js') }}"></script>
 {% endblock %}
 </body>
 </html>

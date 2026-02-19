@@ -1,0 +1,1612 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recommandations d'Orientation - BacLab{% endblock %}
+
+{% set body_class = 'orientation-body' %}
+
+{% block css %}
+    {{ parent() }}
+    <!-- Orientation-specific enhancements -->
+    <style>
+        /* SPECTACULAR ORIENTATION PAGE - DARK LIKE HOME PAGE */
+        .orientation-page {
+            background: #0a0a0f !important;
+            background-color: #0a0a0f !important;
+            min-height: 100vh;
+            padding-top: 100px;
+            position: relative;
+        }
+        
+        /* Fix scrolling issues */
+        html, body {
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            scroll-behavior: smooth !important;
+        }
+        
+        /* Prevent scroll jumping */
+        .orientation-page * {
+            scroll-behavior: smooth !important;
+        }
+        
+        /* ANIMATED BACKGROUND PARTICLES */
+        .orientation-page::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(183, 148, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 107, 157, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 60% 70%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+            animation: backgroundShift 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes backgroundShift {
+            0%, 100% { 
+                transform: translateX(0) translateY(0) scale(1);
+                opacity: 0.8;
+            }
+            25% { 
+                transform: translateX(-20px) translateY(-30px) scale(1.05);
+                opacity: 1;
+            }
+            50% { 
+                transform: translateX(30px) translateY(20px) scale(0.95);
+                opacity: 0.9;
+            }
+            75% { 
+                transform: translateX(-10px) translateY(40px) scale(1.02);
+                opacity: 0.85;
+            }
+        }
+        
+        /* Enhanced page container with floating effect */
+        .orientation-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* FLOATING PARTICLES OVERLAY */
+        .orientation-container::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: -100px;
+            right: -100px;
+            bottom: -100px;
+            background: 
+                radial-gradient(circle at 15% 85%, rgba(0, 212, 255, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 85% 15%, rgba(183, 148, 246, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 45% 55%, rgba(255, 107, 157, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 75% 25%, rgba(102, 126, 234, 0.03) 0%, transparent 40%);
+            animation: particleFloat 25s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes particleFloat {
+            0% { transform: rotate(0deg) translateX(0px) translateY(0px); }
+            25% { transform: rotate(90deg) translateX(20px) translateY(-15px); }
+            50% { transform: rotate(180deg) translateX(-10px) translateY(25px); }
+            75% { transform: rotate(270deg) translateX(15px) translateY(-20px); }
+            100% { transform: rotate(360deg) translateX(0px) translateY(0px); }
+        }
+        
+        /* All content above background */
+        .orientation-container > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* SPECTACULAR MODERN CARDS WITH ADVANCED EFFECTS */
+        .card-modern {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.12),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        /* ANIMATED TOP BORDER */
+        .card-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                var(--neon-blue) 0%, 
+                var(--neon-purple) 33%, 
+                var(--neon-pink) 66%, 
+                var(--neon-blue) 100%);
+            background-size: 200% 100%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* FLOATING GLOW EFFECT */
+        .card-modern::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.03) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            animation: floatingGlow 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes floatingGlow {
+            0%, 100% { 
+                transform: translateX(0) translateY(0) scale(1);
+                opacity: 0;
+            }
+            50% { 
+                transform: translateX(-20px) translateY(-30px) scale(1.1);
+                opacity: 0.6;
+            }
+        }
+        
+        .card-modern:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 
+                0 25px 50px rgba(0, 212, 255, 0.2),
+                0 0 0 1px rgba(0, 212, 255, 0.3) inset,
+                0 0 30px rgba(0, 212, 255, 0.1);
+            border-color: rgba(0, 212, 255, 0.4);
+        }
+        
+        .card-modern:hover::before {
+            opacity: 1;
+        }
+        
+        .card-modern:hover::after {
+            opacity: 0.8;
+        }
+        
+        /* SPECTACULAR PAGE HEADER WITH ROTATING COMPASS */
+        .page-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 3rem 0;
+            position: relative;
+        }
+        
+        .page-title {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--text-white);
+            margin-bottom: 1.5rem;
+            text-shadow: 
+                0 0 30px rgba(0, 212, 255, 0.6),
+                0 0 60px rgba(183, 148, 246, 0.4),
+                0 0 90px rgba(255, 107, 157, 0.2);
+            background: linear-gradient(135deg, 
+                var(--neon-blue) 0%, 
+                var(--neon-purple) 50%, 
+                var(--neon-pink) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+        
+        .page-title i {
+            display: inline-block;
+            animation: iconRotate 10s linear infinite;
+            margin-right: 1rem;
+            color: var(--neon-blue);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+        }
+        
+        @keyframes iconRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .page-subtitle {
+            font-size: 1.4rem;
+            color: var(--text-gray);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.7;
+            position: relative;
+        }
+        
+        /* PULSING BACKGROUND EFFECT FOR SUBTITLE */
+        .page-subtitle::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -20px;
+            right: -20px;
+            bottom: -10px;
+            background: linear-gradient(45deg, 
+                rgba(0, 212, 255, 0.05) 0%, 
+                rgba(183, 148, 246, 0.05) 50%, 
+                rgba(255, 107, 157, 0.05) 100%);
+            border-radius: 16px;
+            opacity: 0;
+            animation: pulseBackground 4s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        @keyframes pulseBackground {
+            0%, 100% { 
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            50% { 
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+        
+        /* SPECTACULAR STATS CARDS WITH ADVANCED ANIMATIONS */
+        .header-stats {
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.1) 0%, 
+                rgba(183, 148, 246, 0.1) 50%, 
+                rgba(255, 107, 157, 0.1) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* ANIMATED STATS BACKGROUND */
+        .header-stats::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, 
+                rgba(0, 212, 255, 0.08) 0%, 
+                rgba(183, 148, 246, 0.06) 30%, 
+                transparent 70%);
+            animation: statsFloat 12s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes statsFloat {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg) scale(1);
+                opacity: 0.6;
+            }
+            33% { 
+                transform: translateY(-30px) rotate(120deg) scale(1.1);
+                opacity: 0.8;
+            }
+            66% { 
+                transform: translateY(20px) rotate(240deg) scale(0.9);
+                opacity: 0.7;
+            }
+        }
+        
+        .stat-item {
+            text-align: center;
+            position: relative;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-8px) scale(1.05);
+        }
+        
+        /* ANIMATED BOTTOM BORDER FOR STATS */
+        .stat-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            border-radius: 2px;
+            transition: width 0.4s ease;
+        }
+        
+        .stat-item:hover::after {
+            width: 60px;
+        }
+        
+        .score-display {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-white);
+            margin-bottom: 0.8rem;
+            text-shadow: 
+                0 2px 10px rgba(0, 212, 255, 0.4),
+                0 0 20px rgba(0, 212, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .score-display:hover {
+            transform: scale(1.1);
+            text-shadow: 
+                0 4px 20px rgba(0, 212, 255, 0.6),
+                0 0 40px rgba(0, 212, 255, 0.4);
+        }
+        
+        .score-display i {
+            margin-right: 0.8rem;
+            color: var(--neon-blue);
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% { 
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+        
+        /* SPECTACULAR PROGRAM CARDS WITH ADVANCED HOVER EFFECTS */
+        .program-card {
+            border-left: 5px solid var(--neon-purple);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* ANIMATED SIDE GRADIENT */
+        .program-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 120px;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(0, 212, 255, 0.08) 30%,
+                rgba(183, 148, 246, 0.08) 70%,
+                rgba(255, 107, 157, 0.06) 100%);
+            opacity: 0;
+            transition: all 0.4s ease;
+            pointer-events: none;
+        }
+        
+        .program-card:hover::after {
+            opacity: 1;
+            width: 200px;
+        }
+        
+        .program-card:hover {
+            border-left-color: var(--neon-blue);
+            border-left-width: 8px;
+            transform: translateX(8px);
+        }
+        
+        .program-title {
+            color: var(--text-white);
+            font-weight: 800;
+            font-size: 1.3rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: block;
+            margin-bottom: 0.8rem;
+            position: relative;
+        }
+        
+        /* ANIMATED UNDERLINE FOR PROGRAM TITLES */
+        .program-title::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            transition: width 0.4s ease;
+        }
+        
+        .program-title:hover {
+            color: var(--neon-blue);
+            text-decoration: none;
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .program-title:hover::after {
+            width: 100%;
+        }
+        
+        .university-info {
+            color: var(--text-gray);
+            font-size: 1rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .university-info:hover {
+            color: var(--text-white);
+            transform: translateX(5px);
+        }
+        
+        .university-info i {
+            color: var(--neon-purple);
+            font-size: 1.1rem;
+            animation: universityPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes universityPulse {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% { 
+                transform: scale(1.15);
+                opacity: 1;
+            }
+        }
+        
+        /* SPECTACULAR BADGES AND INDICATORS */
+        .chance-badge {
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        /* ANIMATED BADGE BACKGROUND */
+        .chance-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.2), 
+                transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .chance-badge:hover::before {
+            left: 100%;
+        }
+        
+        .chance-badge:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 
+                0 12px 30px rgba(0, 0, 0, 0.3),
+                0 0 0 2px rgba(255, 255, 255, 0.2) inset;
+        }
+        
+        .reason-badge {
+            background: linear-gradient(45deg, 
+                rgba(0, 212, 255, 0.15), 
+                rgba(183, 148, 246, 0.15));
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            color: var(--text-white);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.6rem 1rem;
+            border-radius: 25px;
+            margin: 0.3rem;
+            display: inline-block;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* REASON BADGE HOVER EFFECT */
+        .reason-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .reason-badge:hover {
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+            border-color: var(--neon-blue);
+        }
+        
+        .reason-badge:hover::before {
+            opacity: 1;
+        }
+        
+        .reason-badge i {
+            margin-right: 0.5rem;
+            animation: checkPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes checkPulse {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% { 
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+        
+        /* Score comparison */
+        .score-comparison {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            backdrop-filter: blur(10px);
+        }
+        
+        .score-comparison .small {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+        
+        /* SPECTACULAR PROGRESS BARS WITH SHIMMER EFFECTS */
+        .final-score-bar {
+            height: 16px;
+            border-radius: 12px;
+            background: linear-gradient(90deg, 
+                var(--neon-blue) 0%, 
+                var(--neon-purple) 50%, 
+                var(--neon-pink) 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 15px rgba(0, 212, 255, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            transition: all 0.3s ease;
+        }
+        
+        .final-score-bar:hover {
+            transform: scaleY(1.2);
+            box-shadow: 
+                0 6px 25px rgba(0, 212, 255, 0.6),
+                0 0 0 2px rgba(255, 255, 255, 0.2) inset;
+        }
+        
+        /* ANIMATED SHIMMER EFFECT */
+        .final-score-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent);
+            animation: shimmer 2.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* ENHANCED SIDEBAR STYLING */
+        .filter-section, .engagement-stats {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-section:hover, .engagement-stats:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 212, 255, 0.15);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+        
+        .engagement-stats {
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.12) 0%, 
+                rgba(183, 148, 246, 0.12) 50%, 
+                rgba(255, 107, 157, 0.12) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* FLOATING ENGAGEMENT BACKGROUND */
+        .engagement-stats::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, 
+                rgba(0, 212, 255, 0.08) 0%, 
+                rgba(183, 148, 246, 0.06) 40%,
+                transparent 70%);
+            animation: engagementFloat 15s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes engagementFloat {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg) scale(1);
+                opacity: 0.6;
+            }
+            33% { 
+                transform: translateY(-40px) rotate(120deg) scale(1.1);
+                opacity: 0.8;
+            }
+            66% { 
+                transform: translateY(30px) rotate(240deg) scale(0.9);
+                opacity: 0.7;
+            }
+        }
+        
+        /* SPECTACULAR FORM CONTROLS WITH FOCUS ANIMATIONS */
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            color: var(--text-white);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--neon-blue);
+            box-shadow: 
+                0 0 0 3px rgba(0, 212, 255, 0.25),
+                0 0 20px rgba(0, 212, 255, 0.2);
+            color: var(--text-white);
+            transform: translateY(-2px) scale(1.02);
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus::placeholder {
+            color: rgba(0, 212, 255, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        .form-label {
+            color: var(--text-white);
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            position: relative;
+        }
+        
+        /* ANIMATED LABEL UNDERLINE */
+        .form-label::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            transition: width 0.3s ease;
+        }
+        
+        .form-group:focus-within .form-label::after {
+            width: 100%;
+        }
+        
+        /* SPECTACULAR BUTTONS WITH ADVANCED EFFECTS */
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border: none;
+            border-radius: 30px;
+            padding: 1rem 2.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 10px 30px rgba(0, 212, 255, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* BUTTON SHINE EFFECT */
+        .btn-primary-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 
+                0 20px 40px rgba(0, 212, 255, 0.5),
+                0 0 0 2px rgba(255, 255, 255, 0.2) inset;
+            color: white;
+        }
+        
+        .btn-primary-custom:hover::before {
+            left: 100%;
+        }
+        
+        .simulate-btn {
+            background: linear-gradient(45deg, #ffc107, #ff8f00);
+            border: none;
+            border-radius: 30px;
+            padding: 0.8rem 2rem;
+            color: white;
+            font-weight: 700;
+            transition: all 0.4s ease;
+            box-shadow: 
+                0 6px 20px rgba(255, 193, 7, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .simulate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .simulate-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 
+                0 12px 30px rgba(255, 193, 7, 0.5),
+                0 0 0 2px rgba(255, 255, 255, 0.2) inset;
+            color: white;
+        }
+        
+        .simulate-btn:hover::before {
+            left: 100%;
+        }
+        
+        /* SPECTACULAR SPECIAL NOTICES */
+        .no-engagement-notice {
+            background: linear-gradient(45deg, 
+                rgba(255, 193, 7, 0.15), 
+                rgba(255, 152, 0, 0.1));
+            border: 2px solid rgba(255, 193, 7, 0.4);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* ANIMATED NOTICE BACKGROUND */
+        .no-engagement-notice::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, 
+                rgba(255, 193, 7, 0.1) 0%, 
+                transparent 70%);
+            animation: noticeFloat 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes noticeFloat {
+            0%, 100% { 
+                transform: translateX(0) translateY(0) rotate(0deg);
+                opacity: 0.6;
+            }
+            50% { 
+                transform: translateX(-20px) translateY(-30px) rotate(180deg);
+                opacity: 0.9;
+            }
+        }
+        
+        .no-engagement-notice h5 {
+            color: #ffc107;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            font-size: 1.3rem;
+            text-shadow: 0 2px 10px rgba(255, 193, 7, 0.3);
+        }
+        
+        .no-engagement-notice h5 i {
+            margin-right: 0.8rem;
+            animation: infoIconPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes infoIconPulse {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% { 
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+        
+        .no-engagement-notice p {
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        /* ENHANCED EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 5rem 2rem;
+            color: var(--text-gray);
+            position: relative;
+        }
+        
+        .empty-state i {
+            font-size: 5rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.6;
+            color: var(--neon-blue);
+            animation: emptyIconFloat 4s ease-in-out infinite;
+        }
+        
+        @keyframes emptyIconFloat {
+            0%, 100% { 
+                transform: translateY(0px) scale(1);
+                opacity: 0.6;
+            }
+            50% { 
+                transform: translateY(-15px) scale(1.1);
+                opacity: 0.8;
+            }
+        }
+        
+        /* ENHANCED PROGRESS BARS */
+        .progress-custom {
+            height: 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) inset;
+        }
+        
+        .progress-bar-custom {
+            background: linear-gradient(90deg, 
+                var(--neon-blue) 0%, 
+                var(--neon-purple) 50%, 
+                var(--neon-pink) 100%);
+            border-radius: 20px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* PROGRESS BAR SHIMMER */
+        .progress-bar-custom::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent);
+            animation: progressShimmer 2s infinite;
+        }
+        
+        @keyframes progressShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* WHAT IF SECTION ENHANCEMENT */
+        .what-if-section {
+            background: linear-gradient(135deg, 
+                rgba(255, 193, 7, 0.1) 0%, 
+                rgba(255, 152, 0, 0.08) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-top: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* WHAT IF BACKGROUND ANIMATION */
+        .what-if-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, 
+                rgba(255, 193, 7, 0.06) 0%, 
+                transparent 70%);
+            animation: whatIfFloat 12s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes whatIfFloat {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg) scale(1);
+                opacity: 0.7;
+            }
+            50% { 
+                transform: translateY(-25px) rotate(180deg) scale(1.1);
+                opacity: 1;
+            }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .orientation-container {
+                padding: 0 15px 20px;
+            }
+            
+            .page-title {
+                font-size: 2.5rem;
+            }
+            
+            .card-modern {
+                margin-bottom: 1rem;
+            }
+            
+            .filter-section, .engagement-stats, .what-if-section {
+                padding: 1.5rem;
+            }
+            
+            .score-display {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* FORCE ALL TEXT TO BE WHITE/READABLE - COMPREHENSIVE FIX */
+        .orientation-page,
+        .orientation-page *,
+        .orientation-page .card-body,
+        .orientation-page .card-body *,
+        .orientation-page .text-muted,
+        .orientation-page .small,
+        .orientation-page p,
+        .orientation-page span,
+        .orientation-page div,
+        .orientation-page label,
+        .orientation-page input,
+        .orientation-page select,
+        .orientation-page option,
+        .orientation-page .form-control,
+        .orientation-page .form-select,
+        .orientation-page .form-label,
+        .orientation-page .card-title,
+        .orientation-page .card-text,
+        .orientation-page h1, .orientation-page h2, .orientation-page h3, 
+        .orientation-page h4, .orientation-page h5, .orientation-page h6 {
+            color: var(--text-white) !important;
+        }
+        
+        /* Specific overrides for muted text */
+        .orientation-page .text-muted,
+        .orientation-page .small {
+            color: var(--text-gray) !important;
+        }
+        
+        /* Success/danger/warning colors - keep these for meaning */
+        .orientation-page .text-success {
+            color: #28a745 !important;
+        }
+        
+        .orientation-page .text-danger {
+            color: #dc3545 !important;
+        }
+        
+        .orientation-page .text-warning {
+            color: #ffc107 !important;
+        }
+        
+        .orientation-page .text-info {
+            color: var(--neon-blue) !important;
+        }
+        
+        /* Form placeholders */
+        .orientation-page .form-control::placeholder,
+        .orientation-page .form-select::placeholder {
+            color: var(--text-muted) !important;
+        }
+        
+        /* Bootstrap overrides */
+        .orientation-page .btn {
+            color: white !important;
+        }
+        
+        .orientation-page .btn-primary {
+            color: white !important;
+        }
+        
+        /* Table text */
+        .orientation-page table,
+        .orientation-page table *,
+        .orientation-page .table,
+        .orientation-page .table * {
+            color: var(--text-white) !important;
+        }
+        
+        /* Alert text */
+        .orientation-page .alert,
+        .orientation-page .alert * {
+            color: inherit !important;
+        }
+        
+        /* Badge text - keep original colors for contrast */
+        .orientation-page .badge {
+            color: white !important;
+        }
+        
+        /* Links */
+        .orientation-page a {
+            color: var(--neon-blue) !important;
+        }
+        
+        .orientation-page a:hover {
+            color: var(--neon-purple) !important;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="orientation-page">
+    <div class="orientation-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-compass me-3"></i>Recommandations d'Orientation
+            </h1>
+            <p class="page-subtitle">
+                Découvrez les programmes universitaires qui correspondent le mieux à votre profil académique
+                {% if engagementStats.totalViews > 0 %}
+                    et à votre engagement sur BacLab
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- User Info Header -->
+        <div class="card-modern">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h4 class="mb-3">
+                            <i class="fas fa-user-graduate me-2" style="color: var(--neon-blue);"></i>
+                            Votre Profil
+                        </h4>
+                        <p class="mb-1">
+                            <strong>Filière:</strong> {{ filiereLabel }}
+                        </p>
+                        <p class="mb-0">
+                            <strong>Score FG:</strong> {{ userScores.FG }}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="header-stats">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <div class="score-display">
+                                            <i class="fas fa-calculator"></i>
+                                            {{ userScores.FG }}
+                                        </div>
+                                        <small class="text-muted">Formule Globale</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <div class="score-display">
+                                            <i class="fas fa-graduation-cap"></i>
+                                            {{ recommendations|length }}
+                                        </div>
+                                        <small class="text-muted">Programmes</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <div class="score-display">
+                                            <i class="fas fa-chart-line"></i>
+                                            {% if engagementStats.totalViews > 0 %}
+                                                {{ (engagementStats.avgInterest * 100)|round }}%
+                                            {% else %}
+                                                Score
+                                            {% endif %}
+                                        </div>
+                                        <small class="text-muted">
+                                            {% if engagementStats.totalViews > 0 %}
+                                                Engagement
+                                            {% else %}
+                                                Académique
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if engagementStats.totalViews == 0 %}
+        <!-- No Engagement Notice -->
+        <div class="no-engagement-notice">
+            <h5><i class="fas fa-info-circle me-2"></i>Recommandations basées sur votre score académique</h5>
+            <p>
+                Nous n'avons pas encore de données sur votre engagement avec les matières. 
+                Les recommandations sont basées uniquement sur votre score BAC et les seuils d'admission officiels.
+            </p>
+            <button class="simulate-btn" onclick="simulateEngagement()">
+                <i class="fas fa-magic me-2"></i>Simuler des données d'engagement
+            </button>
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                {% if engagementStats.totalViews > 0 %}
+                <!-- Engagement Stats -->
+                <div class="engagement-stats mb-4">
+                    <h5><i class="fas fa-chart-bar me-2"></i>Votre Engagement</h5>
+                    <div class="row">
+                        <div class="col-6">
+                            <small>Ressources vues</small>
+                            <div class="h6">{{ engagementStats.totalViews }}</div>
+                        </div>
+                        <div class="col-6">
+                            <small>Quiz tentés</small>
+                            <div class="h6">{{ engagementStats.totalQuizAttempts }}</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small>Engagement global</small>
+                        <div class="progress progress-custom mt-1">
+                            <div class="progress-bar progress-bar-custom" 
+                                 style="width: {{ (engagementStats.avgInterest * 100)|round }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Filters -->
+                <div class="filter-section">
+                    <h5><i class="fas fa-filter me-2" style="color: var(--neon-blue);"></i>Filtres</h5>
+                    <form method="GET" id="filterForm">
+                        <div class="mb-3">
+                            <label class="form-label">Université</label>
+                            <select name="university" class="form-select">
+                                <option value="">Toutes les universités</option>
+                                {% for university in universities %}
+                                    <option value="{{ university }}" 
+                                            {% if filters.university == university %}selected{% endif %}>
+                                        {{ university }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Domaine</label>
+                            <select name="domain" class="form-select">
+                                <option value="">Tous les domaines</option>
+                                {% for domain in domains %}
+                                    <option value="{{ domain }}" 
+                                            {% if filters.domain == domain %}selected{% endif %}>
+                                        {{ domain }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="form-label">Score min</label>
+                                <input type="number" name="minCutoff" class="form-control" 
+                                       value="{{ filters.minCutoff }}" step="0.1" placeholder="Ex: 80">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Score max</label>
+                                <input type="number" name="maxCutoff" class="form-control" 
+                                       value="{{ filters.maxCutoff }}" step="0.1" placeholder="Ex: 150">
+                            </div>
+                        </div>
+                        
+                        <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" name="geographic_bonus" 
+                                   {% if geographicBonus %}checked{% endif %}>
+                            <label class="form-check-label">
+                                <i class="fas fa-map-marker-alt me-1" style="color: var(--neon-pink);"></i>
+                                Bonus géographique (7%)
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary-custom w-100 mt-3">
+                            <i class="fas fa-search me-2"></i>Appliquer les filtres
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Top Subjects -->
+                {% if topSubjects and engagementStats.totalViews > 0 %}
+                <div class="card-modern">
+                    <div class="card-body">
+                        <h6><i class="fas fa-star me-2" style="color: var(--neon-pink);"></i>Vos matières fortes</h6>
+                        {% for subject in topSubjects %}
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>{{ subject.subjectCode }}</span>
+                                <div class="progress" style="width: 60px; height: 6px;">
+                                    <div class="progress-bar bg-success" 
+                                         style="width: {{ (subject.interestScore * 100)|round }}%"></div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Recommendations -->
+            <div class="col-lg-8">
+                {% if recommendations is empty %}
+                    <div class="card-modern">
+                        <div class="empty-state">
+                            <i class="fas fa-search"></i>
+                            <h5>Aucune recommandation trouvée</h5>
+                            <p>Essayez de modifier vos filtres ou vérifiez que votre score BAC a été calculé.</p>
+                            <a href="{{ path('score_calcul') }}" class="btn btn-primary-custom">
+                                <i class="fas fa-calculator me-2"></i>Recalculer mon score
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    {% for recommendation in recommendations %}
+                        <div class="card-modern program-card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h5 class="card-title">
+                                            <a href="{{ path('orientation_program_detail', {id: recommendation.program.id}) }}" 
+                                               class="program-title">
+                                                {{ recommendation.program.displayName }}
+                                            </a>
+                                        </h5>
+                                        <p class="university-info">
+                                            <i class="fas fa-university me-2"></i>
+                                            {{ recommendation.program.fullInstitutionName }}
+                                        </p>
+                                        
+                                        <!-- Reasons -->
+                                        {% if recommendation.reasons %}
+                                            <div class="mb-3">
+                                                {% for reason in recommendation.reasons %}
+                                                    <span class="reason-badge">
+                                                        <i class="fas fa-check-circle me-1"></i>
+                                                        {{ reason }}
+                                                    </span>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-4 text-end">
+                                        <!-- Chance Badge -->
+                                        <span class="badge bg-{{ recommendation.chanceLevel.color }} chance-badge mb-3">
+                                            <i class="fas fa-chart-line me-1"></i>
+                                            {{ recommendation.chanceLevel.level }}
+                                        </span>
+                                        
+                                        <!-- Scores with Debug Info -->
+                                        <div class="score-comparison">
+                                            <div class="small mb-2">
+                                                <div class="d-flex justify-content-between">
+                                                    <span>Votre T:</span>
+                                                    <strong>{{ recommendation.tUser }}</strong>
+                                                </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <span>Seuil 2024:</span>
+                                                    <strong>{{ recommendation.cutoff2024 }}</strong>
+                                                </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <span>Marge:</span>
+                                                    <strong class="{% if recommendation.margin > 0 %}text-success{% else %}text-danger{% endif %}">
+                                                        {{ recommendation.margin > 0 ? '+' : '' }}{{ recommendation.margin }}
+                                                    </strong>
+                                                </div>
+                                                <div class="d-flex justify-content-between mt-1">
+                                                    <span><small>Score Chance:</small></span>
+                                                    <small>{{ (recommendation.chanceScore * 100)|round }}%</small>
+                                                </div>
+                                                {% if recommendation.interestFit > 0 %}
+                                                <div class="d-flex justify-content-between">
+                                                    <span><small>Affinité:</small></span>
+                                                    <small>{{ (recommendation.interestFit * 100)|round }}%</small>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Final Score -->
+                                        <div class="mt-3">
+                                            <div class="final-score-bar" style="width: {{ (recommendation.finalScore * 100)|round }}%"></div>
+                                            <small class="text-muted mt-1 d-block">
+                                                Compatibilité: {{ (recommendation.finalScore * 100)|round }}%
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- What If Simulator -->
+                <div class="what-if-section">
+                    <h5><i class="fas fa-magic me-2"></i>Simulateur "Et si..."</h5>
+                    <p class="text-muted">Voyez comment l'amélioration de vos notes pourrait changer vos recommandations.</p>
+                    
+                    <form id="whatIfForm">
+                        <div class="row">
+                            {% for subject, score in userScores %}
+                                {% if subject != 'FG' %}
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ subject }}</label>
+                                        <input type="number" name="{{ subject }}" class="form-control" 
+                                               value="{{ score }}" min="0" max="20" step="0.1">
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary-custom">
+                            <i class="fas fa-calculator me-2"></i>Simuler
+                        </button>
+                    </form>
+                    
+                    <div id="simulationResults" class="mt-3" style="display: none;">
+                        <h6>Améliorations possibles:</h6>
+                        <div id="improvementsList"></div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+        // Fix scroll behavior
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure smooth scrolling
+            document.documentElement.style.scrollBehavior = 'smooth';
+            document.body.style.scrollBehavior = 'smooth';
+            
+            // Prevent scroll jumping
+            window.addEventListener('scroll', function(e) {
+                // Allow normal scrolling
+            });
+        });
+        
+        // What If Simulator
+        document.addEventListener('DOMContentLoaded', function() {
+            const whatIfForm = document.getElementById('whatIfForm');
+            if (whatIfForm) {
+                whatIfForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    
+                    // Show loading state
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Simulation...';
+                    submitBtn.disabled = true;
+                    
+                    const formData = new FormData(this);
+                    
+                    fetch('{{ path('orientation_what_if') }}', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            displaySimulationResults(data.improvements);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Erreur lors de la simulation. Veuillez réessayer.');
+                    })
+                    .finally(() => {
+                        // Restore button state
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    });
+                });
+            }
+        });
+        
+        function displaySimulationResults(improvements) {
+            const resultsDiv = document.getElementById('simulationResults');
+            const listDiv = document.getElementById('improvementsList');
+            
+            if (improvements.length === 0) {
+                listDiv.innerHTML = '<p class="text-muted">Aucune amélioration détectée avec ces modifications.</p>';
+            } else {
+                let html = '';
+                improvements.forEach(improvement => {
+                    html += `
+                        <div class="alert alert-success">
+                            <strong>${improvement.program.programNameAr}</strong><br>
+                            ${improvement.positionImprovement === 'NEW' ? 
+                                'Nouveau dans le top 10!' : 
+                                `Amélioration de ${improvement.positionImprovement} positions (${improvement.oldPosition} → ${improvement.newPosition})`
+                            }
+                        </div>
+                    `;
+                });
+                listDiv.innerHTML = html;
+            }
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        // Simulate engagement data
+        function simulateEngagement() {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            
+            // Show loading state
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Simulation...';
+            btn.disabled = true;
+            
+            fetch('{{ path('orientation_simulate_engagement') }}', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Erreur lors de la simulation. Veuillez réessayer.');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Erreur lors de la simulation. Veuillez réessayer.');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        }
+        
+        // Filter form handling
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterForm = document.getElementById('filterForm');
+            if (filterForm) {
+                filterForm.addEventListener('submit', function(e) {
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    
+                    // Show loading state
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Filtrage...';
+                    submitBtn.disabled = true;
+                    
+                    // Allow form to submit normally
+                    // The loading state will be reset when page reloads
+                });
+            }
+        });
+        
+        // Remove problematic smooth scrolling for anchor links
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    const target = document.querySelector(href);
+                    if (target) {
+                        e.preventDefault();
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
